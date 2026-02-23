@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Mail, Lock, User } from 'lucide-react';
+import { Loader2, Mail, Lock, User, Smartphone } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { supabase } from '@/integrations/supabase/client';
@@ -159,6 +159,10 @@ const Register = () => {
             <CardDescription className="text-center">
               Créez votre compte Mariable pour commencer à planifier votre mariage
             </CardDescription>
+            <div className="flex items-start gap-2 p-3 bg-wedding-olive/5 rounded-lg border border-wedding-olive/15 text-sm text-muted-foreground">
+              <Smartphone className="h-4 w-4 mt-0.5 flex-shrink-0 text-wedding-olive" />
+              <p>Utilisation des outils en ligne recommandée sur <strong>ordinateur ou tablette</strong> — sauf l'appli du Jour-J spécialement conçue pour mobile !</p>
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleRegister} className="space-y-4">
