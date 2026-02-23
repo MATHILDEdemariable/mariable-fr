@@ -1,26 +1,41 @@
 
+# Ajout d'encadres informatifs sur /register et /dashboard/installer-app
 
-# Mise a jour des liens et donnees sur /severine-et-olivier
+## 1. Page /register (Register.tsx)
 
-## 3 modifications dans `weddingData` (lignes 22-49 de `WeddingSeverineOlivier.tsx`)
+Ajouter un encadre informatif juste avant le formulaire (apres le CardDescription, ligne 161), dans le CardHeader ou juste avant le CardContent :
 
-### 1. RSVP slug
-- Ligne 25 : changer `rsvpSlug` de `"mariageseverineolivier-1"` vers `"mariageseverineolivier-2"`
+**Contenu de l'encadre :**
+> Utilisation des outils en ligne recommandee sur ordinateur ou tablette - sauf l'appli du Jour-J specialement concue pour mobile !
 
-### 2. Lien hebergements
-- Ligne 38 : changer `accommodationLink` de `"https://www.google.com/maps/search/Hotels+Saint-Emilion"` vers `"https://www.google.com/collections/s/list/ySkAOJFiqjsoFc5eqH9iQSWJnnDZOg/5wLW-FQvP8Y"`
+- Style : petit `Alert` ou encadre avec une icone (Monitor/Smartphone) et fond leger (`bg-blue-50` ou `bg-wedding-olive/5`)
+- Place entre le CardDescription (ligne 159-161) et le CardContent (ligne 163)
 
-### 3. Lieu et lien Google Maps
-- Ligne 46 : changer `address` de `"Saint-Emilion, Nouvelle-Aquitaine"` vers `"Proche Etretat, Normandie"`
-- Ligne 47 : changer `mapLink` de `"https://maps.google.com/?q=Chateau+Saint+Clair+Saint-Emilion"` vers `"https://maps.app.goo.gl/SV5dPnt1X8mcu6SS6"`
+**Fichier :** `src/pages/auth/Register.tsx`, insertion vers ligne 162
+
+---
+
+## 2. Page /dashboard/installer-app (InstallAppPage.tsx)
+
+Modifier la section "DesktopInstructions" (lignes 157-172) et la section lien partageable (lignes 202-215) pour distinguer deux cas :
+
+### a) URL futurs maries
+Dans le bloc desktop (ligne 167-170), garder `mariable.fr/dashboard` mais preciser que c'est pour les futurs maries.
+
+### b) URL invites/temoins/prestataires
+Ajouter une precision dans le bloc "Partagez ce tutoriel" ou juste en dessous : pour les invites, temoins et prestataires a qui vous partagez l'appli du Jour-J, c'est le lien unique que vous leur partagez (le lien specifique de leur mariage).
+
+**Fichier :** `src/pages/dashboard/InstallAppPage.tsx`
+- Modifier le bloc DesktopInstructions (lignes 162-170) pour ajouter la distinction futurs maries vs invites
+- Modifier ou completer le bloc lien partageable (lignes 202-215)
+
+---
 
 ## Details techniques
 
-| Fichier | Lignes | Modification |
-|---|---|---|
-| `src/pages/WeddingSeverineOlivier.tsx` | 25 | `rsvpSlug: "mariageseverineolivier-2"` |
-| `src/pages/WeddingSeverineOlivier.tsx` | 38 | `accommodationLink: "https://www.google.com/collections/s/list/ySkAOJFiqjsoFc5eqH9iQSWJnnDZOg/5wLW-FQvP8Y"` |
-| `src/pages/WeddingSeverineOlivier.tsx` | 46-47 | Adresse "Proche Etretat, Normandie" + nouveau lien Maps |
+| Fichier | Modification |
+|---|---|
+| `src/pages/auth/Register.tsx` | Ajouter un encadre info (Alert) entre CardDescription et CardContent, avec icone Monitor/Smartphone |
+| `src/pages/dashboard/InstallAppPage.tsx` | Mettre a jour DesktopInstructions avec 2 cas (futurs maries = mariable.fr/dashboard, invites = lien unique partage) |
 
-Aucun autre fichier impacte. Modifications purement de donnees statiques.
-
+Aucune dependance externe a ajouter. Utilisation des composants Alert et icones Lucide deja presents dans le projet.
