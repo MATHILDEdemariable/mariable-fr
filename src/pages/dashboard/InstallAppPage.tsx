@@ -159,14 +159,21 @@ const InstallAppPage = () => {
       <CardHeader>
         <CardTitle>Accédez depuis votre mobile</CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-4">
         <p className="text-muted-foreground">
           Pour installer Mariable comme une application, ouvrez cette page depuis votre smartphone ou tablette, 
           puis suivez les instructions qui s'afficheront automatiquement.
         </p>
-        <div className="mt-4 p-4 bg-muted rounded-lg">
-          <p className="font-medium text-sm">URL à ouvrir sur mobile :</p>
+        <div className="p-4 bg-muted rounded-lg space-y-1">
+          <p className="font-medium text-sm">👩‍❤️‍👨 Futurs mariés :</p>
+          <p className="text-sm text-muted-foreground">Ouvrez sur mobile :</p>
           <code className="text-sm text-wedding-olive break-all">mariable.fr/dashboard</code>
+        </div>
+        <div className="p-4 bg-muted rounded-lg space-y-1">
+          <p className="font-medium text-sm">👥 Invités, témoins & prestataires :</p>
+          <p className="text-sm text-muted-foreground">
+            C'est le lien unique de l'appli du Jour-J que les futurs mariés vous ont partagé qu'il faut ouvrir sur mobile.
+          </p>
         </div>
       </CardContent>
     </Card>
