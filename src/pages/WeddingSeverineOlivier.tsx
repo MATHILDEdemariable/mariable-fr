@@ -22,7 +22,7 @@ const colors = {
 const weddingData = {
   couple: "Séverine & Olivier",
   date: "5 septembre 2026",
-  rsvpSlug: "mariageseverineolivier-1",
+  rsvpSlug: "mariageseverineolivier-2",
   rsvpDeadline: "15 juillet 2026",
   schedule: [
     { time: "16h30", event: "Cérémonie laïque", location: "Château de Saint Clair", icon: "💒" },
@@ -35,7 +35,7 @@ const weddingData = {
     { time: "15h00", event: "Cérémonie civile", location: "Mairie", icon: "🏛️", date: "4 septembre" },
     { time: "20h00", event: "Dîner intime", location: "Restaurant Le Jardin", icon: "🌙", date: "4 septembre" },
   ],
-  accommodationLink: "https://www.google.com/maps/search/Hotels+Saint-Emilion",
+  accommodationLink: "https://www.google.com/collections/s/list/ySkAOJFiqjsoFc5eqH9iQSWJnnDZOg/5wLW-FQvP8Y",
   contacts: [
     { name: "Olivier", phone: "06 07 98 00 58" },
     { name: "Séverine", phone: "06 15 46 28 41" },
@@ -43,8 +43,8 @@ const weddingData = {
   ],
   venue: {
     name: "Château de Saint Clair",
-    address: "Saint-Émilion, Nouvelle-Aquitaine",
-    mapLink: "https://maps.google.com/?q=Chateau+Saint+Clair+Saint-Emilion"
+    address: "Proche Etretat, Normandie",
+    mapLink: "https://maps.app.goo.gl/SV5dPnt1X8mcu6SS6"
   }
 };
 
