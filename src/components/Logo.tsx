@@ -4,13 +4,13 @@ import React from 'react';
 export const Logo = () => {
   return (
     <img 
-      src="/logo-mariable-new.webp" 
+      src="/cachet_M.webp" 
       alt="Mariable - Organisation de mariages" 
-      width="120"
-      height="120"
+      width="48"
+      height="48"
       loading="lazy"
       decoding="async"
-      className="h-16 w-auto" 
+      className="h-12 w-12"
     />
   );
 };

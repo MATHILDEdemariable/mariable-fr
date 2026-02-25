@@ -32,9 +32,7 @@ const PremiumHeader = () => {
         {/* Niveau 1 : Logo + nav + boutons */}
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
-            <span className={isHomepage ? 'brightness-0 invert' : ''}>
-              <Logo />
-            </span>
+            <Logo />
           </Link>
 
           {/* Desktop nav links (inline on homepage) */}
