@@ -40,12 +40,13 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
 
         {/* Title */}
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
-          Tout pour organiser un mariage parfait
+          Le wedding planning, entre vos mains.
         </h1>
 
         {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">
-          Les meilleurs outils d'organisation & prestataires mariage au même endroit
+          Outils intelligents pour les couples<br />
+          qui organisent seuls — et le font bien.
         </p>
 
         {/* Single CTA - Navigate to register - Style flag like Club badge */}
@@ -194,7 +195,7 @@ const FAQSection = () => {
 };
 
 // Final CTA Section
-const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-beige">
+const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-olive">
     <div className="container mx-auto px-4">
       <motion.header initial={{
       opacity: 0,
@@ -207,7 +208,7 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
     }} transition={{
       duration: 0.6
     }} className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
-        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl px-2 text-editorial-noir">
+        <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl px-2 text-white">
           Rejoignez le club Mariable
         </h2>
       </motion.header>
@@ -215,19 +216,19 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-be
 
         <div className="flex flex-col gap-3 md:gap-4 justify-center px-2">
           <Link to="/register" className="w-full sm:w-auto sm:mx-auto">
-            <Button size="lg" className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg shadow-lg w-full rounded-none">
+            <Button size="lg" className="bg-white text-editorial-noir hover:bg-white/90 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg shadow-lg w-full rounded-none">
               Rejoindre le Club
               <Heart className="ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </Link>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/mariable.ambassadeur" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="border-white/40 text-white px-6 md:px-8 py-4 md:py-6 text-sm md:text-lg w-full bg-primary">
+              <Button size="lg" variant="outline" className="border-white/40 text-white px-6 md:px-8 py-4 md:py-6 text-sm md:text-lg w-full bg-white/10 hover:bg-white/20">
                 Devenir Lieu Ambassadeur   
               </Button>
             </Link>
             <Link to="/mariable.partenaire" className="w-full sm:w-auto">
-              <Button size="lg" variant="ghost" className="text-white/80 hover:text-white px-6 py-4 md:py-6 text-sm md:text-lg w-full bg-primary">
+              <Button size="lg" variant="ghost" className="text-white/80 hover:text-white px-6 py-4 md:py-6 text-sm md:text-lg w-full bg-white/10 hover:bg-white/20">
                 Devenir Partenaire
               </Button>
             </Link>

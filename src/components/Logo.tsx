@@ -10,7 +10,7 @@ export const Logo = () => {
       height="48"
       loading="lazy"
       decoding="async"
-      className="h-12 w-12"
+      className="h-12 w-auto"
     />
   );
 };

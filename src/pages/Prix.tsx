@@ -95,13 +95,13 @@ const Prix = () => {
       
       <main className="flex-grow page-content">
         {/* Section 1 - Hero */}
-        <section className="py-16 md:py-20 bg-editorial-beige animate-fade-in">
+        <section className="py-16 md:py-20 bg-editorial-olive animate-fade-in">
           <div className="container mx-auto px-4">
             <header className="text-center">
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-editorial-noir mb-6">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-serif text-white mb-6">
                 Nos tarifs
               </h1>
-              <p className="text-lg text-editorial-noir/70 max-w-3xl mx-auto">
+              <p className="text-lg text-white/80 max-w-3xl mx-auto">
                 Toutes les fonctionnalités sont gratuites. Le Premium lève les dernières limites — 29 €, une seule fois, accès à vie.
               </p>
             </header>
@@ -116,7 +116,7 @@ const Prix = () => {
                 <div className="space-y-6">
                   {/* Card Gratuit */}
                   <Card className="border border-editorial-noir/10 rounded-none">
-                    <CardHeader className="bg-editorial-beige rounded-none">
+                    <CardHeader className="bg-editorial-olive/10 rounded-none">
                       <CardTitle className="text-center font-serif text-editorial-noir">Gratuit</CardTitle>
                       <div className="text-3xl font-bold text-editorial-noir text-center">0 €</div>
                       <p className="text-sm text-editorial-noir/60 text-center">Pour bien démarrer</p>
@@ -249,7 +249,7 @@ const Prix = () => {
                             <span className="text-sm text-editorial-noir/50">{row.gratuit}</span>
                           )}
                         </div>
-                        <div className="flex items-center justify-center p-4 bg-editorial-beige/50 border-2 border-editorial-noir/10 rounded-none">
+                        <div className="flex items-center justify-center p-4 bg-editorial-olive/10 border-2 border-editorial-noir/10 rounded-none">
                           {row.premium === "✓" ? (
                             <Check className="w-6 h-6 text-editorial-noir" />
                           ) : (
@@ -304,23 +304,23 @@ const Prix = () => {
         </section>
 
         {/* Section 4 - CTA final */}
-        <section className="py-16 md:py-20 bg-editorial-beige">
+        <section className="py-16 md:py-20 bg-editorial-olive">
           <div className="container mx-auto px-4 text-center">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-editorial-noir mb-4">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-serif text-white mb-4">
               Prêt(e) à organiser votre mariage en toute sérénité ?
             </h2>
-            <p className="text-lg text-editorial-noir/70 mb-8 max-w-2xl mx-auto">
+            <p className="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
               Commencez gratuitement ou passez au Premium pour lever toutes les limites.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="bg-editorial-noir text-white hover:bg-editorial-noir/90 rounded-none">
+              <Button asChild size="lg" className="bg-white text-editorial-noir hover:bg-white/90 rounded-none">
                 <Link to="/register">Commencer gratuitement</Link>
               </Button>
               <Button 
                 onClick={handlePremiumClick}
                 disabled={checkoutLoading}
                 size="lg" 
-                className="border border-editorial-noir text-editorial-noir bg-transparent hover:bg-editorial-noir hover:text-white rounded-none"
+                className="border border-white text-white bg-transparent hover:bg-white hover:text-editorial-noir rounded-none"
               >
                 {checkoutLoading ? "Chargement..." : "Découvrir le Premium — 29 €"}
               </Button>

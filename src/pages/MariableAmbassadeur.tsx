@@ -69,8 +69,8 @@ const MariableAmbassadeur = () => {
       
       <main className="flex-grow">
         {/* Section 1: Hero */}
-        <section className="relative py-24 md:py-36 overflow-hidden bg-editorial-beige">
-          <div className="absolute inset-0 bg-gradient-to-b from-editorial-beige/30 via-transparent to-editorial-beige/20" />
+        <section className="relative py-24 md:py-36 overflow-hidden bg-editorial-olive">
+          <div className="absolute inset-0 bg-gradient-to-b from-editorial-olive/30 via-transparent to-editorial-olive/20" />
           <div className="container mx-auto px-4 relative z-10">
             <motion.div 
               initial={{ opacity: 0, y: 30 }}
@@ -82,20 +82,20 @@ const MariableAmbassadeur = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.2 }}
-                className="inline-flex items-center gap-2 bg-editorial-noir/20 backdrop-blur-sm border border-editorial-noir/30 px-4 py-2 mb-8"
+                className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm border border-white/30 px-4 py-2 mb-8"
               >
-                <Building2 className="h-4 w-4 text-editorial-noir" />
-                <span className="font-medium text-editorial-noir">Pour les lieux de réception</span>
+                <Building2 className="h-4 w-4 text-white" />
+                <span className="font-medium text-white">Pour les lieux de réception</span>
               </motion.div>
 
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3, duration: 0.6 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-serif text-editorial-noir mb-8 leading-tight"
+                className="text-4xl md:text-6xl lg:text-7xl font-serif text-white mb-8 leading-tight"
               >
                 Générez des{' '}
-                <span className="text-editorial-noir/90 relative">
+                <span className="text-white/90 relative">
                   revenus passifs
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 200 8" fill="none">
                     <path d="M2 6C50 2 150 2 198 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
@@ -107,7 +107,7 @@ const MariableAmbassadeur = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4, duration: 0.6 }}
-                className="text-xl md:text-2xl text-editorial-noir/80 mb-12 font-light"
+                className="text-xl md:text-2xl text-white/80 mb-12 font-light"
               >
                 Transformez vos recommandations en revenus. 30 secondes d'effort par couple.
               </motion.p>
@@ -436,14 +436,14 @@ const MariableAmbassadeur = () => {
         </section>
 
         {/* Section 7: CTA Final */}
-        <section className="py-20 md:py-28 bg-editorial-beige relative overflow-hidden">
+        <section className="py-20 md:py-28 bg-editorial-olive relative overflow-hidden">
           <motion.div 
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             className="container mx-auto px-4 text-center relative z-10"
           >
-            <h2 className="text-3xl md:text-5xl font-serif text-editorial-noir mb-8">
+            <h2 className="text-3xl md:text-5xl font-serif text-white mb-8">
               Prêt à générer des revenus passifs ?
             </h2>
             
@@ -451,17 +451,17 @@ const MariableAmbassadeur = () => {
               <Button 
                 size="lg"
                 onClick={() => navigate('/contact')}
-                className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
+                className="bg-white text-editorial-noir hover:bg-white/90 px-10 py-7 text-lg shadow-2xl hover:scale-105 transition-all duration-300 rounded-none"
               >
                 Devenir lieu ambassadeur
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>
             
-            <div className="flex flex-wrap justify-center gap-6 mt-8 text-editorial-noir/80">
+            <div className="flex flex-wrap justify-center gap-6 mt-8 text-white/80">
               {['0€ d\'investissement', 'Commission uniquement', 'Dashboard temps réel'].map((item, index) => (
-                <span key={index} className="flex items-center gap-2 bg-editorial-noir/10 px-4 py-2">
-                  <Check className="h-4 w-4 text-editorial-noir" /> {item}
+                <span key={index} className="flex items-center gap-2 bg-white/10 px-4 py-2">
+                  <Check className="h-4 w-4 text-white" /> {item}
                 </span>
               ))}
             </div>
