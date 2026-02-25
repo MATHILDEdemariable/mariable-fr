@@ -199,7 +199,7 @@ select:focus {
   --gaming-glow: 100 15% 55%;       /* Sauge clair */
   
   /* Editorial colors */
-  --editorial-olive: 100 10% 31%;   /* #4A5548 - New olive/sage */
+  --editorial-olive: 107 13% 40%;   /* #63745a */
   --editorial-noir: 0 0% 6%;        /* #0F0F0F */
   --editorial-beige: 40 23% 85%;    /* #E1DACA - Chalk Beige */
 }
@@ -382,7 +382,7 @@ select:focus {
 
 /* Premium button effects - Editorial style */
 .btn-primary {
-  background: #4a5548;
+  background: #63745a;
   border-radius: 0;
   transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
   position: relative;

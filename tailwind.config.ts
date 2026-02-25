@@ -60,7 +60,7 @@ export default {
 					black: '#000000',
 					white: '#ffffff',
 					gold: '#d4af37',
-					olive: '#4a5548'
+					olive: '#63745a'
 				},
 				premium: {
 					base: '#FEFEFE',
@@ -74,7 +74,7 @@ export default {
 				},
 				editorial: {
 					beige: '#E1DACA',
-					olive: '#4A5548',
+					olive: '#63745a',
 					noir: '#0F0F0F',
 					cream: '#f5f4ef',
 					gray: '#666666',

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Download, FileText } from 'lucide-react';
@@ -30,9 +30,9 @@ const GuideDuJourJ = () => {
       </Helmet>
 
       <div className="min-h-screen flex flex-col bg-premium-warm">
-        <Header />
+        <PremiumHeader />
         
-        <main className="flex-grow container mx-auto px-4 py-12">
+        <main className="flex-grow container mx-auto px-4 py-12 page-content">
           <div className="max-w-6xl mx-auto">
             {/* En-tête */}
             <div className="text-center mb-8">

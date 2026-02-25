@@ -92,7 +92,7 @@ const Index = () => {
       
       <PremiumHeader />
       
-      <main className="flex-grow page-content">
+      <main className="flex-grow">
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 

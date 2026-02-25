@@ -27,20 +27,53 @@ const PremiumHeader = () => {
   }
 
   return (
-    <header className="site-header w-full bg-white border-b border-editorial-noir/10 transition-all duration-300">
+    <header className={`site-header w-full transition-all duration-300 ${isHomepage ? 'bg-transparent border-b border-white/10' : 'bg-white border-b border-editorial-noir/10'}`}>
       <div className="container mx-auto px-4">
-        {/* Niveau 1 : Logo + boutons */}
+        {/* Niveau 1 : Logo + nav + boutons */}
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
-            <Logo />
+            <span className={isHomepage ? 'brightness-0 invert' : ''}>
+              <Logo />
+            </span>
           </Link>
+
+          {/* Desktop nav links (inline on homepage) */}
+          {isHomepage && (
+            <nav className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => {
+                if (link.href.startsWith('/#')) {
+                  return (
+                    <button
+                      key={link.href}
+                      onClick={() => {
+                        const id = link.href.replace('/#', '');
+                        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+                      }}
+                      className="text-[11px] tracking-[0.15em] uppercase text-white/80 hover:text-white transition-colors font-sans bg-transparent border-none cursor-pointer"
+                    >
+                      {link.label}
+                    </button>
+                  );
+                }
+                return (
+                  <Link
+                    key={link.href}
+                    to={link.href}
+                    className="text-[11px] tracking-[0.15em] uppercase text-white/80 hover:text-white transition-colors font-sans"
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+          )}
 
           {/* Desktop buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none px-6 text-xs tracking-widest uppercase font-sans">
+                  <Button className={`rounded-none px-6 text-xs tracking-widest uppercase font-sans ${isHomepage ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' : 'bg-editorial-noir hover:bg-editorial-noir/80 text-white'}`}>
                     Mon compte <ChevronDown className="ml-1 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -57,14 +90,14 @@ const PremiumHeader = () => {
               <Button 
                 variant="ghost"
                 onClick={() => navigate('/login')} 
-                className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent font-sans"
+                className={`text-xs tracking-widest uppercase font-sans ${isHomepage ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent'}`}
               >
                 Connexion / Créer un compte
               </Button>
             )}
             <Link 
               to="/partenariat"
-              className="text-xs tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir transition-colors font-sans"
+              className={`text-xs tracking-widest uppercase transition-colors font-sans ${isHomepage ? 'text-white/80 hover:text-white' : 'text-editorial-noir/80 hover:text-editorial-noir'}`}
             >
               Je suis un professionnel
             </Link>
@@ -74,7 +107,7 @@ const PremiumHeader = () => {
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6 text-editorial-noir" />
+                <Menu className={`h-6 w-6 ${isHomepage ? 'text-white' : 'text-editorial-noir'}`} />
               </Button>
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white pt-20">
@@ -118,39 +151,7 @@ const PremiumHeader = () => {
             </SheetContent>
           </Sheet>
         </div>
-
       </div>
-
-      {/* Niveau 2 : Navigation sections (desktop only, homepage only) - full width */}
-      {isHomepage && (
-        <nav className="hidden md:flex items-center justify-center space-x-8 h-10 bg-editorial-beige border-t border-editorial-noir/5">
-          {navLinks.map((link) => {
-            if (link.href.startsWith('/#')) {
-              return (
-                <button
-                  key={link.href}
-                  onClick={() => {
-                    const id = link.href.replace('/#', '');
-                    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans bg-transparent border-none cursor-pointer"
-                >
-                  {link.label}
-                </button>
-              );
-            }
-            return (
-              <Link
-                key={link.href}
-                to={link.href}
-                className="text-[11px] tracking-[0.15em] uppercase text-editorial-noir/70 hover:text-editorial-noir transition-colors font-sans"
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
-      )}
     </header>
   );
 };
