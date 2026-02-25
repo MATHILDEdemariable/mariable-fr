@@ -1,41 +1,73 @@
 
-# Ajout d'encadres informatifs sur /register et /dashboard/installer-app
 
-## 1. Page /register (Register.tsx)
+# Modifications demandees : Guide Jour-J, Header transparent et couleur verte
 
-Ajouter un encadre informatif juste avant le formulaire (apres le CardDescription, ligne 161), dans le CardHeader ou juste avant le CardContent :
+## 1. Page /guide-jour-j : remplacer le PDF et utiliser PremiumHeader
 
-**Contenu de l'encadre :**
-> Utilisation des outils en ligne recommandee sur ordinateur ou tablette - sauf l'appli du Jour-J specialement concue pour mobile !
+**Fichier : `src/pages/GuideDuJourJ.tsx`**
 
-- Style : petit `Alert` ou encadre avec une icone (Monitor/Smartphone) et fond leger (`bg-blue-50` ou `bg-wedding-olive/5`)
-- Place entre le CardDescription (ligne 159-161) et le CardContent (ligne 163)
+- Remplacer `import Header from '@/components/Header'` par `import PremiumHeader from '@/components/home/PremiumHeader'`
+- Remplacer `<Header />` par `<PremiumHeader />`
+- Copier le nouveau PDF uploadé vers `public/guide-jour-j.pdf` pour remplacer l'ancien
 
-**Fichier :** `src/pages/auth/Register.tsx`, insertion vers ligne 162
-
----
-
-## 2. Page /dashboard/installer-app (InstallAppPage.tsx)
-
-Modifier la section "DesktopInstructions" (lignes 157-172) et la section lien partageable (lignes 202-215) pour distinguer deux cas :
-
-### a) URL futurs maries
-Dans le bloc desktop (ligne 167-170), garder `mariable.fr/dashboard` mais preciser que c'est pour les futurs maries.
-
-### b) URL invites/temoins/prestataires
-Ajouter une precision dans le bloc "Partagez ce tutoriel" ou juste en dessous : pour les invites, temoins et prestataires a qui vous partagez l'appli du Jour-J, c'est le lien unique que vous leur partagez (le lien specifique de leur mariage).
-
-**Fichier :** `src/pages/dashboard/InstallAppPage.tsx`
-- Modifier le bloc DesktopInstructions (lignes 162-170) pour ajouter la distinction futurs maries vs invites
-- Modifier ou completer le bloc lien partageable (lignes 202-215)
+**Fichier : nouveau fichier** `public/guide-jour-j.pdf` (copie du PDF uploadé)
 
 ---
 
-## Details techniques
+## 2. Header transparent sur la page d'accueil (sur la video)
+
+L'objectif est que le header se superpose a la video hero sans fond blanc, comme sur le site "The Host" en reference.
+
+**Fichier : `src/components/home/PremiumHeader.tsx`**
+
+- Sur la homepage uniquement (`isHomepage`), rendre le header transparent : `bg-transparent` au lieu de `bg-white`, supprimer le `border-b`
+- Le texte du header passe en blanc sur la homepage (logo, boutons)
+- La barre de navigation niveau 2 (beige) est supprimee ou rendue transparente aussi
+- Les liens de navigation s'integrent directement dans le header principal
+
+**Fichier : `src/components/home/PremiumHeroSection.tsx`**
+
+- Supprimer le `page-content` padding-top sur le hero pour que la video soit bien plein ecran sous le header transparent
+
+**Fichier : `src/index.css`**
+
+- Ajuster le `--header-offset` ou le comportement du `page-content` pour que la homepage n'ait pas le padding-top du header fixe (puisque le header est overlay)
+
+---
+
+## 3. Remplacer le beige par le vert #63745a pour les CTA
+
+**Fichier : `tailwind.config.ts`**
+
+- Changer `editorial.beige` de `'#E1DACA'` vers `'#63745a'`
+
+Attention : cela impacte globalement tous les usages de `editorial-beige` (environ 28 fichiers). Il faut donc verifier que les usages en fond de section (comme `bg-editorial-beige`) restent coherents. Comme beaucoup de ces usages sont des fonds de section ou hover states, deux approches possibles :
+
+**Approche recommandee** : Ne PAS changer la variable `editorial-beige` globalement (cela casserait les fonds de sections clairs). A la place :
+- Ajouter une nouvelle couleur `editorial.sage: '#63745a'` dans tailwind config
+- Remplacer les CTA qui utilisent `bg-editorial-beige` par `bg-editorial-sage text-white`
+- Remplacer les CTA qui utilisent `bg-editorial-olive` par `bg-[#63745a] text-white`
+- Mettre a jour `editorial.olive` de `'#4A5548'` vers `'#63745a'` puisque c'est la couleur principale des CTA
+
+**Fichier : `tailwind.config.ts`** (ligne 77)
+- Changer `editorial.olive` de `'#4A5548'` vers `'#63745a'`
+
+Cela met a jour automatiquement tous les boutons CTA du site qui utilisent deja `bg-editorial-olive text-white` (hero, sections, etc.) vers la nouvelle teinte verte.
+
+Les fonds beige des sections restent inchanges (ils gardent `editorial-beige: '#E1DACA'`).
+
+La barre de navigation niveau 2 du header passera de beige a transparente (point 2), donc pas d'impact.
+
+---
+
+## Resume des fichiers modifies
 
 | Fichier | Modification |
 |---|---|
-| `src/pages/auth/Register.tsx` | Ajouter un encadre info (Alert) entre CardDescription et CardContent, avec icone Monitor/Smartphone |
-| `src/pages/dashboard/InstallAppPage.tsx` | Mettre a jour DesktopInstructions avec 2 cas (futurs maries = mariable.fr/dashboard, invites = lien unique partage) |
+| `public/guide-jour-j.pdf` | Remplacement par le nouveau PDF uploade |
+| `src/pages/GuideDuJourJ.tsx` | Header -> PremiumHeader |
+| `src/components/home/PremiumHeader.tsx` | Header transparent + texte blanc sur homepage |
+| `src/components/home/PremiumHeroSection.tsx` | Ajustement pour hero plein ecran sous header overlay |
+| `src/index.css` | Gestion du padding-top conditionnel pour homepage |
+| `tailwind.config.ts` | `editorial.olive` passe de `#4A5548` a `#63745a` |
 
-Aucune dependance externe a ajouter. Utilisation des composants Alert et icones Lucide deja presents dans le projet.
