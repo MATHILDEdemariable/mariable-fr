@@ -35,20 +35,8 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
     }} transition={{
       duration: 0.8
     }} className="max-w-4xl mx-auto">
-        {/* Badge */}
-        <motion.div initial={{
-        opacity: 0,
-        scale: 0.9
-      }} animate={{
-        opacity: 1,
-        scale: 1
-      }} transition={{
-        delay: 0.2,
-        duration: 0.5
-      }} className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 px-3 py-1.5 md:px-4 md:py-2 mb-6 md:mb-8">
-          <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-white" />
-          <span className="text-white/90 text-xs md:text-sm font-medium">Club des futurs mariés</span>
-        </motion.div>
+
+
 
         {/* Title */}
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
