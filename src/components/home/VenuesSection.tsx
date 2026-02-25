@@ -97,7 +97,7 @@ const VenuesSection = () => {
 
         {/* CTA Sélection personnalisée centré */}
         <div className="flex justify-center mb-8">
-          <Button onClick={() => setIsCarnetModalOpen(true)} className="px-6 py-4 text-sm uppercase tracking-widest rounded-none bg-editorial-beige text-primary">
+          <Button onClick={() => setIsCarnetModalOpen(true)} className="px-6 py-4 text-sm uppercase tracking-widest rounded-none bg-editorial-olive text-white hover:bg-editorial-olive/90">
             <Gift className="w-4 h-4 mr-2" />
             Sélection personnalisée offerte
           </Button>
@@ -173,7 +173,7 @@ const VenuesSection = () => {
             <div className="text-center mt-12 px-4">
               <Button 
                 onClick={() => navigate('/professionnelsmariable')} 
-                className="w-full sm:w-auto bg-editorial-noir hover:bg-editorial-noir/80 text-white px-6 py-4 sm:px-10 sm:py-6 text-xs sm:text-sm uppercase tracking-widest rounded-none max-w-full"
+                className="w-full sm:w-auto bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-4 sm:px-10 sm:py-6 text-xs sm:text-sm uppercase tracking-widest rounded-none max-w-full"
               >
                 Voir tous les professionnels
               </Button>
