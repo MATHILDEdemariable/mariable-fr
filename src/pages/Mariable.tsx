@@ -60,7 +60,7 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
         duration: 0.5
       }} className="flex justify-center px-4">
           <Link to="/register" className="w-full sm:w-auto">
-            <Button size="lg" className="backdrop-blur-sm border border-white/30 px-6 md:px-10 py-5 md:py-6 text-base md:text-lg transition-all w-full sm:w-auto rounded-none bg-editorial-beige text-primary">
+            <Button size="lg" className="backdrop-blur-sm border border-white/30 px-6 md:px-10 py-5 md:py-6 text-base md:text-lg transition-all w-full sm:w-auto rounded-none bg-editorial-olive text-white hover:bg-editorial-olive/90">
               Créer mon compte gratuit
             </Button>
           </Link>
