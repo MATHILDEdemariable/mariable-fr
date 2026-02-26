@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-// Force rebuild - resolve stale HMR cache
+// Force rebuild v2 - resolve stale HMR cache
 import { motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { Sparkles, Heart, Star, Quote } from "lucide-react";
