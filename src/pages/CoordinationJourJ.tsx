@@ -301,14 +301,14 @@ const CoordinationJourJ: React.FC = () => {
         <section className="py-12 px-4 bg-wedding-olive text-white">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-6">
-              Réservez votre coordination Mon Jour J
+              Organisez vous-même le jour J et faites-le bien
             </h2>
             <p className="text-lg mb-8 opacity-90">
-              Vivez votre mariage en toute sérénité. Notre équipe s'occupe de tout pour que vous puissiez profiter pleinement de votre jour parfait.
+              Mariable vous donne tous les outils pour coordonner votre mariage comme un pro, sans wedding planner.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={() => navigate('/reservation-jour-m')} className="bg-white text-wedding-olive hover:bg-gray-100 px-8 py-3">
-                Réserver maintenant
+              <Button onClick={() => navigate('/register')} className="bg-white text-wedding-olive hover:bg-gray-100 px-8 py-3">
+                Créer un compte
               </Button>
             </div>
           </div>

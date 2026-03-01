@@ -860,8 +860,8 @@ const Budget = () => {
   return (
     <div className="min-h-screen bg-background">
       <SEO 
-        title="Budget de mariage - Calculez et planifiez vos dépenses"
-        description="Utilisez notre calculateur de budget de mariage pour estimer vos dépenses et répartir votre budget selon les différentes catégories."
+        title="Calculateur Budget Mariage Gratuit | Mariable"
+        description="Calculez le budget de votre mariage gratuitement. Estimation par région, nombre d'invités et saison. Répartition détaillée par poste."
       />
       <Header />
       <main className="container max-w-4xl px-4 py-6 md:py-8">

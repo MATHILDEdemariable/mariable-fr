@@ -37,6 +37,7 @@ const SEO: React.FC<SEOProps> = ({
     'checklist-mariage': 'Checklist Mariage',
     'coordination-jour-j': 'Coordination Jour J',
     'conseilsmariage': 'Conseils Mariage',
+    'services/budget': 'Calculateur Budget',
     'retroplanning': 'Rétroplanning',
     'partenariat': 'Partenariat',
     'professionnelsmariable': 'Professionnels',
