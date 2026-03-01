@@ -6,8 +6,8 @@ const DrinksCalculatorPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Calculatrice Boisson | Mariable</title>
-        <meta name="description" content="Calculez les quantités de boissons nécessaires pour votre mariage" />
+        <title>Calculateur Quantité Boissons Mariage | Mariable</title>
+        <meta name="description" content="Estimez les quantités de boissons pour votre mariage : vin, champagne, soft. Calcul par nombre d'invités, moments et durée de réception." />
       </Helmet>
 
       <DrinksCalculator />

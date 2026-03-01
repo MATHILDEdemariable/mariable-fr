@@ -98,7 +98,7 @@ const BlogSection = () => {
           <Button
             variant="outline"
             onClick={() => navigate('/conseilsmariage')}
-            className="border-[#0F0F0F] text-[#0F0F0F] hover:bg-[#0F0F0F] hover:text-white px-8 py-5 text-sm uppercase tracking-widest rounded-none"
+            className="border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-white px-8 py-5 text-sm uppercase tracking-widest rounded-none"
           >
             Voir tous les articles
           </Button>

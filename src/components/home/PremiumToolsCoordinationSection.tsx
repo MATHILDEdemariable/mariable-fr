@@ -80,7 +80,7 @@ const PremiumToolsCoordinationSection = () => {
               <Link to="/register">
                 <Button 
                   size="lg" 
-                  className="bg-editorial-noir hover:bg-editorial-noir/80 text-white px-8 sm:px-10 py-5 sm:py-6 text-sm sm:text-base font-medium rounded-none"
+                  className="bg-editorial-olive hover:bg-editorial-olive/90 text-white px-8 sm:px-10 py-5 sm:py-6 text-sm sm:text-base font-medium rounded-none"
                 >
                   Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
