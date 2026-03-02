@@ -1,31 +1,31 @@
 
-# Chargement de 7 articles dans le blog
+# Correction du formatage des articles de blog (H1/H2/H3 visibles)
 
-## Ce qui sera fait
+## Probleme identifie
 
-Insertion de 7 articles dans la table `blog_posts` via des requetes SQL INSERT, en statut **draft** pour que vous puissiez les relire et publier depuis l'admin.
+Le plugin `@tailwindcss/typography` est installe dans les dependances (`package.json`) mais **n'est pas enregistre** dans `tailwind.config.ts`. La ligne plugins ne contient que `tailwindcss-animate`. En consequence, les classes `prose prose-lg` appliquees au contenu des articles n'ont aucun effet, et les balises `<h2>`, `<h3>`, `<strong>`, `<ul>` etc. s'affichent comme du texte brut.
 
-## Articles a inserer
+Le contenu HTML dans la base de donnees est correct (les `<h2>`, `<h3>` sont bien presents). C'est uniquement un probleme de styles CSS.
 
-| # | Titre | Slug | Categorie |
-|---|-------|------|-----------|
-| 1 | Checklist mariage : ce que tu dois faire 18, 12, 6 et 3 mois avant le jour J | `checklist-mariage-retroplanning` | Organisation |
-| 2 | Budget mariage 2026 : les vrais chiffres, sans langue de bois | `budget-mariage-2026` | Budget |
-| 3 | Comment organiser son mariage sans wedding planner (et sans perdre la tete) | `organiser-mariage-sans-wedding-planner` | Organisation |
-| 4 | Photographe mariage : 10 questions a poser avant de signer | `choisir-photographe-mariage` | Prestataires |
-| 5 | Comment choisir son traiteur mariage : les criteres que personne ne te dit | `choisir-traiteur-mariage` | Prestataires |
-| 6 | Mariage civil uniquement : est-ce vraiment suffisant ? | `mariage-civil-uniquement` | Ceremonie |
-| 7 | Faut-il vraiment inviter toute la famille ? | `inviter-famille-mariage` | Invites |
+## Solution
 
-## Details techniques
+**Fichier unique a modifier : `tailwind.config.ts`**
 
-- **Statut** : `draft` (vous publiez quand vous voulez depuis /admin/blog)
-- **Contenu** : le markdown sera converti en HTML pour le champ `content`
-- **Meta description** : extraite de chaque article
-- **H1 et H2** : renseignes pour le SEO
-- **Pas d'image** : le champ `background_image_url` restera vide, vous pourrez ajouter les images depuis l'admin
+Ajouter le plugin `@tailwindcss/typography` dans le tableau plugins (ligne 172) :
 
-## Methode
+```text
+Avant :  plugins: [require("tailwindcss-animate")]
+Apres  : plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")]
+```
 
-- 7 requetes INSERT via l'outil d'insertion Supabase
-- Aucune modification de code necessaire, uniquement des donnees en base
+Cela activera automatiquement les styles `prose` deja utilises dans `BlogArticle.tsx` (ligne 156), rendant les titres H2/H3, listes, liens et paragraphes correctement formates et visuellement distincts.
+
+## Resultat attendu
+
+- **H2** : grands titres de section bien visibles (ex: "1. A 18 mois avant : Rever et decider")
+- **H3** : sous-titres distinctifs (ex: "Essentiels (fais-les vraiment)")
+- **Listes** : puces visibles avec indentation
+- **Gras** : texte en strong bien mis en valeur
+- **Liens** : couleur et soulignement
+
+Aucune autre modification necessaire. Les 7 articles existants beneficieront immediatement du correctif.
