@@ -37,7 +37,7 @@ const weddingData = {
   ],
   accommodationLink: "https://www.google.com/collections/s/list/ySkAOJFiqjsoFc5eqH9iQSWJnnDZOg/5wLW-FQvP8Y",
   contacts: [
-    { name: "Olivier", phone: "06 07 98 00 58" },
+    { name: "Olivier", phone: "06 07 98 00 56" },
     { name: "Séverine", phone: "06 15 46 28 41" },
     { name: "Mathilde", role: "Wedding Planner", email: "mathilde@mariable.fr" },
   ],
