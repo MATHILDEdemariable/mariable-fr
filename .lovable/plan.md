@@ -1,38 +1,31 @@
 
+# Correction du formatage des articles de blog (H1/H2/H3 visibles)
 
-# Charger les articles dans le blog avec formatage HTML correct
+## Probleme identifie
 
-## Situation actuelle
+Le plugin `@tailwindcss/typography` est installe dans les dependances (`package.json`) mais **n'est pas enregistre** dans `tailwind.config.ts`. La ligne plugins ne contient que `tailwindcss-animate`. En consequence, les classes `prose prose-lg` appliquees au contenu des articles n'ont aucun effet, et les balises `<h2>`, `<h3>`, `<strong>`, `<ul>` etc. s'affichent comme du texte brut.
 
-- **6 articles existent deja** dans la base (slugs: checklist-mariage-retroplanning, budget-mariage-2026, inviter-famille-mariage, mariage-civil-uniquement, choisir-photographe-mariage, organiser-mariage-sans-wedding-planner) → ils seront **mis a jour** avec le contenu des fichiers uploades
-- **3 articles sont nouveaux** (mariage-petit-budget, mariage-20-personnes, organisation-jour-j-mariage) → ils seront **inseres**
+Le contenu HTML dans la base de donnees est correct (les `<h2>`, `<h3>` sont bien presents). C'est uniquement un probleme de styles CSS.
 
-## Format HTML applique (identique a l'article checklist existant)
+## Solution
 
-Le contenu markdown sera converti en HTML semantique :
-- `##` → `<h2>` (titres de sections principaux)
-- `###` → `<h3>` (sous-titres)
-- `**texte**` → `<strong>texte</strong>`
-- Listes `-` → `<ul><li>...</li></ul>`
-- Paragraphes → `<p>...</p>`
-- Pas de `<h1>` dans le contenu (le H1 est dans le champ `h1_title`)
+**Fichier unique a modifier : `tailwind.config.ts`**
 
-## Operations
+Ajouter le plugin `@tailwindcss/typography` dans le tableau plugins (ligne 172) :
 
-1. **UPDATE 6 articles existants** : remplacer le champ `content` par le HTML converti, mettre a jour `meta_description`, `h1_title`, `meta_title` et `h2_titles` depuis les fichiers
-2. **INSERT 3 nouveaux articles** : creer les entrees avec `status: draft`, `order_index: 8/9/10`, memes champs SEO remplis, `category` appropriee
+```text
+Avant :  plugins: [require("tailwindcss-animate")]
+Apres  : plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")]
+```
 
-## Champs remplis pour chaque article
+Cela activera automatiquement les styles `prose` deja utilises dans `BlogArticle.tsx` (ligne 156), rendant les titres H2/H3, listes, liens et paragraphes correctement formates et visuellement distincts.
 
-| Champ | Source |
-|-------|--------|
-| `content` | Markdown converti en HTML |
-| `h1_title` | Titre `#` du fichier |
-| `meta_description` | Champ Meta Description du fichier |
-| `meta_title` | Derive du titre (55-60 car.) |
-| `h2_titles` | JSON array des titres `##` |
-| `slug` | Slug indique dans le fichier |
-| `category` | Organisation / Budget / Prestataires selon le sujet |
+## Resultat attendu
 
-Aucune modification de code. Uniquement des operations de donnees via l'outil d'insertion Supabase.
+- **H2** : grands titres de section bien visibles (ex: "1. A 18 mois avant : Rever et decider")
+- **H3** : sous-titres distinctifs (ex: "Essentiels (fais-les vraiment)")
+- **Listes** : puces visibles avec indentation
+- **Gras** : texte en strong bien mis en valeur
+- **Liens** : couleur et soulignement
 
+Aucune autre modification necessaire. Les 7 articles existants beneficieront immediatement du correctif.
