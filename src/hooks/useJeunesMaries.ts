@@ -99,7 +99,7 @@ export const useJeunesMaries = () => {
       // Récupérer les témoignages réels depuis Supabase
       const { data: realTestimonials, error } = await supabase
         .from('jeunes_maries')
-        .select('id, nom_complet, lieu_mariage, region, date_mariage, nombre_invites, budget_approximatif, photo_principale_url, experience_partagee, note_experience, slug, visible, status_moderation, date_soumission, accept_email_contact, created_at, updated_at')
+        .select('id, nom_complet, email, lieu_mariage, region, date_mariage, nombre_invites, budget_approximatif, photo_principale_url, photos_mariage, experience_partagee, conseils_couples, prestataires_recommandes, note_experience, slug, visible, status_moderation, date_soumission, date_approbation, admin_notes, accept_email_contact, telephone, created_at, updated_at')
         .eq('status_moderation', 'approuve')
         .eq('visible', true)
         .order('date_mariage', { ascending: false });
