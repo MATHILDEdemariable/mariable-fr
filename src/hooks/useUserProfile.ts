@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
@@ -19,71 +19,66 @@ interface UserProfile {
   notify_club_mariable: boolean | null;
 }
 
+const fetchOrCreateProfile = async (userId: string, userMetadata?: any): Promise<UserProfile> => {
+  console.log('🔄 Fetching user profile...');
+
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+    .eq('id', userId)
+    .maybeSingle();
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  if (!data) {
+    console.log('🆕 Creating new profile...');
+    const newProfile = {
+      id: userId,
+      first_name: userMetadata?.first_name || null,
+      last_name: userMetadata?.last_name || null,
+      wedding_date: null,
+      guest_count: null,
+      subscription_type: 'free',
+      subscription_expires_at: null
+    };
+
+    const { data: insertedProfile, error: insertError } = await supabase
+      .from('profiles')
+      .insert(newProfile)
+      .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+      .single();
+
+    if (insertError) throw insertError;
+    console.log('✅ Profile created');
+    return insertedProfile as UserProfile;
+  }
+
+  console.log('✅ Profile loaded:', { subscription_type: data.subscription_type });
+  return data as UserProfile;
+};
+
 export const useUserProfile = () => {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { user } = useAuth();
+  const queryClient = useQueryClient();
 
-  const fetchProfile = async () => {
-    try {
-      console.log('🔄 Fetching user profile...');
-      if (!user) {
-        console.log('❌ No user found');
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', user.id)
-        .maybeSingle();
-
-      if (error && error.code !== 'PGRST116') {
-        throw error;
-      }
-
-      if (!data) {
-        console.log('🆕 Creating new profile...');
-        // Create profile if it doesn't exist
-        const newProfile = {
-          id: user.id,
-          first_name: user.user_metadata?.first_name || null,
-          last_name: user.user_metadata?.last_name || null,
-          wedding_date: null,
-          guest_count: null,
-          subscription_type: 'free',
-          subscription_expires_at: null
-        };
-
-        const { data: insertedProfile, error: insertError } = await supabase
-          .from('profiles')
-          .insert(newProfile)
-          .select()
-          .single();
-
-        if (insertError) throw insertError;
-        console.log('✅ Profile created:', insertedProfile);
-        setProfile(insertedProfile);
-      } else {
-        console.log('✅ Profile loaded:', {
-          subscription_type: data.subscription_type,
-          updated_at: data.updated_at
+  const { data: profile = null, isLoading: loading, refetch } = useQuery({
+    queryKey: ['user-profile', user?.id],
+    queryFn: () => fetchOrCreateProfile(user!.id, user!.user_metadata),
+    enabled: !!user,
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    meta: {
+      onError: () => {
+        toast({
+          title: "Erreur",
+          description: "Impossible de charger votre profil",
+          variant: "destructive"
         });
-        setProfile(data);
       }
-    } catch (error) {
-      console.error('❌ Error fetching profile:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger votre profil",
-        variant: "destructive"
-      });
-    } finally {
-      setLoading(false);
     }
-  };
+  });
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     try {
@@ -96,13 +91,13 @@ export const useUserProfile = () => {
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
-        .select()
+        .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
         .single();
 
       if (error) throw error;
 
-      console.log('✅ Profile updated:', data);
-      setProfile(data);
+      console.log('✅ Profile updated');
+      queryClient.setQueryData(['user-profile', user.id], data);
       return data;
     } catch (error) {
       console.error('❌ Error updating profile:', error);
@@ -114,64 +109,19 @@ export const useUserProfile = () => {
     }
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchProfile();
-      
-      // Écouter les changements sur la table profiles pour ce user
-      const channel = supabase
-        .channel('profile-changes')
-        .on(
-          'postgres_changes',
-          {
-            event: 'UPDATE',
-            schema: 'public',
-            table: 'profiles',
-            filter: `id=eq.${user.id}`,
-          },
-          (payload) => {
-            console.log('🔔 Profile updated via realtime:', payload.new);
-            setProfile(payload.new as UserProfile);
-          }
-        )
-        .subscribe();
-
-      return () => {
-        supabase.removeChannel(channel);
-      };
-    } else {
-      setLoading(false);
-    }
-  }, [user]);
-
-  // Vérifier si l'utilisateur a un abonnement premium actif
   const isPremium = (() => {
     if (!profile) return false;
-    
-    // Vérifier le type d'abonnement
     if (profile.subscription_type !== 'premium') return false;
-    
-    // Vérifier l'expiration (null = accès permanent)
     if (profile.subscription_expires_at === null) return true;
-    
-    // Vérifier si l'abonnement n'est pas expiré
     const expiresAt = new Date(profile.subscription_expires_at);
     return expiresAt > new Date();
   })();
-
-  console.log('🔍 Current profile status:', { 
-    subscription_type: profile?.subscription_type, 
-    subscription_expires_at: profile?.subscription_expires_at,
-    isPremium,
-    loading,
-    updated_at: profile?.updated_at
-  });
 
   return {
     profile,
     loading,
     updateProfile,
-    refetch: fetchProfile,
+    refetch,
     isPremium
   };
 };
