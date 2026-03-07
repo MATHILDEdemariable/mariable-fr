@@ -1,27 +1,31 @@
-# Export PDF Budget - Budget reel uniquement + One-pager professionnel
 
-## Modifications
+# Correction du formatage des articles de blog (H1/H2/H3 visibles)
 
-### Fichier : `src/services/budgetExportService.ts`
+## Probleme identifie
 
-1- supprimer le header ''budget estimé'' avant le tableau détaillé
+Le plugin `@tailwindcss/typography` est installe dans les dependances (`package.json`) mais **n'est pas enregistre** dans `tailwind.config.ts`. La ligne plugins ne contient que `tailwindcss-animate`. En consequence, les classes `prose prose-lg` appliquees au contenu des articles n'ont aucun effet, et les balises `<h2>`, `<h3>`, `<strong>`, `<ul>` etc. s'affichent comme du texte brut.
 
- **2-Refonte visuelle one-pager professionnel** avec palette vert sauge `#63745a` + noir :
+Le contenu HTML dans la base de donnees est correct (les `<h2>`, `<h3>` sont bien presents). C'est uniquement un probleme de styles CSS.
 
-- Header : fond `#63745a`, titre "Mariable" en blanc, sous-titre "Budget de Mariage"
-- Encadre principal : 3 blocs cote a cote (Budget Total, Acomptes Verses, Reste a Payer) avec fond leger sauge
-- Tableau : header `#63745a` blanc, lignes zebrees subtiles, categories avec bordure gauche sauge
-- Texte principal en noir `#1a1a1a`, texte secondaire en gris fonce
-- Police plus compacte (font-size reduit) pour tenir sur une page A4
-- Footer discret : date + mariable.fr
+## Solution
 
-**3. Optimisation one-pager** :
+**Fichier unique a modifier : `tailwind.config.ts`**
 
-- Reduire les paddings/margins
-- Font-size items : 11px, categories : 12px
-- Supprimer la colonne "Commentaire" pour gagner de la place (ou la garder tres compacte)
-- Pas de page-break : tout doit tenir sur 1 page
+Ajouter le plugin `@tailwindcss/typography` dans le tableau plugins (ligne 172) :
 
-### Aucun autre fichier modifie
+```text
+Avant :  plugins: [require("tailwindcss-animate")]
+Apres  : plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")]
+```
 
-Le composant `DetailedBudget.tsx` appelle deja `exportBudgetToPDF` avec toutes les donnees — seul le service de rendu PDF change.
+Cela activera automatiquement les styles `prose` deja utilises dans `BlogArticle.tsx` (ligne 156), rendant les titres H2/H3, listes, liens et paragraphes correctement formates et visuellement distincts.
+
+## Resultat attendu
+
+- **H2** : grands titres de section bien visibles (ex: "1. A 18 mois avant : Rever et decider")
+- **H3** : sous-titres distinctifs (ex: "Essentiels (fais-les vraiment)")
+- **Listes** : puces visibles avec indentation
+- **Gras** : texte en strong bien mis en valeur
+- **Liens** : couleur et soulignement
+
+Aucune autre modification necessaire. Les 7 articles existants beneficieront immediatement du correctif.
