@@ -118,95 +118,76 @@ const generateBudgetContent = (data: BudgetExportData): string => {
   const currentDate = new Date().toLocaleDateString('fr-FR');
   
   return `
-    <div style="min-height: 100%; display: flex; flex-direction: column;">
-      <!-- Header with Mariable branding -->
-      <div style="text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #7F9474;">
-        <div style="font-size: 32px; font-weight: 700; color: #7F9474; font-family: serif; margin-bottom: 8px;">
-          Mariable
+    <div style="min-height: 100%; display: flex; flex-direction: column; font-size: 11px; color: #1a1a1a;">
+      <!-- Header -->
+      <div style="background-color: #63745a; padding: 14px 20px; border-radius: 6px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 22px; font-weight: 700; color: #ffffff; font-family: serif;">Mariable</div>
+          <div style="font-size: 11px; color: rgba(255,255,255,0.8);">Budget de Mariage</div>
         </div>
-        <div style="font-size: 18px; color: #948970; font-weight: 500;">
-          Budget de mariage détaillé
+        <div style="font-size: 10px; color: rgba(255,255,255,0.7);">${currentDate}</div>
+      </div>
+
+      <!-- Summary blocks -->
+      <div style="display: flex; gap: 10px; margin-bottom: 14px;">
+        <div style="flex: 1; text-align: center; padding: 10px; background-color: #f0f3ee; border-radius: 6px; border: 1px solid #d4ddd0;">
+          <div style="font-size: 9px; font-weight: 600; color: #63745a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Budget Total</div>
+          <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">${formatCurrency(data.totalActual)}</div>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background-color: #f0f3ee; border-radius: 6px; border: 1px solid #d4ddd0;">
+          <div style="font-size: 9px; font-weight: 600; color: #63745a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Acomptes Versés</div>
+          <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">${formatCurrency(data.totalDeposit)}</div>
+        </div>
+        <div style="flex: 1; text-align: center; padding: 10px; background-color: #f0f3ee; border-radius: 6px; border: 1px solid #d4ddd0;">
+          <div style="font-size: 9px; font-weight: 600; color: #63745a; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">Reste à Payer</div>
+          <div style="font-size: 18px; font-weight: 700; color: #1a1a1a;">${formatCurrency(data.totalRemaining)}</div>
         </div>
       </div>
 
-      <!-- Budget summary - 1 seul total centré -->
-      <div style="display: flex; justify-content: center; margin-bottom: 24px;">
-        <div style="text-align: center; padding: 16px 32px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); border-radius: 12px; border: 2px solid #4caf50; max-width: 350px;">
-          <h2 style="font-size: 13px; font-weight: 600; color: #2e7d32; margin: 0 0 6px 0; text-transform: uppercase; letter-spacing: 0.5px;">
-            Budget Total Estimé
-          </h2>
-          <p style="font-size: 28px; color: #1b5e20; font-weight: 700; margin: 0;">
-            ${formatCurrency(data.totalEstimated)}
-          </p>
-        </div>
-      </div>
-
-      <!-- Budget table -->
+      <!-- Table -->
       <div style="flex: 1;">
-        <h2 style="font-size: 22px; font-weight: 600; color: #7F9474; margin-bottom: 24px; font-family: serif;">
-          Répartition détaillée
-        </h2>
-        
         <!-- Table header -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #7F9474; color: white; font-weight: 600; font-size: 14px; border-radius: 8px 8px 0 0;">
-          <div>Catégorie / Élément</div>
-          <div style="text-align: right;">Budget Estimé</div>
+        <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 8px 12px; background-color: #63745a; color: #ffffff; font-weight: 600; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; border-radius: 4px 4px 0 0;">
+          <div>Élément</div>
           <div style="text-align: right;">Coût Réel</div>
-          <div style="text-align: right;">Acompte Versé</div>
+          <div style="text-align: right;">Acompte</div>
           <div style="text-align: right;">Reste à Payer</div>
-          <div style="text-align: center;">Commentaire</div>
         </div>
         
-        ${data.categories.map(category => `
-          <!-- Category wrapper to prevent page breaks -->
-          <div style="page-break-inside: avoid; margin-bottom: 8px;">
+        ${data.categories.map((category, catIndex) => `
+          <div>
             <!-- Category row -->
-            <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 12px 16px; background-color: #f8f6f0; font-weight: 600; border-left: 4px solid #7F9474;">
+            <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 7px 12px; background-color: ${catIndex % 2 === 0 ? '#f7f8f6' : '#ffffff'}; font-weight: 600; font-size: 12px; border-left: 3px solid #63745a; color: #1a1a1a;">
               <div>${category.name}</div>
-              <div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
-              <div style="text-align: center;">-</div>
             </div>
             
-            ${category.items.filter(item => item.name).map(item => `
-              <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 8px 16px; border-bottom: 1px solid #e5e7eb; font-size: 14px;">
-                <div style="padding-left: 20px;">${item.name}</div>
-                <div style="text-align: right;">${formatCurrency(item.estimated)}</div>
+            ${category.items.filter(item => item.name).map((item, itemIndex) => `
+              <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 5px 12px; border-bottom: 1px solid #eceeed; font-size: 11px; background-color: ${itemIndex % 2 === 0 ? '#ffffff' : '#fafbfa'};">
+                <div style="padding-left: 16px; color: #333;">${item.name}</div>
                 <div style="text-align: right;">${formatCurrency(item.actual)}</div>
                 <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
                 <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
-                <div style="text-align: center; font-size: 12px;">${item.payment_note || '-'}</div>
               </div>
             `).join('')}
           </div>
         `).join('')}
         
         <!-- Total row -->
-        <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr 1.5fr; gap: 12px; padding: 16px 16px 20px 16px; background-color: #7F9474; color: white; font-weight: 700; font-size: 16px; border-radius: 0 0 8px 8px; margin-bottom: 20px; page-break-inside: avoid;">
+        <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 10px 12px; background-color: #63745a; color: #ffffff; font-weight: 700; font-size: 12px; border-radius: 0 0 4px 4px;">
           <div>TOTAL</div>
-          <div style="text-align: right;">${formatCurrency(data.totalEstimated)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalActual)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalDeposit)}</div>
           <div style="text-align: right;">${formatCurrency(data.totalRemaining)}</div>
-          <div style="text-align: center;">-</div>
         </div>
       </div>
 
       <!-- Footer -->
-      <div style="margin-top: 40px; padding-top: 20px; border-top: 2px solid #e5e7eb; text-align: center;">
-        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #666;">
-          <div>
-            Généré le ${currentDate}
-          </div>
-          <div style="font-weight: 600; color: #7F9474;">
-            mariable.fr
-          </div>
-        </div>
-        <div style="margin-top: 12px; font-size: 11px; color: #999; text-align: center;">
-          Budget personnalisé créé avec Mariable - Votre partenaire pour un mariage réussi
-        </div>
+      <div style="margin-top: 16px; padding-top: 8px; border-top: 1px solid #d4ddd0; display: flex; justify-content: space-between; align-items: center; font-size: 9px; color: #888;">
+        <div>Généré le ${currentDate}</div>
+        <div style="font-weight: 600; color: #63745a;">mariable.fr</div>
       </div>
     </div>
   `;
