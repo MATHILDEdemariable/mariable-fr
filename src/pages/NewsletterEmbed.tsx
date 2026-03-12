@@ -12,7 +12,7 @@ const NewsletterEmbed = () => {
           width="100%" 
           className="w-full min-h-[calc(100vh-64px)]"
           style={{ border: 'none', background: 'transparent' }}
-          title="Newsletter Mariable"
+          title="Guide Personnalisé Mariable"
         />
       </main>
       <ChatbotButton />
