@@ -46,6 +46,7 @@ const Footer = () => {
               <li><Link to="/conseilsmariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Conseils mariage</Link></li>
               <li><Link to="/outils-planning-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Planification</Link></li>
               <li><Link to="/coordination-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Jour J</Link></li>
+              <li><Link to="/newsletter" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Newsletter</Link></li>
             </ul>
           </div>
 
