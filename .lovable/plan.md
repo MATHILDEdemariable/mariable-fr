@@ -1,31 +1,20 @@
 
-# Correction du formatage des articles de blog (H1/H2/H3 visibles)
 
-## Probleme identifie
+# Intégration page embedded Mule + lien footer
 
-Le plugin `@tailwindcss/typography` est installe dans les dependances (`package.json`) mais **n'est pas enregistre** dans `tailwind.config.ts`. La ligne plugins ne contient que `tailwindcss-animate`. En consequence, les classes `prose prose-lg` appliquees au contenu des articles n'ont aucun effet, et les balises `<h2>`, `<h3>`, `<strong>`, `<ul>` etc. s'affichent comme du texte brut.
+## Modifications
 
-Le contenu HTML dans la base de donnees est correct (les `<h2>`, `<h3>` sont bien presents). C'est uniquement un probleme de styles CSS.
+### 1. Créer `src/pages/MuleEmbed.tsx`
+Page simple avec Header, iframe en pleine largeur pointant vers `https://2mscw76h.mule.page/`, et ChatbotButton. Même pattern que `GuideMariableFrame.tsx`.
 
-## Solution
+### 2. Ajouter la route dans `src/App.tsx`
+- Import lazy du composant
+- Route `/newsletter` (ou autre slug à confirmer)
 
-**Fichier unique a modifier : `tailwind.config.ts`**
+### 3. Ajouter le lien dans `src/components/Footer.tsx`
+- Ajouter un `<li>` dans la section "Découvrir" pointant vers la nouvelle route (ex: "Newsletter")
 
-Ajouter le plugin `@tailwindcss/typography` dans le tableau plugins (ligne 172) :
+---
 
-```text
-Avant :  plugins: [require("tailwindcss-animate")]
-Apres  : plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")]
-```
+**Question** : quel nom/label donner à cette page dans le footer ? (ex: "Newsletter", "Inscription", autre ?)
 
-Cela activera automatiquement les styles `prose` deja utilises dans `BlogArticle.tsx` (ligne 156), rendant les titres H2/H3, listes, liens et paragraphes correctement formates et visuellement distincts.
-
-## Resultat attendu
-
-- **H2** : grands titres de section bien visibles (ex: "1. A 18 mois avant : Rever et decider")
-- **H3** : sous-titres distinctifs (ex: "Essentiels (fais-les vraiment)")
-- **Listes** : puces visibles avec indentation
-- **Gras** : texte en strong bien mis en valeur
-- **Liens** : couleur et soulignement
-
-Aucune autre modification necessaire. Les 7 articles existants beneficieront immediatement du correctif.
