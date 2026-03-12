@@ -277,7 +277,7 @@ function App() {
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
                    
                    <Route path="/guidecoordinationjour-j" element={<LivreBlanc />} />
-                   <Route path="/newsletter" element={<NewsletterEmbed />} />
+                   <Route path="/guidepersonnalise" element={<NewsletterEmbed />} />
                    <Route path="/guide-jour-j" element={<GuideDuJourJ />} />
                    <Route path="/guide-debutant" element={<GuideDebutant />} />
 
