@@ -80,6 +80,7 @@ const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
 const ListePreparatifMariage = lazy(() => import("./pages/ListePreparatifMariage"));
 
 const LivreBlanc = lazy(() => import("./pages/LivreBlanc"));
+const NewsletterEmbed = lazy(() => import("./pages/NewsletterEmbed"));
 const CoordinateursMarriage = lazy(() => import("./pages/CoordinateursMarriage"));
 const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
 const AdminBlog = lazy(() => import("./pages/admin/Blog"));
