@@ -1,12 +1,12 @@
 import React from 'react';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import ChatbotButton from '@/components/ChatbotButton';
 
 const NewsletterEmbed = () => {
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header />
-      <main className="flex-grow w-full">
+      <PremiumHeader />
+      <main className="flex-grow w-full pt-16">
         <iframe 
           src="https://2mscw76h.mule.page/" 
           width="100%" 
