@@ -2,7 +2,6 @@ import React from 'react';
 import { Helmet } from 'react-helmet-async';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   Heart, 
   Clock, 
@@ -24,7 +23,6 @@ import {
 } from "@/components/ui/accordion";
 
 const CeremoniePublic: React.FC = () => {
-  // ========== DONNÉES CÉRÉMONIE LAÏQUE ==========
   const fondamentaux = [
     { icon: Clock, label: "Durée optimale", value: "45 à 60 minutes" },
     { icon: AlertCircle, label: "Valeur juridique", value: "Aucune - Mariage civil obligatoire avant" },
@@ -126,6 +124,15 @@ const CeremoniePublic: React.FC = () => {
     { categorie: "Après-cérémonie", items: ["Quelqu'un pour collecter les objets du rituel", "Ranger les livrets restants", "Guider vers le cocktail"] },
   ];
 
+  const SectionTitle = ({ icon: Icon, children }: { icon: React.ElementType; children: React.ReactNode }) => (
+    <div className="flex items-center gap-3 mb-8">
+      <div className="p-2 rounded-none bg-[#63745a]">
+        <Icon className="h-5 w-5 text-white" />
+      </div>
+      <h2 className="font-serif text-2xl md:text-3xl text-editorial-black">{children}</h2>
+    </div>
+  );
+
   return (
     <>
       <Helmet>
@@ -136,271 +143,234 @@ const CeremoniePublic: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-white" style={{ paddingTop: 'var(--header-h-standard)' }}>
-        <div className="container max-w-4xl mx-auto px-4 py-12">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 rounded-full bg-primary">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-            </div>
-            <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-4">Guide de la Cérémonie Laïque</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+      <main className="min-h-screen" style={{ paddingTop: 'var(--header-h-standard)' }}>
+        {/* Hero Section — Sage Green */}
+        <section className="bg-[#63745a] py-20 md:py-28">
+          <div className="container max-w-4xl mx-auto px-4 text-center">
+            <span className="inline-block border border-white/40 text-white/90 text-xs tracking-widest uppercase px-4 py-1.5 mb-6">
+              Guide complet
+            </span>
+            <h1 className="text-3xl md:text-5xl font-serif text-white mb-5">
+              Guide de la Cérémonie Laïque
+            </h1>
+            <p className="text-white/80 max-w-2xl mx-auto text-lg">
               Tout ce que vous devez savoir pour organiser une cérémonie laïque unique et personnalisée
             </p>
           </div>
+        </section>
 
-          <div className="space-y-8">
-            {/* Fondamentaux */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Heart className="h-5 w-5 text-primary" />
-                  Les Fondamentaux
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {fondamentaux.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 bg-muted/30 rounded-lg">
-                      <item.icon className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium text-sm text-foreground">{item.label}</p>
-                        <p className="text-muted-foreground text-sm">{item.value}</p>
-                      </div>
-                    </div>
-                  ))}
+        {/* Fondamentaux */}
+        <section className="py-16 bg-premium-warm">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Heart}>Les Fondamentaux</SectionTitle>
+            <div className="grid md:grid-cols-3 gap-5">
+              {fondamentaux.map((item, index) => (
+                <div key={index} className="bg-white p-5 shadow-sm flex items-start gap-3">
+                  <item.icon className="h-5 w-5 text-[#63745a] mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-medium text-sm text-editorial-black">{item.label}</p>
+                    <p className="text-editorial-black/60 text-sm mt-1">{item.value}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            {/* Déroulement */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Clock className="h-5 w-5 text-primary" />
-                  Déroulement Type (45-60 min)
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {deroulementEtapes.map((etape) => (
-                    <div key={etape.numero} className="flex gap-4 items-start p-3 hover:bg-muted/30 rounded-lg transition-colors">
-                      <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-bold shrink-0">
-                        {etape.numero}
-                      </div>
-                      <div>
-                        <p className="font-medium text-foreground">{etape.titre}</p>
-                        <p className="text-muted-foreground text-sm">{etape.description}</p>
-                      </div>
-                    </div>
-                  ))}
+        {/* Déroulement */}
+        <section className="py-16 bg-premium-beige">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Clock}>Déroulement Type (45-60 min)</SectionTitle>
+            <div className="space-y-3">
+              {deroulementEtapes.map((etape) => (
+                <div key={etape.numero} className="flex gap-4 items-start p-4 bg-white shadow-sm hover:shadow-md transition-shadow">
+                  <div className="w-8 h-8 bg-[#63745a] text-white flex items-center justify-center text-sm font-bold shrink-0">
+                    {etape.numero}
+                  </div>
+                  <div>
+                    <p className="font-medium text-editorial-black">{etape.titre}</p>
+                    <p className="text-editorial-black/60 text-sm">{etape.description}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </div>
+          </div>
+        </section>
 
-            {/* Officiants */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Mic className="h-5 w-5 text-primary" />
-                  Choisir son Officiant
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-3 gap-4">
-                  {typesOfficiants.map((officiant, index) => (
-                    <div key={index} className="border rounded-lg p-4 bg-card">
-                      <h4 className="font-semibold text-foreground mb-3">{officiant.type}</h4>
-                      <div className="space-y-2">
-                        <div>
-                          <p className="text-xs text-green-700 font-medium mb-1">Avantages :</p>
-                          <ul className="text-sm text-muted-foreground space-y-1">
-                            {officiant.avantages.map((av, i) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <CheckCircle2 className="h-3 w-3 text-green-600 mt-1 shrink-0" />
-                                {av}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div>
-                          <p className="text-xs text-amber-700 font-medium mb-1">Vigilances :</p>
-                          <ul className="text-sm text-muted-foreground space-y-1">
-                            {officiant.vigilances.map((vig, i) => (
-                              <li key={i} className="flex items-start gap-2">
-                                <AlertCircle className="h-3 w-3 text-amber-600 mt-1 shrink-0" />
-                                {vig}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Rituels */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <TreePine className="h-5 w-5 text-primary" />
-                  Idées de Rituels Symboliques
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <Accordion type="single" collapsible className="w-full">
-                  {rituels.map((rituel, index) => (
-                    <AccordionItem key={index} value={`rituel-${index}`}>
-                      <AccordionTrigger className="hover:no-underline">
-                        <span className="font-medium text-foreground">{rituel.nom}</span>
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-2 pt-2">
-                          <p className="text-muted-foreground">{rituel.description}</p>
-                          <div className="bg-amber-50 p-3 rounded-lg">
-                            <p className="text-sm text-amber-800">
-                              <span className="font-medium">Conseil :</span> {rituel.conseils}
-                            </p>
-                          </div>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                  ))}
-                </Accordion>
-              </CardContent>
-            </Card>
-
-            {/* Rôles des proches */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Users className="h-5 w-5 text-primary" />
-                  Impliquer les Proches
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-4 mb-6">
-                  {rolesProches.map((item, index) => (
-                    <div key={index} className="flex items-start gap-3 p-4 border rounded-lg">
-                      <CheckCircle2 className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <p className="font-medium text-foreground">{item.role}</p>
-                        <p className="text-muted-foreground text-sm">{item.description}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="bg-muted/30 p-4 rounded-lg">
-                  <p className="font-medium text-foreground mb-2">Alternatives pour les timides :</p>
-                  <ul className="grid md:grid-cols-2 gap-2">
-                    {alternativesTimides.map((alt, index) => (
-                      <li key={index} className="flex items-center gap-2 text-sm text-muted-foreground">
-                        <span className="w-1.5 h-1.5 bg-primary rounded-full" />
-                        {alt}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Musique */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Music className="h-5 w-5 text-primary" />
-                  Programmation Musicale
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-sm">
-                    <thead>
-                      <tr className="border-b">
-                        <th className="text-left py-3 px-4 font-semibold text-foreground">Moment</th>
-                        <th className="text-left py-3 px-4 font-semibold text-foreground">Type de musique</th>
-                        <th className="text-left py-3 px-4 font-semibold text-foreground">Conseil</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {programmationMusicale.map((item, index) => (
-                        <tr key={index} className="border-b last:border-0">
-                          <td className="py-3 px-4 font-medium text-foreground">{item.moment}</td>
-                          <td className="py-3 px-4 text-muted-foreground">{item.type}</td>
-                          <td className="py-3 px-4 text-muted-foreground">{item.conseil}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Rétroplanning */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Sun className="h-5 w-5 text-primary" />
-                  Rétroplanning de Préparation
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  {retroplanning.map((item, index) => (
-                    <div key={index} className="flex gap-4 items-start p-3 border-l-4 border-primary bg-muted/20">
-                      <div className="font-bold text-primary min-w-[50px]">{item.delai}</div>
-                      <p className="text-muted-foreground">{item.action}</p>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Checklist */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
-                  Checklist Jour J
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {checklistJourJ.map((cat, index) => (
-                    <div key={index}>
-                      <h4 className="font-semibold text-foreground mb-3">{cat.categorie}</h4>
-                      <ul className="space-y-2">
-                        {cat.items.map((item, i) => (
-                          <li key={i} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <div className="w-4 h-4 border-2 border-primary rounded" />
-                            {item}
+        {/* Officiants */}
+        <section className="py-16 bg-premium-warm">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Mic}>Choisir son Officiant</SectionTitle>
+            <div className="grid md:grid-cols-3 gap-5">
+              {typesOfficiants.map((officiant, index) => (
+                <div key={index} className="bg-white p-5 shadow-sm">
+                  <h4 className="font-serif text-lg text-editorial-black mb-4 pb-3 border-b border-[#63745a]/20">{officiant.type}</h4>
+                  <div className="space-y-3">
+                    <div>
+                      <p className="text-xs text-[#63745a] font-semibold uppercase tracking-wider mb-2">Avantages</p>
+                      <ul className="text-sm text-editorial-black/70 space-y-1.5">
+                        {officiant.avantages.map((av, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <CheckCircle2 className="h-3.5 w-3.5 text-[#63745a] mt-0.5 shrink-0" />
+                            {av}
                           </li>
                         ))}
                       </ul>
                     </div>
-                  ))}
+                    <div>
+                      <p className="text-xs text-editorial-black/50 font-semibold uppercase tracking-wider mb-2">Vigilances</p>
+                      <ul className="text-sm text-editorial-black/70 space-y-1.5">
+                        {officiant.vigilances.map((vig, i) => (
+                          <li key={i} className="flex items-start gap-2">
+                            <AlertCircle className="h-3.5 w-3.5 text-editorial-black/40 mt-0.5 shrink-0" />
+                            {vig}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* CTA */}
-            <div className="text-center py-8">
-              <p className="text-muted-foreground mb-4">
-                Vous souhaitez accéder à plus d'outils pour organiser votre mariage ?
-              </p>
-              <a 
-                href="/register" 
-                className="inline-flex items-center gap-2 bg-primary text-white px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Créer un compte gratuit
-              </a>
+              ))}
             </div>
           </div>
-        </div>
+        </section>
+
+        {/* Rituels */}
+        <section className="py-16 bg-premium-beige">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={TreePine}>Idées de Rituels Symboliques</SectionTitle>
+            <Accordion type="single" collapsible className="w-full space-y-2">
+              {rituels.map((rituel, index) => (
+                <AccordionItem key={index} value={`rituel-${index}`} className="bg-white shadow-sm border-none px-5">
+                  <AccordionTrigger className="hover:no-underline">
+                    <span className="font-serif text-editorial-black">{rituel.nom}</span>
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <div className="space-y-3 pt-2">
+                      <p className="text-editorial-black/70">{rituel.description}</p>
+                      <div className="bg-[#63745a]/10 p-4">
+                        <p className="text-sm text-[#63745a]">
+                          <span className="font-semibold">Conseil :</span> {rituel.conseils}
+                        </p>
+                      </div>
+                    </div>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+
+        {/* Rôles des proches */}
+        <section className="py-16 bg-premium-warm">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Users}>Impliquer les Proches</SectionTitle>
+            <div className="grid md:grid-cols-2 gap-4 mb-8">
+              {rolesProches.map((item, index) => (
+                <div key={index} className="flex items-start gap-3 p-5 bg-white shadow-sm">
+                  <CheckCircle2 className="h-5 w-5 text-[#63745a] mt-0.5 shrink-0" />
+                  <div>
+                    <p className="font-medium text-editorial-black">{item.role}</p>
+                    <p className="text-editorial-black/60 text-sm mt-1">{item.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="bg-white p-6 shadow-sm">
+              <p className="font-serif text-lg text-editorial-black mb-4">Alternatives pour les timides</p>
+              <ul className="grid md:grid-cols-2 gap-3">
+                {alternativesTimides.map((alt, index) => (
+                  <li key={index} className="flex items-center gap-2 text-sm text-editorial-black/70">
+                    <span className="w-1.5 h-1.5 bg-[#63745a] rounded-full shrink-0" />
+                    {alt}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        {/* Musique */}
+        <section className="py-16 bg-premium-beige">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Music}>Programmation Musicale</SectionTitle>
+            <div className="overflow-x-auto bg-white shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="bg-[#63745a] text-white">
+                    <th className="text-left py-3 px-5 font-medium">Moment</th>
+                    <th className="text-left py-3 px-5 font-medium">Type de musique</th>
+                    <th className="text-left py-3 px-5 font-medium">Conseil</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {programmationMusicale.map((item, index) => (
+                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-premium-warm'}>
+                      <td className="py-3 px-5 font-medium text-editorial-black">{item.moment}</td>
+                      <td className="py-3 px-5 text-editorial-black/70">{item.type}</td>
+                      <td className="py-3 px-5 text-editorial-black/70">{item.conseil}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        {/* Rétroplanning */}
+        <section className="py-16 bg-premium-warm">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={Sun}>Rétroplanning de Préparation</SectionTitle>
+            <div className="space-y-3">
+              {retroplanning.map((item, index) => (
+                <div key={index} className="flex gap-4 items-start p-4 bg-white shadow-sm border-l-4 border-[#63745a]">
+                  <div className="font-bold text-[#63745a] min-w-[50px]">{item.delai}</div>
+                  <p className="text-editorial-black/70">{item.action}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Checklist */}
+        <section className="py-16 bg-premium-beige">
+          <div className="container max-w-4xl mx-auto px-4">
+            <SectionTitle icon={CheckCircle2}>Checklist Jour J</SectionTitle>
+            <div className="grid md:grid-cols-2 gap-6">
+              {checklistJourJ.map((cat, index) => (
+                <div key={index} className="bg-white p-6 shadow-sm">
+                  <h4 className="font-serif text-lg text-editorial-black mb-4 pb-2 border-b border-[#63745a]/20">{cat.categorie}</h4>
+                  <ul className="space-y-2.5">
+                    {cat.items.map((item, i) => (
+                      <li key={i} className="flex items-center gap-3 text-sm text-editorial-black/70">
+                        <div className="w-4 h-4 border-2 border-[#63745a]" />
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Final — Sage Green */}
+        <section className="py-20 bg-[#63745a]">
+          <div className="container max-w-4xl mx-auto px-4 text-center">
+            <h2 className="font-serif text-2xl md:text-3xl text-white mb-4">
+              Prêts à organiser votre cérémonie ?
+            </h2>
+            <p className="text-white/80 mb-8 max-w-lg mx-auto">
+              Accédez à tous nos outils pour planifier votre mariage en toute sérénité
+            </p>
+            <a 
+              href="/register" 
+              className="inline-flex items-center gap-2 bg-white text-editorial-black px-8 py-3 font-medium hover:bg-white/90 transition-colors"
+            >
+              Créer un compte gratuit
+            </a>
+          </div>
+        </section>
       </main>
 
       <Footer />
