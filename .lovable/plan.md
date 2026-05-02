@@ -1,43 +1,78 @@
+# 4 chantiers : nettoyage routes pros, notifications, audit stats, dashboard user
 
+## 1. Supprimer la page `/professionnels`
 
-# Refonte visuelle de /ceremonie-laique — Style premium Homepage
+- Supprimer `src/pages/Professionnels.tsx`
+- Dans `src/App.tsx` : retirer la route `/professionnels` (ligne 260) et l'import
+- Remplacer les liens vers `/professionnels` par `/partenariat` dans :
+  - `src/components/Footer.tsx` (lien "Professionnels" du footer)
+  - `src/components/admin/maintenance/AppArchitectureView.tsx` (référence cartographie)
+- **Conservées** : `/accueilprofessionnels` et `/professionnelsmariable` (différentes, intentionnelles d'après mémoire projet)
 
-## Probleme
+## 2. Notifications email vers `mathilde@mariable.fr` pour les pros
 
-La page actuelle est en `bg-white` avec des Cards generiques noir/blanc. Elle ne reprend pas la charte premium du site (fond beige `bg-premium-base`, accents sage green `#63745a`, typographie Playfair Display, badges, sections alternees).
+Deux déclencheurs sur la même logique que `notify-new-registration` (qui envoie déjà un mail à chaque inscription user) :
 
-## Modifications — fichier unique : `src/pages/CeremoniePublic.tsx`
+### A. Inscription professionnelle
+Dans `supabase/functions/register-professional/index.ts`, après l'insertion réussie dans `prestataires_rows`, appeler une nouvelle Edge Function `notify-new-professional` qui envoie un email Resend à mathilde@mariable.fr avec : nom, catégorie, email, téléphone, SIRET, région, site web, description.
 
-### 1. Hero section premium
-- Fond sage green (`bg-[#63745a]`) pleine largeur avec texte blanc, comme les heros de la homepage
-- Badge "Guide complet" style premium (petit badge au-dessus du H1)
-- Sous-titre en blanc/80
+### B. Demande de démo (lead pro)
+Le formulaire `DemoRequestForm.tsx` insère directement en base via le client → ajouter un appel `supabase.functions.invoke('notify-new-payment-lead', ...)` après l'insertion réussie. Cette nouvelle Edge Function envoie le mail (nom, email, téléphone, catégorie, message).
 
-### 2. Fond general
-- Remplacer `bg-white` par `bg-premium-base` (beige chaud du site)
+Les deux nouvelles fonctions utilisent le secret `RESEND` déjà configuré et suivent le pattern de `notifyNewContact`.
 
-### 3. Sections alternees
-- Alterner entre `bg-premium-base` et `bg-premium-warm` (beige plus chaud) pour chaque bloc, comme la homepage
-- Chaque section en pleine largeur (`section className="py-16 bg-..."`) au lieu de Cards empilees dans un container unique
+## 3. Audit `/admin/usage-stats`
 
-### 4. Suppression des Cards generiques
-- Remplacer les `<Card>` par des `<section>` pleine largeur avec container interieur
-- Titres de section en `font-serif text-2xl text-premium-black` avec icone sage green
-- Badges sage green pour les labels de section (comme `PremiumProcessSection`)
+Vérifier que `supabase/functions/get-usage-stats/index.ts` reflète bien l'état réel :
+- Lister les modules actuels du dashboard utilisateur (`src/data/dashboardFeatures.ts`) et croiser avec les tables interrogées dans la fonction
+- Vérifier que toutes les tables clés sont présentes : budgets_dashboard, wedding_rsvp_events, checklist_mariage_manuel, coordination_planning, coordination_documents, vendor_wishlist, vendors_tracking_preprod, wedding_accommodations, seating_plans, planning_avant_jour_j, planning_apres_jour_j, moodboard, drinks
+- Ajouter les modules manquants éventuels (notamment Avant/Après jour J, Moodboard, Boissons, Pense-bête) et redéployer la fonction
+- Mettre à jour `src/pages/admin/UsageStats.tsx` pour afficher les nouveaux modules
 
-### 5. Couleurs et accents
-- Numeros d'etapes : fond `bg-[#63745a]` (sage green) au lieu de `bg-primary` generique
-- Liens et accents en `text-premium-sage` / `text-[#63745a]`
-- Fond des items : `bg-white` avec legere ombre au lieu de `bg-muted/30`
-- Conseils rituels : fond `bg-premium-sage-very-light` au lieu de `bg-amber-50`
+## 4. Nouveau dashboard admin : analyse d'un utilisateur
 
-### 6. CTA final
-- Section pleine largeur fond sage green avec bouton blanc (texte noir), comme `PremiumFinalCTASection`
+Nouvelle page `src/pages/admin/UserAnalysis.tsx` accessible depuis le menu admin :
 
-### 7. Table musique
-- Restyle avec fond blanc, header sage green, lignes alternees beige
+**Interface**
+- Champ recherche par email (autocomplete sur les profiles)
+- Sélection d'un user → fiche détaillée
 
-## Resultat attendu
+**Fiche utilisateur affichée**
+- Profil : nom, email, date inscription, dernière connexion, type abonnement (premium/free), date mariage, nombre invités
+- État d'avancement par module avec indicateur (vide / commencé / complété) :
+  - Budget (lignes saisies + montant total)
+  - Checklist (% tâches cochées)
+  - Coordination jour J (planning créé, nb événements)
+  - Documents (nb uploadés)
+  - RSVP (nb événements, nb invités, nb réponses)
+  - Wishlist prestataires (nb)
+  - Suivi prestataires (nb + statuts)
+  - Hébergements (nb)
+  - Plan de table (créé ou non)
+  - Avant/Après jour J (% complétion)
+  - Moodboard (nb images)
+- Score global d'avancement (%)
 
-Page visuellement coherente avec la homepage : fond beige, sections alternees, accents sage green, typographie serif pour les titres, badges premium. Plus de look "documentation noir et blanc".
+**Implémentation technique**
+- Nouvelle Edge Function `get-user-analysis` qui prend un `user_id` ou `email` et agrège toutes les données depuis les différentes tables (équivalent de `get-usage-stats` mais ciblé sur un user)
+- Route `/admin/user-analysis` ajoutée dans `App.tsx`
+- Lien dans `src/components/admin/AdminLayout.tsx` (ou équivalent)
+- Protection par `is_admin()`
 
+## Fichiers concernés
+
+| Fichier | Action |
+|--------|--------|
+| `src/pages/Professionnels.tsx` | Supprimer |
+| `src/App.tsx` | Retirer route + ajouter route admin user-analysis |
+| `src/components/Footer.tsx` | Lien → /partenariat |
+| `src/components/admin/maintenance/AppArchitectureView.tsx` | Lien → /partenariat |
+| `supabase/functions/notify-new-professional/index.ts` | Créer |
+| `supabase/functions/notify-new-payment-lead/index.ts` | Créer |
+| `supabase/functions/register-professional/index.ts` | Ajouter appel notif |
+| `src/components/professionnels/DemoRequestForm.tsx` | Ajouter appel notif |
+| `supabase/functions/get-usage-stats/index.ts` | Compléter modules |
+| `src/pages/admin/UsageStats.tsx` | Afficher nouveaux modules |
+| `supabase/functions/get-user-analysis/index.ts` | Créer |
+| `src/pages/admin/UserAnalysis.tsx` | Créer |
+| `src/components/admin/AdminLayout.tsx` | Ajouter lien menu |
