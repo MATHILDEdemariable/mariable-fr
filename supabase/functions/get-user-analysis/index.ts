@@ -117,9 +117,9 @@ Deno.serve(async (req) => {
 
     // Budget total
     const { data: budgetRows } = await supabaseAdmin
-      .from('budgets_dashboard').select('amount, montant').eq('user_id', uid);
+      .from('budgets_dashboard').select('total_budget').eq('user_id', uid);
     const budgetTotal = (budgetRows ?? []).reduce((sum: number, r: any) =>
-      sum + (Number(r.amount ?? r.montant ?? 0) || 0), 0);
+      sum + (Number(r.total_budget ?? 0) || 0), 0);
 
     // Modules avec statut
     const modules = [
