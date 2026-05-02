@@ -36,7 +36,7 @@ const DemoRequestForm = () => {
     setLoading(true);
 
     try {
-      const { error } = await supabase
+      const { data: insertedLead, error } = await supabase
         .from('professional_payment_leads')
         .insert([{
           full_name: formData.fullName,
@@ -45,9 +45,16 @@ const DemoRequestForm = () => {
           category: formData.category,
           message: formData.message,
           rgpd_consent: formData.rgpdConsent
-        }]);
+        }])
+        .select()
+        .single();
 
       if (error) throw error;
+
+      // Notification email (non bloquante)
+      supabase.functions.invoke('notify-new-payment-lead', {
+        body: { record: insertedLead }
+      }).catch(err => console.error('Notification email failed:', err));
 
       toast({
         title: "Demande reçue ! ✅",
