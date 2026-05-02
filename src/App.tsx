@@ -307,6 +307,7 @@ function App() {
                    <Route path="/admin/devis" element={<AdminDevisProfessionnels />} />
                    <Route path="/admin/satisfaction" element={<AdminSatisfactionUtilisateurs />} />
                    <Route path="/admin/usage-stats" element={<AdminUsageStats />} />
+                   <Route path="/admin/user-analysis" element={<AdminUserAnalysis />} />
                    <Route path="/envoidevis" element={<EnvoiDevis />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
