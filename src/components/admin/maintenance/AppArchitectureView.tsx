@@ -69,7 +69,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   { name: "Prestataires", route: "/prestataires", tables: ["prestataires_rows", "prestataires_photos_preprod"], status: "active", category: "Prestataires" },
   { name: "Prestataire", route: "/prestataire/:slug", tables: ["prestataires_rows", "prestataires_photos_preprod", "prestataires_brochures_preprod"], status: "active", category: "Prestataires" },
   { name: "MoteurRecherche", route: "/mariage/:region", tables: ["prestataires_rows"], status: "active", category: "Prestataires" },
-  { name: "Professionnels", route: "/professionnels", tables: [], status: "active", category: "Prestataires" },
+  { name: "Partenariat", route: "/partenariat", tables: ["partnership_requests"], status: "active", category: "Prestataires" },
   { name: "Demo", route: "/demo", tables: [], status: "to-merge", category: "Prestataires" },
   { name: "Preview", route: "/preview", tables: [], status: "to-merge", category: "Prestataires" },
   
