@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw, Crown, AlertTriangle } from 'lucide-react';
+import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw, Crown, AlertTriangle, ListChecks, ListTodo, StickyNote } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ModuleStats = {
