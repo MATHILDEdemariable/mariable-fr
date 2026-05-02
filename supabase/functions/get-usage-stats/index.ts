@@ -73,54 +73,23 @@ Deno.serve(async (req) => {
       vendorTrackingCount,
       accommodationsCount,
       seatingPlansCount,
+      avantJourJCount,
+      apresJourJCount,
+      penseBeteCount,
       profilesComplete
     ] = await Promise.all([
-      // Budget
-      supabaseAdmin
-        .from('budgets_dashboard')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // RSVP Events
-      supabaseAdmin
-        .from('wedding_rsvp_events')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Checklist
-      supabaseAdmin
-        .from('checklist_mariage_manuel')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Coordination (from coordination_planning)
-      supabaseAdmin
-        .from('coordination_planning')
-        .select('coordination_id', { count: 'exact', head: true }),
-      
-      // Documents de coordination
-      supabaseAdmin
-        .from('coordination_documents')
-        .select('coordination_id', { count: 'exact', head: true }),
-      
-      // Wishlist
-      supabaseAdmin
-        .from('vendor_wishlist')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Vendor Tracking
-      supabaseAdmin
-        .from('vendors_tracking_preprod')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Accommodations
-      supabaseAdmin
-        .from('wedding_accommodations')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Seating Plans
-      supabaseAdmin
-        .from('seating_plans')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Profiles complete (with wedding_date and guest_count)
+      supabaseAdmin.from('budgets_dashboard').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('wedding_rsvp_events').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('checklist_mariage_manuel').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('coordination_planning').select('coordination_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('coordination_documents').select('coordination_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('vendor_wishlist').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('vendors_tracking_preprod').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('wedding_accommodations').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('seating_plans').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('planning_avant_jour_j').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('planning_apres_jour_j').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('pense_bete').select('user_id', { count: 'exact', head: true }),
       supabaseAdmin
         .from('profiles')
         .select('id', { count: 'exact', head: true })
