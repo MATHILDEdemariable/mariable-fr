@@ -87,6 +87,7 @@ const AdminUsers = lazy(() => import("./pages/admin/Users"));
 const AdminDevisProfessionnels = lazy(() => import("./pages/admin/DevisProfessionnels"));
 const AdminSatisfactionUtilisateurs = lazy(() => import("./pages/admin/SatisfactionUtilisateurs"));
 const AdminUsageStats = lazy(() => import("./pages/admin/UsageStats"));
+const AdminUserAnalysis = lazy(() => import("./pages/admin/UserAnalysis"));
 const EnvoiDevis = lazy(() => import("./pages/EnvoiDevis"));
 const AdminPrestataires = lazy(() => import("./pages/admin/Prestataires"));
 const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
