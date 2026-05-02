@@ -192,6 +192,18 @@ Deno.serve(async (req) => {
           usersCount: seatingPlanUsers,
           entriesCount: seatingPlansCount.count || 0
         },
+        avantJourJ: {
+          usersCount: avantJourJUsers,
+          entriesCount: avantJourJCount.count || 0
+        },
+        apresJourJ: {
+          usersCount: apresJourJUsers,
+          entriesCount: apresJourJCount.count || 0
+        },
+        penseBete: {
+          usersCount: penseBeteUsers,
+          entriesCount: penseBeteCount.count || 0
+        },
         profileComplete: {
           usersCount: profilesComplete.count || 0
         }
