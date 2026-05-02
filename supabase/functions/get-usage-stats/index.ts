@@ -107,70 +107,47 @@ Deno.serve(async (req) => {
       wishlistUsers,
       vendorUsers,
       accommodationsUsers,
-      seatingPlanUsers
+      seatingPlanUsers,
+      avantJourJUsers,
+      apresJourJUsers,
+      penseBeteUsers
     ] = await Promise.all([
-      supabaseAdmin
-        .from('budgets_dashboard')
-        .select('user_id')
+      supabaseAdmin.from('budgets_dashboard').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('wedding_rsvp_events')
-        .select('user_id')
+      supabaseAdmin.from('wedding_rsvp_events').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('checklist_mariage_manuel')
-        .select('user_id')
+      supabaseAdmin.from('checklist_mariage_manuel').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      // Coordination: count unique user_id via coordination_planning -> wedding_coordination
-      supabaseAdmin
-        .from('coordination_planning')
-        .select('coordination_id')
+      supabaseAdmin.from('coordination_planning').select('coordination_id')
         .then(async ({ data: planning }) => {
           if (!planning?.length) return 0
           const coordIds = [...new Set(planning.map(p => p.coordination_id))]
           const { data: coords } = await supabaseAdmin
-            .from('wedding_coordination')
-            .select('user_id')
-            .in('id', coordIds)
+            .from('wedding_coordination').select('user_id').in('id', coordIds)
           return new Set(coords?.map(c => c.user_id)).size
         }),
-      
-      // Documents: compter les user_id distincts via coordination
-      supabaseAdmin
-        .from('coordination_documents')
-        .select('coordination_id')
+      supabaseAdmin.from('coordination_documents').select('coordination_id')
         .then(async ({ data: docs }) => {
           if (!docs?.length) return 0
           const coordIds = [...new Set(docs.map(d => d.coordination_id))]
           const { data: coords } = await supabaseAdmin
-            .from('wedding_coordination')
-            .select('user_id')
-            .in('id', coordIds)
+            .from('wedding_coordination').select('user_id').in('id', coordIds)
           return new Set(coords?.map(c => c.user_id)).size
         }),
-      
-      supabaseAdmin
-        .from('vendor_wishlist')
-        .select('user_id')
+      supabaseAdmin.from('vendor_wishlist').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('vendors_tracking_preprod')
-        .select('user_id')
+      supabaseAdmin.from('vendors_tracking_preprod').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('wedding_accommodations')
-        .select('user_id')
+      supabaseAdmin.from('wedding_accommodations').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('seating_plans')
-        .select('user_id')
-        .then(({ data }) => new Set(data?.map(d => d.user_id)).size)
+      supabaseAdmin.from('seating_plans').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('planning_avant_jour_j').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('planning_apres_jour_j').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('pense_bete').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
     ])
 
     const stats = {
