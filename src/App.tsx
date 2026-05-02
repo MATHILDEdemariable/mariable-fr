@@ -256,7 +256,7 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Missing routes - Fixed */}
-                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/professionnels" element={<Navigate to="/partenariat" replace />} />
                   <Route path="/partenariat" element={<Partenariat />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
