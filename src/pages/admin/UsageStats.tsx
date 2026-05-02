@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
-import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw, Crown, AlertTriangle } from 'lucide-react';
+import { Loader2, Users, TrendingUp, CheckSquare, Calendar, FileText, Heart, ClipboardList, User, Home, FileStack, LayoutGrid, RefreshCw, Crown, AlertTriangle, ListChecks, ListTodo, StickyNote } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 
 type ModuleStats = {
@@ -25,6 +25,9 @@ type UsageStats = {
     vendorTracking: ModuleStats;
     accommodations: ModuleStats;
     seatingPlan: ModuleStats;
+    avantJourJ: ModuleStats;
+    apresJourJ: ModuleStats;
+    penseBete: ModuleStats;
     profileComplete: ModuleStats;
   };
 };
@@ -173,6 +176,33 @@ const UsageStats = () => {
       users: stats.modules.seatingPlan.usersCount,
       entries: stats.modules.seatingPlan.entriesCount,
       description: 'Plans de table créés'
+    },
+    {
+      name: 'Avant Jour-J',
+      icon: ListChecks,
+      color: 'text-violet-600',
+      bgColor: 'bg-violet-50',
+      users: stats.modules.avantJourJ?.usersCount ?? 0,
+      entries: stats.modules.avantJourJ?.entriesCount ?? 0,
+      description: 'Planning préparatifs avant le jour J'
+    },
+    {
+      name: 'Après Jour-J',
+      icon: ListTodo,
+      color: 'text-fuchsia-600',
+      bgColor: 'bg-fuchsia-50',
+      users: stats.modules.apresJourJ?.usersCount ?? 0,
+      entries: stats.modules.apresJourJ?.entriesCount ?? 0,
+      description: 'Tâches après le jour J'
+    },
+    {
+      name: 'Pense-bête',
+      icon: StickyNote,
+      color: 'text-yellow-600',
+      bgColor: 'bg-yellow-50',
+      users: stats.modules.penseBete?.usersCount ?? 0,
+      entries: stats.modules.penseBete?.entriesCount ?? 0,
+      description: 'Notes du pense-bête'
     }
   ];
 

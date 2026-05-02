@@ -73,54 +73,23 @@ Deno.serve(async (req) => {
       vendorTrackingCount,
       accommodationsCount,
       seatingPlansCount,
+      avantJourJCount,
+      apresJourJCount,
+      penseBeteCount,
       profilesComplete
     ] = await Promise.all([
-      // Budget
-      supabaseAdmin
-        .from('budgets_dashboard')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // RSVP Events
-      supabaseAdmin
-        .from('wedding_rsvp_events')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Checklist
-      supabaseAdmin
-        .from('checklist_mariage_manuel')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Coordination (from coordination_planning)
-      supabaseAdmin
-        .from('coordination_planning')
-        .select('coordination_id', { count: 'exact', head: true }),
-      
-      // Documents de coordination
-      supabaseAdmin
-        .from('coordination_documents')
-        .select('coordination_id', { count: 'exact', head: true }),
-      
-      // Wishlist
-      supabaseAdmin
-        .from('vendor_wishlist')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Vendor Tracking
-      supabaseAdmin
-        .from('vendors_tracking_preprod')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Accommodations
-      supabaseAdmin
-        .from('wedding_accommodations')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Seating Plans
-      supabaseAdmin
-        .from('seating_plans')
-        .select('user_id', { count: 'exact', head: true }),
-      
-      // Profiles complete (with wedding_date and guest_count)
+      supabaseAdmin.from('budgets_dashboard').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('wedding_rsvp_events').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('checklist_mariage_manuel').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('coordination_planning').select('coordination_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('coordination_documents').select('coordination_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('vendor_wishlist').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('vendors_tracking_preprod').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('wedding_accommodations').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('seating_plans').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('planning_avant_jour_j').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('planning_apres_jour_j').select('user_id', { count: 'exact', head: true }),
+      supabaseAdmin.from('pense_bete').select('user_id', { count: 'exact', head: true }),
       supabaseAdmin
         .from('profiles')
         .select('id', { count: 'exact', head: true })
@@ -138,70 +107,47 @@ Deno.serve(async (req) => {
       wishlistUsers,
       vendorUsers,
       accommodationsUsers,
-      seatingPlanUsers
+      seatingPlanUsers,
+      avantJourJUsers,
+      apresJourJUsers,
+      penseBeteUsers
     ] = await Promise.all([
-      supabaseAdmin
-        .from('budgets_dashboard')
-        .select('user_id')
+      supabaseAdmin.from('budgets_dashboard').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('wedding_rsvp_events')
-        .select('user_id')
+      supabaseAdmin.from('wedding_rsvp_events').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('checklist_mariage_manuel')
-        .select('user_id')
+      supabaseAdmin.from('checklist_mariage_manuel').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      // Coordination: count unique user_id via coordination_planning -> wedding_coordination
-      supabaseAdmin
-        .from('coordination_planning')
-        .select('coordination_id')
+      supabaseAdmin.from('coordination_planning').select('coordination_id')
         .then(async ({ data: planning }) => {
           if (!planning?.length) return 0
           const coordIds = [...new Set(planning.map(p => p.coordination_id))]
           const { data: coords } = await supabaseAdmin
-            .from('wedding_coordination')
-            .select('user_id')
-            .in('id', coordIds)
+            .from('wedding_coordination').select('user_id').in('id', coordIds)
           return new Set(coords?.map(c => c.user_id)).size
         }),
-      
-      // Documents: compter les user_id distincts via coordination
-      supabaseAdmin
-        .from('coordination_documents')
-        .select('coordination_id')
+      supabaseAdmin.from('coordination_documents').select('coordination_id')
         .then(async ({ data: docs }) => {
           if (!docs?.length) return 0
           const coordIds = [...new Set(docs.map(d => d.coordination_id))]
           const { data: coords } = await supabaseAdmin
-            .from('wedding_coordination')
-            .select('user_id')
-            .in('id', coordIds)
+            .from('wedding_coordination').select('user_id').in('id', coordIds)
           return new Set(coords?.map(c => c.user_id)).size
         }),
-      
-      supabaseAdmin
-        .from('vendor_wishlist')
-        .select('user_id')
+      supabaseAdmin.from('vendor_wishlist').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('vendors_tracking_preprod')
-        .select('user_id')
+      supabaseAdmin.from('vendors_tracking_preprod').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('wedding_accommodations')
-        .select('user_id')
+      supabaseAdmin.from('wedding_accommodations').select('user_id')
         .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
-      
-      supabaseAdmin
-        .from('seating_plans')
-        .select('user_id')
-        .then(({ data }) => new Set(data?.map(d => d.user_id)).size)
+      supabaseAdmin.from('seating_plans').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('planning_avant_jour_j').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('planning_apres_jour_j').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
+      supabaseAdmin.from('pense_bete').select('user_id')
+        .then(({ data }) => new Set(data?.map(d => d.user_id)).size),
     ])
 
     const stats = {
@@ -245,6 +191,18 @@ Deno.serve(async (req) => {
         seatingPlan: {
           usersCount: seatingPlanUsers,
           entriesCount: seatingPlansCount.count || 0
+        },
+        avantJourJ: {
+          usersCount: avantJourJUsers,
+          entriesCount: avantJourJCount.count || 0
+        },
+        apresJourJ: {
+          usersCount: apresJourJUsers,
+          entriesCount: apresJourJCount.count || 0
+        },
+        penseBete: {
+          usersCount: penseBeteUsers,
+          entriesCount: penseBeteCount.count || 0
         },
         profileComplete: {
           usersCount: profilesComplete.count || 0

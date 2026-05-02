@@ -67,6 +67,12 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
       current: location.pathname === '/admin/usage-stats'
     },
     {
+      name: 'Analyse Utilisateur',
+      href: '/admin/user-analysis',
+      icon: Users,
+      current: location.pathname === '/admin/user-analysis'
+    },
+    {
       name: 'CRM Prestataires',
       href: '/admin/prestataires',
       icon: Users,

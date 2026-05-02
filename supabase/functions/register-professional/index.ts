@@ -69,6 +69,20 @@ serve(async (req) => {
 
     console.log('✅ Prestataire créé avec succès:', data.id);
 
+    // Notification email à mathilde@mariable.fr (non bloquante)
+    try {
+      await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/notify-new-professional`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`,
+        },
+        body: JSON.stringify({ record: data }),
+      });
+    } catch (notifyError) {
+      console.error('⚠️ Notification email échouée (non bloquant):', notifyError);
+    }
+
     return new Response(
       JSON.stringify({ success: true, data }),
       { 

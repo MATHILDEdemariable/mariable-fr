@@ -65,7 +65,6 @@ const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
-const Professionnels = lazy(() => import("./pages/Professionnels"));
 const Partenariat = lazy(() => import("./pages/Partenariat"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
@@ -88,6 +87,7 @@ const AdminUsers = lazy(() => import("./pages/admin/Users"));
 const AdminDevisProfessionnels = lazy(() => import("./pages/admin/DevisProfessionnels"));
 const AdminSatisfactionUtilisateurs = lazy(() => import("./pages/admin/SatisfactionUtilisateurs"));
 const AdminUsageStats = lazy(() => import("./pages/admin/UsageStats"));
+const AdminUserAnalysis = lazy(() => import("./pages/admin/UserAnalysis"));
 const EnvoiDevis = lazy(() => import("./pages/EnvoiDevis"));
 const AdminPrestataires = lazy(() => import("./pages/admin/Prestataires"));
 const AdminForm = lazy(() => import("./pages/admin/FormAdmin"));
@@ -257,7 +257,7 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Missing routes - Fixed */}
-                  <Route path="/professionnels" element={<Professionnels />} />
+                  <Route path="/professionnels" element={<Navigate to="/partenariat" replace />} />
                   <Route path="/partenariat" element={<Partenariat />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
@@ -307,6 +307,7 @@ function App() {
                    <Route path="/admin/devis" element={<AdminDevisProfessionnels />} />
                    <Route path="/admin/satisfaction" element={<AdminSatisfactionUtilisateurs />} />
                    <Route path="/admin/usage-stats" element={<AdminUsageStats />} />
+                   <Route path="/admin/user-analysis" element={<AdminUserAnalysis />} />
                    <Route path="/envoidevis" element={<EnvoiDevis />} />
                    <Route path="/admin/prestataires" element={<AdminPrestataires />} />
                    <Route path="/admin/professional-registrations" element={<AdminProfessionalRegistrations />} />
