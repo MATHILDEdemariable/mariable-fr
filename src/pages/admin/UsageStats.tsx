@@ -25,6 +25,9 @@ type UsageStats = {
     vendorTracking: ModuleStats;
     accommodations: ModuleStats;
     seatingPlan: ModuleStats;
+    avantJourJ: ModuleStats;
+    apresJourJ: ModuleStats;
+    penseBete: ModuleStats;
     profileComplete: ModuleStats;
   };
 };
