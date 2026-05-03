@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, ArrowRight, Sun } from 'lucide-react';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,7 @@ const MariageCorse = () => {
         <meta name="geo.placename" content="Corse, France" />
         <script type="application/ld+json">{JSON.stringify(corseSchema)}</script>
       </SEO>
-      <Header />
+      <PremiumHeader />
       <main className="min-h-screen">
         <section className="bg-gradient-to-br from-wedding-cream/50 to-wedding-olive/10 py-16">
           <div className="container mx-auto px-4">
