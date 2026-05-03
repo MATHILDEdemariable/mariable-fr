@@ -89,18 +89,7 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
   </section>
 );
 
-// Editorial Manifesto strip
-const ManifestoStrip = () => (
-  <section className="bg-white border-y border-editorial-noir/10 py-10 md:py-14 px-4">
-    <div className="container max-w-3xl mx-auto text-center">
-      <p className="font-serif text-xl md:text-2xl text-editorial-noir/80 italic leading-relaxed">
-        « Nous croyons qu'un mariage se construit avec des artisans choisis, pas avec un catalogue.
-        Chaque prestataire de cette page a été rencontré, vérifié et validé par notre équipe. »
-      </p>
-      <p className="mt-4 text-xs uppercase tracking-widest text-premium-sage">— L'équipe Mariable</p>
-    </div>
-  </section>
-);
+
 
 // Editorial Category Pills (underline style)
 const CategoryPills = ({
