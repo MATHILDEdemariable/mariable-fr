@@ -186,7 +186,7 @@ const ProfessionnelsMariable = () => {
 
       <main className="min-h-screen bg-white pt-16 md:pt-20">
         <EditorialHero onScrollToResults={scrollToResults} />
-        <ManifestoStrip />
+        
 
         {/* Results Section */}
         <div ref={resultsRef} className="scroll-mt-24 py-16 md:py-20 bg-white">
