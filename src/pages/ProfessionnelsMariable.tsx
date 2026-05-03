@@ -63,19 +63,28 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans text-base md:text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-10 leading-relaxed"
       >
-        Lieux de caractère, traiteurs d'exception, photographes au regard juste.
-        Une sélection curatée à la main, loin des annuaires anonymes.
+        Lieux de caractère, traiteurs d'exception, photographes au regard juste. Une curation de professionnels.
       </motion.p>
-      <motion.button
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        onClick={onScrollToResults}
-        className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
+        className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center justify-center"
       >
-        Découvrir la sélection
-        <ArrowDown className="w-4 h-4" />
-      </motion.button>
+        <button
+          onClick={onScrollToResults}
+          className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
+        >
+          Découvrir la sélection
+          <ArrowDown className="w-4 h-4" />
+        </button>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-premium-sage border-b border-premium-sage/40 pb-1 hover:border-premium-sage transition-colors"
+        >
+          Découvrir les outils gratuits
+        </Link>
+      </motion.div>
     </div>
   </section>
 );
