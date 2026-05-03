@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,35 +63,33 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans text-base md:text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-10 leading-relaxed"
       >
-        Lieux de caractère, traiteurs d'exception, photographes au regard juste.
-        Une sélection curatée à la main, loin des annuaires anonymes.
+        Lieux de caractère, traiteurs d'exception, photographes au regard juste. Une curation de professionnels.
       </motion.p>
-      <motion.button
+      <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.6, delay: 0.2 }}
-        onClick={onScrollToResults}
-        className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
+        className="flex flex-col sm:flex-row gap-4 sm:gap-8 items-center justify-center"
       >
-        Découvrir la sélection
-        <ArrowDown className="w-4 h-4" />
-      </motion.button>
+        <button
+          onClick={onScrollToResults}
+          className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
+        >
+          Découvrir la sélection
+          <ArrowDown className="w-4 h-4" />
+        </button>
+        <Link
+          to="/dashboard"
+          className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-premium-sage border-b border-premium-sage/40 pb-1 hover:border-premium-sage transition-colors"
+        >
+          Découvrir les outils gratuits
+        </Link>
+      </motion.div>
     </div>
   </section>
 );
 
-// Editorial Manifesto strip
-const ManifestoStrip = () => (
-  <section className="bg-white border-y border-editorial-noir/10 py-10 md:py-14 px-4">
-    <div className="container max-w-3xl mx-auto text-center">
-      <p className="font-serif text-xl md:text-2xl text-editorial-noir/80 italic leading-relaxed">
-        « Nous croyons qu'un mariage se construit avec des artisans choisis, pas avec un catalogue.
-        Chaque prestataire de cette page a été rencontré, vérifié et validé par notre équipe. »
-      </p>
-      <p className="mt-4 text-xs uppercase tracking-widest text-premium-sage">— L'équipe Mariable</p>
-    </div>
-  </section>
-);
+
 
 // Editorial Category Pills (underline style)
 const CategoryPills = ({
@@ -188,7 +186,7 @@ const ProfessionnelsMariable = () => {
 
       <main className="min-h-screen bg-white pt-16 md:pt-20">
         <EditorialHero onScrollToResults={scrollToResults} />
-        <ManifestoStrip />
+        
 
         {/* Results Section */}
         <div ref={resultsRef} className="scroll-mt-24 py-16 md:py-20 bg-white">
