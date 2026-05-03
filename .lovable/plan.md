@@ -1,78 +1,93 @@
-# 4 chantiers : nettoyage routes pros, notifications, audit stats, dashboard user
+## Repositionnement /partenariat — Mariable Studio Social Media Mariage
 
-## 1. Supprimer la page `/professionnels`
+Refonte complète du pricing et du discours de la page `/partenariat` pour passer du modèle annuaire/adhésion (120€/an) à un modèle **studio social media spécialisé mariage** (création de contenu, community management, mise en avant Mariable).
 
-- Supprimer `src/pages/Professionnels.tsx`
-- Dans `src/App.tsx` : retirer la route `/professionnels` (ligne 260) et l'import
-- Remplacer les liens vers `/professionnels` par `/partenariat` dans :
-  - `src/components/Footer.tsx` (lien "Professionnels" du footer)
-  - `src/components/admin/maintenance/AppArchitectureView.tsx` (référence cartographie)
-- **Conservées** : `/accueilprofessionnels` et `/professionnelsmariable` (différentes, intentionnelles d'après mémoire projet)
+### 1. Nouveau Hero (haut de page)
 
-## 2. Notifications email vers `mathilde@mariable.fr` pour les pros
+- H1 : **« Studio social media spécialisé mariage »**
+- Sous-titre : « Devenez le lieu (ou le traiteur) que les futurs mariés veulent absolument sur Instagram. Création de contenu, community management et mise en avant éditoriale. »
+- Cible explicite : « Pour les **lieux de réception** et **traiteurs mariage** »
+- 2 CTA : « Voir les offres » / « Demander un devis »
 
-Deux déclencheurs sur la même logique que `notify-new-registration` (qui envoie déjà un mail à chaque inscription user) :
+### 2. Section Constat (réécriture)
 
-### A. Inscription professionnelle
-Dans `supabase/functions/register-professional/index.ts`, après l'insertion réussie dans `prestataires_rows`, appeler une nouvelle Edge Function `notify-new-professional` qui envoie un email Resend à mathilde@mariable.fr avec : nom, catégorie, email, téléphone, SIRET, région, site web, description.
+Remplacer les 4 étapes actuelles par le constat marché :
+- Les couples cherchent leur inspiration sur Instagram
+- Les prestataires n'ont pas le temps ni le réflexe de produire du contenu
+- Être listé ne suffit plus : il faut être **désirable**
+- L'image et la narration > le référencement
 
-### B. Demande de démo (lead pro)
-Le formulaire `DemoRequestForm.tsx` insère directement en base via le client → ajouter un appel `supabase.functions.invoke('notify-new-payment-lead', ...)` après l'insertion réussie. Cette nouvelle Edge Function envoie le mail (nom, email, téléphone, catégorie, message).
+### 3. Section 3 piliers (nouveau)
 
-Les deux nouvelles fonctions utilisent le secret `RESEND` déjà configuré et suivent le pattern de `notifyNewContact`.
+Présentation des 3 expertises du studio (avant le pricing) :
+1. **Création de contenu** — reels, photos, direction artistique, mise en scène
+2. **Community management** — gestion Instagram, feed cohérent, présence régulière
+3. **Mise en avant Mariable** — publication éditoriale, curation, effet vitrine
 
-## 3. Audit `/admin/usage-stats`
+### 4. Section Pricing — 3 packs (REMPLACE l'existant)
 
-Vérifier que `supabase/functions/get-usage-stats/index.ts` reflète bien l'état réel :
-- Lister les modules actuels du dashboard utilisateur (`src/data/dashboardFeatures.ts`) et croiser avec les tables interrogées dans la fonction
-- Vérifier que toutes les tables clés sont présentes : budgets_dashboard, wedding_rsvp_events, checklist_mariage_manuel, coordination_planning, coordination_documents, vendor_wishlist, vendors_tracking_preprod, wedding_accommodations, seating_plans, planning_avant_jour_j, planning_apres_jour_j, moodboard, drinks
-- Ajouter les modules manquants éventuels (notamment Avant/Après jour J, Moodboard, Boissons, Pense-bête) et redéployer la fonction
-- Mettre à jour `src/pages/admin/UsageStats.tsx` pour afficher les nouveaux modules
+Suppression complète de l'« Adhésion partenaire 120€/an » et de la carte « Offres premium / sur demande ».
 
-## 4. Nouveau dashboard admin : analyse d'un utilisateur
+| Pack | Prix | Cible | Inclus |
+|---|---|---|---|
+| **Essentiel** | 290€/mois | Premier pas, traiteurs/petits lieux | 4 posts Instagram/mois, 2 stories/semaine, ligne éditoriale, reporting |
+| **Signature** ⭐ (mis en avant) | **490€/mois** | Pack pivot — le plus vendable | **4 reels + 8 posts + stories illimitées + community management complet + mise en avant Mariable** |
+| **Studio** | Sur devis | Lieux établis, refonte image | Shooting trimestriel sur site, direction artistique, refonte feed, campagnes saisonnières, site web optionnel |
 
-Nouvelle page `src/pages/admin/UserAnalysis.tsx` accessible depuis le menu admin :
+CTA : « Démarrer » (Essentiel/Signature → formulaire) / « Demander un devis » (Studio → contact).
 
-**Interface**
-- Champ recherche par email (autocomplete sur les profiles)
-- Sélection d'un user → fiche détaillée
+### 5. Focus Pack Signature (nouvelle section dédiée)
 
-**Fiche utilisateur affichée**
-- Profil : nom, email, date inscription, dernière connexion, type abonnement (premium/free), date mariage, nombre invités
-- État d'avancement par module avec indicateur (vide / commencé / complété) :
-  - Budget (lignes saisies + montant total)
-  - Checklist (% tâches cochées)
-  - Coordination jour J (planning créé, nb événements)
-  - Documents (nb uploadés)
-  - RSVP (nb événements, nb invités, nb réponses)
-  - Wishlist prestataires (nb)
-  - Suivi prestataires (nb + statuts)
-  - Hébergements (nb)
-  - Plan de table (créé ou non)
-  - Avant/Après jour J (% complétion)
-  - Moodboard (nb images)
-- Score global d'avancement (%)
+Section détaillée pour le pack pivot 490€/mois — celui qui doit convertir :
 
-**Implémentation technique**
-- Nouvelle Edge Function `get-user-analysis` qui prend un `user_id` ou `email` et agrège toutes les données depuis les différentes tables (équivalent de `get-usage-stats` mais ciblé sur un user)
-- Route `/admin/user-analysis` ajoutée dans `App.tsx`
-- Lien dans `src/components/admin/AdminLayout.tsx` (ou équivalent)
-- Protection par `is_admin()`
+**« Pack Signature — La présence Instagram qui transforme votre lieu en référence »**
 
-## Fichiers concernés
+Livrables mensuels :
+- 4 reels mariage (montage + storytelling)
+- 8 posts feed (photos retouchées + copywriting)
+- Stories illimitées (coulisses, événements, témoignages)
+- Calendrier éditorial mensuel
+- Community management : réponses DM/commentaires
+- 1 mise en avant Mariable/mois (post + story)
+- Reporting mensuel
 
-| Fichier | Action |
-|--------|--------|
-| `src/pages/Professionnels.tsx` | Supprimer |
-| `src/App.tsx` | Retirer route + ajouter route admin user-analysis |
-| `src/components/Footer.tsx` | Lien → /partenariat |
-| `src/components/admin/maintenance/AppArchitectureView.tsx` | Lien → /partenariat |
-| `supabase/functions/notify-new-professional/index.ts` | Créer |
-| `supabase/functions/notify-new-payment-lead/index.ts` | Créer |
-| `supabase/functions/register-professional/index.ts` | Ajouter appel notif |
-| `src/components/professionnels/DemoRequestForm.tsx` | Ajouter appel notif |
-| `supabase/functions/get-usage-stats/index.ts` | Compléter modules |
-| `src/pages/admin/UsageStats.tsx` | Afficher nouveaux modules |
-| `supabase/functions/get-user-analysis/index.ts` | Créer |
-| `src/pages/admin/UserAnalysis.tsx` | Créer |
-| `src/components/admin/AdminLayout.tsx` | Ajouter lien menu |
+Engagement : 3 mois minimum. Setup offert.
+
+### 6. Mots-clés SEO intégrés
+
+Injecter naturellement dans titres, sous-titres, meta et JSON-LD :
+- **création contenu Instagram traiteur mariage**
+- **community management lieu de réception**
+- **reels mariage prestataires**
+- agence social media mariage (secondaire)
+
+Mise à jour `<Helmet>` :
+- Title : `Studio social media mariage — Création contenu Instagram lieux & traiteurs | Mariable`
+- Description : `Agence social media spécialisée mariage. Création de reels, community management Instagram et mise en avant éditoriale pour lieux de réception et traiteurs.`
+- JSON-LD `Service` avec `serviceType: "Social media management for wedding venues and caterers"`.
+
+### 7. Sections à conserver / adapter
+
+- ✅ Garder la section « Éléments inclus » (accordions) → adapter le contenu pour parler reels, CM, contenu
+- ❌ Supprimer la section « Alternative accessible aux articles sponsorisés » (basée sur 120€/an)
+- ✅ Garder « En résumé » → reformuler bénéfices (« Image plus forte / Présence constante / Désirabilité »)
+- ✅ Garder section « Exemples posts/stories » → la mettre plus en valeur (preuve sociale)
+- ✅ Garder formulaire d'inscription (déjà connecté à `notify-new-professional`)
+
+### 8. Détails techniques
+
+- Fichier unique : `src/pages/Partenariat.tsx`
+- Aucun changement DB, aucun changement de routes
+- Garder design system : `bg-premium-base`, `text-premium-sage`, `font-serif` (Playfair), `rounded-none`
+- Mettre en avant le pack Signature visuellement (badge « Le plus choisi », bordure sage, échelle légèrement supérieure)
+- Conserver le formulaire `ProfessionalRegistrationForm` existant et ses notifications email
+
+### 9. Mémoire à mettre à jour
+
+Remplacer `mem://business-model/professional-partnership-membership` (120€/an) par une nouvelle mémoire `mem://business-model/mariable-studio-social-media` décrivant les 3 packs (290 / 490 / sur devis) et le positionnement studio.
+
+### Hors scope
+
+- Pas de page de checkout / paiement Stripe (les conversions passent par formulaire + devis comme aujourd'hui)
+- Pas de modification des fiches prestataires existantes ni du marketplace
+- Pas de touche aux autres pages (Footer, AccueilProfessionnels, etc.) sauf si un lien explicite réfère au tarif 120€/an — à vérifier au moment de l'implémentation
