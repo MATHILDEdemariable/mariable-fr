@@ -187,7 +187,7 @@ const Partenariat = () => {
                 onClick={scrollToExpertises}
                 className="bg-editorial-noir text-white hover:bg-editorial-noir/90"
               >
-                Voir nos expertises
+                Découvrir les services
               </Button>
               <Button
                 asChild
