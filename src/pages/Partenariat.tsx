@@ -37,7 +37,6 @@ const Partenariat = () => {
         "Photos retouchées",
         "Direction artistique éditoriale",
         "Mise en scène & shooting sur site",
-        "Mise en avant Mariable incluse",
       ],
     },
     {
@@ -50,19 +49,6 @@ const Partenariat = () => {
         "Publication & stories",
         "Réponses DM et commentaires",
         "Gestion des publicités Meta Ads (Facebook & Instagram)",
-        "Mise en avant Mariable incluse",
-      ],
-    },
-    {
-      icon: Sparkles,
-      title: "Mise en avant Mariable",
-      description:
-        "Publication éditoriale et curation dans l'univers Mariable pour un effet vitrine auprès des couples.",
-      points: [
-        "Publication éditoriale dédiée",
-        "Curation auprès de notre communauté",
-        "Newsletter +1000 futurs mariés",
-        "Crédibilité & désirabilité",
       ],
     },
     {
@@ -83,27 +69,27 @@ const Partenariat = () => {
     {
       question: "Quels professionnels du mariage accompagnez-vous ?",
       answer:
-        "Nous accompagnons principalement les lieux de réception (domaines, châteaux, mas, manoirs) et les traiteurs mariage qui souhaitent professionnaliser leur image et leur communication digitale. Nous travaillons aussi ponctuellement avec photographes, fleuristes et wedding planners qui partagent une exigence éditoriale forte.",
+        "J'accompagne principalement les lieux de réception (domaines, châteaux, mas, manoirs) et les traiteurs mariage qui souhaitent professionnaliser leur image et leur communication digitale. Je travaille aussi ponctuellement avec photographes, fleuristes et wedding planners qui partagent une exigence éditoriale forte.",
     },
     {
       question: "Combien coûte une agence de communication spécialisée mariage ?",
       answer:
-        "Toutes nos prestations sont sur devis car chaque lieu de réception et chaque traiteur a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads, projet web). Nous construisons un accompagnement à la carte ou un forfait mensuel selon votre maturité digitale et vos objectifs commerciaux.",
+        "Mes prestations démarrent à partir de 400€ et sont ensuite sur devis, car chaque lieu de réception et chaque traiteur a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre maturité digitale et vos objectifs commerciaux.",
     },
     {
       question: "Comment gagner en visibilité quand on est un lieu de réception ou un traiteur mariage ?",
       answer:
-        "La visibilité passe par trois leviers complémentaires : un contenu visuel cohérent et désirable (reels, photos), une présence régulière sur Instagram avec un community manager spécialisé mariage, et des campagnes Meta Ads ciblées sur les futurs mariés de votre région. Une mise en avant éditoriale Mariable amplifie le tout auprès d'une audience ultra-qualifiée.",
+        "La visibilité passe par trois leviers complémentaires : un contenu visuel cohérent et désirable (reels, photos), une présence régulière sur Instagram avec un community manager spécialisé mariage, et des campagnes Meta Ads ciblées sur les futurs mariés de votre région. La mise en avant éditoriale Mariable, incluse dans chaque formule, amplifie le tout auprès d'une audience ultra-qualifiée.",
     },
     {
       question: "Pourquoi confier ses publicités Meta Ads à une agence spécialisée mariage ?",
       answer:
-        "Le marché du mariage a ses propres codes de ciblage : saisonnalité, intention d'achat, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. Nous optimisons vos Meta Ads (Facebook & Instagram) pour générer des leads qualifiés au coût le plus juste.",
+        "Le marché du mariage a ses propres codes de ciblage : saisonnalité, intention d'achat, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. J'optimise vos Meta Ads (Facebook & Instagram) pour générer des leads qualifiés au coût le plus juste.",
     },
     {
       question: "Pouvez-vous créer le site web de mon domaine de mariage ?",
       answer:
-        "Oui. Nous concevons des sites web vitrine et des sites de réservation sur-mesure pour lieux de réception et traiteurs mariage : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Nous prenons aussi en charge la refonte de sites existants.",
+        "Oui. Je conçois des sites web vitrine et des sites de réservation sur-mesure pour lieux de réception et traiteurs mariage : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Je prends aussi en charge la refonte de sites existants.",
     },
     {
       question: "Qu'est-ce qu'un guide digital pour un lieu de réception ou un traiteur ?",
@@ -113,12 +99,12 @@ const Partenariat = () => {
     {
       question: "La mise en avant Mariable est-elle incluse dans vos prestations ?",
       answer:
-        "Oui : la mise en avant éditoriale Mariable est incluse dans les formules Création de contenu et Community management. Elle reste également disponible en formule autonome pour les professionnels qui souhaitent uniquement gagner en visibilité auprès de notre communauté de futurs mariés.",
+        "Oui : la mise en avant éditoriale Mariable est systématiquement incluse dans toutes mes formules (Création de contenu, Community management, Développement digital). Elle vous fait bénéficier d'une publication éditoriale dédiée et d'une visibilité auprès de ma communauté de futurs mariés.",
     },
     {
       question: "Travaillez-vous partout en France ?",
       answer:
-        "Oui, nous accompagnons des lieux de réception et des traiteurs partout en France métropolitaine. Les tournages et shootings se font sur site, les volets community management, Meta Ads et développement digital sont pilotés à distance avec des points réguliers.",
+        "Oui, j'accompagne des lieux de réception et des traiteurs partout en France métropolitaine. Les tournages et shootings se font sur site, les volets community management, Meta Ads et développement digital sont pilotés à distance avec des points réguliers.",
     },
   ];
 
@@ -164,6 +150,21 @@ const Partenariat = () => {
       </Helmet>
       <PremiumHeader />
       <main className="min-h-screen">
+        {/* Top-left contact button under sticky header */}
+        <div className="px-4 pt-4">
+          <Button
+            asChild
+            variant="outline"
+            size="sm"
+            className="border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
+          >
+            <a href={`mailto:${CONTACT_EMAIL}`}>
+              <Mail className="w-4 h-4 mr-2" />
+              Nous contacter
+            </a>
+          </Button>
+        </div>
+
         {/* Hero */}
         <motion.section
           initial={{ opacity: 0 }}
@@ -182,22 +183,12 @@ const Partenariat = () => {
               Lieux de réception et traiteurs : nous créons votre image, votre présence digitale
               et vos outils en ligne pour attirer les couples qui vous ressemblent.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <div className="flex justify-center">
               <Button
                 onClick={scrollToExpertises}
                 className="bg-editorial-noir text-white hover:bg-editorial-noir/90"
               >
                 Voir les offres
-              </Button>
-              <Button
-                asChild
-                variant="outline"
-                className="border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
-              >
-                <a href={`mailto:${CONTACT_EMAIL}`}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Nous contacter
-                </a>
               </Button>
             </div>
           </div>
@@ -216,12 +207,12 @@ const Partenariat = () => {
                 Les services proposés
               </h2>
               <p className="text-editorial-noir/70 max-w-2xl mx-auto">
-                Quatre leviers pour construire votre image et votre présence digitale, à la
+                Trois leviers pour construire votre image et votre présence digitale, à la
                 carte ou en accompagnement complet.
               </p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {expertises.map((p, index) => (
                 <motion.article
                   key={p.title}
@@ -258,6 +249,26 @@ const Partenariat = () => {
                 </motion.article>
               ))}
             </div>
+
+            {/* Bandeau Mise en avant Mariable incluse */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-8 bg-premium-sage/10 border-l-4 border-premium-sage p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-4"
+            >
+              <Sparkles className="w-8 h-8 text-premium-sage shrink-0" />
+              <div>
+                <h3 className="text-lg md:text-xl font-serif text-editorial-noir mb-1">
+                  Mise en avant Mariable incluse dans chaque formule
+                </h3>
+                <p className="text-sm text-editorial-noir/70">
+                  Publication éditoriale dédiée, curation auprès de notre communauté et diffusion
+                  dans la newsletter +1000 futurs mariés — incluse systématiquement dans toutes mes
+                  prestations.
+                </p>
+              </div>
+            </motion.div>
           </div>
         </section>
 
@@ -323,8 +334,8 @@ const Partenariat = () => {
                 Parlons de votre projet
               </h2>
               <p className="text-editorial-noir/70 mb-8">
-                Pour toute demande — devis, partenariat, question — écrivez-nous directement.
-                Nous revenons vers vous sous 48h.
+                Pour toute demande — devis, partenariat, question — écrivez-moi directement.
+                Je reviens vers vous sous 48h.
               </p>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
