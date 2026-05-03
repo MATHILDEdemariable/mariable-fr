@@ -182,13 +182,7 @@ const Partenariat = () => {
               Lieux de réception et traiteurs : nous créons votre image, votre présence digitale
               et vos outils en ligne pour attirer les couples qui vous ressemblent.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                onClick={scrollToExpertises}
-                className="bg-editorial-noir text-white hover:bg-editorial-noir/90"
-              >
-                Découvrir les services
-              </Button>
+            <div className="flex justify-center">
               <Button
                 asChild
                 variant="outline"
