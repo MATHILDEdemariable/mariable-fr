@@ -249,6 +249,26 @@ const Partenariat = () => {
                 </motion.article>
               ))}
             </div>
+
+            {/* Bandeau Mise en avant Mariable incluse */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mt-8 bg-premium-sage/10 border-l-4 border-premium-sage p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-4"
+            >
+              <Sparkles className="w-8 h-8 text-premium-sage shrink-0" />
+              <div>
+                <h3 className="text-lg md:text-xl font-serif text-editorial-noir mb-1">
+                  Mise en avant Mariable incluse dans chaque formule
+                </h3>
+                <p className="text-sm text-editorial-noir/70">
+                  Publication éditoriale dédiée, curation auprès de notre communauté et diffusion
+                  dans la newsletter +1000 futurs mariés — incluse systématiquement dans toutes mes
+                  prestations.
+                </p>
+              </div>
+            </motion.div>
           </div>
         </section>
 
@@ -314,8 +334,8 @@ const Partenariat = () => {
                 Parlons de votre projet
               </h2>
               <p className="text-editorial-noir/70 mb-8">
-                Pour toute demande — devis, partenariat, question — écrivez-nous directement.
-                Nous revenons vers vous sous 48h.
+                Pour toute demande — devis, partenariat, question — écrivez-moi directement.
+                Je reviens vers vous sous 48h.
               </p>
               <a
                 href={`mailto:${CONTACT_EMAIL}`}
