@@ -213,7 +213,7 @@ const Partenariat = () => {
               className="text-center mb-12"
             >
               <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-4">
-                Nos expertises
+                Les services proposés
               </h2>
               <p className="text-editorial-noir/70 max-w-2xl mx-auto">
                 Quatre leviers pour construire votre image et votre présence digitale, à la
