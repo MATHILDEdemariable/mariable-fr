@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -863,7 +863,7 @@ const Budget = () => {
         title="Calculateur Budget Mariage Gratuit | Mariable"
         description="Calculez le budget de votre mariage gratuitement. Estimation par région, nombre d'invités et saison. Répartition détaillée par poste."
       />
-      <Header />
+      <PremiumHeader />
       <main className="container max-w-4xl px-4 py-6 md:py-8">
         <div className="text-center mb-6">
           <h1 className="text-2xl md:text-3xl font-serif mb-2">Calculatrice de budget mariage</h1>

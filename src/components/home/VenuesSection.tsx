@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { MapPin, Gift } from "lucide-react";
+import { MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -95,13 +95,6 @@ const VenuesSection = () => {
           </p>
         </motion.header>
 
-        {/* CTA Sélection personnalisée centré */}
-        <div className="flex justify-center mb-8">
-          <Button onClick={() => setIsCarnetModalOpen(true)} className="px-6 py-4 text-sm uppercase tracking-widest rounded-none bg-editorial-olive text-white hover:bg-editorial-olive/90">
-            <Gift className="w-4 h-4 mr-2" />
-            Sélection personnalisée offerte
-          </Button>
-        </div>
 
         {/* Mobile Filters */}
         <div className="lg:hidden mb-6 space-y-3">

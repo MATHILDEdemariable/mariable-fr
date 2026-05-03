@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Camera, Utensils, Music, Heart, ArrowRight, Users, Sparkles } from 'lucide-react';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
@@ -64,7 +64,7 @@ const MariageProvence = () => {
         </script>
       </SEO>
       
-      <Header />
+      <PremiumHeader />
       
       <main className="min-h-screen">
         {/* Hero Section */}

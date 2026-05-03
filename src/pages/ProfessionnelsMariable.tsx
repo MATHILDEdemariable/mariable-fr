@@ -1,218 +1,133 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import VendorCard from '@/components/vendors/VendorCard';
 import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
-import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, Plus, MessageCircle, CalendarCheck, ArrowRight, LayoutDashboard, HelpCircle } from 'lucide-react';
+import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, ArrowDown } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Database } from '@/integrations/supabase/types';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
-
 import CartIcon from '@/components/cart/CartIcon';
-import CarnetAdressesModal from '@/components/home/CarnetAdressesModal';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import { useAuth } from '@/contexts/AuthContext';
+
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
-const CATEGORY_CONFIG: {
-  value: PrestataireCategorie | 'Tous';
-  label: string;
-  icon: React.ReactNode;
-}[] = [{
-  value: 'Tous',
-  label: 'Tous',
-  icon: <Sparkles className="w-4 h-4" />
-}, {
-  value: 'Lieu de réception',
-  label: 'Lieux',
-  icon: <Building2 className="w-4 h-4" />
-}, {
-  value: 'Photographe',
-  label: 'Photo',
-  icon: <Camera className="w-4 h-4" />
-}, {
-  value: 'Vidéaste',
-  label: 'Vidéo',
-  icon: <Camera className="w-4 h-4" />
-}, {
-  value: 'Traiteur',
-  label: 'Traiteur',
-  icon: <Utensils className="w-4 h-4" />
-}, {
-  value: 'DJ',
-  label: 'DJ',
-  icon: <Music className="w-4 h-4" />
-}, {
-  value: 'Fleuriste',
-  label: 'Fleuriste',
-  icon: <Flower2 className="w-4 h-4" />
-}, {
-  value: 'Décoration',
-  label: 'Déco',
-  icon: <Palette className="w-4 h-4" />
-}, {
-  value: 'Mise en beauté',
-  label: 'Beauté',
-  icon: <Star className="w-4 h-4" />
-}, {
-  value: 'Robe de mariée',
-  label: 'Robes',
-  icon: <Gift className="w-4 h-4" />
-}, {
-  value: 'Voiture',
-  label: 'Voiture',
-  icon: <Car className="w-4 h-4" />
-}, {
-  value: 'Invités',
-  label: 'Invités',
-  icon: <Users className="w-4 h-4" />
-}, {
-  value: 'Coordination',
-  label: 'Coordination',
-  icon: <Calendar className="w-4 h-4" />
-}];
+
+const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; label: string; icon: React.ReactNode }[] = [
+  { value: 'Tous', label: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
+  { value: 'Lieu de réception', label: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
+  { value: 'Photographe', label: 'Photo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Vidéaste', label: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Traiteur', label: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
+  { value: 'DJ', label: 'DJ', icon: <Music className="w-4 h-4" /> },
+  { value: 'Fleuriste', label: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
+  { value: 'Décoration', label: 'Déco', icon: <Palette className="w-4 h-4" /> },
+  { value: 'Mise en beauté', label: 'Beauté', icon: <Star className="w-4 h-4" /> },
+  { value: 'Robe de mariée', label: 'Robes', icon: <Gift className="w-4 h-4" /> },
+  { value: 'Voiture', label: 'Voiture', icon: <Car className="w-4 h-4" /> },
+  { value: 'Invités', label: 'Invités', icon: <Users className="w-4 h-4" /> },
+  { value: 'Coordination', label: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
+];
+
 const ITEMS_PER_PAGE = 12;
 const REGIONS = ['France entière', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
 
-// Hero Section with background image
-const HeroSection = ({
-  onScrollToResults,
-  isLoggedIn
-
-
-
-}: {onScrollToResults: () => void;isLoggedIn: boolean;}) => <section className="relative min-h-[40vh] md:min-h-[50vh] flex items-center justify-center overflow-hidden">
-    {/* Background Image */}
-    <div className="absolute inset-0 bg-cover bg-center" style={{
-    backgroundImage: "url('https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/mariablestore.png')"
-  }} />
-    {/* Dark Overlay */}
-    <div className="absolute inset-0 bg-black/50" />
-    
-    <div className="relative z-10 text-center text-white px-4 py-8 md:py-12">
-      <motion.h1 initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.6
-    }} className="font-serif text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">Organisez facilement votre mariage</motion.h1>
-      
-      <motion.p initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.6,
-      delay: 0.1
-    }} className="text-base md:text-lg lg:text-xl max-w-2xl mx-auto mb-6 md:mb-8 text-white/90">Trouvez des prestataires parmi notre guide & utilisez les outils en ligne pour coordonner le jour-J</motion.p>
-
-      <motion.div initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.6,
-      delay: 0.2
-    }} className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
-        <Button size="lg" onClick={onScrollToResults} className="bg-editorial-noir text-white hover:bg-editorial-noir/80 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none shadow-lg w-full sm:w-auto">
-          Explorer les professionnels
-          <ArrowRight className="ml-2 w-5 h-5" />
-        </Button>
-        
-        <Button
-        size="lg"
-        variant="outline"
-        onClick={() => {
-          if (isLoggedIn) {
-            window.location.href = '/dashboard';
-          } else {
-            window.location.href = '/register?redirect=/dashboard';
-          }
-        }}
-        className="border-white/70 bg-white/10 text-white hover:bg-white/20 px-6 sm:px-8 py-5 sm:py-6 text-base sm:text-lg rounded-none backdrop-blur-sm w-full sm:w-auto">
-
-          <LayoutDashboard className="mr-2 w-5 h-5" />
-          Mes outils
-        </Button>
-      </motion.div>
+// Editorial Hero — magazine style
+const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void }) => (
+  <section className="relative bg-editorial-beige/40 pt-12 pb-16 md:pt-20 md:pb-24 px-4 overflow-hidden">
+    <div className="container max-w-5xl mx-auto text-center relative z-10">
+      <motion.span
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="inline-block text-xs uppercase tracking-[0.3em] text-premium-sage mb-6"
+      >
+        Le Guide Mariable
+      </motion.span>
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="font-serif text-4xl md:text-5xl lg:text-6xl text-editorial-noir leading-tight mb-6"
+      >
+        Notre sélection éditoriale<br />
+        <em className="italic font-serif text-premium-sage">de prestataires mariage</em>
+      </motion.h1>
+      <motion.p
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        className="font-sans text-base md:text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-10 leading-relaxed"
+      >
+        Lieux de caractère, traiteurs d'exception, photographes au regard juste.
+        Une sélection curatée à la main, loin des annuaires anonymes.
+      </motion.p>
+      <motion.button
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        onClick={onScrollToResults}
+        className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
+      >
+        Découvrir la sélection
+        <ArrowDown className="w-4 h-4" />
+      </motion.button>
     </div>
-  </section>;
+  </section>
+);
 
-// How It Works Section - Compact version with uniform design
-const HowItWorksSection = () => {
-  const steps = [{
-    step: "1",
-    icon: <Plus className="w-5 h-5" />,
-    title: "Ajoutez au panier",
-    description: "Pas trouvé ? Cliquez 'Sélection personnalisée'"
-  }, {
-    step: "2",
-    icon: <MessageCircle className="w-5 h-5" />,
-    title: "Contactez via la plateforme",
-    description: "Obtenez l'avantage Mariable (remise ou cadeau)"
-  }, {
-    step: "3",
-    icon: <CalendarCheck className="w-5 h-5" />,
-    title: "Réservez & envoyez le devis",
-    description: "Validez et envoyez pour recevoir l'avantage"
-  }];
-  return <section className="py-8 bg-white border-y border-border">
-      <div className="container max-w-5xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {steps.map((item, i) => <div key={i} className="flex items-start gap-4 text-left">
-              <div className="w-10 h-10 bg-editorial-noir text-white flex items-center justify-center text-base font-bold flex-shrink-0">
-                {item.step}
-              </div>
-              <div className="flex-1 min-h-[60px]">
-                <p className="font-semibold text-foreground text-sm mb-1">{item.title}</p>
-                <p className="text-xs text-muted-foreground leading-relaxed">{item.description}</p>
-              </div>
-              {i < steps.length - 1 && <ArrowRight className="hidden md:block w-5 h-5 text-editorial-noir/50 flex-shrink-0 mt-2" />}
-            </div>)}
-        </div>
-      </div>
-    </section>;
-};
+// Editorial Manifesto strip
+const ManifestoStrip = () => (
+  <section className="bg-white border-y border-editorial-noir/10 py-10 md:py-14 px-4">
+    <div className="container max-w-3xl mx-auto text-center">
+      <p className="font-serif text-xl md:text-2xl text-editorial-noir/80 italic leading-relaxed">
+        « Nous croyons qu'un mariage se construit avec des artisans choisis, pas avec un catalogue.
+        Chaque prestataire de cette page a été rencontré, vérifié et validé par notre équipe. »
+      </p>
+      <p className="mt-4 text-xs uppercase tracking-widest text-premium-sage">— L'équipe Mariable</p>
+    </div>
+  </section>
+);
 
-// Category Pills Filter
+// Editorial Category Pills (underline style)
 const CategoryPills = ({
   selected,
   onSelect,
-  categoryCounts
-
-
-
-
-}: {selected: PrestataireCategorie | 'Tous';onSelect: (cat: PrestataireCategorie | 'Tous') => void;categoryCounts: Record<string, number> | undefined;}) => {
-  // Filter categories to only show those with vendors (or "Tous")
-  const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || categoryCounts && (categoryCounts[cat.value] ?? 0) > 0);
-  return <ScrollArea className="w-full whitespace-nowrap">
-      <div className="flex gap-2 pb-4">
-        {visibleCategories.map((cat) => <button key={cat.value} onClick={() => onSelect(cat.value)} className={`
-              inline-flex items-center gap-2 px-4 py-2.5 text-sm font-medium
-              transition-all duration-200 whitespace-nowrap flex-shrink-0
-              ${selected === cat.value ? 'bg-editorial-noir text-white shadow-md' : 'bg-white border border-border text-muted-foreground hover:border-editorial-noir/50 hover:text-editorial-noir'}
-            `}>
+  categoryCounts,
+}: {
+  selected: PrestataireCategorie | 'Tous';
+  onSelect: (cat: PrestataireCategorie | 'Tous') => void;
+  categoryCounts: Record<string, number> | undefined;
+}) => {
+  const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0));
+  return (
+    <ScrollArea className="w-full whitespace-nowrap">
+      <div className="flex gap-1 md:gap-2 pb-4 justify-start md:justify-center">
+        {visibleCategories.map((cat) => (
+          <button
+            key={cat.value}
+            onClick={() => onSelect(cat.value)}
+            className={`
+              inline-flex items-center gap-2 px-3 md:px-5 py-3 text-xs md:text-sm uppercase tracking-wider
+              transition-all duration-200 whitespace-nowrap flex-shrink-0 border-b-2
+              ${selected === cat.value
+                ? 'border-premium-sage text-editorial-noir font-medium'
+                : 'border-transparent text-editorial-noir/50 hover:text-editorial-noir hover:border-editorial-noir/20'}
+            `}
+          >
             {cat.icon}
             {cat.label}
-          </button>)}
+          </button>
+        ))}
       </div>
       <ScrollBar orientation="horizontal" className="invisible" />
-    </ScrollArea>;
+    </ScrollArea>
+  );
 };
-
 
 const ProfessionnelsMariable = () => {
   const navigate = useNavigate();
@@ -222,198 +137,193 @@ const ProfessionnelsMariable = () => {
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [debouncedSearch] = useDebounce(search, 500);
-  const [showCarnetModal, setShowCarnetModal] = useState(false);
-  const { isAuthenticated } = useAuth();
 
-  // Fetch category counts to hide empty categories
-  const {
-    data: categoryCounts
-  } = useQuery({
+  const { data: categoryCounts } = useQuery({
     queryKey: ['category-counts'],
     queryFn: async () => {
-      const {
-        data
-      } = await supabase.from('prestataires_rows').select('categorie').eq('visible', true).not('categorie', 'is', null);
+      const { data } = await supabase.from('prestataires_rows').select('categorie').eq('visible', true).not('categorie', 'is', null);
       const counts: Record<string, number> = {};
       data?.forEach((p) => {
-        if (p.categorie) {
-          counts[p.categorie] = (counts[p.categorie] || 0) + 1;
-        }
+        if (p.categorie) counts[p.categorie] = (counts[p.categorie] || 0) + 1;
       });
       return counts;
     },
-    staleTime: 5 * 60 * 1000 // Cache for 5 minutes
+    staleTime: 5 * 60 * 1000,
   });
-  const {
-    data: vendorsData,
-    isLoading
-  } = useOptimizedVendors({
-    filters: {
-      search,
-      category,
-      region
-    },
+
+  const { data: vendorsData, isLoading } = useOptimizedVendors({
+    filters: { search, category, region },
     debouncedSearch,
-    initialLimit: 1000
+    initialLimit: 1000,
   });
+
   const vendors = vendorsData?.vendors || [];
   const totalPages = Math.ceil(vendors.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const currentVendors = vendors.slice(startIndex, endIndex);
+  const currentVendors = vendors.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Reset page when filters change
   React.useEffect(() => {
     setCurrentPage(1);
   }, [search, category, region]);
+
   const handleReset = () => {
     setSearch('');
     setCategory('Tous');
     setRegion(null);
   };
-  const scrollToResults = () => {
-    resultsRef.current?.scrollIntoView({
-      behavior: 'smooth'
-    });
-  };
+
+  const scrollToResults = () => resultsRef.current?.scrollIntoView({ behavior: 'smooth' });
   const hasActiveFilters = search || category !== 'Tous' || region;
-  return <>
+
+  return (
+    <>
       <Helmet>
-        <title>Tous les Professionnels de Mariage | Mariable</title>
-        <meta name="description" content="Découvrez notre sélection complète de prestataires de mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes et plus encore. Trouvez les meilleurs professionnels pour votre mariage." />
-        <meta name="keywords" content="prestataires mariage, professionnels mariage, lieu réception, traiteur mariage, photographe mariage" />
+        <title>Le guide des prestataires mariage | Mariable</title>
+        <meta name="description" content="Notre sélection éditoriale de prestataires mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes. Une curation à la main par l'équipe Mariable." />
+        <meta name="keywords" content="prestataires mariage, guide mariage, lieu réception, traiteur mariage, photographe mariage" />
       </Helmet>
 
       <PremiumHeader />
       <CartIcon />
-      
-      <main className="min-h-screen bg-[#efeee9] pt-16 md:pt-20">
-        {/* Hero */}
-        <HeroSection onScrollToResults={scrollToResults} isLoggedIn={isAuthenticated} />
 
-        {/* How It Works */}
-        
+      <main className="min-h-screen bg-white pt-16 md:pt-20">
+        <EditorialHero onScrollToResults={scrollToResults} />
+        <ManifestoStrip />
 
         {/* Results Section */}
-        <div ref={resultsRef} className="scroll-mt-20 py-12">
+        <div ref={resultsRef} className="scroll-mt-24 py-16 md:py-20 bg-white">
           <div className="container max-w-7xl mx-auto px-4">
-            {/* Search Bar */}
-            <motion.div initial={{
-            opacity: 0,
-            y: 20
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} viewport={{
-            once: true
-          }} className="max-w-2xl mx-auto mb-8">
-              <div className="relative">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <Input type="text" placeholder="Rechercher une marque ou un prestataire..." value={search} onChange={(e) => setSearch(e.target.value)} className="pl-12 pr-12 py-6 text-lg border-2 border-border focus:border-editorial-noir bg-white shadow-sm" />
-                {search && <button onClick={() => setSearch('')} className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground">
-                    <X className="h-5 w-5" />
-                  </button>}
-              </div>
-            </motion.div>
+            {/* Editorial section header */}
+            <div className="text-center mb-10">
+              <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">Sommaire</p>
+              <h2 className="font-serif text-3xl md:text-4xl text-editorial-noir">
+                Explorer le guide
+              </h2>
+            </div>
 
             {/* Category Pills */}
-            <div className="mb-8">
+            <div className="mb-8 border-b border-editorial-noir/10">
               <CategoryPills selected={category} onSelect={setCategory} categoryCounts={categoryCounts} />
             </div>
 
-            {/* Region Filter (optional - compact) */}
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-                <select value={region || 'all'} onChange={(e) => setRegion(e.target.value === 'all' ? null : e.target.value)} className="w-full sm:w-auto px-4 py-2 border border-border bg-white text-sm focus:outline-none focus:ring-2 focus:ring-editorial-noir/20">
-                  <option value="all">Toutes les régions</option>
-                  {REGIONS.map((reg) => <option key={reg} value={reg}>{reg}</option>)}
-                </select>
-
-                {hasActiveFilters && <Button variant="ghost" size="sm" onClick={handleReset} className="text-muted-foreground hover:text-foreground w-full sm:w-auto">
-                    <X className="h-4 w-4 mr-1" />
-                    Réinitialiser
-                  </Button>}
+            {/* Search + Region row */}
+            <div className="flex flex-col md:flex-row gap-3 mb-10 max-w-4xl mx-auto">
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-editorial-noir/40" />
+                <Input
+                  type="text"
+                  placeholder="Rechercher un prestataire, une marque..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-11 pr-10 py-5 text-sm bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 focus:border-editorial-noir rounded-none focus-visible:ring-0"
+                />
+                {search && (
+                  <button onClick={() => setSearch('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-editorial-noir/50 hover:text-editorial-noir">
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
               </div>
-
-              {/* Results Counter + Recherche personnalisée */}
-              {!isLoading && <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3">
-                  <p className="text-sm text-muted-foreground">
-                    <span className="font-semibold text-foreground">{vendors.length}</span> {vendors.length > 1 ? 'professionnels' : 'professionnel'}
-                  </p>
-                  <Button variant="outline" size="sm" onClick={() => setShowCarnetModal(true)} className="text-editorial-noir border-editorial-noir hover:bg-editorial-noir hover:text-white w-full sm:w-auto">
-                    <HelpCircle className="h-4 w-4 mr-1" />
-                    Sélection personnalisée
-                  </Button>
-                </div>}
+              <select
+                value={region || 'all'}
+                onChange={(e) => setRegion(e.target.value === 'all' ? null : e.target.value)}
+                className="px-4 py-3 bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 text-sm focus:outline-none focus:border-editorial-noir rounded-none"
+              >
+                <option value="all">Toutes les régions</option>
+                {REGIONS.map((reg) => <option key={reg} value={reg}>{reg}</option>)}
+              </select>
             </div>
 
-            {/* Vendors Grid */}
-            {isLoading ? <div className="flex justify-center items-center py-20">
-                <Loader2 className="h-10 w-10 animate-spin text-editorial-noir" />
-              </div> : vendors.length === 0 ? <div className="text-center py-20 bg-white border border-border">
-                <div className="w-16 h-16 bg-muted flex items-center justify-center mx-auto mb-4">
-                  <Search className="w-8 h-8 text-muted-foreground" />
-                </div>
-                <p className="text-lg text-muted-foreground mb-4">
-                  Aucun professionnel trouvé avec ces critères
+            {/* Counter + reset */}
+            {!isLoading && (
+              <div className="flex items-center justify-between mb-8 pb-3 border-b border-editorial-noir/10">
+                <p className="text-sm text-editorial-noir/60 italic font-serif">
+                  <span className="text-editorial-noir font-medium not-italic">{vendors.length}</span>
+                  {' '}{vendors.length > 1 ? 'prestataires sélectionnés' : 'prestataire sélectionné'}
                 </p>
-                <Button variant="outline" onClick={handleReset}>
+                {hasActiveFilters && (
+                  <Button variant="ghost" size="sm" onClick={handleReset} className="text-xs uppercase tracking-wider text-editorial-noir/60 hover:text-editorial-noir">
+                    <X className="h-3 w-3 mr-1" />
+                    Réinitialiser
+                  </Button>
+                )}
+              </div>
+            )}
+
+            {/* Vendors Grid */}
+            {isLoading ? (
+              <div className="flex justify-center items-center py-20">
+                <Loader2 className="h-8 w-8 animate-spin text-premium-sage" />
+              </div>
+            ) : vendors.length === 0 ? (
+              <div className="text-center py-20">
+                <p className="font-serif text-xl text-editorial-noir/70 italic mb-6">
+                  Aucun prestataire ne correspond à votre recherche.
+                </p>
+                <Button variant="outline" onClick={handleReset} className="rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white">
                   Réinitialiser les filtres
                 </Button>
-              </div> : <>
-                <motion.div initial={{
-              opacity: 0
-            }} animate={{
-              opacity: 1
-            }} transition={{
-              duration: 0.3
-            }} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6 mb-10">
-                  {currentVendors.map((vendor, index) => <motion.div key={vendor.id} initial={{
-                opacity: 0,
-                y: 20
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: index * 0.05,
-                duration: 0.3
-              }}>
+              </div>
+            ) : (
+              <>
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                  className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10 mb-16"
+                >
+                  {currentVendors.map((vendor, index) => (
+                    <motion.div
+                      key={vendor.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.04, duration: 0.3 }}
+                    >
                       <VendorCard vendor={vendor} onClick={() => navigate(`/prestataire/${vendor.slug || vendor.id}`)} />
-                    </motion.div>)}
+                    </motion.div>
+                  ))}
                 </motion.div>
 
                 {/* Pagination */}
-                {totalPages > 1 && <div className="flex justify-center items-center gap-2">
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1}>
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 pt-8 border-t border-editorial-noir/10">
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.max(1, p - 1))} disabled={currentPage === 1} className="rounded-none border-editorial-noir/20">
                       <ChevronLeft className="h-4 w-4" />
                     </Button>
-
                     <div className="flex gap-1">
-                      {Array.from({
-                  length: totalPages
-                }, (_, i) => i + 1).map((page) => {
-                  if (page === 1 || page === totalPages || page >= currentPage - 1 && page <= currentPage + 1) {
-                    return <Button key={page} variant={currentPage === page ? "default" : "outline"} size="sm" className={`min-w-[40px] ${currentPage === page ? "bg-editorial-noir hover:bg-editorial-noir/80" : ""}`} onClick={() => setCurrentPage(page)}>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
+                        if (page === 1 || page === totalPages || (page >= currentPage - 1 && page <= currentPage + 1)) {
+                          return (
+                            <Button
+                              key={page}
+                              variant={currentPage === page ? 'default' : 'outline'}
+                              size="sm"
+                              className={`min-w-[40px] rounded-none ${currentPage === page ? 'bg-editorial-noir hover:bg-editorial-noir/90' : 'border-editorial-noir/20'}`}
+                              onClick={() => setCurrentPage(page)}
+                            >
                               {page}
-                            </Button>;
-                  } else if (page === currentPage - 2 || page === currentPage + 2) {
-                    return <span key={page} className="px-2 py-2 text-muted-foreground">...</span>;
-                  }
-                  return null;
-                })}
+                            </Button>
+                          );
+                        }
+                        if (page === currentPage - 2 || page === currentPage + 2) {
+                          return <span key={page} className="px-2 py-2 text-editorial-noir/40">…</span>;
+                        }
+                        return null;
+                      })}
                     </div>
-
-                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>
+                    <Button variant="outline" size="sm" onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages} className="rounded-none border-editorial-noir/20">
                       <ChevronRight className="h-4 w-4" />
                     </Button>
-                  </div>}
-              </>}
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </main>
 
       <Footer />
-      <CarnetAdressesModal isOpen={showCarnetModal} onClose={() => setShowCarnetModal(false)} />
-    </>;
+    </>
+  );
 };
+
 export default ProfessionnelsMariable;
