@@ -54,8 +54,8 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6 }}
         className="font-serif text-4xl md:text-5xl lg:text-6xl text-editorial-noir leading-tight mb-6"
       >
-        Notre sélection éditoriale<br />
-        <em className="italic font-serif text-premium-sage">de prestataires mariage</em>
+        Sélection de professionnels<br />
+        <em className="italic font-serif text-premium-sage">et outils simples & personnalisables</em>
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: 20 }}
