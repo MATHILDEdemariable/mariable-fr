@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -18,27 +19,29 @@ import { supabase } from '@/integrations/supabase/client';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 
-const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; label: string; icon: React.ReactNode }[] = [
-  { value: 'Tous', label: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
-  { value: 'Lieu de réception', label: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
-  { value: 'Photographe', label: 'Photo', icon: <Camera className="w-4 h-4" /> },
-  { value: 'Vidéaste', label: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
-  { value: 'Traiteur', label: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
-  { value: 'DJ', label: 'DJ', icon: <Music className="w-4 h-4" /> },
-  { value: 'Fleuriste', label: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
-  { value: 'Décoration', label: 'Déco', icon: <Palette className="w-4 h-4" /> },
-  { value: 'Mise en beauté', label: 'Beauté', icon: <Star className="w-4 h-4" /> },
-  { value: 'Robe de mariée', label: 'Robes', icon: <Gift className="w-4 h-4" /> },
-  { value: 'Voiture', label: 'Voiture', icon: <Car className="w-4 h-4" /> },
-  { value: 'Invités', label: 'Invités', icon: <Users className="w-4 h-4" /> },
-  { value: 'Coordination', label: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
+const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; labelKey: string; icon: React.ReactNode }[] = [
+  { value: 'Tous', labelKey: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
+  { value: 'Lieu de réception', labelKey: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
+  { value: 'Photographe', labelKey: 'Photo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Vidéaste', labelKey: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Traiteur', labelKey: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
+  { value: 'DJ', labelKey: 'DJ', icon: <Music className="w-4 h-4" /> },
+  { value: 'Fleuriste', labelKey: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
+  { value: 'Décoration', labelKey: 'Déco', icon: <Palette className="w-4 h-4" /> },
+  { value: 'Mise en beauté', labelKey: 'Beauté', icon: <Star className="w-4 h-4" /> },
+  { value: 'Robe de mariée', labelKey: 'Robes', icon: <Gift className="w-4 h-4" /> },
+  { value: 'Voiture', labelKey: 'Voiture', icon: <Car className="w-4 h-4" /> },
+  { value: 'Invités', labelKey: 'Invités', icon: <Users className="w-4 h-4" /> },
+  { value: 'Coordination', labelKey: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
 ];
 
 const ITEMS_PER_PAGE = 12;
 const REGIONS = ['France entière', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
 
 // Editorial Hero — magazine style
-const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void }) => (
+const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void }) => {
+  const { t } = useTranslation('professionals');
+  return (
   <section className="relative bg-editorial-beige/40 pt-12 pb-16 md:pt-20 md:pb-24 px-4 overflow-hidden">
     <div className="container max-w-5xl mx-auto text-center relative z-10">
       <motion.span
@@ -46,7 +49,7 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         animate={{ opacity: 1, y: 0 }}
         className="inline-block text-xs uppercase tracking-[0.3em] text-premium-sage mb-6"
       >
-        Le Guide Mariable
+        {t('hero.eyebrow')}
       </motion.span>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
@@ -54,8 +57,8 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6 }}
         className="font-serif text-4xl md:text-5xl lg:text-6xl text-editorial-noir leading-tight mb-6"
       >
-        Sélection de professionnels<br />
-        <em className="italic font-serif text-premium-sage">et outils simples & personnalisables</em>
+        {t('hero.titleLine1')}<br />
+        <em className="italic font-serif text-premium-sage">{t('hero.titleLine2')}</em>
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: 20 }}
@@ -63,7 +66,7 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans text-base md:text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-10 leading-relaxed"
       >
-        Lieux de caractère, traiteurs d'exception, photographes au regard juste. Une curation de professionnels.
+        {t('hero.subtitle')}
       </motion.p>
       <motion.div
         initial={{ opacity: 0 }}
@@ -75,19 +78,20 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
           onClick={onScrollToResults}
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
         >
-          Découvrir la sélection
+          {t('hero.ctaSelection')}
           <ArrowDown className="w-4 h-4" />
         </button>
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-premium-sage border-b border-premium-sage/40 pb-1 hover:border-premium-sage transition-colors"
         >
-          Découvrir les outils gratuits
+          {t('hero.ctaTools')}
         </Link>
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 
 
