@@ -18,6 +18,10 @@ const LanguageToggle: React.FC<LanguageToggleProps> = ({ variant = 'dark', class
 
   const setLang = (lng: 'fr' | 'en') => {
     if (lng === current) return;
+    try {
+      window.localStorage.setItem('mariable_lang', lng);
+    } catch {}
+    document.documentElement.lang = lng;
     i18n.changeLanguage(lng);
   };
 
