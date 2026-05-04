@@ -133,6 +133,7 @@ const CategoryPills = ({
 };
 
 const ProfessionnelsMariable = () => {
+  const { t } = useTranslation('professionals');
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
@@ -181,9 +182,9 @@ const ProfessionnelsMariable = () => {
   return (
     <>
       <Helmet>
-        <title>Le guide des prestataires mariage | Mariable</title>
-        <meta name="description" content="Notre sélection éditoriale de prestataires mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes. Une curation à la main par l'équipe Mariable." />
-        <meta name="keywords" content="prestataires mariage, guide mariage, lieu réception, traiteur mariage, photographe mariage" />
+        <title>{t('seo.title')}</title>
+        <meta name="description" content={t('seo.description')} />
+        <meta name="keywords" content={t('seo.keywords')} />
       </Helmet>
 
       <PremiumHeader />
@@ -198,9 +199,9 @@ const ProfessionnelsMariable = () => {
           <div className="container max-w-7xl mx-auto px-4">
             {/* Editorial section header */}
             <div className="text-center mb-10">
-              <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">Sommaire</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">{t('guide.eyebrow')}</p>
               <h2 className="font-serif text-3xl md:text-4xl text-editorial-noir">
-                Explorer le guide
+                {t('guide.title')}
               </h2>
             </div>
 
@@ -215,7 +216,7 @@ const ProfessionnelsMariable = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-editorial-noir/40" />
                 <Input
                   type="text"
-                  placeholder="Rechercher un prestataire, une marque..."
+                  placeholder={t('guide.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-11 pr-10 py-5 text-sm bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 focus:border-editorial-noir rounded-none focus-visible:ring-0"
@@ -231,7 +232,7 @@ const ProfessionnelsMariable = () => {
                 onChange={(e) => setRegion(e.target.value === 'all' ? null : e.target.value)}
                 className="px-4 py-3 bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 text-sm focus:outline-none focus:border-editorial-noir rounded-none"
               >
-                <option value="all">Toutes les régions</option>
+                <option value="all">{t('guide.allRegions')}</option>
                 {REGIONS.map((reg) => <option key={reg} value={reg}>{reg}</option>)}
               </select>
             </div>
@@ -240,13 +241,14 @@ const ProfessionnelsMariable = () => {
             {!isLoading && (
               <div className="flex items-center justify-between mb-8 pb-3 border-b border-editorial-noir/10">
                 <p className="text-sm text-editorial-noir/60 italic font-serif">
-                  <span className="text-editorial-noir font-medium not-italic">{vendors.length}</span>
-                  {' '}{vendors.length > 1 ? 'prestataires sélectionnés' : 'prestataire sélectionné'}
+                  {vendors.length > 1
+                    ? t('guide.countOther', { count: vendors.length })
+                    : t('guide.countOne', { count: vendors.length })}
                 </p>
                 {hasActiveFilters && (
                   <Button variant="ghost" size="sm" onClick={handleReset} className="text-xs uppercase tracking-wider text-editorial-noir/60 hover:text-editorial-noir">
                     <X className="h-3 w-3 mr-1" />
-                    Réinitialiser
+                    {t('guide.reset')}
                   </Button>
                 )}
               </div>
@@ -260,10 +262,10 @@ const ProfessionnelsMariable = () => {
             ) : vendors.length === 0 ? (
               <div className="text-center py-20">
                 <p className="font-serif text-xl text-editorial-noir/70 italic mb-6">
-                  Aucun prestataire ne correspond à votre recherche.
+                  {t('guide.emptyTitle')}
                 </p>
                 <Button variant="outline" onClick={handleReset} className="rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white">
-                  Réinitialiser les filtres
+                  {t('guide.resetFilters')}
                 </Button>
               </div>
             ) : (
