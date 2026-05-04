@@ -3,29 +3,31 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Sparkles, ClipboardList, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 const PremiumProcessSection = () => {
+  const { t } = useTranslation('home');
   const steps = [{
     id: 1,
     icon: Sparkles,
-    title: "S'INSPIRER",
-    description: "Notre sélection exclusive de prestataires d'exception",
-    cta: "Explorer nos prestataires",
+    title: t('process.steps.inspire.title'),
+    description: t('process.steps.inspire.description'),
+    cta: t('process.steps.inspire.cta'),
     link: "/selection",
     gradient: "from-premium-sage to-premium-sage-medium"
   }, {
     id: 2,
     icon: ClipboardList,
-    title: "ORGANISER",
-    description: "Vos outils de planification inclus",
-    cta: "Créer mon planning gratuit",
+    title: t('process.steps.organize.title'),
+    description: t('process.steps.organize.description'),
+    cta: t('process.steps.organize.cta'),
     link: "/register",
     gradient: "from-premium-sage-medium to-premium-sage-light"
   }, {
     id: 3,
     icon: Calendar,
-    title: "PROFITER",
-    description: "Coordination Jour-J en trois clics grâce à notre appli dédiée",
-    cta: "Découvrir la coordination",
+    title: t('process.steps.enjoy.title'),
+    description: t('process.steps.enjoy.description'),
+    cta: t('process.steps.enjoy.cta'),
     link: "/coordination-jour-j",
     gradient: "from-premium-sage-light to-premium-sage"
   }];
@@ -33,9 +35,9 @@ const PremiumProcessSection = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-premium-black mb-4 md:text-4xl">
-            Organisez vous-même
+            {t('process.titleLine1')}
             <br />
-            <span className="text-premium-sage">et faites de votre mariage une expérience exceptionnelle</span>
+            <span className="text-premium-sage">{t('process.titleLine2')}</span>
           </h2>
         </div>
 
