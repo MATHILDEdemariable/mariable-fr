@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
@@ -18,27 +19,29 @@ import { supabase } from '@/integrations/supabase/client';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 
-const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; label: string; icon: React.ReactNode }[] = [
-  { value: 'Tous', label: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
-  { value: 'Lieu de réception', label: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
-  { value: 'Photographe', label: 'Photo', icon: <Camera className="w-4 h-4" /> },
-  { value: 'Vidéaste', label: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
-  { value: 'Traiteur', label: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
-  { value: 'DJ', label: 'DJ', icon: <Music className="w-4 h-4" /> },
-  { value: 'Fleuriste', label: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
-  { value: 'Décoration', label: 'Déco', icon: <Palette className="w-4 h-4" /> },
-  { value: 'Mise en beauté', label: 'Beauté', icon: <Star className="w-4 h-4" /> },
-  { value: 'Robe de mariée', label: 'Robes', icon: <Gift className="w-4 h-4" /> },
-  { value: 'Voiture', label: 'Voiture', icon: <Car className="w-4 h-4" /> },
-  { value: 'Invités', label: 'Invités', icon: <Users className="w-4 h-4" /> },
-  { value: 'Coordination', label: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
+const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; labelKey: string; icon: React.ReactNode }[] = [
+  { value: 'Tous', labelKey: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
+  { value: 'Lieu de réception', labelKey: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
+  { value: 'Photographe', labelKey: 'Photo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Vidéaste', labelKey: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
+  { value: 'Traiteur', labelKey: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
+  { value: 'DJ', labelKey: 'DJ', icon: <Music className="w-4 h-4" /> },
+  { value: 'Fleuriste', labelKey: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
+  { value: 'Décoration', labelKey: 'Déco', icon: <Palette className="w-4 h-4" /> },
+  { value: 'Mise en beauté', labelKey: 'Beauté', icon: <Star className="w-4 h-4" /> },
+  { value: 'Robe de mariée', labelKey: 'Robes', icon: <Gift className="w-4 h-4" /> },
+  { value: 'Voiture', labelKey: 'Voiture', icon: <Car className="w-4 h-4" /> },
+  { value: 'Invités', labelKey: 'Invités', icon: <Users className="w-4 h-4" /> },
+  { value: 'Coordination', labelKey: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
 ];
 
 const ITEMS_PER_PAGE = 12;
 const REGIONS = ['France entière', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
 
 // Editorial Hero — magazine style
-const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void }) => (
+const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void }) => {
+  const { t } = useTranslation('professionals');
+  return (
   <section className="relative bg-editorial-beige/40 pt-12 pb-16 md:pt-20 md:pb-24 px-4 overflow-hidden">
     <div className="container max-w-5xl mx-auto text-center relative z-10">
       <motion.span
@@ -46,7 +49,7 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         animate={{ opacity: 1, y: 0 }}
         className="inline-block text-xs uppercase tracking-[0.3em] text-premium-sage mb-6"
       >
-        Le Guide Mariable
+        {t('hero.eyebrow')}
       </motion.span>
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
@@ -54,8 +57,8 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6 }}
         className="font-serif text-4xl md:text-5xl lg:text-6xl text-editorial-noir leading-tight mb-6"
       >
-        Sélection de professionnels<br />
-        <em className="italic font-serif text-premium-sage">et outils simples & personnalisables</em>
+        {t('hero.titleLine1')}<br />
+        <em className="italic font-serif text-premium-sage">{t('hero.titleLine2')}</em>
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, y: 20 }}
@@ -63,7 +66,7 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
         transition={{ duration: 0.6, delay: 0.1 }}
         className="font-sans text-base md:text-lg text-editorial-noir/70 max-w-2xl mx-auto mb-10 leading-relaxed"
       >
-        Lieux de caractère, traiteurs d'exception, photographes au regard juste. Une curation de professionnels.
+        {t('hero.subtitle')}
       </motion.p>
       <motion.div
         initial={{ opacity: 0 }}
@@ -75,19 +78,20 @@ const EditorialHero = ({ onScrollToResults }: { onScrollToResults: () => void })
           onClick={onScrollToResults}
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-editorial-noir border-b border-editorial-noir/40 pb-1 hover:border-editorial-noir transition-colors"
         >
-          Découvrir la sélection
+          {t('hero.ctaSelection')}
           <ArrowDown className="w-4 h-4" />
         </button>
         <Link
           to="/dashboard"
           className="inline-flex items-center gap-2 text-sm uppercase tracking-widest text-premium-sage border-b border-premium-sage/40 pb-1 hover:border-premium-sage transition-colors"
         >
-          Découvrir les outils gratuits
+          {t('hero.ctaTools')}
         </Link>
       </motion.div>
     </div>
   </section>
-);
+  );
+};
 
 
 
@@ -101,6 +105,7 @@ const CategoryPills = ({
   onSelect: (cat: PrestataireCategorie | 'Tous') => void;
   categoryCounts: Record<string, number> | undefined;
 }) => {
+  const { t } = useTranslation('professionals');
   const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0));
   return (
     <ScrollArea className="w-full whitespace-nowrap">
@@ -118,7 +123,7 @@ const CategoryPills = ({
             `}
           >
             {cat.icon}
-            {cat.label}
+            {t(`categories.${cat.labelKey}`)}
           </button>
         ))}
       </div>
@@ -128,6 +133,7 @@ const CategoryPills = ({
 };
 
 const ProfessionnelsMariable = () => {
+  const { t } = useTranslation('professionals');
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
@@ -176,9 +182,9 @@ const ProfessionnelsMariable = () => {
   return (
     <>
       <Helmet>
-        <title>Le guide des prestataires mariage | Mariable</title>
-        <meta name="description" content="Notre sélection éditoriale de prestataires mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes. Une curation à la main par l'équipe Mariable." />
-        <meta name="keywords" content="prestataires mariage, guide mariage, lieu réception, traiteur mariage, photographe mariage" />
+        <title>{t('seo.title')}</title>
+        <meta name="description" content={t('seo.description')} />
+        <meta name="keywords" content={t('seo.keywords')} />
       </Helmet>
 
       <PremiumHeader />
@@ -193,9 +199,9 @@ const ProfessionnelsMariable = () => {
           <div className="container max-w-7xl mx-auto px-4">
             {/* Editorial section header */}
             <div className="text-center mb-10">
-              <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">Sommaire</p>
+              <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">{t('guide.eyebrow')}</p>
               <h2 className="font-serif text-3xl md:text-4xl text-editorial-noir">
-                Explorer le guide
+                {t('guide.title')}
               </h2>
             </div>
 
@@ -210,7 +216,7 @@ const ProfessionnelsMariable = () => {
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-editorial-noir/40" />
                 <Input
                   type="text"
-                  placeholder="Rechercher un prestataire, une marque..."
+                  placeholder={t('guide.searchPlaceholder')}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="pl-11 pr-10 py-5 text-sm bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 focus:border-editorial-noir rounded-none focus-visible:ring-0"
@@ -226,7 +232,7 @@ const ProfessionnelsMariable = () => {
                 onChange={(e) => setRegion(e.target.value === 'all' ? null : e.target.value)}
                 className="px-4 py-3 bg-editorial-beige/30 border-0 border-b border-editorial-noir/20 text-sm focus:outline-none focus:border-editorial-noir rounded-none"
               >
-                <option value="all">Toutes les régions</option>
+                <option value="all">{t('guide.allRegions')}</option>
                 {REGIONS.map((reg) => <option key={reg} value={reg}>{reg}</option>)}
               </select>
             </div>
@@ -235,13 +241,14 @@ const ProfessionnelsMariable = () => {
             {!isLoading && (
               <div className="flex items-center justify-between mb-8 pb-3 border-b border-editorial-noir/10">
                 <p className="text-sm text-editorial-noir/60 italic font-serif">
-                  <span className="text-editorial-noir font-medium not-italic">{vendors.length}</span>
-                  {' '}{vendors.length > 1 ? 'prestataires sélectionnés' : 'prestataire sélectionné'}
+                  {vendors.length > 1
+                    ? t('guide.countOther', { count: vendors.length })
+                    : t('guide.countOne', { count: vendors.length })}
                 </p>
                 {hasActiveFilters && (
                   <Button variant="ghost" size="sm" onClick={handleReset} className="text-xs uppercase tracking-wider text-editorial-noir/60 hover:text-editorial-noir">
                     <X className="h-3 w-3 mr-1" />
-                    Réinitialiser
+                    {t('guide.reset')}
                   </Button>
                 )}
               </div>
@@ -255,10 +262,10 @@ const ProfessionnelsMariable = () => {
             ) : vendors.length === 0 ? (
               <div className="text-center py-20">
                 <p className="font-serif text-xl text-editorial-noir/70 italic mb-6">
-                  Aucun prestataire ne correspond à votre recherche.
+                  {t('guide.emptyTitle')}
                 </p>
                 <Button variant="outline" onClick={handleReset} className="rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white">
-                  Réinitialiser les filtres
+                  {t('guide.resetFilters')}
                 </Button>
               </div>
             ) : (

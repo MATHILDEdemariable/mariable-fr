@@ -1,0 +1,72 @@
+{
+  "seo": {
+    "title": "Tarifs Mariable – Gratuit ou Premium 29 €",
+    "description": "Mariable est gratuit. Le compte Premium coûte 29 € (achat unique, accès à vie). Checklist IA, budget, coordination jour-J, plan de table et exports illimités."
+  },
+  "hero": {
+    "title": "Nos tarifs",
+    "subtitle": "Toutes les fonctionnalités sont gratuites. Le Premium lève les dernières limites — 29 €, une seule fois, accès à vie."
+  },
+  "plans": {
+    "free": {
+      "name": "Gratuit",
+      "price": "0 €",
+      "tagline": "Pour bien démarrer",
+      "allFeatures": "Toutes les fonctionnalités incluses",
+      "limitsLabel": "Limitations",
+      "limit1": "Exports PDF : non inclus",
+      "limit2": "Guides mariage PDF : non inclus",
+      "limit3": "IA : 1 génération par outil",
+      "limit4": "Budget : 3 lignes par catégorie",
+      "cta": "S'inscrire gratuitement"
+    },
+    "premium": {
+      "badge": "⭐ RECOMMANDÉ",
+      "name": "Premium",
+      "price": "29 €",
+      "tagline": "Achat unique · Accès à vie",
+      "all": "Tout le Gratuit, sans aucune limitation",
+      "feature1": "Exports PDF/CSV illimités",
+      "feature2": "+ 10 guides mariage & checklists PDF",
+      "feature2Detail": "Guide jour-J · Organisation débutant · Guide prestataires · Checklist marié(e)s & proches · Checklist mairie & cérémonie",
+      "feature3": "IA illimitée",
+      "feature4": "Budget illimité",
+      "feature5": "Stockage documents illimité",
+      "feature6": "Support prioritaire",
+      "cta": "Passer au Premium",
+      "ctaLoading": "Chargement..."
+    }
+  },
+  "comparison": {
+    "rows": [
+      { "name": "Toutes les fonctionnalités (checklist, RSVP, plan de table, coordination jour-J…)", "free": "✓", "premium": "✓" },
+      { "name": "Exports PDF/CSV des modules", "free": "Non inclus", "premium": "Illimités" },
+      { "name": "Guides mariage & checklists PDF (10 guides)", "free": "Non inclus", "premium": "+ 10 guides inclus" },
+      { "name": "Utilisation IA (checklist, rétroplanning, moodboard)", "free": "1 génération par outil", "premium": "Illimitée" },
+      { "name": "Gestion budget (lignes par catégorie)", "free": "3 lignes max", "premium": "Illimitée" },
+      { "name": "Stockage documents", "free": "2 documents", "premium": "Illimité" },
+      { "name": "Support prioritaire", "free": "Non inclus", "premium": "Inclus" }
+    ]
+  },
+  "faq": {
+    "title": "Questions fréquentes sur nos tarifs",
+    "items": [
+      { "question": "Mariable est-il vraiment gratuit ?", "answer": "Oui, toutes les fonctionnalités sont accessibles gratuitement : checklist, budget, RSVP, plan de table, coordination jour-J, guide prestataires. Seuls les exports PDF, les guides, l'IA illimitée et le budget illimité nécessitent le Premium." },
+      { "question": "Que contient le compte Premium à 29 € ?", "answer": "Le Premium est un achat unique à 29 € qui lève toutes les limitations : exports PDF/CSV illimités, IA illimitée, gestion budget sans limite de lignes, guides mariage PDF, stockage documents illimité et support prioritaire." },
+      { "question": "Est-ce un abonnement ou un paiement unique ?", "answer": "C'est un paiement unique de 29 €. Pas d'abonnement, pas de renouvellement automatique. Vous payez une seule fois et gardez l'accès à vie." },
+      { "question": "Puis-je utiliser l'app avec ma famille ?", "answer": "Oui, l'application est faite pour être collaborative. Chacun peut accéder au planning et aux informations importantes grâce au partage en temps réel." },
+      { "question": "Puis-je passer au Premium plus tard ?", "answer": "Oui, vous pouvez passer au Premium à tout moment. Votre compte gratuit est conservé et toutes vos données sont préservées lors de l'upgrade." }
+    ]
+  },
+  "finalCta": {
+    "title": "Prêt(e) à organiser votre mariage en toute sérénité ?",
+    "subtitle": "Commencez gratuitement ou passez au Premium pour lever toutes les limites.",
+    "free": "Commencer gratuitement",
+    "premium": "Découvrir le Premium — 29 €"
+  },
+  "errors": {
+    "title": "Erreur",
+    "checkout": "Impossible de créer la session de paiement.",
+    "generic": "Une erreur est survenue."
+  }
+}

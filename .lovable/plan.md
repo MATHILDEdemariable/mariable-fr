@@ -1,84 +1,43 @@
-## Objectif
-Ajouter une traduction FR/EN du site avec un toggle de langue, en commençant par les pages publiques clés (`/`, `/professionnelsmariable`, `/prix`) puis le dashboard et ses modules.
+# Compléter la traduction FR/EN
 
-## Faisabilité
-Oui, c'est tout à fait possible. Aucun système i18n n'est actuellement installé dans le projet (pas de `react-i18next`, pas de fichiers de traduction). Il faut donc partir de zéro.
+## Constat
 
-⚠️ **Point d'attention important** : le site contient **plus de 200 pages/composants** avec du texte français codé en dur partout (titres, descriptions, boutons, FAQ, formulaires, emails, SEO meta, schémas JSON-LD, contenus blog, etc.). Une traduction **complète** représente un travail colossal (plusieurs milliers de chaînes). Je propose donc une approche **progressive et pragmatique**.
+- **Home `/`** : déjà traduite (toutes les sections `Premium*` utilisent `useTranslation`). Si le contenu reste en FR au clic du toggle, c'est un bug d'affichage à diagnostiquer (cache `localStorage` `mariable_lang`, namespace mal chargé, ou clé manquante ponctuelle).
+- **`/prix` (Prix.tsx, 337 lignes)** : aucun appel à `useTranslation`. Tout le texte est hardcodé en FR.
+- **`/professionnelsmariable` (ProfessionnelsMariable.tsx, 327 lignes)** : idem, aucun i18n.
 
-## Approche recommandée : progressive en 3 phases
+## Plan
 
-### Phase 1 — Infrastructure i18n (fondation technique)
-- Installer `react-i18next` + `i18next` + `i18next-browser-languagedetector`
-- Créer la structure de fichiers de traduction :
-  ```
-  src/i18n/
-    ├── index.ts              (config)
-    ├── locales/
-    │   ├── fr/
-    │   │   ├── common.json   (header, footer, boutons génériques)
-    │   │   ├── home.json
-    │   │   ├── pricing.json
-    │   │   ├── professionnels.json
-    │   │   └── dashboard.json
-    │   └── en/
-    │       └── (mêmes fichiers)
-  ```
-- Créer un composant `LanguageToggle` (FR/EN) à intégrer dans le `PremiumHeader` et le header dashboard
-- Persister le choix dans `localStorage` + détection automatique du navigateur
-- Mettre à jour l'attribut `<html lang="">` dynamiquement
-- Ajouter les balises SEO `hreflang` dans le composant `SEO.tsx`
+### 1. Audit rapide de la home (`/`)
+- Vérifier en preview que le toggle EN bascule bien le texte des sections Hero, Process, Marketplace, Tools, Coordination, Testimonials, FinalCTA.
+- Si une section reste en FR : compléter les clés manquantes dans `home.json` (FR + EN).
+- Vérifier que `LanguageToggle` persiste bien dans `localStorage` (`mariable_lang`).
 
-### Phase 2 — Pages publiques prioritaires
-Traduction complète de :
-1. **`/` (Index.tsx)** — tous les composants `Premium*Section` (Hero, Process, Marketplace, Tools, Coordination, Testimonials, FinalCTA) + `PremiumHeader` + `Footer`
-2. **`/professionnelsmariable`** (`ProfessionnelsMariable.tsx`)
-3. **`/prix`** (`Prix.tsx` + `Pricing.tsx`)
-4. SEO meta tags (titles, descriptions) traduits pour ces pages
+### 2. Page `/prix`
+- Créer 2 fichiers : `src/i18n/locales/fr/pricing.json` et `src/i18n/locales/en/pricing.json`.
+- Enregistrer le namespace `pricing` dans `src/i18n/index.ts`.
+- Refactoriser `src/pages/Prix.tsx` pour utiliser `useTranslation('pricing')` sur tous les textes (titre, sous-titre, plans Free/Premium, features, CTA, FAQ, etc.).
+- Garder le SEO dynamique (titre/description) via `useTranslation`.
 
-### Phase 3 — Dashboard et modules
-Le dashboard contient ~30 modules (checklist, budget, planning, seating-plan, RSVP, moodboard, documents, etc.). Traduction de :
-- Sidebar / navigation dashboard
-- `UserDashboard.tsx`
-- Chaque module un par un (à prioriser ensemble)
-- ⚠️ Les **données utilisateur** (noms d'invités, tâches custom, notes) restent dans la langue saisie — seule l'**UI** est traduite.
+### 3. Page `/professionnelsmariable`
+- Créer 2 fichiers : `src/i18n/locales/fr/professionals.json` et `src/i18n/locales/en/professionals.json`.
+- Enregistrer le namespace `professionals` dans `src/i18n/index.ts`.
+- Refactoriser `src/pages/ProfessionnelsMariable.tsx` pour utiliser `useTranslation('professionals')` sur tous les textes (hero, bénéfices, témoignages pros, formulaire d'inscription, FAQ, CTA).
+- Préserver l'intégralité de la logique business (formulaires, soumission, validation) — uniquement remplacement des strings.
 
-## Hors périmètre (à confirmer)
-Éléments qui resteront en français sauf demande explicite ultérieure :
-- Articles de blog (contenu rédactionnel volumineux)
-- Pages SEO régionales (`/mariage-paris`, `/mariage-bretagne`...)
-- Emails transactionnels (edge functions Supabase)
-- Pages admin
-- Contenu généré par l'IA (chatbot, assistant) — nécessiterait d'adapter les prompts
-- CGV / mentions légales (juridique FR)
-- Données BDD (descriptions prestataires, etc.)
+### 4. Validation
+- Tester le toggle FR/EN sur les 3 pages (`/`, `/prix`, `/professionnelsmariable`).
+- Vérifier qu'aucun texte ne reste en FR quand EN est sélectionné, et inversement.
+- Vérifier que les meta SEO (`title`, `description`) basculent aussi.
+
+## Hors périmètre
+
+- Dashboard et ses modules (Phase 3 future).
+- Blog, pages régionales, pages légales (restent FR uniquement comme convenu).
+- Pages prestataires individuelles, mini-sites mariage.
 
 ## Détails techniques
 
-**Exemple d'usage dans un composant :**
-```tsx
-import { useTranslation } from 'react-i18next';
-
-const PremiumHeroSection = () => {
-  const { t } = useTranslation('home');
-  return <h1>{t('hero.title')}</h1>;
-};
-```
-
-**Structure JSON :**
-```json
-// src/i18n/locales/fr/home.json
-{
-  "hero": {
-    "title": "L'organisation mariage facile",
-    "cta": "Commencer"
-  }
-}
-```
-
-**Toggle UI :** bouton compact `FR | EN` dans le header, accessible (aria-label), avec persistance `localStorage`.
-
-## Questions avant de démarrer
-1. **Périmètre Phase 1** : OK pour démarrer uniquement par l'infrastructure + les 3 pages (`/`, `/professionnelsmariable`, `/prix`) dans un premier temps, puis livrer le dashboard dans un second message ? (recommandé pour éviter une seule livraison massive et risquée)
-2. **Qualité des traductions EN** : je génère les traductions anglaises moi-même (qualité correcte mais à relire), ou tu préfères fournir un glossaire / faire relire par un traducteur ?
-3. **Blog & pages régionales** : on les laisse en FR uniquement ?
+- Génération des traductions EN par l'IA (qualité standard, à relire si besoin).
+- Conservation stricte des clés métier, classes Tailwind, et de la structure DOM (zéro impact visuel hors texte).
+- Aucune modification de logique métier, formulaires, ou appels Supabase.
