@@ -1,0 +1,72 @@
+{
+  "seo": {
+    "title": "Mariable Pricing – Free or Premium €29",
+    "description": "Mariable is free. Premium costs €29 (one-time purchase, lifetime access). AI checklist, budget, day-of coordination, seating plan and unlimited exports."
+  },
+  "hero": {
+    "title": "Our pricing",
+    "subtitle": "All features are free. Premium lifts the last limits — €29, one-time, lifetime access."
+  },
+  "plans": {
+    "free": {
+      "name": "Free",
+      "price": "€0",
+      "tagline": "To get started",
+      "allFeatures": "All features included",
+      "limitsLabel": "Limitations",
+      "limit1": "PDF exports: not included",
+      "limit2": "Wedding PDF guides: not included",
+      "limit3": "AI: 1 generation per tool",
+      "limit4": "Budget: 3 lines per category",
+      "cta": "Sign up for free"
+    },
+    "premium": {
+      "badge": "⭐ RECOMMENDED",
+      "name": "Premium",
+      "price": "€29",
+      "tagline": "One-time purchase · Lifetime access",
+      "all": "Everything in Free, with no limits",
+      "feature1": "Unlimited PDF/CSV exports",
+      "feature2": "+ 10 wedding guides & PDF checklists",
+      "feature2Detail": "Day-of guide · Beginner planning · Vendor guide · Couples & close ones checklist · City hall & ceremony checklist",
+      "feature3": "Unlimited AI",
+      "feature4": "Unlimited budget",
+      "feature5": "Unlimited document storage",
+      "feature6": "Priority support",
+      "cta": "Go Premium",
+      "ctaLoading": "Loading..."
+    }
+  },
+  "comparison": {
+    "rows": [
+      { "name": "All features (checklist, RSVP, seating plan, day-of coordination…)", "free": "✓", "premium": "✓" },
+      { "name": "PDF/CSV exports of modules", "free": "Not included", "premium": "Unlimited" },
+      { "name": "Wedding guides & PDF checklists (10 guides)", "free": "Not included", "premium": "+ 10 guides included" },
+      { "name": "AI usage (checklist, planning, moodboard)", "free": "1 generation per tool", "premium": "Unlimited" },
+      { "name": "Budget management (lines per category)", "free": "3 lines max", "premium": "Unlimited" },
+      { "name": "Document storage", "free": "2 documents", "premium": "Unlimited" },
+      { "name": "Priority support", "free": "Not included", "premium": "Included" }
+    ]
+  },
+  "faq": {
+    "title": "Frequently asked questions about pricing",
+    "items": [
+      { "question": "Is Mariable really free?", "answer": "Yes, all features are accessible for free: checklist, budget, RSVP, seating plan, day-of coordination, vendor guide. Only PDF exports, guides, unlimited AI and unlimited budget require Premium." },
+      { "question": "What's included in the €29 Premium account?", "answer": "Premium is a one-time €29 purchase that removes all limitations: unlimited PDF/CSV exports, unlimited AI, unlimited budget, PDF wedding guides, unlimited document storage and priority support." },
+      { "question": "Is it a subscription or a one-time payment?", "answer": "It's a one-time €29 payment. No subscription, no automatic renewal. You pay once and keep access for life." },
+      { "question": "Can I use the app with my family?", "answer": "Yes, the app is built to be collaborative. Everyone can access the planning and key information thanks to real-time sharing." },
+      { "question": "Can I upgrade to Premium later?", "answer": "Yes, you can upgrade to Premium at any time. Your free account is kept and all your data is preserved during the upgrade." }
+    ]
+  },
+  "finalCta": {
+    "title": "Ready to plan your wedding with peace of mind?",
+    "subtitle": "Start for free or go Premium to remove all limits.",
+    "free": "Start for free",
+    "premium": "Discover Premium — €29"
+  },
+  "errors": {
+    "title": "Error",
+    "checkout": "Could not create the checkout session.",
+    "generic": "Something went wrong."
+  }
+}

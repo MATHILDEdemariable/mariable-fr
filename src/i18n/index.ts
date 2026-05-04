@@ -4,8 +4,12 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import frCommon from './locales/fr/common.json';
 import frHome from './locales/fr/home.json';
+import frPricing from './locales/fr/pricing.json';
+import frProfessionals from './locales/fr/professionals.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
+import enPricing from './locales/en/pricing.json';
+import enProfessionals from './locales/en/professionals.json';
 
 export const SUPPORTED_LANGUAGES = ['fr', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -14,10 +18,14 @@ const resources = {
   fr: {
     common: frCommon,
     home: frHome,
+    pricing: frPricing,
+    professionals: frProfessionals,
   },
   en: {
     common: enCommon,
     home: enHome,
+    pricing: enPricing,
+    professionals: enProfessionals,
   },
 };
 
@@ -29,7 +37,7 @@ i18n
     fallbackLng: 'fr',
     supportedLngs: SUPPORTED_LANGUAGES as unknown as string[],
     defaultNS: 'common',
-    ns: ['common', 'home'],
+    ns: ['common', 'home', 'pricing', 'professionals'],
     interpolation: {
       escapeValue: false,
     },

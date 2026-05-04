@@ -1,0 +1,41 @@
+{
+  "seo": {
+    "title": "The wedding vendor guide | Mariable",
+    "description": "Our editorial selection of wedding vendors: venues, caterers, photographers, DJs, florists. A hand-picked curation by the Mariable team.",
+    "keywords": "wedding vendors, wedding guide, wedding venue, wedding caterer, wedding photographer"
+  },
+  "hero": {
+    "eyebrow": "The Mariable Guide",
+    "titleLine1": "A selection of professionals",
+    "titleLine2": "and simple & customizable tools",
+    "subtitle": "Venues with character, exceptional caterers, photographers with a sharp eye. A curation of professionals.",
+    "ctaSelection": "Discover the selection",
+    "ctaTools": "Discover the free tools"
+  },
+  "categories": {
+    "Tous": "All",
+    "Lieux": "Venues",
+    "Photo": "Photo",
+    "Vidéo": "Video",
+    "Traiteur": "Catering",
+    "DJ": "DJ",
+    "Fleuriste": "Florist",
+    "Déco": "Decor",
+    "Beauté": "Beauty",
+    "Robes": "Dresses",
+    "Voiture": "Car",
+    "Invités": "Guests",
+    "Coordination": "Coordination"
+  },
+  "guide": {
+    "eyebrow": "Contents",
+    "title": "Explore the guide",
+    "searchPlaceholder": "Search a vendor, a brand...",
+    "allRegions": "All regions",
+    "countOne": "{{count}} vendor selected",
+    "countOther": "{{count}} vendors selected",
+    "reset": "Reset",
+    "emptyTitle": "No vendor matches your search.",
+    "resetFilters": "Reset filters"
+  }
+}

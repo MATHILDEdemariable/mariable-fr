@@ -1,0 +1,41 @@
+{
+  "seo": {
+    "title": "Le guide des prestataires mariage | Mariable",
+    "description": "Notre sélection éditoriale de prestataires mariage : lieux de réception, traiteurs, photographes, DJ, fleuristes. Une curation à la main par l'équipe Mariable.",
+    "keywords": "prestataires mariage, guide mariage, lieu réception, traiteur mariage, photographe mariage"
+  },
+  "hero": {
+    "eyebrow": "Le Guide Mariable",
+    "titleLine1": "Sélection de professionnels",
+    "titleLine2": "et outils simples & personnalisables",
+    "subtitle": "Lieux de caractère, traiteurs d'exception, photographes au regard juste. Une curation de professionnels.",
+    "ctaSelection": "Découvrir la sélection",
+    "ctaTools": "Découvrir les outils gratuits"
+  },
+  "categories": {
+    "Tous": "Tous",
+    "Lieux": "Lieux",
+    "Photo": "Photo",
+    "Vidéo": "Vidéo",
+    "Traiteur": "Traiteur",
+    "DJ": "DJ",
+    "Fleuriste": "Fleuriste",
+    "Déco": "Déco",
+    "Beauté": "Beauté",
+    "Robes": "Robes",
+    "Voiture": "Voiture",
+    "Invités": "Invités",
+    "Coordination": "Coordination"
+  },
+  "guide": {
+    "eyebrow": "Sommaire",
+    "title": "Explorer le guide",
+    "searchPlaceholder": "Rechercher un prestataire, une marque...",
+    "allRegions": "Toutes les régions",
+    "countOne": "{{count}} prestataire sélectionné",
+    "countOther": "{{count}} prestataires sélectionnés",
+    "reset": "Réinitialiser",
+    "emptyTitle": "Aucun prestataire ne correspond à votre recherche.",
+    "resetFilters": "Réinitialiser les filtres"
+  }
+}
