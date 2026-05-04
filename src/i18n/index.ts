@@ -70,11 +70,13 @@ i18n
     },
     react: {
       useSuspense: false,
-      // Ensure components re-render on language change AND when a namespace finishes loading.
-      bindI18n: 'languageChanged loaded',
-      bindI18nStore: 'added removed',
     },
   });
+
+// Force normalization after init (e.g. 'fr-FR' → 'fr') so the store is consistent.
+if (i18n.language && i18n.language.includes('-')) {
+  i18n.changeLanguage(i18n.language.split('-')[0]);
+}
 
 // Sync <html lang="">
 const syncHtmlLang = (lng: string) => {
