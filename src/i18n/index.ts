@@ -29,6 +29,25 @@ const resources = {
   },
 };
 
+// Sanitize any stale value in localStorage (e.g. 'fr-FR', empty, unsupported code).
+// Without this, the detector may return a region-tagged code that doesn't match
+// our supported lng list, causing some namespaces/components to fall back silently.
+if (typeof window !== 'undefined') {
+  try {
+    const stored = window.localStorage.getItem('mariable_lang');
+    if (stored) {
+      const normalized = stored.toLowerCase().split('-')[0];
+      if (!SUPPORTED_LANGUAGES.includes(normalized as SupportedLanguage)) {
+        window.localStorage.removeItem('mariable_lang');
+      } else if (normalized !== stored) {
+        window.localStorage.setItem('mariable_lang', normalized);
+      }
+    }
+  } catch {
+    // ignore (private mode, etc.)
+  }
+}
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -36,6 +55,9 @@ i18n
     resources,
     fallbackLng: 'fr',
     supportedLngs: SUPPORTED_LANGUAGES as unknown as string[],
+    // Normalize 'fr-FR' / 'en-US' from the browser to 'fr' / 'en' so they match resources.
+    load: 'languageOnly',
+    nonExplicitSupportedLngs: true,
     defaultNS: 'common',
     ns: ['common', 'home', 'pricing', 'professionals'],
     interpolation: {
@@ -48,6 +70,9 @@ i18n
     },
     react: {
       useSuspense: false,
+      // Ensure components re-render on language change AND when a namespace finishes loading.
+      bindI18n: 'languageChanged loaded',
+      bindI18nStore: 'added removed',
     },
   });
 
