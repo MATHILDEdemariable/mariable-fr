@@ -1,147 +1,44 @@
-# Plan : correction toggle home + i18n complet du dashboard
+# Correction du toggle FR/EN sur la home (rien ne se traduit)
 
-## Phase A — Diagnostic & correction du toggle home (rapide)
+## Diagnostic
 
-**Symptôme** : seul le header bascule en EN, le hero et les autres sections restent en FR.
+Tout l'infra i18n est en place (resources bundlées en synchrone, hook `useTranslation('home')` utilisé partout dans `src/components/home/*`, JSON valides). Le toggle appelle bien `i18n.changeLanguage`. Pourtant les sections ne basculent pas.
 
-**Causes probables à vérifier dans l'ordre** :
-1. Cache `localStorage` `mariable_lang` : si une ancienne valeur est stockée (ex. `fr-FR` ou clé différente), le détecteur peut ignorer le changement pour certains namespaces.
-2. Le hook `useTranslation('home')` est appelé après le 1er render alors que `useSuspense: false` → certains composants peuvent rendre les clés brutes ou le fallback FR sans re-render au `languageChanged`.
-3. `i18next-browser-languagedetector` peut renvoyer `fr-FR` (navigateur) qui matche `fr` mais qui, combiné à `caches: ['localStorage']`, écrit `fr-FR` → la bascule EN ne déclenche pas un changement perçu.
+Causes probables, par ordre de probabilité :
 
-**Actions** :
-- Forcer la normalisation : ajouter `load: 'languageOnly'` + `nonExplicitSupportedLngs: true` dans la config i18n.
-- Forcer le re-render global : ajouter un listener `i18n.on('languageChanged')` dans un composant racine (ou utiliser `<I18nextProvider>` autour de `<App />` dans `main.tsx`) pour garantir la propagation.
-- Nettoyer la valeur `mariable_lang` au boot si elle ne fait pas partie de `SUPPORTED_LANGUAGES`.
-- Tester en preview les 8 sections de la home (Hero, Process, Marketplace, Tools, Coordination, Testimonials, FinalCTA, Footer) en basculant FR ↔ EN.
+1. **Incompatibilité de versions** : `i18next@^26.0.8` + `react-i18next@^17.0.6` sont récents et la v17 de react-i18next exige des peer deps précises. Si la résolution est cassée, `useTranslation` peut retourner `t = key => key` silencieusement (texte brut FR/EN absent → fallback affichant la clé ou un cache figé).
+2. **`bindI18n: 'languageChanged loaded'`** combiné à `useSuspense: false` peut, dans certaines versions, ne pas re-render les composants qui ont capturé un `t` au premier rendu si le store n'a pas signalé `added`.
+3. **Cache `localStorage`** : si une ancienne valeur (`fr-FR` etc.) reste, le détecteur peut figer la langue sur `fr` même après clic EN. Notre sanitization au boot ne s'exécute qu'au démarrage.
 
-## Phase B — Traduction complète du dashboard (32 pages)
+Note : la preview m'a renvoyé HTTP 412 donc je n'ai pas pu reproduire en live, le diagnostic est basé sur la lecture du code et des versions.
 
-Découpage en 4 sous-phases pour livrer par incréments testables.
+## Plan de correction (étapes minimales, RÈGLE #1 simplicité)
 
-### B.1 — Layout & navigation (fondations)
-Composants partagés affichés sur toutes les pages dashboard.
-- `DashboardLayout.tsx` (header, breadcrumbs)
-- `DashboardSidebar.tsx` (menu latéral desktop)
-- `MobileBottomNav.tsx` (navigation mobile)
-- `DashboardFeatureCards.tsx`, `DashboardInstructions.tsx`, `DashboardModal.tsx`
-- `OnboardingProgress.tsx`, `VerticalOnboardingProgress.tsx`, `ProgressBar.tsx`, `ProgressOverview.tsx`
-- `UserProfile.tsx`, `ReaderBanner.tsx`
+### Étape 1 — Aligner les versions sur un combo stable
+- Downgrader vers `i18next@^23.15.0` + `react-i18next@^15.0.0` + `i18next-browser-languagedetector@^8.0.0`. Combo largement testé avec React 18.
+- Une seule commande `bun add` ; pas de changement de code requis.
 
-Namespace : `dashboard-common`.
+### Étape 2 — Simplifier la config i18n
+Dans `src/i18n/index.ts` :
+- Retirer `bindI18n: 'languageChanged loaded'` et `bindI18nStore: 'added removed'` (valeurs par défaut suffisantes).
+- Garder `useSuspense: false`, `load: 'languageOnly'`, `nonExplicitSupportedLngs: true`.
+- Ajouter un appel `i18n.changeLanguage(i18n.language)` post-init pour garantir la cohérence du store (utile si le détecteur retourne `fr-FR` non normalisé).
 
-### B.2 — Pages d'entrée du dashboard
-- `UserDashboard.tsx` (accueil)
-- `MonMariage.tsx`, `MonMariageDetail.tsx`
-- `ProjectSummary.tsx`, `CreateProjectDialog.tsx`
-- `HelpPage.tsx`, `GuidesPage.tsx`, `InstallAppPage.tsx`
-- `PanierPage.tsx`, `WishlistPage.tsx`
+### Étape 3 — Forcer la persistance + reload propre dans le toggle
+Dans `src/components/LanguageToggle.tsx`, après `i18n.changeLanguage(lng)` :
+- Écrire explicitement `localStorage.setItem('mariable_lang', lng)` (ne pas dépendre du caching automatique).
+- Optionnel : écrire `document.documentElement.lang = lng` immédiatement.
 
-Namespace : `dashboard-home`.
+### Étape 4 — Vérification live
+- Ouvrir la preview, vider `localStorage` (`mariable_lang`), recharger.
+- Cliquer EN → vérifier que le hero et toutes les sections home basculent (titre, sous-titre, étapes, CTAs, footer).
+- Cliquer FR → vérifier le retour.
+- Inspecter `window.i18n` (en dev) pour confirmer `language === 'en'` et que `home` est dans les ressources chargées.
 
-### B.3 — Modules outils
-Un namespace par module pour garder les fichiers JSON lisibles.
-- `dashboard-checklist` : ChecklistMariagePage, ChecklistPage, ChecklistDixEtapes, ChecklistIntelligente, ChecklistMariageManuelle, ChecklistWidget, TasksList
-- `dashboard-budget` : BudgetPage, BudgetCalculator, BudgetSummary, DetailedBudget
-- `dashboard-planning` : PlanningPage, PlanningResults, AvantJourJPage, ApresJourJPage, ApresJourJManuelle
-- `dashboard-coordination` : CoordinationPage, CoordinatorsPage, CallScheduleModal
-- `dashboard-rsvp` : RSVPManagement, RSVPResponses, RSVPTabs, RSVPEventCard, GuestManagement
-- `dashboard-vendors` : VendorSelectionPage, VendorTrackingPage, VendorTracking, AddVendorDialog, EditVendorModal, ProfessionnelsMariableDashboard
-- `dashboard-tools` : MoodboardPage, DrinksCalculatorPage, DrinksCalculatorWidget, QRCodeGenerator, MairieCivilPage, CeremoniePage, AccommodationsPage
-- `dashboard-misc` : DocumentsPage, DocumentsSection, MessagesPage, AssistantPage, SiteInternetModal, ClubMariableModal, SatisfactionModal, ReaderView, GuideStartupContent, InitiationMariageWidget, PricingContent
-
-### B.4 — Données structurées
-- `src/data/dashboardFeatures.ts` : transformer les chaînes hardcodées en clés i18n (les composants consommateurs feront `t(feature.titleKey)`).
-
-## Phase C — Exports PDF & emails bilingues
-
-### C.1 — Services d'export PDF (frontend)
-Chaque service reçoit la langue active via `i18n.language` et utilise des dictionnaires internes (FR/EN) pour les libellés statiques (titres, en-têtes de colonnes, mentions légales, footer "Généré par Mariable").
-- `budgetExportService.ts`
-- `planningExportService.ts`, `planningBrandedExportService.ts`, `planningJourJBrandedExport.ts`, `publicPlanningExportService.ts`, `publicPlanningBrandedExportService.ts`
-- `coordinationExportService.ts`
-- `avantJourJExportService.ts`, `apresJourJExportService.ts`
-- `drinksExportService.ts`
-- `vendorTrackingExportService.ts`
-- `moodboardPdfService.ts`
-- `pdfExportService.ts`
-- `utils/exportQRCodePDF.ts`
-
-Approche : créer `src/services/i18n/exportLabels.ts` avec un objet `{ fr: {...}, en: {...} }` partagé entre tous les services pour éviter la duplication.
-
-### C.2 — Emails transactionnels (Supabase Edge Functions)
-Ajouter un paramètre `lang` (`fr`|`en`) au payload de chaque appel, propagé depuis le frontend via `i18n.language`. Templates dupliqués FR/EN dans chaque fonction.
-
-Edge functions concernées :
-- `send-welcome-couple-email` (séquence onboarding)
-- `send-welcome-premium-email`
-- `send-inscription-email`
-- `notify-new-registration` (admin → reste FR)
-- `notify-vendor-message` (notification au pro → garder FR car les pros sont francophones)
-- `reply-contact-request` (réponse user → bilingue)
-- `send-problem-report` (admin → reste FR)
-- `auth-email-hook` (mots de passe / vérification → bilingue, via les templates `_shared/email-templates/`)
-
-**Précisions** :
-- Auth emails (password reset, email confirmation) : modifier les 6 templates React Email dans `supabase/functions/_shared/email-templates/` pour accepter un prop `lang` et basculer textes/CTA. Stocker `preferred_language` dans `profiles` (nouvelle colonne) lue par l'edge function `auth-email-hook` depuis le user metadata.
-- Emails admin internes : restent FR (lecteurs francophones).
-
-### C.3 — Migration DB
-Ajouter `preferred_language text default 'fr'` dans la table `profiles` + trigger pour la copier depuis `auth.users.raw_user_meta_data.lang` à l'inscription.
+### Étape 5 (si étapes 1-4 ne corrigent pas)
+- Ajouter un log temporaire dans le toggle (`console.log(i18n.language, i18n.store.data)`) pour identifier où la chaîne se rompt.
+- Vérifier qu'il n'y a pas un second `i18n.init` quelque part (ex. import dupliqué).
 
 ## Hors périmètre
-
-- Blog & articles SEO (FR uniquement, déjà décidé)
-- Pages régionales mariage (FR uniquement)
-- Pages prestataires individuelles & mini-sites mariage couples (contenu user-generated en FR)
-- Admin dashboard (`/admin/*`) — usage interne FR
-- Pages publiques RSVP / guides invités (génère par couple, langue propre au mariage)
-
-## Détails techniques
-
-### Structure i18n finale
-```text
-src/i18n/locales/
-  fr/
-    common.json
-    home.json
-    pricing.json
-    professionals.json
-    dashboard-common.json
-    dashboard-home.json
-    dashboard-checklist.json
-    dashboard-budget.json
-    dashboard-planning.json
-    dashboard-coordination.json
-    dashboard-rsvp.json
-    dashboard-vendors.json
-    dashboard-tools.json
-    dashboard-misc.json
-    exports.json          # libellés PDF
-    emails.json           # libellés emails (frontend preview)
-  en/
-    (mêmes fichiers)
-```
-
-### Persistance de la langue utilisateur
-- Logged-out : `localStorage.mariable_lang`
-- Logged-in : colonne `profiles.preferred_language`, sync bidirectionnel au login/logout. Source de vérité = DB quand connecté.
-
-### Règles d'exécution
-- Aucun changement de logique métier (formulaires, calculs, RLS, requêtes Supabase)
-- Conservation stricte du DOM, des classes Tailwind, et de l'architecture composants
-- Génération automatique des traductions EN par l'IA (qualité standard, relecture utilisateur recommandée)
-- Tests manuels après chaque sous-phase (B.1, B.2, B.3, B.4, C.1, C.2)
-
-## Estimation & ordre d'exécution recommandé
-
-1. **Phase A** (correction toggle home) — petit, à faire en premier pour valider l'infra
-2. **Phase B.1** (layout dashboard) — débloque visuellement toutes les pages
-3. **Phase B.2** (pages d'entrée)
-4. **Phase B.3** (modules outils) — gros volume, livrable module par module
-5. **Phase B.4** (données structurées)
-6. **Phase C.1** (exports PDF)
-7. **Phase C.3** (migration DB `preferred_language`)
-8. **Phase C.2** (emails) — en dernier car dépend de C.3
-
-Chaque phase = livraison testable indépendante.
+- Pas de modification des fichiers de traductions (déjà OK).
+- Pas de touche au dashboard / PDFs / emails (Phase B/C ultérieure une fois le toggle confirmé fonctionnel).
