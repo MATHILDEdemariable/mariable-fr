@@ -105,6 +105,7 @@ const CategoryPills = ({
   onSelect: (cat: PrestataireCategorie | 'Tous') => void;
   categoryCounts: Record<string, number> | undefined;
 }) => {
+  const { t } = useTranslation('professionals');
   const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0));
   return (
     <ScrollArea className="w-full whitespace-nowrap">
@@ -122,7 +123,7 @@ const CategoryPills = ({
             `}
           >
             {cat.icon}
-            {cat.label}
+            {t(`categories.${cat.labelKey}`)}
           </button>
         ))}
       </div>
