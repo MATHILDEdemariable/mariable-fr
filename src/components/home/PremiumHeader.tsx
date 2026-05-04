@@ -6,12 +6,8 @@ import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
-
-const navLinks = [
-  { label: "Prestataires", href: "/professionnelsmariable" },
-  { label: "Outils", href: "/#outils-planification" },
-  { label: "Prix", href: "/prix" },
-];
+import { useTranslation } from 'react-i18next';
+import LanguageToggle from '@/components/LanguageToggle';
 
 const PremiumHeader = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -19,6 +15,7 @@ const PremiumHeader = () => {
   const [searchParams] = useSearchParams();
   const location = useLocation();
   const { isAuthenticated } = useAuth();
+  const { t } = useTranslation('common');
   const isHomepage = location.pathname === '/' || location.pathname === '/accueil';
 
   const isEmbedded = searchParams.get('embedded') === 'true';
@@ -26,16 +23,20 @@ const PremiumHeader = () => {
     return null;
   }
 
+  const navLinks = [
+    { label: t('header.nav.vendors'), href: "/professionnelsmariable" },
+    { label: t('header.nav.tools'), href: "/#outils-planification" },
+    { label: t('header.nav.pricing'), href: "/prix" },
+  ];
+
   return (
     <header className={`site-header w-full transition-all duration-300 ${isHomepage ? 'bg-transparent border-b border-white/10' : 'bg-white border-b border-editorial-noir/10'}`}>
       <div className="container mx-auto px-4">
-        {/* Niveau 1 : Logo + nav + boutons */}
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center">
             <Logo />
           </Link>
 
-          {/* Desktop nav links (inline on homepage) */}
           {isHomepage && (
             <nav className="hidden md:flex items-center space-x-8">
               {navLinks.map((link) => {
@@ -66,21 +67,20 @@ const PremiumHeader = () => {
             </nav>
           )}
 
-          {/* Desktop buttons */}
           <div className="hidden md:flex items-center space-x-4">
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button className={`rounded-none px-6 text-xs tracking-widest uppercase font-sans ${isHomepage ? 'bg-white/20 hover:bg-white/30 text-white border border-white/30' : 'bg-editorial-noir hover:bg-editorial-noir/80 text-white'}`}>
-                    Mon compte <ChevronDown className="ml-1 w-4 h-4" />
+                    {t('header.myAccount')} <ChevronDown className="ml-1 w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-white border border-editorial-noir/10 shadow-lg z-[1000] rounded-none">
                   <DropdownMenuItem onClick={() => navigate('/dashboard')} className="cursor-pointer">
-                    Mes outils
+                    {t('header.myTools')}
                   </DropdownMenuItem>
                   <DropdownMenuItem onClick={() => navigate('/professionnelsmariable')} className="cursor-pointer">
-                    Les prestataires
+                    {t('header.vendors')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -90,18 +90,18 @@ const PremiumHeader = () => {
                 onClick={() => navigate('/login')} 
                 className={`text-xs tracking-widest uppercase font-sans ${isHomepage ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-editorial-noir/80 hover:text-editorial-noir hover:bg-transparent'}`}
               >
-                Connexion / Créer un compte
+                {t('header.login')}
               </Button>
             )}
             <Link 
               to="/partenariat"
               className={`text-xs tracking-widest uppercase transition-colors font-sans ${isHomepage ? 'text-white/80 hover:text-white' : 'text-editorial-noir/80 hover:text-editorial-noir'}`}
             >
-              Je suis un professionnel
+              {t('header.iAmPro')}
             </Link>
+            <LanguageToggle variant={isHomepage ? 'light' : 'dark'} />
           </div>
 
-          {/* Mobile Menu */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild className="md:hidden">
               <Button variant="ghost" size="icon">
@@ -126,7 +126,7 @@ const PremiumHeader = () => {
                   onClick={() => setMobileOpen(false)}
                   className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
                 >
-                  Je suis un professionnel
+                  {t('header.iAmPro')}
                 </Link>
                 <hr className="border-editorial-noir/10" />
                 {isAuthenticated ? (
@@ -134,7 +134,7 @@ const PremiumHeader = () => {
                     onClick={() => { navigate('/dashboard'); setMobileOpen(false); }} 
                     className="bg-editorial-noir text-white rounded-none w-full"
                   >
-                    Mes outils
+                    {t('header.myTools')}
                   </Button>
                 ) : (
                   <Button 
@@ -142,9 +142,13 @@ const PremiumHeader = () => {
                     onClick={() => { navigate('/login'); setMobileOpen(false); }} 
                     className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
                   >
-                    Connexion / Créer un compte
+                    {t('header.login')}
                   </Button>
                 )}
+                <hr className="border-editorial-noir/10" />
+                <div className="flex justify-center">
+                  <LanguageToggle variant="dark" />
+                </div>
               </div>
             </SheetContent>
           </Sheet>
