@@ -1,0 +1,57 @@
+{
+  "header": {
+    "nav": {
+      "vendors": "Vendors",
+      "tools": "Tools",
+      "pricing": "Pricing"
+    },
+    "myAccount": "My account",
+    "myTools": "My tools",
+    "vendors": "Vendors",
+    "login": "Sign in / Create account",
+    "iAmPro": "I'm a professional"
+  },
+  "language": {
+    "label": "Language",
+    "fr": "FR",
+    "en": "EN",
+    "switchTo": "Switch to {{lang}}"
+  },
+  "footer": {
+    "tagline": "Mariable is the reference for modern and elegant weddings.",
+    "section": {
+      "plan": "Plan my wedding",
+      "discover": "Discover",
+      "regions": "Weddings by region",
+      "about": "About"
+    },
+    "links": {
+      "dashboard": "My dashboard",
+      "checklist": "Checklist",
+      "findVendor": "Find a vendor",
+      "selection": "Selection",
+      "coordination": "Day-of coordination",
+      "guideJourJ": "Wedding Day Guide",
+      "guideBeginner": "Beginner's Guide",
+      "budget": "Budget calculator",
+      "club": "Mariable Club",
+      "advice": "Wedding advice",
+      "planning": "Planning",
+      "jourJ": "Wedding day",
+      "customGuide": "Customize my guide",
+      "provence": "Weddings in Provence",
+      "paris": "Weddings in Paris & Île-de-France",
+      "rhoneAlpes": "Weddings in Auvergne-Rhône-Alpes",
+      "aquitaine": "Weddings in Nouvelle-Aquitaine",
+      "allRegions": "See all regions →",
+      "history": "Our story",
+      "charter": "Our charter",
+      "contact": "Contact us",
+      "faq": "FAQ",
+      "compare": "Comparison",
+      "professionals": "Professionals",
+      "partnership": "Partnership"
+    },
+    "copyright": "© 2025 Mariable – All rights reserved. | Crafted with joy for modern couples 💍"
+  }
+}

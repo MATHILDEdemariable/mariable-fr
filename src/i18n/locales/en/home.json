@@ -1,0 +1,163 @@
+{
+  "seo": {
+    "title": "Mariable",
+    "description": "Wedding planning made simple. Tools, vendors, and advice to plan your big day."
+  },
+  "hero": {
+    "titleLine1": "The simple way to plan",
+    "titleLine2": "your wedding",
+    "subtitle": "Free tools & personalized recommendations",
+    "datePlaceholder": "Your wedding date",
+    "cta": "Get started",
+    "alreadyAccount": "Already have an account?",
+    "signIn": "Sign in"
+  },
+  "process": {
+    "titleLine1": "Plan it yourself",
+    "titleLine2": "and turn your wedding into an exceptional experience",
+    "steps": {
+      "inspire": {
+        "title": "GET INSPIRED",
+        "description": "Our exclusive selection of outstanding vendors",
+        "cta": "Explore our vendors"
+      },
+      "organize": {
+        "title": "ORGANIZE",
+        "description": "Your planning tools, all included",
+        "cta": "Create my free planning"
+      },
+      "enjoy": {
+        "title": "ENJOY",
+        "description": "Wedding-day coordination in three clicks with our dedicated app",
+        "cta": "Discover coordination"
+      }
+    }
+  },
+  "marketplace": {
+    "badge": "Premium selection",
+    "titleLine1": "An exceptional curation,",
+    "titleLine2": "not a directory",
+    "subtitle": "We hand-pick the best vendors for you",
+    "processTitle": "Our selection process",
+    "process": {
+      "portfolio": "Verified portfolio",
+      "quality": "Quality check",
+      "references": "Client references",
+      "delays": "On-time delivery"
+    },
+    "cta": "Explore our selection"
+  },
+  "tools": {
+    "badge": "Included for everyone",
+    "title": "Your personalized space",
+    "subtitle": "Tools to organize your wedding",
+    "items": {
+      "checklist": {
+        "title": "Smart checklist",
+        "description": "Personalized planning based on your wedding style"
+      },
+      "budget": {
+        "title": "Interactive budget tracker",
+        "description": "Track your expenses in real time"
+      },
+      "drinks": {
+        "title": "Budget & drinks calculator",
+        "description": "Accurate estimates for your reception"
+      },
+      "rsvp": {
+        "title": "RSVP & seating plan",
+        "description": "Organize your guests with drag & drop and RSVP import",
+        "badge": "BETA"
+      },
+      "accommodations": {
+        "title": "Accommodation manager",
+        "description": "Book and track your guests' accommodations"
+      },
+      "documents": {
+        "title": "Document storage",
+        "description": "Centralize all your important documents"
+      }
+    },
+    "mockup": {
+      "title": "My Wedding Planning",
+      "task1": "Book the venue",
+      "status1": "Done",
+      "task2": "Choose the caterer",
+      "status2": "In progress",
+      "task3": "Select the flowers",
+      "status3": "To do"
+    },
+    "cta": "Create an account"
+  },
+  "coordination": {
+    "badge": "Our innovation",
+    "titleLine1": "The online app",
+    "titleLine2": "that changes everything",
+    "subtitle": "Who does what? At what time? Share information easily with your loved ones & vendors.",
+    "features": {
+      "mobile": {
+        "title": "Mobile app — no download required",
+        "description": "Intuitive interface accessible everywhere"
+      },
+      "sync": {
+        "title": "Real-time synchronization",
+        "description": "Your whole team connected instantly"
+      },
+      "team": {
+        "title": "Team coordination",
+        "description": "Every contributor knows exactly what to do"
+      },
+      "schedule": {
+        "title": "Automated schedule",
+        "description": "Perfect timing for every moment"
+      }
+    },
+    "mockup": {
+      "title": "Wedding Day Coordination",
+      "couple": "Sarah & Thomas's Wedding",
+      "step1": "2:00 PM - Guest arrival",
+      "status1": "In progress ✓",
+      "step2": "3:30 PM - Ceremony",
+      "status2": "Preparation in progress",
+      "step3": "5:00 PM - Cocktail",
+      "status3": "Upcoming",
+      "notification": "<strong>Photographer:</strong> In position for the ceremony"
+    },
+    "ctaPrimary": "Create my free account",
+    "ctaSecondary": "Watch the demo",
+    "modalTitle": "Wedding-day coordination demo"
+  },
+  "testimonials": {
+    "titleLine1": "They lived",
+    "titleLine2": "the Mariable experience",
+    "subtitle": "Read the stories of couples who trusted our platform",
+    "items": {
+      "1": {
+        "name": "Sarah & Thomas",
+        "location": "Provence",
+        "text": "Mariable completely transformed how we planned our wedding. The vendor selection was exceptional."
+      },
+      "2": {
+        "name": "Julie & Marc",
+        "location": "Paris",
+        "text": "The day-of coordination was flawless. We were able to fully enjoy our day."
+      },
+      "3": {
+        "name": "Emma & Pierre",
+        "location": "Lyon",
+        "text": "All the vendors recommended by Mariable were wonderful. Exactly what we were looking for."
+      }
+    },
+    "cta": "Create my free account",
+    "trust": "Free • No commitment • In 2 minutes"
+  },
+  "finalCta": {
+    "titleLine1": "Ready to live your",
+    "titleLine2": "exceptional wedding?",
+    "subtitle": "Join hundreds of couples who trusted Mariable",
+    "cta": "Create my free account",
+    "trust1": "Free signup",
+    "trust2": "Tools included",
+    "trust3": "Dedicated support"
+  }
+}

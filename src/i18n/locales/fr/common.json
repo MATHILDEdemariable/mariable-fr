@@ -1,0 +1,57 @@
+{
+  "header": {
+    "nav": {
+      "vendors": "Prestataires",
+      "tools": "Outils",
+      "pricing": "Prix"
+    },
+    "myAccount": "Mon compte",
+    "myTools": "Mes outils",
+    "vendors": "Les prestataires",
+    "login": "Connexion / Créer un compte",
+    "iAmPro": "Je suis un professionnel"
+  },
+  "language": {
+    "label": "Langue",
+    "fr": "FR",
+    "en": "EN",
+    "switchTo": "Passer en {{lang}}"
+  },
+  "footer": {
+    "tagline": "Mariable est la référence des mariages modernes & élégants.",
+    "section": {
+      "plan": "Planifier mon mariage",
+      "discover": "Découvrir",
+      "regions": "Mariages par région",
+      "about": "À Propos"
+    },
+    "links": {
+      "dashboard": "Mon tableau de bord",
+      "checklist": "Check-list",
+      "findVendor": "Trouver un prestataire",
+      "selection": "Sélection",
+      "coordination": "Coordination du jour J",
+      "guideJourJ": "Guide Jour-J",
+      "guideBeginner": "Guide Débutant",
+      "budget": "Calculateur de budget",
+      "club": "Club Mariable",
+      "advice": "Conseils mariage",
+      "planning": "Planification",
+      "jourJ": "Jour J",
+      "customGuide": "Personnaliser mon guide",
+      "provence": "Mariage Provence",
+      "paris": "Mariage Paris & Île-de-France",
+      "rhoneAlpes": "Mariage Auvergne-Rhône-Alpes",
+      "aquitaine": "Mariage Nouvelle-Aquitaine",
+      "allRegions": "Voir toutes les régions →",
+      "history": "Notre histoire",
+      "charter": "Notre charte",
+      "contact": "Nous contacter",
+      "faq": "FAQ",
+      "compare": "Comparatif",
+      "professionals": "Professionnels",
+      "partnership": "Partenariat"
+    },
+    "copyright": "© 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍"
+  }
+}

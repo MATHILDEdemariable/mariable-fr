@@ -1,0 +1,163 @@
+{
+  "seo": {
+    "title": "Mariable",
+    "description": "L'organisation mariage facile. Outils, prestataires et conseils pour planifier votre grand jour."
+  },
+  "hero": {
+    "titleLine1": "La façon simple d'organiser",
+    "titleLine2": "votre mariage",
+    "subtitle": "Outils gratuits & recommandations personnalisées",
+    "datePlaceholder": "Date de votre mariage",
+    "cta": "Commencer",
+    "alreadyAccount": "Déjà un compte ?",
+    "signIn": "Se connecter"
+  },
+  "process": {
+    "titleLine1": "Organisez vous-même",
+    "titleLine2": "et faites de votre mariage une expérience exceptionnelle",
+    "steps": {
+      "inspire": {
+        "title": "S'INSPIRER",
+        "description": "Notre sélection exclusive de prestataires d'exception",
+        "cta": "Explorer nos prestataires"
+      },
+      "organize": {
+        "title": "ORGANISER",
+        "description": "Vos outils de planification inclus",
+        "cta": "Créer mon planning gratuit"
+      },
+      "enjoy": {
+        "title": "PROFITER",
+        "description": "Coordination Jour-J en trois clics grâce à notre appli dédiée",
+        "cta": "Découvrir la coordination"
+      }
+    }
+  },
+  "marketplace": {
+    "badge": "Sélection premium",
+    "titleLine1": "Une sélection d'exception,",
+    "titleLine2": "pas un annuaire",
+    "subtitle": "Nous sélectionnons les meilleurs prestataires pour vous",
+    "processTitle": "Notre processus de sélection",
+    "process": {
+      "portfolio": "Portfolio vérifié",
+      "quality": "Test qualité",
+      "references": "Références clients",
+      "delays": "Respect des délais"
+    },
+    "cta": "Explorer notre sélection"
+  },
+  "tools": {
+    "badge": "Inclus pour tous",
+    "title": "Votre espace personnalisé",
+    "subtitle": "Outils pour organiser votre mariage",
+    "items": {
+      "checklist": {
+        "title": "Checklist intelligente",
+        "description": "Planning personnalisé selon votre style de mariage"
+      },
+      "budget": {
+        "title": "Gestion budget interactive",
+        "description": "Suivez vos dépenses en temps réel"
+      },
+      "drinks": {
+        "title": "Calculatrice budget & boissons",
+        "description": "Estimations précises pour votre réception"
+      },
+      "rsvp": {
+        "title": "RSVP & plan de table",
+        "description": "Organisez vos invités avec drag & drop et import RSVP",
+        "badge": "BETA"
+      },
+      "accommodations": {
+        "title": "Gestion hébergements",
+        "description": "Réservez et suivez les hébergements de vos invités"
+      },
+      "documents": {
+        "title": "Stockage documents",
+        "description": "Centralisez tous vos documents importants"
+      }
+    },
+    "mockup": {
+      "title": "Mon Planning Mariage",
+      "task1": "Réserver la salle",
+      "status1": "Terminé",
+      "task2": "Choisir le traiteur",
+      "status2": "En cours",
+      "task3": "Sélectionner les fleurs",
+      "status3": "À faire"
+    },
+    "cta": "Créer un compte"
+  },
+  "coordination": {
+    "badge": "Notre innovation",
+    "titleLine1": "L'appli en ligne",
+    "titleLine2": "qui change tout",
+    "subtitle": "Qui fait quoi ? À quelle heure ? Partager facilement les informations à vos proches & prestataires.",
+    "features": {
+      "mobile": {
+        "title": "Application mobile sans téléchargement",
+        "description": "Interface intuitive accessible partout"
+      },
+      "sync": {
+        "title": "Synchronisation temps réel",
+        "description": "Toute l'équipe connectée instantanément"
+      },
+      "team": {
+        "title": "Coordination équipe",
+        "description": "Chaque intervenant sait exactement quoi faire"
+      },
+      "schedule": {
+        "title": "Planning automatisé",
+        "description": "Timing parfait pour chaque moment"
+      }
+    },
+    "mockup": {
+      "title": "Coordination Jour J",
+      "couple": "Mariage de Sarah & Thomas",
+      "step1": "14:00 - Arrivée invités",
+      "status1": "En cours ✓",
+      "step2": "15:30 - Cérémonie",
+      "status2": "Préparation en cours",
+      "step3": "17:00 - Cocktail",
+      "status3": "À venir",
+      "notification": "<strong>Photographe :</strong> En position pour la cérémonie"
+    },
+    "ctaPrimary": "Créer mon compte gratuit",
+    "ctaSecondary": "Voir la démo",
+    "modalTitle": "Démonstration de la coordination Jour J"
+  },
+  "testimonials": {
+    "titleLine1": "Ils ont vécu",
+    "titleLine2": "l'expérience Mariable",
+    "subtitle": "Découvrez les témoignages de couples qui ont fait confiance à notre plateforme",
+    "items": {
+      "1": {
+        "name": "Sarah & Thomas",
+        "location": "Provence",
+        "text": "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle."
+      },
+      "2": {
+        "name": "Julie & Marc",
+        "location": "Paris",
+        "text": "La coordination le jour J était parfaite. Nous avons pu profiter pleinement de notre journée."
+      },
+      "3": {
+        "name": "Emma & Pierre",
+        "location": "Lyon",
+        "text": "Les prestataires recommandés par Mariable étaient tous formidables. Exactement ce que nous cherchions."
+      }
+    },
+    "cta": "Créer mon compte gratuit",
+    "trust": "Gratuit • Sans engagement • En 2 minutes"
+  },
+  "finalCta": {
+    "titleLine1": "Prêt à vivre votre",
+    "titleLine2": "mariage d'exception ?",
+    "subtitle": "Rejoignez des centaines de couples qui ont fait confiance à Mariable",
+    "cta": "Créer mon compte gratuit",
+    "trust1": "Inscription gratuite",
+    "trust2": "Outils inclus",
+    "trust3": "Support dédié"
+  }
+}
