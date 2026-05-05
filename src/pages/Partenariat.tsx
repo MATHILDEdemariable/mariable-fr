@@ -63,6 +63,7 @@ const Partenariat = () => {
         "Création de site web vitrine ou réservation",
         "Guides digitaux (welcome guide, brochures interactives)",
         "Outils en ligne sur-mesure (formulaires, espaces clients)",
+        "Création de CRM, newsletter et séquences mail automatisées",
         "Autres projets de développement web sur demande",
       ],
     },
