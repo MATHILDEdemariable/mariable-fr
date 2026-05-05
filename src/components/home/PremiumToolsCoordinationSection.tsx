@@ -3,41 +3,19 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CheckSquare, Calculator, Users, Search, FileText, Smartphone, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const PremiumToolsCoordinationSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation('home');
 
   const tools = [
-    {
-      icon: CheckSquare,
-      title: "Checklist intelligente",
-      description: "Planning personnalisé",
-    },
-    {
-      icon: Calculator,
-      title: "Gestion budget",
-      description: "Suivi de vos dépenses",
-    },
-    {
-      icon: Users,
-      title: "RSVP & plan de table",
-      description: "Gestion des invités",
-    },
-    {
-      icon: Search,
-      title: "Sélection prestataires",
-      description: "Recommandations personnalisées",
-    },
-    {
-      icon: FileText,
-      title: "Stockage documents",
-      description: "Tous vos contrats centralisés",
-    },
-    {
-      icon: Smartphone,
-      title: "Coordination Jour J",
-      description: "Application mobile",
-    },
+    { icon: CheckSquare, title: t('toolsCoord.items.checklist.title'), description: t('toolsCoord.items.checklist.description') },
+    { icon: Calculator, title: t('toolsCoord.items.budget.title'), description: t('toolsCoord.items.budget.description') },
+    { icon: Users, title: t('toolsCoord.items.rsvp.title'), description: t('toolsCoord.items.rsvp.description') },
+    { icon: Search, title: t('toolsCoord.items.vendors.title'), description: t('toolsCoord.items.vendors.description') },
+    { icon: FileText, title: t('toolsCoord.items.documents.title'), description: t('toolsCoord.items.documents.description') },
+    { icon: Smartphone, title: t('toolsCoord.items.coordination.title'), description: t('toolsCoord.items.coordination.description') },
   ];
 
   return (
@@ -46,10 +24,10 @@ const PremiumToolsCoordinationSection = () => {
         {/* Titre éditorial */}
         <header className="text-center mb-12 md:mb-16">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Outils de planification mariage
+            {t('toolsCoord.title')}
           </h2>
           <p className="text-editorial-gray text-base md:text-lg max-w-2xl mx-auto px-2">
-            Checklist, budget, RSVP et coordination jour-J pour organiser votre mariage sereinement
+            {t('toolsCoord.subtitle')}
           </p>
         </header>
 
