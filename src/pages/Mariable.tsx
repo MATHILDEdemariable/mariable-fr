@@ -53,50 +53,22 @@ const HeroSection = () => {
 
 // Testimonials Section - kept from original
 const TestimonialsSection = () => {
-  const testimonials = [{
-    quote: "Les outils de planification sont incroyables ! Le budget tracker et la checklist nous ont permis de tout organiser sans stress.",
-    author: "Sophie & Marc",
-    location: "Mariage en Provence"
-  }, {
-    quote: "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticiper sans rien oublier et partager les infos à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique, on recommande !",
-    author: "Julie & Thomas",
-    location: "Mariage à Paris"
-  }, {
-    quote: "Le service WhatsApp est super pratique ! On a eu des réponses rapides et des conseils personnalisés pour notre mariage.",
-    author: "Emma & Lucas",
-    location: "Mariage en Bretagne"
-  }];
+  const { t } = useTranslation('home');
+  const testimonials = [1, 2, 3].map((id) => ({
+    quote: t(`mariableTestimonials.items.${id}.quote`),
+    author: t(`mariableTestimonials.items.${id}.author`),
+    location: t(`mariableTestimonials.items.${id}.location`),
+  }));
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
-        <motion.header initial={{
-        opacity: 0,
-        y: 20
-      }} whileInView={{
-        opacity: 1,
-        y: 0
-      }} viewport={{
-        once: true
-      }} transition={{
-        duration: 0.6
-      }} className="text-center mb-8 md:mb-12">
+        <motion.header initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center mb-8 md:mb-12">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Ils ont organisé leur mariage avec Mariable
+            {t('mariableTestimonials.title')}
           </h2>
         </motion.header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto">
-          {testimonials.map((testimonial, index) => <motion.div key={index} initial={{
-          opacity: 0,
-          y: 20
-        }} whileInView={{
-          opacity: 1,
-          y: 0
-        }} viewport={{
-          once: true
-        }} transition={{
-          delay: index * 0.1,
-          duration: 0.5
-        }} className="bg-white p-5 md:p-6 border border-editorial-noir/10">
+          {testimonials.map((testimonial, index) => <motion.div key={index} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1, duration: 0.5 }} className="bg-white p-5 md:p-6 border border-editorial-noir/10">
               <Quote className="w-6 h-6 md:w-8 md:h-8 text-editorial-beige mb-3 md:mb-4" />
               <p className="text-sm md:text-base text-editorial-noir mb-4 italic">
                 "{testimonial.quote}"
@@ -118,48 +90,22 @@ const TestimonialsSection = () => {
 
 // FAQ Section
 const FAQSection = () => {
-  const faqItems = [{
-    question: "Comment organiser mon mariage étape par étape ?",
-    answer: "Mariable vous accompagne à chaque étape : 1) Créez votre compte gratuit, 2) Utilisez notre checklist intelligente pour planifier les grandes étapes, 3) Parcourez nos prestataires ou demandez une sélection personnalisée, 4) Gérez votre budget avec notre calculateur, 5) Coordonnez le jour J avec notre outil de planning. Tous nos outils sont accessibles gratuitement."
-  }, {
-    question: "Comment calculer le budget de mon mariage ?",
-    answer: "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte le nombre d'invités, la région, la saison et vos prestataires. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit."
-  }, {
-    question: "Mariable est-il vraiment gratuit ?",
-    answer: "Oui, de nombreuses fonctionnalités sont 100% gratuites : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Mariable propose également des fonctionnalités premium à découvrir pour aller plus loin dans l'organisation de votre mariage."
-  }, {
-    question: "Que comprend le Premium et quel est le prix ?",
-    answer: "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés, accès complet aux checklists et guides, utilisation IA sans limite, stockage illimité de documents, et plus de 3 lignes par catégorie de budget."
-  }];
+  const { t } = useTranslation('home');
+  const faqItems = [1, 2, 3, 4].map((id) => ({
+    question: t(`faq.items.${id}.question`),
+    answer: t(`faq.items.${id}.answer`),
+  }));
   return <section className="py-12 md:py-20 bg-white">
       <div className="container mx-auto px-4">
-        <motion.header initial={{
-        opacity: 0,
-        y: 20
-      }} whileInView={{
-        opacity: 1,
-        y: 0
-      }} viewport={{
-        once: true
-      }} className="text-center mb-8 md:mb-16 px-2">
+        <motion.header initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8 md:mb-16 px-2">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir">
-            Questions fréquentes sur l'organisation de mariage
+            {t('faq.title')}
           </h2>
         </motion.header>
 
         <div className="max-w-2xl mx-auto">
           <Accordion type="single" collapsible className="space-y-3 md:space-y-4">
-            {faqItems.map((item, index) => <motion.div key={index} initial={{
-            opacity: 0,
-            y: 10
-          }} whileInView={{
-            opacity: 1,
-            y: 0
-          }} viewport={{
-            once: true
-          }} transition={{
-            delay: index * 0.1
-          }}>
+            {faqItems.map((item, index) => <motion.div key={index} initial={{ opacity: 0, y: 10 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * 0.1 }}>
                 <AccordionItem value={`item-${index}`} className="border border-editorial-noir/10 px-4 md:px-6 hover:border-editorial-beige transition-all duration-300 bg-white">
                   <AccordionTrigger className="text-left font-medium hover:no-underline py-4 md:py-5 font-serif text-sm md:text-base text-editorial-noir">
                     {item.question}
@@ -176,21 +122,13 @@ const FAQSection = () => {
 };
 
 // Final CTA Section
-const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-olive">
+const FinalCTASection = () => {
+  const { t } = useTranslation('home');
+  return <section className="py-12 md:py-20 bg-editorial-olive">
     <div className="container mx-auto px-4">
-      <motion.header initial={{
-      opacity: 0,
-      y: 20
-    }} whileInView={{
-      opacity: 1,
-      y: 0
-    }} viewport={{
-      once: true
-    }} transition={{
-      duration: 0.6
-    }} className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
+      <motion.header initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="text-center max-w-3xl mx-auto mb-6 md:mb-8">
         <h2 className="font-serif text-2xl sm:text-3xl md:text-5xl px-2 text-white">
-          Rejoignez le club Mariable
+          {t('mariableFinalCta.title')}
         </h2>
       </motion.header>
       <div className="text-center max-w-3xl mx-auto">
@@ -198,19 +136,19 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-ol
         <div className="flex flex-col gap-3 md:gap-4 justify-center px-2">
           <Link to="/register" className="w-full sm:w-auto sm:mx-auto">
             <Button size="lg" className="bg-white text-editorial-noir hover:bg-white/90 px-6 md:px-8 py-5 md:py-6 text-base md:text-lg shadow-lg w-full rounded-none">
-              Rejoindre le Club
+              {t('mariableFinalCta.ctaPrimary')}
               <Heart className="ml-2 w-4 h-4 md:w-5 md:h-5" />
             </Button>
           </Link>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link to="/mariable.ambassadeur" className="w-full sm:w-auto">
               <Button size="lg" variant="outline" className="border-white/40 text-white px-6 md:px-8 py-4 md:py-6 text-sm md:text-lg w-full bg-white/10 hover:bg-white/20">
-                Devenir Lieu Ambassadeur   
+                {t('mariableFinalCta.ctaAmbassador')}
               </Button>
             </Link>
             <Link to="/mariable.partenaire" className="w-full sm:w-auto">
               <Button size="lg" variant="ghost" className="text-white/80 hover:text-white px-6 py-4 md:py-6 text-sm md:text-lg w-full bg-white/10 hover:bg-white/20">
-                Devenir Partenaire
+                {t('mariableFinalCta.ctaPartner')}
               </Button>
             </Link>
           </div>
@@ -218,6 +156,7 @@ const FinalCTASection = () => <section className="py-12 md:py-20 bg-editorial-ol
       </div>
     </div>
   </section>;
+};
 
 // Main Page Component
 const Mariable = () => {
