@@ -3,41 +3,19 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { CheckSquare, Calculator, Users, Search, FileText, Smartphone, ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const PremiumToolsCoordinationSection = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { t } = useTranslation('home');
 
   const tools = [
-    {
-      icon: CheckSquare,
-      title: "Checklist intelligente",
-      description: "Planning personnalisé",
-    },
-    {
-      icon: Calculator,
-      title: "Gestion budget",
-      description: "Suivi de vos dépenses",
-    },
-    {
-      icon: Users,
-      title: "RSVP & plan de table",
-      description: "Gestion des invités",
-    },
-    {
-      icon: Search,
-      title: "Sélection prestataires",
-      description: "Recommandations personnalisées",
-    },
-    {
-      icon: FileText,
-      title: "Stockage documents",
-      description: "Tous vos contrats centralisés",
-    },
-    {
-      icon: Smartphone,
-      title: "Coordination Jour J",
-      description: "Application mobile",
-    },
+    { icon: CheckSquare, title: t('toolsCoord.items.checklist.title'), description: t('toolsCoord.items.checklist.description') },
+    { icon: Calculator, title: t('toolsCoord.items.budget.title'), description: t('toolsCoord.items.budget.description') },
+    { icon: Users, title: t('toolsCoord.items.rsvp.title'), description: t('toolsCoord.items.rsvp.description') },
+    { icon: Search, title: t('toolsCoord.items.vendors.title'), description: t('toolsCoord.items.vendors.description') },
+    { icon: FileText, title: t('toolsCoord.items.documents.title'), description: t('toolsCoord.items.documents.description') },
+    { icon: Smartphone, title: t('toolsCoord.items.coordination.title'), description: t('toolsCoord.items.coordination.description') },
   ];
 
   return (
@@ -46,10 +24,10 @@ const PremiumToolsCoordinationSection = () => {
         {/* Titre éditorial */}
         <header className="text-center mb-12 md:mb-16">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Outils de planification mariage
+            {t('toolsCoord.title')}
           </h2>
           <p className="text-editorial-gray text-base md:text-lg max-w-2xl mx-auto px-2">
-            Checklist, budget, RSVP et coordination jour-J pour organiser votre mariage sereinement
+            {t('toolsCoord.subtitle')}
           </p>
         </header>
 
@@ -82,7 +60,7 @@ const PremiumToolsCoordinationSection = () => {
                   size="lg" 
                   className="bg-editorial-olive hover:bg-editorial-olive/90 text-white px-8 sm:px-10 py-5 sm:py-6 text-sm sm:text-base font-medium rounded-none"
                 >
-                  Créer mon compte gratuit <ArrowRight className="ml-2 h-4 w-4" />
+                  {t('toolsCoord.cta')} <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
               </Link>
             </div>
@@ -101,30 +79,30 @@ const PremiumToolsCoordinationSection = () => {
                   
                   {/* App header */}
                   <div className="bg-editorial-olive text-white p-3 sm:p-4">
-                    <span className="font-serif text-sm sm:text-lg block" aria-hidden="true">Coordination Jour J</span>
-                    <span className="text-white/80 text-xs sm:text-sm block" aria-hidden="true">Votre mariage</span>
+                    <span className="font-serif text-sm sm:text-lg block" aria-hidden="true">{t('toolsCoord.phone.header')}</span>
+                    <span className="text-white/80 text-xs sm:text-sm block" aria-hidden="true">{t('toolsCoord.phone.subheader')}</span>
                   </div>
                   
                   {/* Timeline */}
                   <div className="p-3 sm:p-4 space-y-2 sm:space-y-3">
                     <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-green-50 border-l-2 border-green-500">
                       <div>
-                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">14:00 - Arrivée invités</p>
-                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">En cours ✓</p>
+                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">{t('toolsCoord.phone.step1')}</p>
+                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">{t('toolsCoord.phone.status1')}</p>
                       </div>
                     </div>
                     
                     <div className="flex items-center gap-2 sm:gap-3 p-2 sm:p-3 bg-editorial-olive/5 border-l-2 border-editorial-olive">
                       <div>
-                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">15:30 - Cérémonie</p>
-                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">Préparation</p>
+                        <p className="font-medium text-xs sm:text-sm text-editorial-noir">{t('toolsCoord.phone.step2')}</p>
+                        <p className="text-[10px] sm:text-xs text-editorial-noir/60">{t('toolsCoord.phone.status2')}</p>
                       </div>
                     </div>
                     
                     <div className="hidden sm:flex items-center gap-3 p-3 bg-editorial-beige border-l-2 border-editorial-noir/30">
                       <div>
-                        <p className="font-medium text-sm text-editorial-noir">17:00 - Cocktail</p>
-                        <p className="text-xs text-editorial-noir/60">À venir</p>
+                        <p className="font-medium text-sm text-editorial-noir">{t('toolsCoord.phone.step3')}</p>
+                        <p className="text-xs text-editorial-noir/60">{t('toolsCoord.phone.status3')}</p>
                       </div>
                     </div>
                   </div>
@@ -134,9 +112,10 @@ const PremiumToolsCoordinationSection = () => {
                     <div className="bg-white border border-editorial-noir/10 p-2 sm:p-3 shadow-sm">
                       <div className="flex items-center gap-2">
                         <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-green-500 rounded-full animate-pulse"></div>
-                        <p className="text-[10px] sm:text-xs text-editorial-noir">
-                          <strong>Photographe:</strong> En position
-                        </p>
+                        <p
+                          className="text-[10px] sm:text-xs text-editorial-noir"
+                          dangerouslySetInnerHTML={{ __html: t('toolsCoord.phone.notification') }}
+                        />
                       </div>
                     </div>
                   </div>
@@ -150,7 +129,7 @@ const PremiumToolsCoordinationSection = () => {
                 onClick={() => setIsModalOpen(true)}
                 className="text-[10px] sm:text-xs tracking-widest text-editorial-olive uppercase border-b border-editorial-olive pb-1 hover:text-editorial-noir hover:border-editorial-noir transition-colors whitespace-nowrap"
               >
-                Voir la démo
+                {t('toolsCoord.demo')}
               </button>
             </div>
           </div>
@@ -161,7 +140,7 @@ const PremiumToolsCoordinationSection = () => {
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent className="max-w-4xl w-full p-0 rounded-none">
           <DialogHeader className="p-6 pb-0">
-            <DialogTitle className="font-serif text-xl">Démonstration de la coordination Jour J</DialogTitle>
+            <DialogTitle className="font-serif text-xl">{t('toolsCoord.modalTitle')}</DialogTitle>
           </DialogHeader>
           <div className="relative w-full" style={{ paddingTop: '56.25%' }}>
             <iframe
@@ -169,7 +148,7 @@ const PremiumToolsCoordinationSection = () => {
               className="absolute top-0 left-0 w-full h-full"
               frameBorder="0"
               allowFullScreen
-              title="Démonstration coordination Jour J"
+              title={t('toolsCoord.modalTitle')}
             />
           </div>
         </DialogContent>

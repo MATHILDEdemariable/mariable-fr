@@ -2,11 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 
 const BlogSection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('home');
 
   const { data: posts, isLoading } = useQuery({
     queryKey: ['homepage-blog'],
@@ -33,7 +35,7 @@ const BlogSection = () => {
           className="text-center mb-12 md:mb-16"
         >
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir">
-            Conseils & inspirations mariage
+            {t('blogSection.title')}
           </h2>
         </motion.header>
 
@@ -100,7 +102,7 @@ const BlogSection = () => {
             onClick={() => navigate('/conseilsmariage')}
             className="border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-white px-8 py-5 text-sm uppercase tracking-widest rounded-none"
           >
-            Voir tous les articles
+            {t('blogSection.cta')}
           </Button>
         </div>
       </div>

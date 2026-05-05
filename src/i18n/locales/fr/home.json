@@ -159,5 +159,109 @@
     "trust1": "Inscription gratuite",
     "trust2": "Outils inclus",
     "trust3": "Support dédié"
+  },
+  "mariableSeo": {
+    "title": "Organiser son mariage facilement | Mariable",
+    "description": "Outils gratuits pour organiser votre mariage : checklist, budget, RSVP, coordination jour-J et sélection de prestataires vérifiés partout en France.",
+    "keywords": "organiser mariage, wedding planner digital, professionnels mariage, organisation mariage, coordination jour-j, prestataires mariage, checklist mariage, budget mariage"
+  },
+  "mariableHero": {
+    "title": "Le wedding planning, entre vos mains.",
+    "subtitleLine1": "Outils intelligents pour les couples",
+    "subtitleLine2": "qui organisent seuls — et le font bien.",
+    "cta": "Créer mon compte gratuit"
+  },
+  "venuesSection": {
+    "title": "Lieux de mariage & prestataires",
+    "subtitle": "Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage",
+    "allRegions": "Toutes les régions",
+    "regionPlaceholder": "Région",
+    "categoriesTitle": "Catégories",
+    "allCategoriesPlaceholder": "Toutes les catégories",
+    "categories": {
+      "all": "Tous les prestataires",
+      "venue": "Lieux de réception",
+      "photographer": "Photographes",
+      "caterer": "Traiteurs",
+      "others": "Autres"
+    },
+    "cta": "Voir tous les professionnels"
+  },
+  "toolsCoord": {
+    "title": "Outils de planification mariage",
+    "subtitle": "Checklist, budget, RSVP et coordination jour-J pour organiser votre mariage sereinement",
+    "cta": "Créer mon compte gratuit",
+    "demo": "Voir la démo",
+    "modalTitle": "Démonstration de la coordination Jour J",
+    "items": {
+      "checklist": { "title": "Checklist intelligente", "description": "Planning personnalisé" },
+      "budget": { "title": "Gestion budget", "description": "Suivi de vos dépenses" },
+      "rsvp": { "title": "RSVP & plan de table", "description": "Gestion des invités" },
+      "vendors": { "title": "Sélection prestataires", "description": "Recommandations personnalisées" },
+      "documents": { "title": "Stockage documents", "description": "Tous vos contrats centralisés" },
+      "coordination": { "title": "Coordination Jour J", "description": "Application mobile" }
+    },
+    "phone": {
+      "header": "Coordination Jour J",
+      "subheader": "Votre mariage",
+      "step1": "14:00 - Arrivée invités",
+      "status1": "En cours ✓",
+      "step2": "15:30 - Cérémonie",
+      "status2": "Préparation",
+      "step3": "17:00 - Cocktail",
+      "status3": "À venir",
+      "notification": "<strong>Photographe:</strong> En position"
+    }
+  },
+  "blogSection": {
+    "title": "Conseils & inspirations mariage",
+    "cta": "Voir tous les articles"
+  },
+  "mariableTestimonials": {
+    "title": "Ils ont organisé leur mariage avec Mariable",
+    "items": {
+      "1": {
+        "quote": "Les outils de planification sont incroyables ! Le budget tracker et la checklist nous ont permis de tout organiser sans stress.",
+        "author": "Sophie & Marc",
+        "location": "Mariage en Provence"
+      },
+      "2": {
+        "quote": "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticiper sans rien oublier et partager les infos à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique, on recommande !",
+        "author": "Julie & Thomas",
+        "location": "Mariage à Paris"
+      },
+      "3": {
+        "quote": "Le service WhatsApp est super pratique ! On a eu des réponses rapides et des conseils personnalisés pour notre mariage.",
+        "author": "Emma & Lucas",
+        "location": "Mariage en Bretagne"
+      }
+    }
+  },
+  "faq": {
+    "title": "Questions fréquentes sur l'organisation de mariage",
+    "items": {
+      "1": {
+        "question": "Comment organiser mon mariage étape par étape ?",
+        "answer": "Mariable vous accompagne à chaque étape : 1) Créez votre compte gratuit, 2) Utilisez notre checklist intelligente pour planifier les grandes étapes, 3) Parcourez nos prestataires ou demandez une sélection personnalisée, 4) Gérez votre budget avec notre calculateur, 5) Coordonnez le jour J avec notre outil de planning. Tous nos outils sont accessibles gratuitement."
+      },
+      "2": {
+        "question": "Comment calculer le budget de mon mariage ?",
+        "answer": "Notre calculateur de budget vous aide à estimer et répartir votre enveloppe. Il prend en compte le nombre d'invités, la région, la saison et vos prestataires. Vous obtenez une estimation réaliste par poste (lieu, traiteur, photo, DJ, etc.) et pouvez suivre vos dépenses en temps réel. L'outil est 100% gratuit."
+      },
+      "3": {
+        "question": "Mariable est-il vraiment gratuit ?",
+        "answer": "Oui, de nombreuses fonctionnalités sont 100% gratuites : tableau de bord, checklist, calculateur de budget, gestion des invités, plan de table, et coordination jour J. La recherche de prestataires est également gratuite. Mariable propose également des fonctionnalités premium à découvrir pour aller plus loin dans l'organisation de votre mariage."
+      },
+      "4": {
+        "question": "Que comprend le Premium et quel est le prix ?",
+        "answer": "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés, accès complet aux checklists et guides, utilisation IA sans limite, stockage illimité de documents, et plus de 3 lignes par catégorie de budget."
+      }
+    }
+  },
+  "mariableFinalCta": {
+    "title": "Rejoignez le club Mariable",
+    "ctaPrimary": "Rejoindre le Club",
+    "ctaAmbassador": "Devenir Lieu Ambassadeur",
+    "ctaPartner": "Devenir Partenaire"
   }
 }
