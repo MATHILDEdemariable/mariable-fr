@@ -159,5 +159,109 @@
     "trust1": "Free signup",
     "trust2": "Tools included",
     "trust3": "Dedicated support"
+  },
+  "mariableSeo": {
+    "title": "Plan your wedding easily | Mariable",
+    "description": "Free tools to plan your wedding: checklist, budget, RSVP, day-of coordination and a curated selection of verified vendors across France.",
+    "keywords": "plan wedding, digital wedding planner, wedding vendors, wedding organization, day-of coordination, wedding checklist, wedding budget"
+  },
+  "mariableHero": {
+    "title": "Wedding planning, in your hands.",
+    "subtitleLine1": "Smart tools for couples",
+    "subtitleLine2": "who plan it themselves — and do it well.",
+    "cta": "Create my free account"
+  },
+  "venuesSection": {
+    "title": "Wedding venues & vendors",
+    "subtitle": "Explore our selection of outstanding venues and verified professionals for your wedding",
+    "allRegions": "All regions",
+    "regionPlaceholder": "Region",
+    "categoriesTitle": "Categories",
+    "allCategoriesPlaceholder": "All categories",
+    "categories": {
+      "all": "All vendors",
+      "venue": "Venues",
+      "photographer": "Photographers",
+      "caterer": "Caterers",
+      "others": "Others"
+    },
+    "cta": "View all professionals"
+  },
+  "toolsCoord": {
+    "title": "Wedding planning tools",
+    "subtitle": "Checklist, budget, RSVP and day-of coordination to plan your wedding with peace of mind",
+    "cta": "Create my free account",
+    "demo": "Watch the demo",
+    "modalTitle": "Wedding-day coordination demo",
+    "items": {
+      "checklist": { "title": "Smart checklist", "description": "Personalized planning" },
+      "budget": { "title": "Budget management", "description": "Track your expenses" },
+      "rsvp": { "title": "RSVP & seating plan", "description": "Guest management" },
+      "vendors": { "title": "Vendor selection", "description": "Personalized recommendations" },
+      "documents": { "title": "Document storage", "description": "All your contracts in one place" },
+      "coordination": { "title": "Wedding-day coordination", "description": "Mobile app" }
+    },
+    "phone": {
+      "header": "Wedding-day Coordination",
+      "subheader": "Your wedding",
+      "step1": "2:00 PM - Guest arrival",
+      "status1": "In progress ✓",
+      "step2": "3:30 PM - Ceremony",
+      "status2": "Preparing",
+      "step3": "5:00 PM - Cocktail",
+      "status3": "Upcoming",
+      "notification": "<strong>Photographer:</strong> In position"
+    }
+  },
+  "blogSection": {
+    "title": "Wedding advice & inspiration",
+    "cta": "View all articles"
+  },
+  "mariableTestimonials": {
+    "title": "They planned their wedding with Mariable",
+    "items": {
+      "1": {
+        "quote": "The planning tools are amazing! The budget tracker and checklist let us organize everything stress-free.",
+        "author": "Sophie & Marc",
+        "location": "Wedding in Provence"
+      },
+      "2": {
+        "quote": "We found our venue on the guide and the day-of app is a game changer. We anticipated everything and shared info with our witnesses easily on their phones — highly recommended!",
+        "author": "Julie & Thomas",
+        "location": "Wedding in Paris"
+      },
+      "3": {
+        "quote": "The WhatsApp service is super handy! We got fast answers and tailored advice for our wedding.",
+        "author": "Emma & Lucas",
+        "location": "Wedding in Brittany"
+      }
+    }
+  },
+  "faq": {
+    "title": "Frequently asked questions about wedding planning",
+    "items": {
+      "1": {
+        "question": "How do I plan my wedding step by step?",
+        "answer": "Mariable supports you at every step: 1) Create your free account, 2) Use our smart checklist to plan the major milestones, 3) Browse our vendors or request a personalized selection, 4) Manage your budget with our calculator, 5) Coordinate the day with our planning tool. All our tools are free to use."
+      },
+      "2": {
+        "question": "How do I calculate my wedding budget?",
+        "answer": "Our budget calculator helps you estimate and allocate your funds. It factors in the number of guests, region, season and your vendors. You get a realistic estimate per category (venue, caterer, photo, DJ, etc.) and can track your expenses in real time. The tool is 100% free."
+      },
+      "3": {
+        "question": "Is Mariable really free?",
+        "answer": "Yes — many features are 100% free: dashboard, checklist, budget calculator, guest management, seating plan and day-of coordination. Vendor search is free too. Mariable also offers premium features to go further in planning your wedding."
+      },
+      "4": {
+        "question": "What does Premium include and how much is it?",
+        "answer": "The Mariable Premium account is available for €29 (one-time payment, lifetime access). It includes: unlimited PDF exports, full access to checklists and guides, unlimited AI usage, unlimited document storage, and more than 3 lines per budget category."
+      }
+    }
+  },
+  "mariableFinalCta": {
+    "title": "Join the Mariable club",
+    "ctaPrimary": "Join the Club",
+    "ctaAmbassador": "Become an Ambassador Venue",
+    "ctaPartner": "Become a Partner"
   }
 }
