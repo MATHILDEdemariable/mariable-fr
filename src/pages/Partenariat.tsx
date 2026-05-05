@@ -40,7 +40,6 @@ const Partenariat = () => {
         "Création de contenu spécial réseaux sociaux (iPhone 17) : Reels & photos authentiques",
         "Interview équipe & mise en avant humaine des responsables — format vidéo court et impactant",
         "Direction artistique éditoriale, branding & charte graphique",
-        "Mise en scène & shooting sur site",
       ],
     },
     {
