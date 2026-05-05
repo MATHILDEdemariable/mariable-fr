@@ -154,18 +154,18 @@ const Partenariat = () => {
       </Helmet>
       <PremiumHeader />
       <main className="min-h-screen">
-        {/* Top-left contact button under sticky header */}
-        <div className="px-4 pt-4">
+        {/* Bouton retour accueil sous le sticky header */}
+        <div className="px-4 pt-20">
           <Button
             asChild
             variant="outline"
             size="sm"
             className="border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
           >
-            <a href={`mailto:${CONTACT_EMAIL}`}>
-              <Mail className="w-4 h-4 mr-2" />
-              Nous contacter
-            </a>
+            <Link to="/">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour à l'accueil
+            </Link>
           </Button>
         </div>
 
