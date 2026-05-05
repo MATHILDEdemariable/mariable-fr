@@ -79,10 +79,10 @@ const VenuesSection = () => {
         duration: 0.6
       }} className="text-center mb-8 md:mb-16 px-2">
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir mb-4">
-            Lieux de mariage & prestataires
+            {t('venuesSection.title')}
           </h2>
           <p className="text-base text-editorial-gray font-sans max-w-2xl mx-auto">
-            Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage
+            {t('venuesSection.subtitle')}
           </p>
         </motion.header>
 
@@ -91,7 +91,7 @@ const VenuesSection = () => {
         <div className="lg:hidden mb-6 space-y-3">
           <Select value={selectedCategory} onValueChange={value => setSelectedCategory(value)}>
             <SelectTrigger className="w-full bg-white border-editorial-border rounded-none">
-              <SelectValue placeholder="Toutes les catégories" />
+              <SelectValue placeholder={t('venuesSection.allCategoriesPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
               {CATEGORIES.map(cat => <SelectItem key={cat.id} value={cat.id}>{cat.label}</SelectItem>)}
@@ -100,10 +100,10 @@ const VenuesSection = () => {
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
             <SelectTrigger className="w-full bg-white border-editorial-border rounded-none">
               <MapPin className="w-4 h-4 mr-2 text-editorial-gray" />
-              <SelectValue placeholder="Région" />
+              <SelectValue placeholder={t('venuesSection.regionPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              {REGIONS.map(region => <SelectItem key={region} value={region}>{region}</SelectItem>)}
+              {REGIONS.map(region => <SelectItem key={region} value={region}>{region === ALL_REGIONS_VALUE ? t('venuesSection.allRegions') : region}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -113,10 +113,10 @@ const VenuesSection = () => {
           <Select value={selectedRegion} onValueChange={setSelectedRegion}>
             <SelectTrigger className="w-[220px] md:w-[280px] bg-white border-editorial-border rounded-none">
               <MapPin className="w-4 h-4 mr-2 text-editorial-gray" />
-              <SelectValue placeholder="Région" />
+              <SelectValue placeholder={t('venuesSection.regionPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              {REGIONS.map(region => <SelectItem key={region} value={region}>{region}</SelectItem>)}
+              {REGIONS.map(region => <SelectItem key={region} value={region}>{region === ALL_REGIONS_VALUE ? t('venuesSection.allRegions') : region}</SelectItem>)}
             </SelectContent>
           </Select>
         </div>
@@ -127,7 +127,7 @@ const VenuesSection = () => {
           <aside className="hidden lg:block w-[250px] flex-shrink-0">
             <div className="bg-white border border-editorial-border p-6 sticky top-24">
               <h3 className="text-sm uppercase tracking-widest font-medium text-editorial-noir mb-6">
-                Catégories
+                {t('venuesSection.categoriesTitle')}
               </h3>
               <ul className="space-y-1">
                 {CATEGORIES.map(cat => <li key={cat.id}>
@@ -159,7 +159,7 @@ const VenuesSection = () => {
                 onClick={() => navigate('/professionnelsmariable')} 
                 className="w-full sm:w-auto bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-4 sm:px-10 sm:py-6 text-xs sm:text-sm uppercase tracking-widest rounded-none max-w-full"
               >
-                Voir tous les professionnels
+                {t('venuesSection.cta')}
               </Button>
             </div>
           </div>
