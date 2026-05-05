@@ -33,12 +33,6 @@ const VenuesSection = () => {
     data: vendors,
     isLoading
   } = useQuery({
-    queryKey: ['homepage-vendors', selectedCategory, selectedRegion],
-    queryFn: async () => {
-      let query = supabase.from('prestataires_rows').select(`
-          *,
-          prestataires_photos_preprod (url, is_cover, ordre, thumbnail_url)
-        `).eq('visible', true)
   const {
     data: vendors,
     isLoading
