@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { MapPin } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,34 +11,34 @@ import VendorCard from "@/components/vendors/VendorCard";
 import CarnetAdressesModal from "@/components/home/CarnetAdressesModal";
 import { Database } from "@/integrations/supabase/types";
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
-const REGIONS = ['Toutes les régions', 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
+const ALL_REGIONS_VALUE = 'Toutes les régions';
+const REGIONS = [ALL_REGIONS_VALUE, 'Auvergne-Rhône-Alpes', 'Bourgogne-Franche-Comté', 'Bretagne', 'Centre-Val de Loire', 'Corse', 'Grand Est', 'Hauts-de-France', 'Île-de-France', 'Normandie', 'Nouvelle-Aquitaine', 'Occitanie', 'Pays de la Loire', "Provence-Alpes-Côte d'Azur"];
 
 // Catégories simplifiées pour la page d'accueil
 const MAIN_CATEGORIES = ['Lieu de réception', 'Photographe', 'Traiteur'];
-const CATEGORIES: {
-  id: string;
-  label: string;
-}[] = [{
-  id: 'all',
-  label: 'Tous les prestataires'
-}, {
-  id: 'Lieu de réception',
-  label: 'Lieux de réception'
-}, {
-  id: 'Photographe',
-  label: 'Photographes'
-}, {
-  id: 'Traiteur',
-  label: 'Traiteurs'
-}, {
-  id: 'Autres',
-  label: 'Autres'
-}];
 const VenuesSection = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('home');
+  const CATEGORIES: { id: string; label: string }[] = [
+    { id: 'all', label: t('venuesSection.categories.all') },
+    { id: 'Lieu de réception', label: t('venuesSection.categories.venue') },
+    { id: 'Photographe', label: t('venuesSection.categories.photographer') },
+    { id: 'Traiteur', label: t('venuesSection.categories.caterer') },
+    { id: 'Autres', label: t('venuesSection.categories.others') },
+  ];
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
-  const [selectedRegion, setSelectedRegion] = useState<string>('Toutes les régions');
+  const [selectedRegion, setSelectedRegion] = useState<string>(ALL_REGIONS_VALUE);
   const [isCarnetModalOpen, setIsCarnetModalOpen] = useState(false);
+  const {
+    data: vendors,
+    isLoading
+  } = useQuery({
+    queryKey: ['homepage-vendors', selectedCategory, selectedRegion],
+    queryFn: async () => {
+      let query = supabase.from('prestataires_rows').select(`
+          *,
+          prestataires_photos_preprod (url, is_cover, ordre, thumbnail_url)
+        `).eq('visible', true)
   const {
     data: vendors,
     isLoading
