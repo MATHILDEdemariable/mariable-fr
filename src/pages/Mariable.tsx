@@ -161,6 +161,7 @@ const FinalCTASection = () => {
 // Main Page Component
 const Mariable = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('home');
 
   // Détecter les erreurs d'auth ou tokens de recovery dans le hash fragment et rediriger vers /auth/callback
   useEffect(() => {
@@ -186,7 +187,7 @@ const Mariable = () => {
     }
   }, [navigate]);
   return <>
-      <SEO title="Organiser son mariage facilement | Mariable" description="Outils gratuits pour organiser votre mariage : checklist, budget, RSVP, coordination jour-J et sélection de prestataires vérifiés partout en France." canonical="/" keywords="organiser mariage, wedding planner digital, professionnels mariage, organisation mariage, coordination jour-j, prestataires mariage, checklist mariage, budget mariage" />
+      <SEO title={t('mariableSeo.title')} description={t('mariableSeo.description')} canonical="/" keywords={t('mariableSeo.keywords')} />
 
       <div className="min-h-screen bg-editorial-beige">
         <PremiumHeader />
