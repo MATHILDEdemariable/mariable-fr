@@ -31,13 +31,15 @@ const Partenariat = () => {
   const expertises = [
     {
       icon: Film,
-      title: "Création de contenu",
+      title: "Stratégie Réseaux sociaux & Création de contenu",
       description:
-        "Reels, photos, direction artistique et mise en scène de votre lieu, de votre cuisine ou de votre savoir-faire.",
+        "Stratégie selon vos objectifs, refonte de feed Instagram et création de contenu spécial réseaux sociaux tourné en iPhone 17 — authentique, éditorial et performant.",
       points: [
-        "Reels formats Instagram & TikTok",
-        "Photos retouchées",
-        "Direction artistique éditoriale",
+        "Conseil en stratégie réseaux sociaux selon objectif",
+        "Refonte de feed Instagram",
+        "Création de contenu spécial réseaux sociaux (iPhone 17) : Reels & photos authentiques",
+        "Interview équipe & mise en avant humaine des responsables — format vidéo court et impactant",
+        "Direction artistique éditoriale, branding & charte graphique",
         "Mise en scène & shooting sur site",
       ],
     },
@@ -45,7 +47,7 @@ const Partenariat = () => {
       icon: MessageSquare,
       title: "Community management",
       description:
-        "Gestion complète de votre Instagram et de vos campagnes Meta Ads pour une présence régulière et performante.",
+        "Gestion partielle ou complète de votre Instagram et de vos campagnes Meta Ads selon vos besoins, pour une présence régulière et performante.",
       points: [
         "Calendrier éditorial mensuel",
         "Publication & stories",
