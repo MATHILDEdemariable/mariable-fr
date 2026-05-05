@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Helmet } from "react-helmet-async";
 import {
@@ -10,6 +11,7 @@ import {
   ChevronDown,
   ChevronUp,
   Mail,
+  ArrowLeft,
 } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
@@ -29,13 +31,15 @@ const Partenariat = () => {
   const expertises = [
     {
       icon: Film,
-      title: "Création de contenu",
+      title: "Stratégie Réseaux sociaux & Création de contenu",
       description:
-        "Reels, photos, direction artistique et mise en scène de votre lieu, de votre cuisine ou de votre savoir-faire.",
+        "Stratégie selon vos objectifs, refonte de feed Instagram et création de contenu spécial réseaux sociaux tourné en iPhone 17 — authentique, éditorial et performant.",
       points: [
-        "Reels formats Instagram & TikTok",
-        "Photos retouchées",
-        "Direction artistique éditoriale",
+        "Conseil en stratégie réseaux sociaux selon objectif",
+        "Refonte de feed Instagram",
+        "Création de contenu spécial réseaux sociaux (iPhone 17) : Reels & photos authentiques",
+        "Interview équipe & mise en avant humaine des responsables — format vidéo court et impactant",
+        "Direction artistique éditoriale, branding & charte graphique",
         "Mise en scène & shooting sur site",
       ],
     },
@@ -43,7 +47,7 @@ const Partenariat = () => {
       icon: MessageSquare,
       title: "Community management",
       description:
-        "Gestion complète de votre Instagram et de vos campagnes Meta Ads pour une présence régulière et performante.",
+        "Gestion partielle ou complète de votre Instagram et de vos campagnes Meta Ads selon vos besoins, pour une présence régulière et performante.",
       points: [
         "Calendrier éditorial mensuel",
         "Publication & stories",
@@ -150,18 +154,18 @@ const Partenariat = () => {
       </Helmet>
       <PremiumHeader />
       <main className="min-h-screen">
-        {/* Top-left contact button under sticky header */}
-        <div className="px-4 pt-4">
+        {/* Bouton retour accueil sous le sticky header */}
+        <div className="px-4 pt-20">
           <Button
             asChild
             variant="outline"
             size="sm"
             className="border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
           >
-            <a href={`mailto:${CONTACT_EMAIL}`}>
-              <Mail className="w-4 h-4 mr-2" />
-              Nous contacter
-            </a>
+            <Link to="/">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour à l'accueil
+            </Link>
           </Button>
         </div>
 

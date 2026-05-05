@@ -1,30 +1,25 @@
-## Plan de correction ciblé
+## Modifications page `/partenariat`
 
-Le problème ne vient pas du toggle : `/prix` et `/professionnelsmariable` utilisent déjà `useTranslation(...)` dans leurs composants. La route `/`, elle, affiche `src/pages/Mariable.tsx` et plusieurs sections avec du texte encore écrit en dur, donc rien ne peut basculer en anglais.
+**Fichier:** `src/pages/Partenariat.tsx`
 
-### 1. Internationaliser la vraie home `/`
-- Ajouter `useTranslation('home')` dans `src/pages/Mariable.tsx`.
-- Remplacer les textes en dur de :
-  - hero,
-  - témoignages,
-  - FAQ,
-  - CTA final,
-  - SEO title/description/keywords.
-- Réutiliser les clés `home` quand elles existent et ajouter seulement les clés manquantes.
+### 1. Bouton retour accueil
 
-### 2. Internationaliser les sections home encore en dur
-- Appliquer la même logique que `/prix` et `/professionnelsmariable` dans :
-  - `src/components/home/VenuesSection.tsx`,
-  - `src/components/home/PremiumToolsCoordinationSection.tsx`,
-  - `src/components/home/BlogSection.tsx`.
-- Remplacer titres, sous-titres, boutons, filtres, mockup téléphone et modal par `t('...')`.
+Remplacer le bouton "Nous contacter" en haut (lignes 153-166) par un bouton **"← Retour à l'accueil"** (Link vers `/`), sous le sticky header avec un padding-top suffisant (`pt-20`) pour être visible sous le header fixe.
 
-### 3. Compléter les fichiers de traduction
-- Étendre :
-  - `src/i18n/locales/fr/home.json`,
-  - `src/i18n/locales/en/home.json`.
-- Garder la structure existante et ajouter des clés métier explicites, sans modifier les pages `/prix` et `/professionnelsmariable` qui fonctionnent déjà.
+### 2. Carte "Création de contenu" (lignes 30-41)
 
-### 4. Vérification
-- Contrôler que toutes les clés utilisées existent en FR et EN.
-- Vérifier que le toggle EN modifie bien les textes visibles de `/` sans changer la logique des autres pages.
+- **Nouveau titre:** `"Stratégie Réseaux sociaux & Création de contenu"`
+- **Nouvelle description:** mentionner stratégie selon objectif, refonte feed Instagram, création de contenu spécial réseaux sociaux (iPhone 17)
+- **Points mis à jour:**
+  - Conseil en stratégie réseaux sociaux 
+  - Refonte de feed Instagram 
+  - Création de contenu spécial réseaux sociaux (iPhone 17) : Reels & photos authentiques
+  - Photos retouchées → **Interview équipe & mise en avant humaine des responsables format vidéo court et impactant**
+  - Direction artistique éditoriale, branding et charte graphique
+    &nbsp;
+
+### 3. Carte "Community management" (lignes 42-53)
+
+- **Nouvelle description:** "Gestion **partielle ou complète** de votre Instagram et de vos campagnes Meta Ads selon vos besoins, pour une présence régulière et performante."
+
+Aucun autre changement (FAQ, Hero, JSON-LD, Contact section restent identiques).
