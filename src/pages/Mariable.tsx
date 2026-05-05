@@ -17,7 +17,9 @@ import CartIcon from "@/components/cart/CartIcon";
 const VIDEO_URL = "https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4";
 
 // Hero Section - Single CTA
-const HeroSection = () => <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
+const HeroSection = () => {
+  const { t } = useTranslation('home');
+  return <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden">
     {/* Video Background */}
     <div className="absolute inset-0 z-0">
       <video autoPlay muted loop playsInline className="w-full h-full object-cover">
@@ -27,49 +29,27 @@ const HeroSection = () => <section className="relative min-h-[100svh] flex items
     </div>
 
     <div className="relative z-10 container mx-auto px-4 py-12 md:py-20 text-center">
-      <motion.div initial={{
-      opacity: 0,
-      y: 20
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      duration: 0.8
-    }} className="max-w-4xl mx-auto">
-
-
-
-        {/* Title */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }} className="max-w-4xl mx-auto">
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white mb-4 md:mb-6 leading-tight px-2 lg:text-6xl">
-          Le wedding planning, entre vos mains.
+          {t('mariableHero.title')}
         </h1>
 
-        {/* Subtitle */}
         <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-white/80 mb-8 md:mb-10 font-sans px-4">
-          Outils intelligents pour les couples<br />
-          qui organisent seuls — et le font bien.
+          {t('mariableHero.subtitleLine1')}<br />
+          {t('mariableHero.subtitleLine2')}
         </p>
 
-        {/* Single CTA - Navigate to register - Style flag like Club badge */}
-        <motion.div initial={{
-        opacity: 0,
-        y: 20
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        delay: 0.7,
-        duration: 0.5
-      }} className="flex justify-center px-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.5 }} className="flex justify-center px-4">
           <Link to="/register" className="w-full sm:w-auto">
             <Button size="lg" className="backdrop-blur-sm border border-white/30 px-6 md:px-10 py-5 md:py-6 text-base md:text-lg transition-all w-full sm:w-auto rounded-none bg-editorial-olive text-white hover:bg-editorial-olive/90">
-              Créer mon compte gratuit
+              {t('mariableHero.cta')}
             </Button>
           </Link>
         </motion.div>
       </motion.div>
     </div>
   </section>;
+};
 
 // Testimonials Section - kept from original
 const TestimonialsSection = () => {
