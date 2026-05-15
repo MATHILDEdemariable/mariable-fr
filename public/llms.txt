@@ -1,0 +1,53 @@
+# Mariable
+
+> Plateforme française d'organisation de mariage : outils gratuits, marketplace de prestataires sélectionnés, et accompagnement digital du budget jusqu'à la coordination du jour J. Premium 29€ à vie.
+
+Mariable aide les couples à organiser leur mariage de A à Z grâce à des outils digitaux (checklist IA, budget, plan de table, RSVP, moodboard, coordination jour J), une marketplace de prestataires (lieux, traiteurs, photographes, fleuristes, DJ, wedding planners) et des guides éditoriaux. Le cœur des outils est gratuit ; un Premium en achat unique à 29€ déverrouille IA et exports illimités.
+
+## Pages
+
+- [Accueil](/): Présentation de la plateforme et accès aux outils.
+- [Sélection de prestataires](/selection): Marketplace de prestataires de mariage en France.
+- [Tarifs](/prix): Détail des offres gratuit et Premium 29€ à vie.
+- [Comparatif](/comparatif): Mariable comparé aux solutions traditionnelles.
+- [Notre approche](/about/approche): Méthode d'accompagnement personnalisée.
+- [Notre histoire](/about/histoire): Origine et mission de Mariable.
+- [Témoignages](/about/temoignages): Avis de jeunes mariés.
+- [FAQ](/contact/faq): Réponses aux questions fréquentes.
+- [Contact](/contact): Nous joindre.
+- [Conseils mariage (blog)](/conseilsmariage): Articles éditoriaux et guides SEO.
+- [Checklist mariage](/checklist-mariage): Rétroplanning intelligent.
+- [Coordination jour J](/coordination-jour-j): Outil de coordination du jour J.
+- [Guide du jour J](/guide-jour-j): Guide pratique pour le déroulé.
+- [Guide débutant](/guide-debutant): Premiers pas dans l'organisation.
+- [Jeunes mariés](/jeunes-maries): Témoignages et inscriptions.
+- [Partenariat agences/prestataires](/partenariat): Offres B2B Mariable Studio.
+- [Professionnels Mariable](/professionnelsmariable): Espace dédié aux pros.
+
+## Régions
+
+- [Mariage en Provence](/mariage-provence): Lieux et prestataires PACA.
+- [Mariage à Paris](/mariage-paris): Lieux et prestataires Île-de-France.
+- [Mariage en Bretagne](/mariage-bretagne): Lieux et prestataires Bretagne.
+- [Mariage en Normandie](/mariage-normandie): Lieux et prestataires Normandie.
+- [Mariage en Occitanie](/mariage-occitanie): Lieux et prestataires Occitanie.
+- [Mariage en Auvergne-Rhône-Alpes](/mariage-auvergne-rhone-alpes): Lieux et prestataires AURA.
+- [Mariage en Nouvelle-Aquitaine](/mariage-nouvelle-aquitaine): Lieux et prestataires Nouvelle-Aquitaine.
+- [Mariage en Pays de la Loire](/mariage-pays-de-la-loire): Lieux et prestataires Pays de la Loire.
+- [Mariage en Centre-Val de Loire](/mariage-centre-val-de-loire): Lieux et prestataires Centre-Val de Loire.
+- [Mariage dans les Hauts-de-France](/mariage-hauts-de-france): Lieux et prestataires Hauts-de-France.
+- [Mariage en Bourgogne-Franche-Comté](/mariage-bourgogne-franche-comte): Lieux et prestataires BFC.
+- [Mariage en Grand Est](/mariage-grand-est): Lieux et prestataires Grand Est.
+- [Mariage en Corse](/mariage-corse): Lieux et prestataires Corse.
+
+## Cérémonies
+
+- [Mariage civil](/mariage-civil): Guide du mariage civil.
+- [Cérémonie laïque](/ceremonie-laique): Guide de la cérémonie laïque.
+- [Cérémonie catholique](/ceremonie-catholique): Guide du mariage religieux catholique.
+
+## Optional
+
+- [CGV](/cgv): Conditions générales de vente.
+- [CGV Couples](/cgv-couples): CGV spécifiques aux couples.
+- [Sitemap HTML](/sitemap-html): Plan du site complet.
