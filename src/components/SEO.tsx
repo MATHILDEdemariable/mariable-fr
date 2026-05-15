@@ -15,8 +15,8 @@ interface SEOProps {
 }
 
 const SEO: React.FC<SEOProps> = ({ 
-  title = "Le premier wedding planner de poche – Mariable",
-  description = "Mariable est la solution clé en main pour organiser votre mariage. Profitez pleinement de votre journée grâce à un outil simple, personnalisé et sans charge mentale.",
+  title = "Mariable — Tout votre mariage au même endroit",
+  description = "Outils, prestataires et conseils pour organiser votre mariage sereinement, du budget au plan de table jusqu'à la coordination du jour J.",
   keywords,
   image = "https://www.mariable.fr/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
   canonical,
@@ -27,7 +27,8 @@ const SEO: React.FC<SEOProps> = ({
   // Self-reference og:url to current path when canonical not provided
   const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
   const resolvedPath = canonical ?? currentPath;
-  const fullTitle = title === "Le premier wedding planner de poche – Mariable" ? title : `${title} – Mariable`;
+  // Avoid "X – Mariable" when title already contains "Mariable"
+  const fullTitle = /mariable/i.test(title) ? title : `${title} – Mariable`;
   const siteUrl = "https://www.mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
   
