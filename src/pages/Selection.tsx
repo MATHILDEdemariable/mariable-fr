@@ -59,7 +59,31 @@ const Selection: React.FC = () => {
         title="Sélection de Prestataires"
         description="Découvrez notre sélection complète de prestataires de mariage pour votre grand jour."
         canonical="/selection"
-      />
+      >
+        <script type="application/ld+json">{JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "CollectionPage",
+          "name": "Sélection de Prestataires de Mariage",
+          "description": "Annuaire de prestataires de mariage en France : lieux, traiteurs, photographes, fleuristes, DJ, wedding planners.",
+          "url": "https://www.mariable.fr/selection",
+          "isPartOf": { "@type": "WebSite", "name": "Mariable", "url": "https://www.mariable.fr" },
+          "mainEntity": {
+            "@type": "ItemList",
+            "name": "Prestataires de mariage",
+            "itemListElement": vendors.slice(0, 20).map((v: any, i: number) => ({
+              "@type": "ListItem",
+              "position": i + 1,
+              "item": {
+                "@type": "LocalBusiness",
+                "name": v.nom,
+                "url": v.slug ? `https://www.mariable.fr/prestataire/${v.slug}` : undefined,
+                "image": v.photo_principale || v.photo_url || undefined,
+                "address": v.ville ? { "@type": "PostalAddress", "addressLocality": v.ville, "addressRegion": v.region, "addressCountry": "FR" } : undefined
+              }
+            }))
+          }
+        })}</script>
+      </SEO>
 
       <SimpleHeader />
 
