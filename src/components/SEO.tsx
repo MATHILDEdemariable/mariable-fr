@@ -125,13 +125,13 @@ const SEO: React.FC<SEOProps> = ({
         <link rel="canonical" href={canonical ? `${siteUrl}${canonical}` : siteUrl} />
         
         {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={ogType} />
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={absoluteImage} />
         <meta property="og:site_name" content="MARIABLE" />
         <meta property="og:locale" content="fr_FR" />
-        <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
+        <meta property="og:url" content={`${siteUrl}${resolvedPath || ''}`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />
