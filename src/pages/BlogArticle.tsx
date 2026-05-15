@@ -95,6 +95,7 @@ const BlogArticlePage = () => {
         description={metaDescription || undefined}
         image={post.background_image_url || undefined}
         canonical={`/conseilsmariage/${post.slug}`}
+        ogType="article"
       >
         <script type="application/ld+json">{`
             {

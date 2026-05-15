@@ -9,6 +9,7 @@ interface SEOProps {
   keywords?: string;
   image?: string;
   canonical?: string;
+  ogType?: 'website' | 'article';
   schemas?: Array<{ type: 'Organization' | 'BlogPosting' | 'FAQ' | 'Course' | 'Review' | 'Event' | 'HowTo'; data: any }>;
   children?: React.ReactNode;
 }
@@ -19,9 +20,13 @@ const SEO: React.FC<SEOProps> = ({
   keywords,
   image = "https://www.mariable.fr/lovable-uploads/23541521-b6ff-4175-a8c8-5017e5b19312.png",
   canonical,
+  ogType = 'website',
   schemas = [],
   children
 }) => {
+  // Self-reference og:url to current path when canonical not provided
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const resolvedPath = canonical ?? currentPath;
   const fullTitle = title === "Le premier wedding planner de poche – Mariable" ? title : `${title} – Mariable`;
   const siteUrl = "https://www.mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
@@ -120,13 +125,13 @@ const SEO: React.FC<SEOProps> = ({
         <link rel="canonical" href={canonical ? `${siteUrl}${canonical}` : siteUrl} />
         
         {/* Open Graph / Facebook */}
-        <meta property="og:type" content="website" />
+        <meta property="og:type" content={ogType} />
         <meta property="og:title" content={fullTitle} />
         <meta property="og:description" content={description} />
         <meta property="og:image" content={absoluteImage} />
         <meta property="og:site_name" content="MARIABLE" />
         <meta property="og:locale" content="fr_FR" />
-        <meta property="og:url" content={`${siteUrl}${canonical || ''}`} />
+        <meta property="og:url" content={`${siteUrl}${resolvedPath || ''}`} />
         
         {/* Twitter */}
         <meta name="twitter:card" content="summary_large_image" />

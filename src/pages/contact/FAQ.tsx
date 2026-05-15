@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Helmet } from 'react-helmet-async';
+import SEO from '@/components/SEO';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import {
@@ -78,17 +78,16 @@ const FAQ = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>FAQ - Questions fréquentes | Mariable</title>
-        <meta name="description" content="Trouvez les réponses à toutes vos questions sur Mariable : fonctionnalités, tableau de bord, Mon Jour M, sélection de prestataires et tarifs." />
-        <meta name="keywords" content="faq mariable, questions mariage, aide organisation mariage, tableau de bord mariage, jour j coordination" />
-        <link rel="canonical" href="https://www.mariable.fr/contact/faq" />
-        
-        {/* Schema FAQPage pour les moteurs de recherche et les IA */}
+      <SEO
+        title="FAQ - Questions fréquentes"
+        description="Trouvez les réponses à toutes vos questions sur Mariable : fonctionnalités, tableau de bord, Mon Jour M, sélection de prestataires et tarifs."
+        keywords="faq mariable, questions mariage, aide organisation mariage, tableau de bord mariage, jour j coordination"
+        canonical="/contact/faq"
+      >
         <script type="application/ld+json">
           {JSON.stringify(faqSchema)}
         </script>
-      </Helmet>
+      </SEO>
 
       <PremiumHeader />
       
