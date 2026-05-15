@@ -55,13 +55,11 @@ const Selection: React.FC = () => {
 
   return (
     <>
-      <Helmet>
-        <title>Sélection de Prestataires | Mariable</title>
-        <meta 
-          name="description" 
-          content="Découvrez notre sélection complète de prestataires de mariage pour votre grand jour." 
-        />
-      </Helmet>
+      <SEO
+        title="Sélection de Prestataires"
+        description="Découvrez notre sélection complète de prestataires de mariage pour votre grand jour."
+        canonical="/selection"
+      />
 
       <SimpleHeader />
 
