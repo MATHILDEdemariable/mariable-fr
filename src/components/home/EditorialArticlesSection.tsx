@@ -50,7 +50,7 @@ const EditorialArticlesSection = () => {
           <h2 className="font-serif text-3xl md:text-4xl lg:text-5xl text-white mb-4 font-normal">
             Inspiration & <em>Conseils mariage</em>
           </h2>
-          <p className="text-white/60 text-lg max-w-2xl mx-auto">
+          <p className="text-white/85 text-lg max-w-2xl mx-auto">
             Explorez nos rubriques pour préparer votre mariage
           </p>
         </div>
@@ -74,7 +74,7 @@ const EditorialArticlesSection = () => {
               </h3>
               
               {/* Description */}
-              <p className="text-white/50 text-xs">
+              <p className="text-white/80 text-xs">
                 {category.description}
               </p>
             </Link>
