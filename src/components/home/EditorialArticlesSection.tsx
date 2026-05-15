@@ -74,7 +74,7 @@ const EditorialArticlesSection = () => {
               </h3>
               
               {/* Description */}
-              <p className="text-white/50 text-xs">
+              <p className="text-white/80 text-xs">
                 {category.description}
               </p>
             </Link>
