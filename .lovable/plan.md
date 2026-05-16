@@ -1,48 +1,61 @@
-## Modifications page `/partenariat`
+## Itérations sur `/partenariat`
 
-### 1. Repositionnement éditorial (lieux & traiteurs → pros de l'événementiel + agence marketing digital)
+### 1. Hero — sous-titre raccourci
 
-Mise à jour des textes dans `src/pages/Partenariat.tsx` :
+Dans `src/pages/Partenariat.tsx`, remplacer le sous-titre actuel (liste des métiers) par :
 
-- **Chip hero** : « Agence de communication · Lieux de réception & traiteurs » → « Agence marketing digital · Professionnels de l'événementiel »
-- **H1** : « L'agence de communication des professionnels du mariage » → « L'agence marketing digital des professionnels de l'événementiel »
-- **Sous-titre hero** : reformulé sur la croissance organique et payante sur les réseaux sociaux et l'acquisition clients pour lieux de réception, traiteurs, photographes, fleuristes, wedding planners, DJ et autres pros de l'événementiel.
-- **Titres / descriptions des 3 services** : on garde la structure (Stratégie & contenu / Community management / Développement digital) mais on enrichit le vocabulaire avec « croissance organique », « acquisition payante (Meta Ads / TikTok Ads) », « stratégie d'acquisition clients », « tunnel de conversion ».
-- **FAQ** : remplacer systématiquement « lieux de réception et traiteurs mariage » par « professionnels de l'événementiel » (en gardant 1–2 exemples : lieux, traiteurs, photographes, fleuristes, wedding planners). Recentrer 1–2 questions sur croissance organique vs paid et stratégie d'acquisition.
-- **Meta title / description / JSON-LD Service** : repositionner sur « Agence marketing digital · Professionnels de l'événementiel ».
+> « Stratégie et gestion de communication pour attirer des clients qui vous ressemblent. »
 
-### 2. Cartes de service : suppression du bouton « Demander un devis »
+La liste des professionnels reste dans la FAQ (déjà OK).
 
-Dans chaque carte service :
-- Garder le bloc « Tarif · Sur devis » (déjà présent).
-- **Supprimer** le bouton `Demander un devis` (mailto).
-- **Ajouter** un bouton `Contact` qui ouvre la modal décrite ci-dessous.
+### 2. Modal Contact — fusion téléphone / WhatsApp
 
-### 3. Modal Contact (nouveau composant)
+Dans `src/components/partenariat/ContactProModal.tsx`, supprimer le bloc « Téléphone » et ne garder qu'un seul bloc combiné :
 
-Création de `src/components/partenariat/ContactProModal.tsx` basé sur le `Dialog` shadcn déjà utilisé dans le projet.
+- Icône WhatsApp (lucide `MessageCircle`)
+- Label : « Téléphone · WhatsApp »
+- Numéro : `+33 7 60 10 81 89`
+- Lien : `https://wa.me/33760108189` (cible `_blank`)
 
-Layout 2 colonnes (stack en mobile) :
+Résultat : 2 blocs au lieu de 3 (Email + Téléphone/WhatsApp).
 
-- **Colonne gauche** — formulaire de contact court inspiré de `/contact` (`src/pages/contact/NousContacter.tsx`) : nom, email, structure (optionnel), message → envoi vers la même table Supabase `contact_requests` que la page contact existante (réutilisation du même handler / service pour rester DRY).
-- **Colonne droite** — carte « contact direct » :
-  - Photo de Mathilde (upload utilisateur copié dans `src/assets/mathilde-portrait.jpg`)
-  - Email : `mathilde@mariable.fr` (cliquable mailto)
-  - Téléphone / WhatsApp : `+33 7 60 10 81 89` avec deux liens : `tel:` et `https://wa.me/33760108189`
-  - Icônes lucide (`Mail`, `Phone`, logo WhatsApp via icône `MessageCircle`)
+### 3. Notification email à `mathilde@mariable.fr` à la soumission du formulaire
 
-État d'ouverture géré dans `Partenariat.tsx` (`useState`) ; le même modal est partagé par les 3 boutons de carte et le CTA final de la section « Parlons de votre projet » (qui remplacera le gros bouton mailto actuel).
+Nouvelle edge function `supabase/functions/notify-partenariat-contact/index.ts` :
 
-### 4. Section finale « Parlons de votre projet »
+- Reçoit `{ email, phone, message, subject }`
+- Envoie un email via Resend (secret `RESEND` déjà configuré) :
+  - From : `Mariable <mathilde@mariable.fr>`
+  - To : `mathilde@mariable.fr`
+  - Reply-To : email du prospect
+  - Subject : `Nouvelle demande Partenariat — {subject ou "Contact"}`
+  - HTML simple éditorial avec les infos du formulaire
+- CORS ouvert, pas de vérification JWT (formulaire public)
 
-Remplacer le bouton mailto par un bouton `Contact` qui ouvre la même modal.
+Dans `ContactProModal.tsx`, après l'insert Supabase réussi, appel `supabase.functions.invoke('notify-partenariat-contact', { body: {...} })`. L'échec d'envoi du mail ne bloque pas la confirmation utilisateur (log console uniquement).
+
+### 4. Traduction EN de la page Partenariat
+
+Ajout d'un namespace `partenariat` dans `src/i18n` :
+
+- `src/i18n/locales/fr/partenariat.json` — toutes les chaînes actuelles (hero, services, FAQ, contact, modal).
+- `src/i18n/locales/en/partenariat.json` — traduction anglaise complète.
+- Mise à jour de `src/i18n/index.ts` pour charger le namespace.
+
+Dans `Partenariat.tsx` et `ContactProModal.tsx` : utiliser `useTranslation('partenariat')` et remplacer toutes les chaînes en dur par des appels `t(...)`. Les `expertises` et `faqItems` sont restructurés pour lire titre/description/points/question/réponse depuis i18n (via `t('services.0.title')` etc. ou via `t('services', { returnObjects: true })`).
+
+Le toggle de langue existant (LanguageToggle dans le header) bascule alors la page entière.
 
 ### Fichiers touchés
 
 ```text
-src/pages/Partenariat.tsx              (textes + boutons + state modal)
-src/components/partenariat/ContactProModal.tsx  (nouveau)
-src/assets/mathilde-portrait.jpg       (copie de l'upload utilisateur)
+src/pages/Partenariat.tsx                     (sous-titre + i18n)
+src/components/partenariat/ContactProModal.tsx (fusion tel/wa + i18n + invoke notif)
+src/i18n/index.ts                              (+ namespace partenariat)
+src/i18n/locales/fr/partenariat.json           (nouveau)
+src/i18n/locales/en/partenariat.json           (nouveau)
+supabase/functions/notify-partenariat-contact/index.ts (nouveau)
+supabase/config.toml                           (verify_jwt = false pour la nouvelle fn)
 ```
 
-Aucun changement business / DB : on réutilise la logique d'envoi existante de `/contact`.
+Aucune migration DB nécessaire (on continue d'insérer dans `contact_requests`).
