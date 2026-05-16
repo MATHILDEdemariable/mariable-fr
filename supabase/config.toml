@@ -57,3 +57,6 @@ verify_jwt = false
 
 [functions.notify-vendor-message]
 verify_jwt = false
+
+[functions.notify-partenariat-contact]
+verify_jwt = false
