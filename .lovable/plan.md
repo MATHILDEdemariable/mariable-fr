@@ -1,42 +1,48 @@
-## Nouvelle page `/agence` — Slideshow professionnel
+## Modifications page `/partenariat`
 
-Création d'une page commerciale type **présentation slideshow** (à destination des pros de l'événementiel : lieux, traiteurs, etc.), reprenant le contenu de `/partenariat` avec le même design (Playfair, Sage Green, Editorial Beige/Noir, `rounded-none`).
+### 1. Repositionnement éditorial (lieux & traiteurs → pros de l'événementiel + agence marketing digital)
 
-### Fichier créé
-- `src/pages/Agence.tsx`
-- Route ajoutée dans `src/App.tsx` : `<Route path="/agence" element={<Agence />} />`
+Mise à jour des textes dans `src/pages/Partenariat.tsx` :
 
-### Structure — 8 slides plein écran
+- **Chip hero** : « Agence de communication · Lieux de réception & traiteurs » → « Agence marketing digital · Professionnels de l'événementiel »
+- **H1** : « L'agence de communication des professionnels du mariage » → « L'agence marketing digital des professionnels de l'événementiel »
+- **Sous-titre hero** : reformulé sur la croissance organique et payante sur les réseaux sociaux et l'acquisition clients pour lieux de réception, traiteurs, photographes, fleuristes, wedding planners, DJ et autres pros de l'événementiel.
+- **Titres / descriptions des 3 services** : on garde la structure (Stratégie & contenu / Community management / Développement digital) mais on enrichit le vocabulaire avec « croissance organique », « acquisition payante (Meta Ads / TikTok Ads) », « stratégie d'acquisition clients », « tunnel de conversion ».
+- **FAQ** : remplacer systématiquement « lieux de réception et traiteurs mariage » par « professionnels de l'événementiel » (en gardant 1–2 exemples : lieux, traiteurs, photographes, fleuristes, wedding planners). Recentrer 1–2 questions sur croissance organique vs paid et stratégie d'acquisition.
+- **Meta title / description / JSON-LD Service** : repositionner sur « Agence marketing digital · Professionnels de l'événementiel ».
 
-Chaque slide = section `min-h-screen` avec navigation (flèches latérales + indicateurs en bas + clavier ←/→). Transitions framer-motion (fade + slide). Compteur "03 / 08" en haut à droite. Logo Mariable + bouton "Retour" en haut à gauche.
+### 2. Cartes de service : suppression du bouton « Demander un devis »
 
-1. **Cover** — Visuel hero plein écran (image générée : mariage éditorial). Titre "L'agence de communication des professionnels du mariage", sous-titre, CTA "Découvrir".
-2. **Le constat** — Pourquoi les pros du mariage ont besoin d'une agence spécialisée (3 chiffres-clés en gros).
-3. **Notre approche** — Manifesto éditorial court + visuel.
-4. **Service 1 — Stratégie & Création de contenu** (avec visuel : shooting iPhone 17 / reels).
-5. **Service 2 — Community management & Meta Ads** (visuel : feed instagram mockup).
-6. **Service 3 — Développement digital** (visuel : site web / guide digital).
-7. **Bonus inclus** — Mise en avant éditoriale Mariable + audience +1000 futurs mariés.
-8. **Contact / CTA final** — `mathilde@mariable.fr`, bouton devis, retour accueil.
+Dans chaque carte service :
+- Garder le bloc « Tarif · Sur devis » (déjà présent).
+- **Supprimer** le bouton `Demander un devis` (mailto).
+- **Ajouter** un bouton `Contact` qui ouvre la modal décrite ci-dessous.
 
-### Design system
-- Couleurs : `bg-white`, `bg-editorial-beige/30`, `bg-editorial-noir` (slides alternées pour rythme)
-- Typo : `font-serif` (Playfair) pour titres XXL (`text-6xl md:text-8xl`), corps en sans
-- Accents : `text-premium-sage`, `border-premium-sage`
-- Aucun `rounded` (cohérence éditoriale)
+### 3. Modal Contact (nouveau composant)
 
-### Visuels (3 images générées via imagegen, format 16:9)
-- `src/assets/agence-hero.jpg` — scène mariage éditorial sage/beige
-- `src/assets/agence-content.jpg` — création de contenu / shooting
-- `src/assets/agence-digital.jpg` — site web / mockup digital
+Création de `src/components/partenariat/ContactProModal.tsx` basé sur le `Dialog` shadcn déjà utilisé dans le projet.
 
-### Navigation slideshow
-- État `currentSlide` (0–7)
-- Boutons prev/next, raccourcis clavier, dots cliquables
-- Animation `AnimatePresence` (fade + translateX)
-- Mobile : swipe via `framer-motion` drag
+Layout 2 colonnes (stack en mobile) :
 
-### SEO
-Helmet : title "Agence de communication mariage — Présentation | Mariable", canonical `/agence`, meta description orientée pro.
+- **Colonne gauche** — formulaire de contact court inspiré de `/contact` (`src/pages/contact/NousContacter.tsx`) : nom, email, structure (optionnel), message → envoi vers la même table Supabase `contact_requests` que la page contact existante (réutilisation du même handler / service pour rester DRY).
+- **Colonne droite** — carte « contact direct » :
+  - Photo de Mathilde (upload utilisateur copié dans `src/assets/mathilde-portrait.jpg`)
+  - Email : `mathilde@mariable.fr` (cliquable mailto)
+  - Téléphone / WhatsApp : `+33 7 60 10 81 89` avec deux liens : `tel:` et `https://wa.me/33760108189`
+  - Icônes lucide (`Mail`, `Phone`, logo WhatsApp via icône `MessageCircle`)
 
-Aucune modification de `/partenariat` (qui reste la page SEO de référence). `/agence` = version commerciale "deck de présentation".
+État d'ouverture géré dans `Partenariat.tsx` (`useState`) ; le même modal est partagé par les 3 boutons de carte et le CTA final de la section « Parlons de votre projet » (qui remplacera le gros bouton mailto actuel).
+
+### 4. Section finale « Parlons de votre projet »
+
+Remplacer le bouton mailto par un bouton `Contact` qui ouvre la même modal.
+
+### Fichiers touchés
+
+```text
+src/pages/Partenariat.tsx              (textes + boutons + state modal)
+src/components/partenariat/ContactProModal.tsx  (nouveau)
+src/assets/mathilde-portrait.jpg       (copie de l'upload utilisateur)
+```
+
+Aucun changement business / DB : on réutilise la logique d'envoi existante de `/contact`.
