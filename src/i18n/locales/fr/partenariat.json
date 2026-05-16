@@ -1,0 +1,128 @@
+{
+  "seo": {
+    "title": "Agence marketing digital — Professionnels de l'événementiel | Mariable",
+    "description": "Agence marketing digital pour pros de l'événementiel : croissance organique réseaux sociaux, Meta Ads, TikTok Ads, contenu, community management et sites web. Sur devis."
+  },
+  "backHome": "Retour à l'accueil",
+  "hero": {
+    "eyebrow": "Agence marketing digital · Professionnels de l'événementiel",
+    "title": "L'agence marketing digital des professionnels de l'événementiel",
+    "subtitle": "Stratégie et gestion de communication pour attirer des clients qui vous ressemblent.",
+    "cta": "Voir les offres"
+  },
+  "services": {
+    "sectionTitle": "Les services proposés",
+    "sectionSubtitle": "Trois leviers pour construire votre marque, votre acquisition clients et votre présence digitale, à la carte ou en accompagnement complet.",
+    "pricingLabel": "Tarif",
+    "pricingValue": "Sur devis",
+    "contactCta": "Contact",
+    "items": [
+      {
+        "title": "Stratégie réseaux sociaux & création de contenu",
+        "description": "Croissance organique sur Instagram et TikTok : stratégie éditoriale, refonte de feed et création de contenu authentique tourné en iPhone 17 pour attirer vos futurs clients.",
+        "points": [
+          "Audit & stratégie d'acquisition organique (Instagram, TikTok)",
+          "Refonte de feed Instagram et direction artistique éditoriale",
+          "Création de contenu Reels & photos (iPhone 17)",
+          "Interviews équipe & mise en avant humaine en format court",
+          "Branding, charte graphique et ligne éditoriale"
+        ]
+      },
+      {
+        "title": "Community management & acquisition payante",
+        "description": "Gestion de votre présence sociale et de vos campagnes payantes Meta Ads & TikTok Ads pour générer des leads qualifiés mois après mois.",
+        "points": [
+          "Calendrier éditorial mensuel, publication & stories",
+          "Réponses DM et commentaires (community management)",
+          "Campagnes Meta Ads (Facebook & Instagram) & TikTok Ads",
+          "Stratégie d'acquisition clients & tunnel de conversion",
+          "Reporting mensuel : portée, leads, coût d'acquisition"
+        ]
+      },
+      {
+        "title": "Développement digital & outils de conversion",
+        "description": "Sites web, guides digitaux et outils sur-mesure pour transformer votre trafic en clients : du premier clic à la signature.",
+        "points": [
+          "Sites web vitrine ou réservation, optimisés SEO",
+          "Guides digitaux (welcome guide, brochures interactives)",
+          "Formulaires, espaces clients et outils sur-mesure",
+          "CRM, newsletter et séquences mail automatisées",
+          "Autres projets de développement web sur demande"
+        ]
+      }
+    ],
+    "banner": {
+      "title": "Mise en avant Mariable incluse dans chaque formule",
+      "body": "Publication éditoriale dédiée, curation auprès de notre communauté et diffusion dans la newsletter +1000 futurs mariés — incluse systématiquement dans toutes mes prestations."
+    }
+  },
+  "faq": {
+    "title": "Questions fréquentes",
+    "items": [
+      {
+        "question": "Quels professionnels de l'événementiel accompagnez-vous ?",
+        "answer": "J'accompagne tous les professionnels de l'événementiel mariage : lieux de réception (domaines, châteaux, mas, manoirs), traiteurs, photographes, vidéastes, fleuristes, DJ, wedding planners et marques qui souhaitent professionnaliser leur image, leur acquisition clients et leur communication digitale."
+      },
+      {
+        "question": "Croissance organique ou publicité payante : que choisir ?",
+        "answer": "Les deux sont complémentaires. L'organique (Instagram, TikTok, SEO) construit votre marque et votre crédibilité sur le long terme. Le paid (Meta Ads, TikTok Ads) génère des leads qualifiés rapidement et permet de tester des angles. Je construis une stratégie d'acquisition mixte selon votre maturité digitale, votre budget et vos objectifs de remplissage."
+      },
+      {
+        "question": "Combien coûte une agence marketing digital spécialisée événementiel ?",
+        "answer": "Mes prestations démarrent à partir de 400€ et sont ensuite sur devis, car chaque professionnel de l'événementiel a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads / TikTok Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre stratégie d'acquisition."
+      },
+      {
+        "question": "Comment gagner en visibilité quand on est un pro de l'événementiel ?",
+        "answer": "Trois leviers complémentaires : un contenu visuel cohérent et désirable (Reels, photos), une présence régulière sur les réseaux pilotée par un community manager spécialisé événementiel, et des campagnes payantes ciblées sur vos futurs clients. La mise en avant éditoriale Mariable, incluse dans chaque formule, amplifie le tout auprès d'une audience ultra-qualifiée."
+      },
+      {
+        "question": "Pourquoi confier ses Meta Ads et TikTok Ads à une agence spécialisée ?",
+        "answer": "Le marché de l'événementiel a ses propres codes : saisonnalité forte, intention d'achat élevée, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés ou les organisateurs d'événements. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. J'optimise vos campagnes pour générer des leads qualifiés au coût le plus juste."
+      },
+      {
+        "question": "Pouvez-vous créer le site web de mon activité ?",
+        "answer": "Oui. Je conçois des sites vitrine et des sites de réservation sur-mesure pour pros de l'événementiel : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Je prends aussi en charge la refonte de sites existants."
+      },
+      {
+        "question": "Qu'est-ce qu'un guide digital ?",
+        "answer": "Un guide digital remplace les classiques PDF envoyés par mail : welcome guide pour les clients qui ont signé, brochure interactive pour valoriser votre offre commerciale, livret pratique pour vos invités. Plus engageant, mis à jour en temps réel et consultable depuis n'importe quel mobile."
+      },
+      {
+        "question": "La mise en avant Mariable est-elle incluse dans vos prestations ?",
+        "answer": "Oui : la mise en avant éditoriale Mariable est systématiquement incluse dans toutes mes formules. Elle vous fait bénéficier d'une publication éditoriale dédiée et d'une visibilité auprès de ma communauté de futurs mariés."
+      },
+      {
+        "question": "Travaillez-vous partout en France ?",
+        "answer": "Oui, j'accompagne des professionnels de l'événementiel partout en France métropolitaine. Les tournages et shootings se font sur site, les volets community management, acquisition payante et développement digital sont pilotés à distance avec des points réguliers."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Parlons de votre projet",
+    "body": "Devis, partenariat, simple question — on échange directement et je reviens vers vous sous 48h.",
+    "cta": "Contact"
+  },
+  "modal": {
+    "title": "Parlons de votre projet",
+    "subjectPrefix": "Demande : {{subject}}",
+    "defaultDescription": "Décrivez-nous votre besoin, on revient vers vous sous 48h.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "phoneLabel": "Téléphone",
+    "phonePlaceholder": "06 12 34 56 78",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Présentez votre activité, vos objectifs, votre budget…",
+    "submit": "Envoyer",
+    "submitting": "Envoi en cours…",
+    "required": "Email et message sont obligatoires.",
+    "incomplete": "Formulaire incomplet",
+    "successTitle": "Message envoyé !",
+    "successBody": "Mathilde vous répond sous 48h.",
+    "errorTitle": "Erreur",
+    "errorBody": "Une erreur est survenue. Veuillez réessayer.",
+    "founderName": "Mathilde",
+    "founderRole": "Fondatrice — Mariable",
+    "directEmail": "Email",
+    "directPhone": "Téléphone · WhatsApp"
+  }
+}

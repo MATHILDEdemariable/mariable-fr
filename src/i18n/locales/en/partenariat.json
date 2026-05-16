@@ -1,0 +1,128 @@
+{
+  "seo": {
+    "title": "Digital marketing agency — Event professionals | Mariable",
+    "description": "Digital marketing agency for event pros: organic social media growth, Meta Ads, TikTok Ads, content creation, community management and websites. On quote."
+  },
+  "backHome": "Back to home",
+  "hero": {
+    "eyebrow": "Digital marketing agency · Event professionals",
+    "title": "The digital marketing agency for event professionals",
+    "subtitle": "Communication strategy and management to attract clients who look like you.",
+    "cta": "See the services"
+  },
+  "services": {
+    "sectionTitle": "Our services",
+    "sectionSubtitle": "Three levers to build your brand, your client acquisition and your digital presence — à la carte or as a full retainer.",
+    "pricingLabel": "Pricing",
+    "pricingValue": "On quote",
+    "contactCta": "Contact",
+    "items": [
+      {
+        "title": "Social media strategy & content creation",
+        "description": "Organic growth on Instagram and TikTok: editorial strategy, feed redesign, and authentic content shot on iPhone 17 to attract your future clients.",
+        "points": [
+          "Audit & organic acquisition strategy (Instagram, TikTok)",
+          "Instagram feed redesign and editorial art direction",
+          "Reels & photo content creation (iPhone 17)",
+          "Team interviews & human-centric short-form video",
+          "Branding, visual identity and editorial guidelines"
+        ]
+      },
+      {
+        "title": "Community management & paid acquisition",
+        "description": "Management of your social presence and your paid campaigns on Meta Ads & TikTok Ads to generate qualified leads month after month.",
+        "points": [
+          "Monthly editorial calendar, posts & stories",
+          "DM & comment replies (community management)",
+          "Meta Ads (Facebook & Instagram) & TikTok Ads campaigns",
+          "Client acquisition strategy & conversion funnel",
+          "Monthly reporting: reach, leads, cost per acquisition"
+        ]
+      },
+      {
+        "title": "Digital development & conversion tools",
+        "description": "Custom websites, digital guides and tools to turn your traffic into clients — from the first click to the signature.",
+        "points": [
+          "SEO-optimized showcase or booking websites",
+          "Digital guides (welcome guide, interactive brochures)",
+          "Custom forms, client portals and bespoke tools",
+          "CRM, newsletter and automated email sequences",
+          "Other web development projects on request"
+        ]
+      }
+    ],
+    "banner": {
+      "title": "Mariable editorial feature included with every plan",
+      "body": "Dedicated editorial publication, curation across our community and exposure in the newsletter (+1000 engaged couples) — included by default in every offer."
+    }
+  },
+  "faq": {
+    "title": "Frequently asked questions",
+    "items": [
+      {
+        "question": "Which event professionals do you work with?",
+        "answer": "I work with all wedding event professionals: venues (estates, châteaux, mas, manors), caterers, photographers, videographers, florists, DJs, wedding planners and brands looking to professionalise their image, client acquisition and digital communication."
+      },
+      {
+        "question": "Organic growth or paid advertising — which to choose?",
+        "answer": "Both are complementary. Organic (Instagram, TikTok, SEO) builds your brand and credibility long term. Paid (Meta Ads, TikTok Ads) generates qualified leads quickly and lets you test angles. I build a hybrid acquisition strategy based on your digital maturity, your budget and your booking goals."
+      },
+      {
+        "question": "How much does a digital marketing agency specialised in events cost?",
+        "answer": "My services start at €400 and are then on quote, because every event professional has specific needs (content volume, posting frequency, Meta / TikTok Ads budget, web project). I build à la carte support or a monthly retainer matched to your acquisition strategy."
+      },
+      {
+        "question": "How do you grow visibility as an event pro?",
+        "answer": "Three complementary levers: cohesive, desirable visual content (Reels, photos), consistent social presence run by a community manager specialised in events, and paid campaigns targeted at your future clients. The Mariable editorial feature — included in every plan — amplifies it all with a highly qualified audience."
+      },
+      {
+        "question": "Why hand Meta Ads and TikTok Ads to a specialised agency?",
+        "answer": "The events market has its own codes: strong seasonality, high purchase intent, multi-month decision journeys, look-alike audiences on engaged couples or event organisers. A generalist agency often burns budget without these specifics. I optimise your campaigns to generate qualified leads at the right cost."
+      },
+      {
+        "question": "Can you build the website for my business?",
+        "answer": "Yes. I design custom showcase and booking websites for event pros: editorial design, SEO, contact forms, photo galleries, availability calendar integration. I also handle redesigns of existing websites."
+      },
+      {
+        "question": "What is a digital guide?",
+        "answer": "A digital guide replaces the classic PDFs sent by email: welcome guide for signed clients, interactive brochure to showcase your commercial offer, practical booklet for your guests. More engaging, updated in real time and mobile-friendly."
+      },
+      {
+        "question": "Is the Mariable feature included in your services?",
+        "answer": "Yes: the Mariable editorial feature is included by default in every plan. It gives you a dedicated editorial publication and visibility within my community of engaged couples."
+      },
+      {
+        "question": "Do you work everywhere in France?",
+        "answer": "Yes, I support event pros across mainland France. Shoots and tapings happen on site; community management, paid acquisition and digital development are run remotely with regular check-ins."
+      }
+    ]
+  },
+  "contact": {
+    "title": "Let's talk about your project",
+    "body": "Quote, partnership, simple question — we'll talk directly and I'll get back to you within 48h.",
+    "cta": "Contact"
+  },
+  "modal": {
+    "title": "Let's talk about your project",
+    "subjectPrefix": "Request: {{subject}}",
+    "defaultDescription": "Tell us about your needs, we'll get back to you within 48h.",
+    "emailLabel": "Email",
+    "emailPlaceholder": "your@email.com",
+    "phoneLabel": "Phone",
+    "phonePlaceholder": "+33 6 12 34 56 78",
+    "messageLabel": "Message",
+    "messagePlaceholder": "Tell us about your business, your goals, your budget…",
+    "submit": "Send",
+    "submitting": "Sending…",
+    "required": "Email and message are required.",
+    "incomplete": "Incomplete form",
+    "successTitle": "Message sent!",
+    "successBody": "Mathilde will reply within 48h.",
+    "errorTitle": "Error",
+    "errorBody": "Something went wrong. Please try again.",
+    "founderName": "Mathilde",
+    "founderRole": "Founder — Mariable",
+    "directEmail": "Email",
+    "directPhone": "Phone · WhatsApp"
+  }
+}
