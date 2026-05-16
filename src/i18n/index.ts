@@ -6,10 +6,12 @@ import frCommon from './locales/fr/common.json';
 import frHome from './locales/fr/home.json';
 import frPricing from './locales/fr/pricing.json';
 import frProfessionals from './locales/fr/professionals.json';
+import frPartenariat from './locales/fr/partenariat.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enPricing from './locales/en/pricing.json';
 import enProfessionals from './locales/en/professionals.json';
+import enPartenariat from './locales/en/partenariat.json';
 
 export const SUPPORTED_LANGUAGES = ['fr', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -20,12 +22,14 @@ const resources = {
     home: frHome,
     pricing: frPricing,
     professionals: frProfessionals,
+    partenariat: frPartenariat,
   },
   en: {
     common: enCommon,
     home: enHome,
     pricing: enPricing,
     professionals: enProfessionals,
+    partenariat: enPartenariat,
   },
 };
 
