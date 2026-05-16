@@ -10,17 +10,22 @@ import {
   CheckCircle,
   ChevronDown,
   ChevronUp,
-  Mail,
   ArrowLeft,
 } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-
-const CONTACT_EMAIL = "mathilde@mariable.fr";
+import ContactProModal from "@/components/partenariat/ContactProModal";
 
 const Partenariat = () => {
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
+  const [contactOpen, setContactOpen] = useState(false);
+  const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
+
+  const openContact = (subject?: string) => {
+    setContactSubject(subject);
+    setContactOpen(true);
+  };
 
   const scrollToExpertises = () =>
     document.getElementById("expertises")?.scrollIntoView({ behavior: "smooth" });
@@ -31,39 +36,40 @@ const Partenariat = () => {
   const expertises = [
     {
       icon: Film,
-      title: "Stratégie Réseaux sociaux & Création de contenu",
+      title: "Stratégie réseaux sociaux & création de contenu",
       description:
-        "Stratégie selon vos objectifs, refonte de feed Instagram et création de contenu spécial réseaux sociaux tourné en iPhone 17 — authentique, éditorial et performant.",
+        "Croissance organique sur Instagram et TikTok : stratégie éditoriale, refonte de feed et création de contenu authentique tourné en iPhone 17 pour attirer vos futurs clients.",
       points: [
-        "Conseil en stratégie réseaux sociaux selon objectif",
-        "Refonte de feed Instagram",
-        "Création de contenu spécial réseaux sociaux (iPhone 17) : Reels & photos authentiques",
-        "Interview équipe & mise en avant humaine des responsables — format vidéo court et impactant",
-        "Direction artistique éditoriale, branding & charte graphique",
+        "Audit & stratégie d'acquisition organique (Instagram, TikTok)",
+        "Refonte de feed Instagram et direction artistique éditoriale",
+        "Création de contenu Reels & photos (iPhone 17)",
+        "Interviews équipe & mise en avant humaine en format court",
+        "Branding, charte graphique et ligne éditoriale",
       ],
     },
     {
       icon: MessageSquare,
-      title: "Community management",
+      title: "Community management & acquisition payante",
       description:
-        "Gestion partielle ou complète de votre Instagram et de vos campagnes Meta Ads selon vos besoins, pour une présence régulière et performante.",
+        "Gestion de votre présence sociale et de vos campagnes payantes Meta Ads & TikTok Ads pour générer des leads qualifiés mois après mois.",
       points: [
-        "Calendrier éditorial mensuel",
-        "Publication & stories",
-        "Réponses DM et commentaires",
-        "Gestion des publicités Meta Ads (Facebook & Instagram)",
+        "Calendrier éditorial mensuel, publication & stories",
+        "Réponses DM et commentaires (community management)",
+        "Campagnes Meta Ads (Facebook & Instagram) & TikTok Ads",
+        "Stratégie d'acquisition clients & tunnel de conversion",
+        "Reporting mensuel : portée, leads, coût d'acquisition",
       ],
     },
     {
       icon: Globe,
-      title: "Développement digital",
+      title: "Développement digital & outils de conversion",
       description:
-        "Sites web, guides digitaux et outils en ligne sur-mesure pour valoriser votre offre et fluidifier la relation client.",
+        "Sites web, guides digitaux et outils sur-mesure pour transformer votre trafic en clients : du premier clic à la signature.",
       points: [
-        "Création de site web vitrine ou réservation",
+        "Sites web vitrine ou réservation, optimisés SEO",
         "Guides digitaux (welcome guide, brochures interactives)",
-        "Outils en ligne sur-mesure (formulaires, espaces clients)",
-        "Création de CRM, newsletter et séquences mail automatisées",
+        "Formulaires, espaces clients et outils sur-mesure",
+        "CRM, newsletter et séquences mail automatisées",
         "Autres projets de développement web sur demande",
       ],
     },
@@ -71,52 +77,57 @@ const Partenariat = () => {
 
   const faqItems = [
     {
-      question: "Quels professionnels du mariage accompagnez-vous ?",
+      question: "Quels professionnels de l'événementiel accompagnez-vous ?",
       answer:
-        "J'accompagne principalement les lieux de réception (domaines, châteaux, mas, manoirs) et les traiteurs mariage qui souhaitent professionnaliser leur image et leur communication digitale. Je travaille aussi ponctuellement avec photographes, fleuristes et wedding planners qui partagent une exigence éditoriale forte.",
+        "J'accompagne tous les professionnels de l'événementiel mariage : lieux de réception (domaines, châteaux, mas, manoirs), traiteurs, photographes, vidéastes, fleuristes, DJ, wedding planners et marques qui souhaitent professionnaliser leur image, leur acquisition clients et leur communication digitale.",
     },
     {
-      question: "Combien coûte une agence de communication spécialisée mariage ?",
+      question: "Croissance organique ou publicité payante : que choisir ?",
       answer:
-        "Mes prestations démarrent à partir de 400€ et sont ensuite sur devis, car chaque lieu de réception et chaque traiteur a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre maturité digitale et vos objectifs commerciaux.",
+        "Les deux sont complémentaires. L'organique (Instagram, TikTok, SEO) construit votre marque et votre crédibilité sur le long terme. Le paid (Meta Ads, TikTok Ads) génère des leads qualifiés rapidement et permet de tester des angles. Je construis une stratégie d'acquisition mixte selon votre maturité digitale, votre budget et vos objectifs de remplissage.",
     },
     {
-      question: "Comment gagner en visibilité quand on est un lieu de réception ou un traiteur mariage ?",
+      question: "Combien coûte une agence marketing digital spécialisée événementiel ?",
       answer:
-        "La visibilité passe par trois leviers complémentaires : un contenu visuel cohérent et désirable (reels, photos), une présence régulière sur Instagram avec un community manager spécialisé mariage, et des campagnes Meta Ads ciblées sur les futurs mariés de votre région. La mise en avant éditoriale Mariable, incluse dans chaque formule, amplifie le tout auprès d'une audience ultra-qualifiée.",
+        "Mes prestations démarrent à partir de 400€ et sont ensuite sur devis, car chaque professionnel de l'événementiel a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads / TikTok Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre stratégie d'acquisition.",
     },
     {
-      question: "Pourquoi confier ses publicités Meta Ads à une agence spécialisée mariage ?",
+      question: "Comment gagner en visibilité quand on est un pro de l'événementiel ?",
       answer:
-        "Le marché du mariage a ses propres codes de ciblage : saisonnalité, intention d'achat, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. J'optimise vos Meta Ads (Facebook & Instagram) pour générer des leads qualifiés au coût le plus juste.",
+        "Trois leviers complémentaires : un contenu visuel cohérent et désirable (Reels, photos), une présence régulière sur les réseaux pilotée par un community manager spécialisé événementiel, et des campagnes payantes ciblées sur vos futurs clients. La mise en avant éditoriale Mariable, incluse dans chaque formule, amplifie le tout auprès d'une audience ultra-qualifiée.",
     },
     {
-      question: "Pouvez-vous créer le site web de mon domaine de mariage ?",
+      question: "Pourquoi confier ses Meta Ads et TikTok Ads à une agence spécialisée ?",
       answer:
-        "Oui. Je conçois des sites web vitrine et des sites de réservation sur-mesure pour lieux de réception et traiteurs mariage : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Je prends aussi en charge la refonte de sites existants.",
+        "Le marché de l'événementiel a ses propres codes : saisonnalité forte, intention d'achat élevée, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés ou les organisateurs d'événements. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. J'optimise vos campagnes pour générer des leads qualifiés au coût le plus juste.",
     },
     {
-      question: "Qu'est-ce qu'un guide digital pour un lieu de réception ou un traiteur ?",
+      question: "Pouvez-vous créer le site web de mon activité ?",
       answer:
-        "Un guide digital remplace les classiques PDF envoyés par mail : welcome guide pour les couples qui ont signé, brochure interactive pour valoriser votre offre commerciale, livret pratique pour les invités. Plus engageant, mis à jour en temps réel et consultable depuis n'importe quel mobile.",
+        "Oui. Je conçois des sites vitrine et des sites de réservation sur-mesure pour pros de l'événementiel : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Je prends aussi en charge la refonte de sites existants.",
+    },
+    {
+      question: "Qu'est-ce qu'un guide digital ?",
+      answer:
+        "Un guide digital remplace les classiques PDF envoyés par mail : welcome guide pour les clients qui ont signé, brochure interactive pour valoriser votre offre commerciale, livret pratique pour vos invités. Plus engageant, mis à jour en temps réel et consultable depuis n'importe quel mobile.",
     },
     {
       question: "La mise en avant Mariable est-elle incluse dans vos prestations ?",
       answer:
-        "Oui : la mise en avant éditoriale Mariable est systématiquement incluse dans toutes mes formules (Création de contenu, Community management, Développement digital). Elle vous fait bénéficier d'une publication éditoriale dédiée et d'une visibilité auprès de ma communauté de futurs mariés.",
+        "Oui : la mise en avant éditoriale Mariable est systématiquement incluse dans toutes mes formules. Elle vous fait bénéficier d'une publication éditoriale dédiée et d'une visibilité auprès de ma communauté de futurs mariés.",
     },
     {
       question: "Travaillez-vous partout en France ?",
       answer:
-        "Oui, j'accompagne des lieux de réception et des traiteurs partout en France métropolitaine. Les tournages et shootings se font sur site, les volets community management, Meta Ads et développement digital sont pilotés à distance avec des points réguliers.",
+        "Oui, j'accompagne des professionnels de l'événementiel partout en France métropolitaine. Les tournages et shootings se font sur site, les volets community management, acquisition payante et développement digital sont pilotés à distance avec des points réguliers.",
     },
   ];
 
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
-    name: "Mariable — Agence de communication mariage",
-    serviceType: "Communication agency for wedding professionals",
+    name: "Mariable — Agence marketing digital événementiel",
+    serviceType: "Digital marketing agency for event professionals",
     provider: {
       "@type": "Organization",
       name: "Mariable",
@@ -124,7 +135,7 @@ const Partenariat = () => {
     },
     areaServed: "FR",
     description:
-      "Agence de communication spécialisée mariage pour lieux de réception et traiteurs en France : création de contenu, community management Instagram, campagnes Meta Ads, sites web, guides digitaux et mise en avant éditoriale Mariable.",
+      "Agence marketing digital spécialisée pour les professionnels de l'événementiel : croissance organique sur réseaux sociaux, acquisition payante Meta Ads & TikTok Ads, création de contenu, community management, sites web et stratégie d'acquisition clients.",
   };
 
   const faqJsonLd = {
@@ -143,10 +154,10 @@ const Partenariat = () => {
   return (
     <>
       <Helmet>
-        <title>Agence de communication mariage — Lieux de réception & traiteurs | Mariable</title>
+        <title>Agence marketing digital — Professionnels de l'événementiel | Mariable</title>
         <meta
           name="description"
-          content="Agence de communication spécialisée mariage pour lieux de réception et traiteurs : création de contenu, community management, Meta Ads, sites web et guides digitaux. Sur devis."
+          content="Agence marketing digital pour pros de l'événementiel : croissance organique réseaux sociaux, Meta Ads, TikTok Ads, contenu, community management et sites web. Sur devis."
         />
         <link rel="canonical" href="https://www.mariable.fr/partenariat" />
         <script type="application/ld+json">{JSON.stringify(serviceJsonLd)}</script>
@@ -154,7 +165,6 @@ const Partenariat = () => {
       </Helmet>
       <PremiumHeader />
       <main className="min-h-screen">
-        {/* Bouton retour accueil sous le sticky header */}
         <div className="px-4 pt-20">
           <Button
             asChild
@@ -178,14 +188,15 @@ const Partenariat = () => {
         >
           <div className="container mx-auto max-w-4xl text-center">
             <span className="inline-block px-4 py-1 bg-premium-sage/10 text-premium-sage text-sm mb-6 uppercase tracking-widest">
-              Agence de communication · Lieux de réception & traiteurs
+              Agence marketing digital · Professionnels de l'événementiel
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-editorial-noir mb-6">
-              L'agence de communication des professionnels du mariage
+              L'agence marketing digital des professionnels de l'événementiel
             </h1>
             <p className="text-lg md:text-xl text-editorial-noir/70 mb-10 max-w-3xl mx-auto leading-relaxed">
-              Lieux de réception et traiteurs : nous créons votre image, votre présence digitale
-              et vos outils en ligne pour attirer les couples qui vous ressemblent.
+              Lieux de réception, traiteurs, photographes, fleuristes, wedding planners, DJ :
+              croissance organique sur réseaux sociaux, acquisition payante (Meta Ads & TikTok Ads)
+              et stratégie d'acquisition clients pour attirer ceux qui vous ressemblent.
             </p>
             <div className="flex justify-center">
               <Button
@@ -211,8 +222,8 @@ const Partenariat = () => {
                 Les services proposés
               </h2>
               <p className="text-editorial-noir/70 max-w-2xl mx-auto">
-                Trois leviers pour construire votre image et votre présence digitale, à la
-                carte ou en accompagnement complet.
+                Trois leviers pour construire votre marque, votre acquisition clients et votre
+                présence digitale, à la carte ou en accompagnement complet.
               </p>
             </motion.div>
 
@@ -242,19 +253,16 @@ const Partenariat = () => {
                   </p>
                   <p className="text-2xl font-serif text-editorial-noir mb-5">Sur devis</p>
                   <Button
-                    asChild
+                    onClick={() => openContact(p.title)}
                     variant="outline"
                     className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white"
                   >
-                    <a href={`mailto:${CONTACT_EMAIL}?subject=Demande de devis — ${p.title}`}>
-                      Demander un devis
-                    </a>
+                    Contact
                   </Button>
                 </motion.article>
               ))}
             </div>
 
-            {/* Bandeau Mise en avant Mariable incluse */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -338,21 +346,26 @@ const Partenariat = () => {
                 Parlons de votre projet
               </h2>
               <p className="text-editorial-noir/70 mb-8">
-                Pour toute demande — devis, partenariat, question — écrivez-moi directement.
-                Je reviens vers vous sous 48h.
+                Devis, partenariat, simple question — on échange directement et je reviens vers
+                vous sous 48h.
               </p>
-              <a
-                href={`mailto:${CONTACT_EMAIL}`}
-                className="inline-flex items-center gap-3 px-8 py-4 bg-editorial-noir text-white hover:bg-editorial-noir/90 transition-colors text-lg"
+              <Button
+                onClick={() => openContact()}
+                className="bg-editorial-noir text-white hover:bg-editorial-noir/90 text-lg px-8 py-6 rounded-none"
               >
-                <Mail className="w-5 h-5" />
-                {CONTACT_EMAIL}
-              </a>
+                Contact
+              </Button>
             </motion.div>
           </div>
         </section>
       </main>
       <Footer />
+
+      <ContactProModal
+        open={contactOpen}
+        onOpenChange={setContactOpen}
+        defaultSubject={contactSubject}
+      />
     </>
   );
 };
