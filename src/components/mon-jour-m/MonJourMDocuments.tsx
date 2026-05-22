@@ -70,6 +70,7 @@ const MonJourMDocuments: React.FC = () => {
   const [pinterestLinks, setPinterestLinks] = useState<PinterestLink[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDocument, setShowAddDocument] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [showAddPinterest, setShowAddPinterest] = useState(false);
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
   const [editingPinterest, setEditingPinterest] = useState<PinterestLink | null>(null);
