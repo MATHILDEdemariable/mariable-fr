@@ -22,8 +22,26 @@ const PlanningPublicProject: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
+  const [selectedDay, setSelectedDay] = useState<string>('Jour J');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
+
+  const sortDays = (days: string[]): string[] => {
+    const priority: Record<string, number> = { 'J-1': 0, 'Jour J': 1, 'J+1': 2 };
+    return [...days].sort((a, b) => {
+      const pa = priority[a] ?? 99;
+      const pb = priority[b] ?? 99;
+      if (pa !== pb) return pa - pb;
+      return a.localeCompare(b);
+    });
+  };
+
+  const availableDays = React.useMemo(() => {
+    if (!coordinationData?.tasks) return [];
+    const set = new Set<string>();
+    coordinationData.tasks.forEach((t: any) => set.add(t.event_day || 'Jour J'));
+    return sortDays(Array.from(set));
+  }, [coordinationData?.tasks]);
 
   useEffect(() => {
     if (token) {
@@ -35,10 +53,16 @@ const PlanningPublicProject: React.FC = () => {
   }, [token]);
 
   useEffect(() => {
+    if (availableDays.length > 0 && !availableDays.includes(selectedDay)) {
+      setSelectedDay(availableDays.includes('Jour J') ? 'Jour J' : availableDays[0]);
+    }
+  }, [availableDays, selectedDay]);
+
+  useEffect(() => {
     if (coordinationData?.tasks) {
       filterTasks();
     }
-  }, [selectedTeamMember, coordinationData?.tasks]);
+  }, [selectedTeamMember, selectedDay, coordinationData?.tasks]);
 
   const loadProjectCoordinationData = async (shareToken: string) => {
     try {
