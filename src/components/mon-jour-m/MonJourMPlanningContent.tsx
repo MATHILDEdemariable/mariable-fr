@@ -224,7 +224,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               duration: item.duration || 30,
               category: item.category || 'general',
               type: item.category || 'general',
-              assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
+              assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : [],
+              eventDay: item.event_day || "Jour J"
             };
           });
           
@@ -288,7 +289,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
               duration: item.duration || 30,
               category: item.category || 'general',
               type: item.category || 'general',
-              assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
+              assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : [],
+              eventDay: item.event_day || "Jour J"
             };
           });
           
@@ -354,7 +356,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           category: item.category,
           type: item.category,
           
-          assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : []
+          assignedTo: Array.isArray(item.assigned_to) ? item.assigned_to : [],
+              eventDay: item.event_day || "Jour J"
         };
       });
 
