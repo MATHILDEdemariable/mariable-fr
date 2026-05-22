@@ -750,7 +750,18 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
+
+          {coordination && (
+            <ImportFromDashboardModal
+              open={showImportModal}
+              onOpenChange={setShowImportModal}
+              coordinationId={coordination.id}
+              alreadyImportedSourceIds={documents.map(d => d.source_document_id).filter(Boolean) as string[]}
+              onImported={() => loadDocuments(coordination.id)}
+            />
+          )}
 
           <Card>
             <CardContent className="pt-6">
