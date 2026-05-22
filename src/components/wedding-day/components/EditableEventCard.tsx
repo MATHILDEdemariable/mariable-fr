@@ -206,18 +206,42 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                 {/* DURÉE */}
                 <div className={`text-gray-600 ${isMobile ? 'text-xs mb-2' : 'text-sm mb-3'}`}>
                   {isEditing ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span>Durée:</span>
-                      <Input
-                        type="number"
-                        value={editedDuration}
-                        onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
-                        className={isMobile ? "w-16 text-xs" : "w-20"}
-                        min="5"
-                        max="480"
-                        onKeyDown={handleKeyDown}
-                      />
-                      <span>min</span>
+                      <Select
+                        value={DURATION_PRESETS.includes(editedDuration) ? String(editedDuration) : 'custom'}
+                        onValueChange={(val) => {
+                          if (val === 'custom') return;
+                          setEditedDuration(parseInt(val, 10));
+                        }}
+                      >
+                        <SelectTrigger className={isMobile ? 'w-24 h-8 text-xs' : 'w-28 h-9'}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background z-50 max-h-72">
+                          {DURATION_PRESETS.map((m) => (
+                            <SelectItem key={m} value={String(m)}>{formatDurationLabel(m)}</SelectItem>
+                          ))}
+                          <SelectItem value="custom">Personnalisé…</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {!DURATION_PRESETS.includes(editedDuration) && (
+                        <>
+                          <Input
+                            type="number"
+                            value={editedDuration}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value, 10);
+                              if (Number.isFinite(v) && v >= 1) setEditedDuration(v);
+                            }}
+                            className={isMobile ? 'w-16 text-xs' : 'w-20'}
+                            min={1}
+                            max={1440}
+                            onKeyDown={handleKeyDown}
+                          />
+                          <span>min</span>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <span className="font-medium">
