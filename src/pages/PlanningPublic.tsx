@@ -151,15 +151,18 @@ const PlanningPublic: React.FC = () => {
   const filterTasks = () => {
     if (!coordinationData?.tasks) return;
 
-    if (selectedTeamMember === 'all') {
-      setFilteredTasks(coordinationData.tasks);
-    } else {
-      const filtered = coordinationData.tasks.filter(task => {
+    let filtered = coordinationData.tasks.filter(
+      (task: any) => (task.event_day || 'Jour J') === selectedDay
+    );
+
+    if (selectedTeamMember !== 'all') {
+      filtered = filtered.filter((task: any) => {
         if (!task.assigned_to || !Array.isArray(task.assigned_to)) return false;
         return task.assigned_to.includes(selectedTeamMember);
       });
-      setFilteredTasks(filtered);
     }
+
+    setFilteredTasks(filtered);
   };
 
   const formatTime = (timeString?: string) => {
