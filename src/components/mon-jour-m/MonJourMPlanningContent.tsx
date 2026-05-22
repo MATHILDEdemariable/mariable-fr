@@ -323,6 +323,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         category: 'jour-m',
         priority: 'medium',
         position: events.length + index,
+        event_day: event.eventDay || activeDay || 'Jour J',
         assigned_to: event.assignedTo || []
       }));
 
