@@ -477,28 +477,49 @@ const PlanningPublic: React.FC = () => {
             <TabsContent value="planning">
               <Card>
                 <CardHeader>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                     <CardTitle>Planning</CardTitle>
-                    
-                    {/* Filtre par équipe */}
-                    {teamMembers.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4 text-gray-500" />
-                        <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                          <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                            <SelectValue placeholder="Filtrer par membre" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
-                            {teamMembers.map((member) => (
-                              <SelectItem key={member.id} value={member.id}>
-                                {member.name} ({member.role})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      {/* Filtre par jour */}
+                      {availableDays.length > 1 && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-gray-500" />
+                          <Select value={selectedDay} onValueChange={setSelectedDay}>
+                            <SelectTrigger className="w-40 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
+                              <SelectValue placeholder="Choisir un jour" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableDays.map((day) => (
+                                <SelectItem key={day} value={day}>
+                                  {day}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Filtre par équipe */}
+                      {teamMembers.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-gray-500" />
+                          <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
+                            <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
+                              <SelectValue placeholder="Filtrer par membre" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
+                              {teamMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.id}>
+                                  {member.name} ({member.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
