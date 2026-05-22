@@ -4,10 +4,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Edit2, Check, X, Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../types/planningTypes';
 import { addMinutes } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+const DURATION_PRESETS = [5, 10, 15, 20, 30, 40, 45, 50, 60, 75, 90, 120, 150, 180, 240];
+const formatDurationLabel = (mins: number) => {
+  if (mins >= 60 && mins % 60 === 0) return `${mins / 60} h`;
+  if (mins > 60) return `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`;
+  return `${mins} min`;
+};
 
 interface EditableEventCardProps {
   event: PlanningEvent;
