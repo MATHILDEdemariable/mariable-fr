@@ -641,9 +641,16 @@ const MonJourMDocuments: React.FC = () => {
 
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2 flex-wrap">
             <h3 className="text-lg font-medium">Mes Documents</h3>
-            <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
+            <div className="flex gap-2 flex-wrap">
+              {coordination && (
+                <Button variant="outline" onClick={() => setShowImportModal(true)}>
+                  <ArrowDownToLine className="h-4 w-4 mr-2" />
+                  Importer depuis mon Dashboard
+                </Button>
+              )}
+              <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
