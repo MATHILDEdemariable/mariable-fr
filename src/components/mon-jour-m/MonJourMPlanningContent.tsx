@@ -79,6 +79,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             duration: event.duration,
             assigned_to: event.assignedTo || [],
             position: index,
+            event_day: event.eventDay || 'Jour J',
             category: 'jour-m' // S'assurer que la catégorie reste 'jour-m'
           })
           .eq('id', event.id)
