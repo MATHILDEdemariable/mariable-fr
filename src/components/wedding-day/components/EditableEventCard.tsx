@@ -4,10 +4,18 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Edit2, Check, X, Trash2, GripVertical, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../types/planningTypes';
 import { addMinutes } from 'date-fns';
 import { useIsMobile } from '@/hooks/use-mobile';
+
+const DURATION_PRESETS = [5, 10, 15, 20, 30, 40, 45, 50, 60, 75, 90, 120, 150, 180, 240];
+const formatDurationLabel = (mins: number) => {
+  if (mins >= 60 && mins % 60 === 0) return `${mins / 60} h`;
+  if (mins > 60) return `${Math.floor(mins / 60)}h${String(mins % 60).padStart(2, '0')}`;
+  return `${mins} min`;
+};
 
 interface EditableEventCardProps {
   event: PlanningEvent;
@@ -198,18 +206,42 @@ const EditableEventCard: React.FC<EditableEventCardProps> = ({
                 {/* DURÉE */}
                 <div className={`text-gray-600 ${isMobile ? 'text-xs mb-2' : 'text-sm mb-3'}`}>
                   {isEditing ? (
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span>Durée:</span>
-                      <Input
-                        type="number"
-                        value={editedDuration}
-                        onChange={(e) => setEditedDuration(Math.max(parseInt(e.target.value) || 5, 5))}
-                        className={isMobile ? "w-16 text-xs" : "w-20"}
-                        min="5"
-                        max="480"
-                        onKeyDown={handleKeyDown}
-                      />
-                      <span>min</span>
+                      <Select
+                        value={DURATION_PRESETS.includes(editedDuration) ? String(editedDuration) : 'custom'}
+                        onValueChange={(val) => {
+                          if (val === 'custom') return;
+                          setEditedDuration(parseInt(val, 10));
+                        }}
+                      >
+                        <SelectTrigger className={isMobile ? 'w-24 h-8 text-xs' : 'w-28 h-9'}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-background z-50 max-h-72">
+                          {DURATION_PRESETS.map((m) => (
+                            <SelectItem key={m} value={String(m)}>{formatDurationLabel(m)}</SelectItem>
+                          ))}
+                          <SelectItem value="custom">Personnalisé…</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      {!DURATION_PRESETS.includes(editedDuration) && (
+                        <>
+                          <Input
+                            type="number"
+                            value={editedDuration}
+                            onChange={(e) => {
+                              const v = parseInt(e.target.value, 10);
+                              if (Number.isFinite(v) && v >= 1) setEditedDuration(v);
+                            }}
+                            className={isMobile ? 'w-16 text-xs' : 'w-20'}
+                            min={1}
+                            max={1440}
+                            onKeyDown={handleKeyDown}
+                          />
+                          <span>min</span>
+                        </>
+                      )}
                     </div>
                   ) : (
                     <span className="font-medium">

@@ -6,13 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink, Sparkles } from 'lucide-react';
+import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink, Sparkles, ArrowDownToLine } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import SharePublicButton from './SharePublicButton';
 import PhotoListTemplate from './PhotoListTemplate';
 import SeatingPlanCard from './SeatingPlanCard';
+import ImportFromDashboardModal from './ImportFromDashboardModal';
 
 interface Document {
   id: string;
@@ -25,6 +26,7 @@ interface Document {
   mime_type?: string;
   category: string;
   assigned_to?: string;
+  source_document_id?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -68,6 +70,7 @@ const MonJourMDocuments: React.FC = () => {
   const [pinterestLinks, setPinterestLinks] = useState<PinterestLink[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDocument, setShowAddDocument] = useState(false);
+  const [showImportModal, setShowImportModal] = useState(false);
   const [showAddPinterest, setShowAddPinterest] = useState(false);
   const [editingDocument, setEditingDocument] = useState<Document | null>(null);
   const [editingPinterest, setEditingPinterest] = useState<PinterestLink | null>(null);
@@ -638,9 +641,16 @@ const MonJourMDocuments: React.FC = () => {
 
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">
-          <div className="flex justify-between items-center">
+          <div className="flex justify-between items-center gap-2 flex-wrap">
             <h3 className="text-lg font-medium">Mes Documents</h3>
-            <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
+            <div className="flex gap-2 flex-wrap">
+              {coordination && (
+                <Button variant="outline" onClick={() => setShowImportModal(true)}>
+                  <ArrowDownToLine className="h-4 w-4 mr-2" />
+                  Importer depuis mon Dashboard
+                </Button>
+              )}
+              <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
@@ -740,7 +750,18 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
               </DialogContent>
             </Dialog>
+            </div>
           </div>
+
+          {coordination && (
+            <ImportFromDashboardModal
+              open={showImportModal}
+              onOpenChange={setShowImportModal}
+              coordinationId={coordination.id}
+              alreadyImportedSourceIds={documents.map(d => d.source_document_id).filter(Boolean) as string[]}
+              onImported={() => loadDocuments(coordination.id)}
+            />
+          )}
 
           <Card>
             <CardContent className="pt-6">
@@ -796,8 +817,14 @@ const MonJourMDocuments: React.FC = () => {
                         {document.description && (
                           <p className="text-sm text-gray-600 line-clamp-2">{document.description}</p>
                         )}
-                        
+
                         <div className="flex flex-wrap gap-1">
+                          {document.source_document_id && (
+                            <Badge variant="outline" className="text-xs border-wedding-olive/40 text-wedding-olive">
+                              <ArrowDownToLine className="h-3 w-3 mr-1" />
+                              Dashboard
+                            </Badge>
+                          )}
                           <Badge className={getCategoryColor(document.category)}>
                             {document.category === 'contract' ? 'Contrat' : 
                              document.category === 'invoice' ? 'Facture' :

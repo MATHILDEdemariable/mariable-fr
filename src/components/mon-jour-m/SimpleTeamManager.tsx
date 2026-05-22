@@ -14,6 +14,7 @@ import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
 import SharePublicButton from './SharePublicButton';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import BulkAddTeamModal from './BulkAddTeamModal';
 
 // Rôles spécifiques au mariage
 const TEAM_ROLES = [
@@ -39,6 +40,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   
   // Form state
@@ -253,14 +255,25 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
               Gérez votre équipe et leurs rôles
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <SharePublicButton coordinationId={coordination.id} />
+            <Button variant="outline" onClick={() => setShowBulkModal(true)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Ajout en masse
+            </Button>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Ajouter un membre
             </Button>
           </div>
         </div>
+
+        <BulkAddTeamModal
+          open={showBulkModal}
+          onOpenChange={setShowBulkModal}
+          coordinationId={coordination.id}
+          onAdded={loadTeamMembers}
+        />
 
         {/* Liste des membres */}
         {teamMembers.length === 0 ? (

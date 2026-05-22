@@ -559,6 +559,7 @@ export type Database = {
           file_url: string
           id: string
           mime_type: string | null
+          source_document_id: string | null
           title: string
           updated_at: string
         }
@@ -574,6 +575,7 @@ export type Database = {
           file_url: string
           id?: string
           mime_type?: string | null
+          source_document_id?: string | null
           title: string
           updated_at?: string
         }
@@ -589,6 +591,7 @@ export type Database = {
           file_url?: string
           id?: string
           mime_type?: string | null
+          source_document_id?: string | null
           title?: string
           updated_at?: string
         }
@@ -605,6 +608,13 @@ export type Database = {
             columns: ["coordination_id"]
             isOneToOne: false
             referencedRelation: "wedding_coordination"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coordination_documents_source_document_id_fkey"
+            columns: ["source_document_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_documents"
             referencedColumns: ["id"]
           },
         ]
@@ -683,6 +693,7 @@ export type Database = {
           description: string | null
           duration: number | null
           end_time: string | null
+          event_day: string
           id: string
           is_ai_generated: boolean | null
           parallel_group: string | null
@@ -700,6 +711,7 @@ export type Database = {
           description?: string | null
           duration?: number | null
           end_time?: string | null
+          event_day?: string
           id?: string
           is_ai_generated?: boolean | null
           parallel_group?: string | null
@@ -717,6 +729,7 @@ export type Database = {
           description?: string | null
           duration?: number | null
           end_time?: string | null
+          event_day?: string
           id?: string
           is_ai_generated?: boolean | null
           parallel_group?: string | null

@@ -87,6 +87,7 @@ export type PlanningEvent = {
   notes?: string;
   location?: string;
   assignedTo?: string[]; // Ajout de la propriété assignedTo
+  eventDay?: string; // Libellé du jour (ex: "J-1", "Jour J", "J+1")
 };
 
 // This type is needed for JSON serialization
