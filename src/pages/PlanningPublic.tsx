@@ -415,7 +415,7 @@ const PlanningPublic: React.FC = () => {
             <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="planning" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
-                Planning ({tasks.length})
+                Planning ({filteredTasks.length})
               </TabsTrigger>
               <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Camera className="h-4 w-4" />
@@ -440,7 +440,7 @@ const PlanningPublic: React.FC = () => {
                 >
                   <Calendar className="h-4 w-4" />
                   <span>Planning</span>
-                  <span className="text-[10px] opacity-70">({tasks.length})</span>
+                  <span className="text-[10px] opacity-70">({filteredTasks.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="photos" 
