@@ -396,7 +396,15 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
 
   // Gestionnaire pour l'ajout d'événement manuel
   const handleManualEventAdded = (newEvent: PlanningEvent) => {
-    setEvents(prev => [...prev, newEvent]);
+    const withDay = { ...newEvent, eventDay: newEvent.eventDay || activeDay };
+    setEvents(prev => [...prev, withDay]);
+    // Persister le event_day si l'événement vient d'être créé en base
+    if (withDay.id) {
+      supabase.from('coordination_planning').update({ event_day: withDay.eventDay })
+        .eq('id', withDay.id).then(({ error }) => {
+          if (error) console.error('❌ update event_day:', error);
+        });
+    }
   };
 
   // Gestion de la sélection multiple
