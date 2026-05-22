@@ -40,6 +40,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null);
   
   // Form state
