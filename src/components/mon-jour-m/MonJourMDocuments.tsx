@@ -817,8 +817,14 @@ const MonJourMDocuments: React.FC = () => {
                         {document.description && (
                           <p className="text-sm text-gray-600 line-clamp-2">{document.description}</p>
                         )}
-                        
+
                         <div className="flex flex-wrap gap-1">
+                          {document.source_document_id && (
+                            <Badge variant="outline" className="text-xs border-wedding-olive/40 text-wedding-olive">
+                              <ArrowDownToLine className="h-3 w-3 mr-1" />
+                              Dashboard
+                            </Badge>
+                          )}
                           <Badge className={getCategoryColor(document.category)}>
                             {document.category === 'contract' ? 'Contrat' : 
                              document.category === 'invoice' ? 'Facture' :
