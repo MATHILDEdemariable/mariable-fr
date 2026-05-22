@@ -27,11 +27,30 @@ const PlanningPublic: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
+  const [selectedDay, setSelectedDay] = useState<string>('Jour J');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
   const [expandedTasks, setExpandedTasks] = useState<Set<string>>(new Set());
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
+
+  // Tri des jours : J-1, Jour J, J+1, puis autres alphabétique
+  const sortDays = (days: string[]): string[] => {
+    const priority: Record<string, number> = { 'J-1': 0, 'Jour J': 1, 'J+1': 2 };
+    return [...days].sort((a, b) => {
+      const pa = priority[a] ?? 99;
+      const pb = priority[b] ?? 99;
+      if (pa !== pb) return pa - pb;
+      return a.localeCompare(b);
+    });
+  };
+
+  const availableDays = React.useMemo(() => {
+    if (!coordinationData?.tasks) return [];
+    const set = new Set<string>();
+    coordinationData.tasks.forEach((t: any) => set.add(t.event_day || 'Jour J'));
+    return sortDays(Array.from(set));
+  }, [coordinationData?.tasks]);
 
   useEffect(() => {
     if (coordinationId) {
@@ -42,11 +61,18 @@ const PlanningPublic: React.FC = () => {
     }
   }, [coordinationId]);
 
+  // S'assurer que selectedDay est valide selon les jours disponibles
+  useEffect(() => {
+    if (availableDays.length > 0 && !availableDays.includes(selectedDay)) {
+      setSelectedDay(availableDays.includes('Jour J') ? 'Jour J' : availableDays[0]);
+    }
+  }, [availableDays, selectedDay]);
+
   useEffect(() => {
     if (coordinationData?.tasks) {
       filterTasks();
     }
-  }, [selectedTeamMember, coordinationData?.tasks]);
+  }, [selectedTeamMember, selectedDay, coordinationData?.tasks]);
 
   const loadPublicCoordinationData = async (id: string) => {
     try {
@@ -125,15 +151,18 @@ const PlanningPublic: React.FC = () => {
   const filterTasks = () => {
     if (!coordinationData?.tasks) return;
 
-    if (selectedTeamMember === 'all') {
-      setFilteredTasks(coordinationData.tasks);
-    } else {
-      const filtered = coordinationData.tasks.filter(task => {
+    let filtered = coordinationData.tasks.filter(
+      (task: any) => (task.event_day || 'Jour J') === selectedDay
+    );
+
+    if (selectedTeamMember !== 'all') {
+      filtered = filtered.filter((task: any) => {
         if (!task.assigned_to || !Array.isArray(task.assigned_to)) return false;
         return task.assigned_to.includes(selectedTeamMember);
       });
-      setFilteredTasks(filtered);
     }
+
+    setFilteredTasks(filtered);
   };
 
   const formatTime = (timeString?: string) => {
@@ -386,7 +415,7 @@ const PlanningPublic: React.FC = () => {
             <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
               <TabsTrigger value="planning" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
-                Planning ({tasks.length})
+                Planning ({filteredTasks.length})
               </TabsTrigger>
               <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Camera className="h-4 w-4" />
@@ -411,7 +440,7 @@ const PlanningPublic: React.FC = () => {
                 >
                   <Calendar className="h-4 w-4" />
                   <span>Planning</span>
-                  <span className="text-[10px] opacity-70">({tasks.length})</span>
+                  <span className="text-[10px] opacity-70">({filteredTasks.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="photos" 
@@ -448,28 +477,49 @@ const PlanningPublic: React.FC = () => {
             <TabsContent value="planning">
               <Card>
                 <CardHeader>
-                  <div className="flex justify-between items-center">
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                     <CardTitle>Planning</CardTitle>
-                    
-                    {/* Filtre par équipe */}
-                    {teamMembers.length > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4 text-gray-500" />
-                        <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                          <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                            <SelectValue placeholder="Filtrer par membre" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
-                            {teamMembers.map((member) => (
-                              <SelectItem key={member.id} value={member.id}>
-                                {member.name} ({member.role})
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    )}
+
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                      {/* Filtre par jour */}
+                      {availableDays.length > 1 && (
+                        <div className="flex items-center gap-2">
+                          <Calendar className="h-4 w-4 text-gray-500" />
+                          <Select value={selectedDay} onValueChange={setSelectedDay}>
+                            <SelectTrigger className="w-40 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
+                              <SelectValue placeholder="Choisir un jour" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableDays.map((day) => (
+                                <SelectItem key={day} value={day}>
+                                  {day}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+
+                      {/* Filtre par équipe */}
+                      {teamMembers.length > 0 && (
+                        <div className="flex items-center gap-2">
+                          <Filter className="h-4 w-4 text-gray-500" />
+                          <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
+                            <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
+                              <SelectValue placeholder="Filtrer par membre" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
+                              {teamMembers.map((member) => (
+                                <SelectItem key={member.id} value={member.id}>
+                                  {member.name} ({member.role})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </CardHeader>
                 <CardContent>
