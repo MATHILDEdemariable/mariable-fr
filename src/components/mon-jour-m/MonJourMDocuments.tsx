@@ -6,13 +6,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink, Sparkles } from 'lucide-react';
+import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink, Sparkles, ArrowDownToLine } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import SharePublicButton from './SharePublicButton';
 import PhotoListTemplate from './PhotoListTemplate';
 import SeatingPlanCard from './SeatingPlanCard';
+import ImportFromDashboardModal from './ImportFromDashboardModal';
 
 interface Document {
   id: string;
