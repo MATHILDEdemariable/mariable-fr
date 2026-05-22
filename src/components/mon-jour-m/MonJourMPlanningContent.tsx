@@ -37,6 +37,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showMathildeModal, setShowMathildeModal] = useState(false);
+  const [activeDay, setActiveDay] = useState<string>('Jour J');
+  const [customDays, setCustomDays] = useState<string[]>([]);
   const { toast } = useToast();
   
   const { coordination } = useMonJourMCoordination();
