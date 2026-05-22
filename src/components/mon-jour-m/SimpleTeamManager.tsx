@@ -14,6 +14,7 @@ import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
 import SharePublicButton from './SharePublicButton';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import BulkAddTeamModal from './BulkAddTeamModal';
 
 // Rôles spécifiques au mariage
 const TEAM_ROLES = [
