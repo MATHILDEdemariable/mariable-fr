@@ -26,6 +26,7 @@ interface Document {
   mime_type?: string;
   category: string;
   assigned_to?: string;
+  source_document_id?: string | null;
   created_at: string;
   updated_at: string;
 }
