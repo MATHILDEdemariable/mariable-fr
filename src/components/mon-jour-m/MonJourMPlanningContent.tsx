@@ -592,41 +592,86 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
         </div>
       )}
 
-      {/* Planning principal */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between">
-            <span>Planning du jour J</span>
-            {events.length > 0 && (
-              <Badge variant="secondary">
-                {events.length} étape{events.length > 1 ? 's' : ''}
-              </Badge>
-            )}
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          {events.length === 0 ? (
-            <div className="text-center py-12">
-              <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">
-                Aucun planning pour le moment
-              </h3>
-              <p className="text-gray-500 mb-4">
-                Commencez par créer votre planning avec l'assistant IA ou ajoutez des étapes manuellement.
-              </p>
+      {/* Sélecteur de jours */}
+      {(() => {
+        const baseDays = ['J-1', 'Jour J', 'J+1'];
+        const dynamic = Array.from(new Set([...baseDays, ...customDays, ...events.map(e => e.eventDay || 'Jour J')]));
+        const filtered = events.filter(e => (e.eventDay || 'Jour J') === activeDay);
+        return (
+          <>
+            <div className="flex items-center gap-2 flex-wrap border-b pb-2">
+              {dynamic.map(d => {
+                const count = events.filter(e => (e.eventDay || 'Jour J') === d).length;
+                return (
+                  <Button
+                    key={d}
+                    variant={activeDay === d ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setActiveDay(d)}
+                    className={activeDay === d ? 'bg-wedding-olive hover:bg-wedding-olive/90' : ''}
+                  >
+                    {d} {count > 0 && <Badge variant="secondary" className="ml-2">{count}</Badge>}
+                  </Button>
+                );
+              })}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  const label = window.prompt('Nom du jour à ajouter (ex: J-2, Brunch)');
+                  if (label && label.trim()) {
+                    setCustomDays(prev => [...prev, label.trim()]);
+                    setActiveDay(label.trim());
+                  }
+                }}
+              >
+                <Plus className="h-3 w-3 mr-1" /> Ajouter un jour
+              </Button>
             </div>
-          ) : (
-            <EnhancedDragDropTimeline
-              events={events}
-              teamMembers={teamMembers}
-              onEventsUpdate={handleEventsUpdate}
-              selectionMode={selectionMode}
-              selectedEvents={selectedEvents}
-              onSelectionChange={handleSelectionChange}
-            />
-          )}
-        </CardContent>
-      </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center justify-between">
+                  <span>Planning — {activeDay}</span>
+                  {filtered.length > 0 && (
+                    <Badge variant="secondary">
+                      {filtered.length} étape{filtered.length > 1 ? 's' : ''}
+                    </Badge>
+                  )}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {filtered.length === 0 ? (
+                  <div className="text-center py-12">
+                    <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Aucune étape pour {activeDay}
+                    </h3>
+                    <p className="text-gray-500 mb-4">
+                      Ajoutez une étape via le bouton ci-dessus — elle sera rattachée à ce jour.
+                    </p>
+                  </div>
+                ) : (
+                  <EnhancedDragDropTimeline
+                    events={filtered}
+                    teamMembers={teamMembers}
+                    onEventsUpdate={(updated) => {
+                      // Réinjecter les événements des autres jours pour ne pas les perdre
+                      const others = events.filter(e => (e.eventDay || 'Jour J') !== activeDay);
+                      const mergedUpdated = updated.map(e => ({ ...e, eventDay: e.eventDay || activeDay }));
+                      handleEventsUpdate([...others, ...mergedUpdated]);
+                    }}
+                    selectionMode={selectionMode}
+                    selectedEvents={selectedEvents}
+                    onSelectionChange={handleSelectionChange}
+                  />
+                )}
+              </CardContent>
+            </Card>
+          </>
+        );
+      })()}
+
 
       {/* Modal d'onboarding */}
       <MonJourMOnboardingModal
