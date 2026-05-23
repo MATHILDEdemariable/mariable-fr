@@ -154,6 +154,9 @@ const Prix = () => {
                           </div>
                         ))}
                       </div>
+                      <p className="text-xs text-editorial-noir/70 italic mt-4 pt-3 border-t border-editorial-noir/10">
+                        {t('plans.premium.vsWeddingPlanner')}
+                      </p>
                       <Button 
                         onClick={handlePremiumClick}
                         disabled={checkoutLoading}
