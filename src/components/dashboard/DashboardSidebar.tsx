@@ -5,9 +5,8 @@ import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import { ProblemModal } from '@/components/support/ProblemModal';
-import ClubMariableModal from './ClubMariableModal';
+import SiteInternetModal from './SiteInternetModal';
 import SiteInternetModal from './SiteInternetModal';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
