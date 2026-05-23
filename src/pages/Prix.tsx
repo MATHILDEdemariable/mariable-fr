@@ -229,6 +229,13 @@ const Prix = () => {
                       {checkoutLoading ? t('plans.premium.ctaLoading') : t('plans.premium.cta')}
                     </Button>
                   </div>
+                  <div className="grid grid-cols-3 gap-4 mt-3">
+                    <div></div>
+                    <div></div>
+                    <p className="text-xs text-editorial-noir/70 italic text-center">
+                      {t('plans.premium.vsWeddingPlanner')}
+                    </p>
+                  </div>
                 </>
               )}
             </div>
