@@ -122,6 +122,12 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose }) =
           <DialogTitle className="text-xl font-serif text-wedding-olive">
             Un problème ?
           </DialogTitle>
+          <p className="text-sm text-muted-foreground pt-1">
+            Vous pouvez aussi nous écrire directement à{' '}
+            <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive underline font-medium">
+              mathilde@mariable.fr
+            </a>
+          </p>
         </DialogHeader>
         
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
