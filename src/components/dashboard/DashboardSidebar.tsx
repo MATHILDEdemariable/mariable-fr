@@ -529,8 +529,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       {/* Modal Votre cadeau */}
       <CallScheduleModal isOpen={showCallModal} onClose={() => setShowCallModal(false)} />
       
-      {/* Modal Club Mariable */}
-      <ClubMariableModal isOpen={showClubMariableModal} onClose={() => setShowClubMariableModal(false)} />
+      
       
       {/* Modal Site Internet */}
       <SiteInternetModal open={showSiteInternetModal} onOpenChange={setShowSiteInternetModal} />
