@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import SiteInternetModal from './SiteInternetModal';
-import SiteInternetModal from './SiteInternetModal';
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
 }
@@ -17,7 +16,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   const location = useLocation();
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
-  const [showClubMariableModal, setShowClubMariableModal] = useState(false);
   const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
 
   // Menu déroulant Tableau de bord
