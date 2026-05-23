@@ -21,14 +21,15 @@
       "cta": "S'inscrire gratuitement"
     },
     "premium": {
-      "badge": "⭐ RECOMMANDÉ",
+      "badge": "Valeur totale : 59€",
       "name": "Premium",
       "price": "29 €",
       "tagline": "Achat unique · Accès à vie",
       "all": "Tout le Gratuit, sans aucune limitation",
       "feature1": "Exports PDF/CSV illimités",
-      "feature2": "+ 10 guides mariage & checklists PDF",
-      "feature2Detail": "Guide jour-J · Organisation débutant · Guide prestataires · Checklist marié(e)s & proches · Checklist mairie & cérémonie",
+      "feature2": "Accès complet au guide en ligne Mariable. Une fois, pour toujours.",
+      "feature2Detail": "Mises à jour incluses pendant toute la durée de ton projet. Accès immédiat · Aucune installation — disponible sur navigateur (ordinateur, tablette, mobile).",
+      "vsWeddingPlanner": "vs un wedding planner à partir de 2000€ — 10× moins cher, 10× plus de contrôle",
       "feature3": "IA illimitée",
       "feature4": "Budget illimité",
       "feature5": "Stockage documents illimité",

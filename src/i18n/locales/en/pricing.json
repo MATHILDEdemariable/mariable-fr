@@ -21,14 +21,15 @@
       "cta": "Sign up for free"
     },
     "premium": {
-      "badge": "⭐ RECOMMENDED",
+      "badge": "Total value: €59",
       "name": "Premium",
       "price": "€29",
       "tagline": "One-time purchase · Lifetime access",
       "all": "Everything in Free, with no limits",
       "feature1": "Unlimited PDF/CSV exports",
-      "feature2": "+ 10 wedding guides & PDF checklists",
-      "feature2Detail": "Day-of guide · Beginner planning · Vendor guide · Couples & close ones checklist · City hall & ceremony checklist",
+      "feature2": "Full access to the Mariable online guide. Once, forever.",
+      "feature2Detail": "Updates included throughout your project. Instant access · No install — available on any browser (desktop, tablet, mobile).",
+      "vsWeddingPlanner": "vs a wedding planner from €2000 — 10× cheaper, 10× more control",
       "feature3": "Unlimited AI",
       "feature4": "Unlimited budget",
       "feature5": "Unlimited document storage",

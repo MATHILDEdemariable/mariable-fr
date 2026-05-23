@@ -120,7 +120,7 @@ const Prix = () => {
                   {/* Premium */}
                   <Card className="border-2 border-editorial-noir rounded-none relative">
                     <div className="absolute -top-3 left-1/2 transform -translate-x-1/2 z-10">
-                      <span className="bg-editorial-noir text-white px-4 py-1 text-xs font-bold tracking-wide">
+                      <span className="bg-editorial-noir text-white px-4 py-1 text-xs font-bold tracking-wide line-through">
                         {t('plans.premium.badge')}
                       </span>
                     </div>
@@ -154,6 +154,9 @@ const Prix = () => {
                           </div>
                         ))}
                       </div>
+                      <p className="text-xs text-editorial-noir/70 italic mt-4 pt-3 border-t border-editorial-noir/10">
+                        {t('plans.premium.vsWeddingPlanner')}
+                      </p>
                       <Button 
                         onClick={handlePremiumClick}
                         disabled={checkoutLoading}
@@ -177,7 +180,7 @@ const Prix = () => {
                     </Card>
                     <Card className="text-center p-6 bg-editorial-noir border-2 border-editorial-noir rounded-none relative">
                       <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span className="bg-white text-editorial-noir px-4 py-1 text-xs font-bold tracking-wide">
+                        <span className="bg-white text-editorial-noir px-4 py-1 text-xs font-bold tracking-wide line-through">
                           {t('plans.premium.badge')}
                         </span>
                       </div>
@@ -225,6 +228,13 @@ const Prix = () => {
                     >
                       {checkoutLoading ? t('plans.premium.ctaLoading') : t('plans.premium.cta')}
                     </Button>
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 mt-3">
+                    <div></div>
+                    <div></div>
+                    <p className="text-xs text-editorial-noir/70 italic text-center">
+                      {t('plans.premium.vsWeddingPlanner')}
+                    </p>
                   </div>
                 </>
               )}

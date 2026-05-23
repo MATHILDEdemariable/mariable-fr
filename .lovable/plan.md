@@ -1,41 +1,25 @@
-# Filtre par jour dans la vue partagée du planning
+## Modifications
 
-## Problème
-Le filtre multi-jours (`event_day`: J-1, Jour J, J+1, jours custom) existe dans la vue d'édition `MonJourMPlanningContent`, mais les vues **consultatives/partagées** (`/planning/public/...`) affichent toutes les tâches à la suite, sans distinction de jour. Sur la capture, on voit Petit déjeuner / Matin Quartier Libre / Déjeuner / Préparatifs / Arrivée invités mélangés alors qu'ils appartiennent à des jours différents.
+### 1. Dashboard (`src/components/dashboard/DashboardSidebar.tsx`)
+- Supprimer l'entrée **Club Mariable** (bouton + import `ClubMariableModal` + state + modal rendu).
+- Supprimer le bouton **Support WhatsApp** (`<WhatsAppButton />` + import). Conserver uniquement le bouton "Un problème ?".
 
-## Solution (la plus simple)
-Ajouter un **sélecteur de jour** à côté du filtre "membre d'équipe" déjà présent, et filtrer les tâches affichées selon le jour choisi. Pas de changement de logique d'affichage, pas de nouvelle table.
+### 2. Modal "Un problème ?" (`src/components/support/ProblemModal.tsx`)
+- Ajouter en haut du formulaire (sous le titre) un petit texte indiquant l'email de contact direct visible :  
+  *« Vous pouvez aussi nous écrire directement à `mathilde@mariable.fr` »*
+- Le système d'envoi instantané vers mathilde@mariable.fr fonctionne déjà via l'edge function `send-problem-report` (vérifié : appel `resend.emails.send` vers `mathilde@mariable.fr` dès la soumission). Aucun changement backend nécessaire.
 
-## Fichiers modifiés
+### 3. Page /prix (`src/pages/Prix.tsx` + `src/i18n/locales/fr/pricing.json` + EN)
+Sur la carte **Premium** (mobile + desktop) :
+- Remplacer le badge "Recommandé" (`plans.premium.badge`) par : **« Valeur totale : 59€ »** affichée barrée (`<span className="line-through">`), sur le même emplacement (badge au-dessus de la carte).
+- Mettre à jour le texte d'une feature pour refléter :  
+  *« Accès complet au guide en ligne Mariable. Une fois, pour toujours. Mises à jour incluses pendant toute la durée de ton projet. Accès immédiat · Aucune installation — disponible sur navigateur (ordinateur, tablette, mobile). »*  
+  → modifier la clé `plans.premium.feature2` + `feature2Detail` dans les fichiers i18n FR et EN.
+- Ajouter sous la liste de features de la carte Premium une **petite note** :  
+  *« vs un wedding planner à partir de 2000€ — 10× moins cher, 10× plus de contrôle »*  
+  (nouvelle clé i18n `plans.premium.vsWeddingPlanner`).
 
-### 1. `src/pages/PlanningPublic.tsx`
-- Ajouter un state `selectedDay` (default = `'Jour J'`).
-- Calculer `availableDays` = jours uniques présents dans `coordinationData.tasks` (en lisant `task.event_day || 'Jour J'`), triés avec ordre logique (J-1, Jour J, J+1, autres alphabétique).
-- Si une seule valeur de jour existe → ne pas afficher le sélecteur (rétrocompatibilité).
-- Sinon : afficher un `<Select>` (ou groupe de boutons type tabs) à côté du filtre membre, options = `availableDays`.
-- Mettre à jour `filteredTasks` pour appliquer **les deux filtres** : jour ET membre.
-- Mettre à jour le compteur `Planning (N)` pour refléter le nombre du jour sélectionné.
-- Mettre à jour l'export PDF (`tasks` envoyés à `coordinationExportService`) pour exporter selon le jour actif ou ajouter une mention du jour.
-
-### 2. `src/pages/PlanningPublicProject.tsx`
-- Même logique, en miroir (cette page utilise `coordination_planning` aussi via `ProjectPlanningContent` partagé).
-
-### 3. (optionnel) `src/components/project-management/ProjectPlanningContent.tsx`
-- Vérifier s'il est utilisé en mode lecture seule partagé. Si oui, appliquer le même filtre.
-
-## UI proposée
-```
-[Filtre jour ▼ Jour J]   [Filtre membre ▼ Voir toutes les tâches]
-```
-Sur mobile : les deux selects empilés.
-
-## Hors scope
-- Pas de modif de la table `coordination_planning` (colonne `event_day` déjà ajoutée).
-- Pas de refonte des cartes de tâche.
-- Pas de changement de la vue d'édition.
-- Pas de regroupement visuel multi-jours sur une même page (un seul jour à la fois, comme dans l'édition).
-
-## Détails techniques
-- `event_day` est déjà dans `tasks` via `select('*')` ligne 78.
-- Default `'Jour J'` cohérent avec la migration SQL existante.
-- Le tri des jours : `['J-1', 'Jour J', 'J+1', ...autresCustomTriésAlpha]`.
+### Hors scope
+- Pas de refonte de la sidebar ni de la page Prix.
+- Pas de modification de l'edge function (déjà fonctionnelle).
+- Pas de suppression du fichier `WhatsAppButton.tsx` ni de `ClubMariableModal.tsx` (composants conservés au cas où utilisés ailleurs ; seules les références dans la sidebar sont retirées).
