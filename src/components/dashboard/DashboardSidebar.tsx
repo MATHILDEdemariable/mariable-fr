@@ -499,9 +499,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
 
       </nav>
       
-      {/* Support WhatsApp - Premium uniquement */}
+      {/* Support */}
       <div className="mt-auto px-2 sm:px-3 py-2">
-        <WhatsAppButton variant="compact" requirePremium={true} />
+        
         
         {/* Votre cadeau - Cal.com */}
         
