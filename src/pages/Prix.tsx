@@ -180,7 +180,7 @@ const Prix = () => {
                     </Card>
                     <Card className="text-center p-6 bg-editorial-noir border-2 border-editorial-noir rounded-none relative">
                       <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                        <span className="bg-white text-editorial-noir px-4 py-1 text-xs font-bold tracking-wide">
+                        <span className="bg-white text-editorial-noir px-4 py-1 text-xs font-bold tracking-wide line-through">
                           {t('plans.premium.badge')}
                         </span>
                       </div>
