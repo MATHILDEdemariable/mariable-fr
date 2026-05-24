@@ -78,7 +78,9 @@ export default {
 					noir: '#0F0F0F',
 					cream: '#f5f4ef',
 					gray: '#666666',
-					border: '#E8E8E8'
+					border: '#E8E8E8',
+					terracotta: '#C4654A',
+					'gold-light': '#E8D9BF'
 				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
