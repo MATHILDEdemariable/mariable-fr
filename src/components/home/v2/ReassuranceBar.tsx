@@ -1,5 +1,5 @@
 const items = [
-  '100% web — aucune installation',
+  '100% web — pas de téléchargement',
   'Mobile, tablette, ordinateur',
   'Accès à vie',
   'Mis à jour en continu',
