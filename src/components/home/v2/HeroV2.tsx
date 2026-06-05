@@ -28,9 +28,7 @@ export default function HeroV2() {
             quelque chose&nbsp;?
           </h1>
           <p className="text-base md:text-lg leading-relaxed mb-10 text-editorial-cream/85 max-w-2xl mx-auto">
-            Un service complet pour celles et ceux qui organisent leur mariage
-            eux-mêmes. Accessible depuis ton navigateur — mobile, tablette,
-            ordinateur. Aucun téléchargement.
+            Découvre le 1er wedding planner de poche pour les futurs mariés qui organisent eux-mêmes.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <a
