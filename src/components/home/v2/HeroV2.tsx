@@ -20,7 +20,7 @@ export default function HeroV2() {
       <div className="relative z-10 container mx-auto px-6 py-24 md:py-32 text-center">
         <div className="max-w-3xl mx-auto text-editorial-cream">
           <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive-light">
-            Service de wedding planning en ligne avec IA
+            WEDDING PLANNING NOUVELLE GENERATION
           </p>
           <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[1.05] mb-8">
             Et si tu oubliais

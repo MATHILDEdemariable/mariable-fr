@@ -17,11 +17,11 @@ export default function VersionJuin26() {
   return (
     <>
       <Helmet>
-        <title>Mariable — Service de wedding planning en ligne (mockup juin)</title>
+        <title>Mariable — WEDDING PLANNING NOUVELLE GENERATION</title>
         <meta name="robots" content="noindex,nofollow" />
         <meta
           name="description"
-          content="Service de wedding planning en ligne avec IA pour celles et ceux qui organisent eux-mêmes leur mariage."
+          content="WEDDING PLANNING NOUVELLE GENERATION pour celles et ceux qui organisent eux-mêmes leur mariage."
         />
       </Helmet>
       <div className="min-h-screen bg-editorial-cream">
