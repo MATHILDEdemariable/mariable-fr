@@ -28,7 +28,7 @@ const faqs = [
   },
   {
     q: 'Il faut télécharger une app&nbsp;?',
-    a: 'Non. Mariable fonctionne directement dans ton navigateur — ordinateur, tablette ou mobile.',
+    a: 'Non. Mariable fonctionne directement dans ton navigateur — ordinateur, tablette ou mobile. Aucun téléchargement.',
   },
 ];
 
@@ -37,7 +37,7 @@ export default function FAQSection() {
     <section className="bg-editorial-cream py-24 md:py-32">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-terracotta">
+          <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
             Questions fréquentes
           </p>
           <h2 className="font-serif text-4xl md:text-5xl text-editorial-noir">
@@ -56,7 +56,7 @@ export default function FAQSection() {
                   className="font-serif text-lg text-editorial-noir"
                   dangerouslySetInnerHTML={{ __html: f.q }}
                 />
-                <Plus className="w-4 h-4 text-editorial-terracotta flex-shrink-0 transition-transform group-data-[state=open]:rotate-45" />
+                <Plus className="w-4 h-4 text-editorial-olive flex-shrink-0 transition-transform group-data-[state=open]:rotate-45" />
               </CollapsibleTrigger>
               <CollapsibleContent className="text-editorial-gray text-sm leading-relaxed pt-4 pr-8">
                 {f.a}

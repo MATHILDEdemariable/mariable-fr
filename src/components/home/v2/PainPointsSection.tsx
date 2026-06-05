@@ -5,7 +5,7 @@ const pains = [
   'Tu jongles entre Excel, Pinterest, Notes iPhone et WhatsApp — et tu perds le fil.',
   'Tu as peur d\'oublier un détail le jour J et que ça gâche tout.',
   'Tes prestataires t\'envoient 12 mails par jour, tu ne sais plus où donner de la tête.',
-  'Tu voudrais quelqu\'un pour t\'aider, mais 2 000€ pour un wedding planner, non merci.',
+  'Tu voudrais quelqu\'un pour t\'aider, sans déléguer tout le contrôle.',
 ];
 
 export default function PainPointsSection() {
@@ -26,7 +26,7 @@ export default function PainPointsSection() {
       <div className="container mx-auto px-6">
         <div ref={ref} className="grid md:grid-cols-2 gap-16 lg:gap-24">
           <div>
-            <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-terracotta">
+            <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
               Tu te reconnais&nbsp;?
             </p>
             <h2 className="font-serif text-4xl md:text-5xl text-editorial-noir leading-tight mb-6">
@@ -51,7 +51,7 @@ export default function PainPointsSection() {
                   transitionDelay: `${i * 100}ms`,
                 }}
               >
-                <span className="w-2.5 h-2.5 rounded-full bg-editorial-terracotta flex-shrink-0 mt-2" />
+                <span className="w-2.5 h-2.5 rounded-full bg-editorial-olive flex-shrink-0 mt-2" />
                 <p className="text-editorial-noir text-lg leading-relaxed">{p}</p>
               </li>
             ))}
