@@ -49,7 +49,7 @@ export default function IncludedSection() {
             Le service en détail.
           </h2>
           <p className="text-editorial-gray">
-            Un service de wedding planning en ligne avec IA — 6 fonctionnalités
+            WEDDING PLANNING NOUVELLE GENERATION — 6 fonctionnalités
             pensées ensemble pour t'accompagner du oui au jour J.
           </p>
         </div>
