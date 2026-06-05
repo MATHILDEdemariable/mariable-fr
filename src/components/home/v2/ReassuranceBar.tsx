@@ -1,6 +1,6 @@
 const items = [
-  'Outil web — aucune installation',
-  'Ordinateur, tablette, mobile',
+  '100% web — aucune installation',
+  'Mobile, tablette, ordinateur',
   'Accès à vie',
   'Mis à jour en continu',
 ];
@@ -13,7 +13,7 @@ export default function ReassuranceBar() {
           {items.map((item, i) => (
             <li key={item} className="flex items-center gap-3">
               {i > 0 && (
-                <span className="w-1.5 h-1.5 rounded-full bg-editorial-terracotta hidden md:inline-block" />
+                <span className="w-1.5 h-1.5 rounded-full bg-editorial-olive hidden md:inline-block" />
               )}
               <span className="font-light tracking-wide">{item}</span>
             </li>

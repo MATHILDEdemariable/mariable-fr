@@ -1,21 +1,12 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 const VIDEO_URL =
   'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
 
-const tools = [
-  'Rétroplanning intelligent',
-  'Budget réel & alertes',
-  'Plan de table interactif',
-  'Liste invités & RSVP',
-  'Coordination Jour J',
-  'Assistant IA personnalisé',
-];
-
 export default function HeroV2() {
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden">
+    <section className="relative min-h-[90vh] flex items-center overflow-hidden">
       <video
         autoPlay
         muted
@@ -26,70 +17,35 @@ export default function HeroV2() {
       />
       <div className="absolute inset-0 bg-editorial-noir/65" />
 
-      <div className="relative z-10 container mx-auto px-6 py-24 md:py-32">
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-          {/* Left */}
-          <div className="text-editorial-cream">
-            <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-terracotta">
-              Le planner Mariable
-            </p>
-            <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl leading-[1.05] mb-6">
-              Et si tu oubliais
-              <br />
-              quelque chose&nbsp;?
-            </h1>
-            <p className="text-base md:text-lg leading-relaxed mb-8 text-editorial-cream/85 max-w-md">
-              Un outil de wedding planning en ligne avec IA. Accessible partout,
-              sans téléchargement. Pour organiser ton mariage l'esprit tranquille.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 mb-6">
-              <Link
-                to="/paiement"
-                className="inline-flex items-center justify-center gap-2 bg-editorial-terracotta hover:bg-editorial-terracotta/90 text-white px-8 py-4 rounded-none font-medium transition-colors"
-              >
-                Accéder au planner — 29€
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href="#planner-included"
-                className="inline-flex items-center justify-center px-8 py-4 border border-editorial-cream/40 text-editorial-cream hover:bg-editorial-cream/10 rounded-none font-medium transition-colors"
-              >
-                Voir ce qu'il y a dedans ↓
-              </a>
-            </div>
-            <p className="text-xs text-editorial-cream/60 italic">
-              Les wedding planners facturent 2&nbsp;000€. Toi, tu l'as pour 29€.
-            </p>
-          </div>
-
-          {/* Right — mockup card */}
-          <div className="bg-editorial-beige/95 backdrop-blur-sm p-8 md:p-10 shadow-2xl">
-            <div className="flex items-center justify-between mb-6 pb-4 border-b border-editorial-noir/15">
-              <span className="text-xs uppercase tracking-widest text-editorial-noir/60">
-                Ton espace Mariable
-              </span>
-              <span className="text-xs bg-editorial-noir text-editorial-cream px-2 py-1">
-                Accès à vie
-              </span>
-            </div>
-            <ul className="space-y-3 mb-8">
-              {tools.map((tool) => (
-                <li
-                  key={tool}
-                  className="flex items-center gap-3 text-editorial-noir text-sm"
-                >
-                  <Check className="w-4 h-4 text-editorial-terracotta flex-shrink-0" />
-                  {tool}
-                </li>
-              ))}
-            </ul>
-            <div className="flex items-baseline gap-3">
-              <span className="font-serif text-5xl text-editorial-noir">29€</span>
-              <span className="text-editorial-noir/50 line-through text-lg">59€</span>
-              <span className="text-xs text-editorial-noir/60 ml-auto">
-                Paiement unique
-              </span>
-            </div>
+      <div className="relative z-10 container mx-auto px-6 py-24 md:py-32 text-center">
+        <div className="max-w-3xl mx-auto text-editorial-cream">
+          <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive-light">
+            Service de wedding planning en ligne avec IA
+          </p>
+          <h1 className="font-serif text-4xl md:text-6xl lg:text-7xl leading-[1.05] mb-8">
+            Et si tu oubliais
+            <br />
+            quelque chose&nbsp;?
+          </h1>
+          <p className="text-base md:text-lg leading-relaxed mb-10 text-editorial-cream/85 max-w-2xl mx-auto">
+            Un service complet pour celles et ceux qui organisent leur mariage
+            eux-mêmes. Accessible depuis ton navigateur — mobile, tablette,
+            ordinateur. Aucun téléchargement.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <a
+              href="#planner-included"
+              className="inline-flex items-center justify-center gap-2 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-8 py-4 rounded-none font-medium transition-colors"
+            >
+              Découvrir Mariable
+              <ArrowRight className="w-4 h-4" />
+            </a>
+            <a
+              href="#testimonials"
+              className="inline-flex items-center justify-center px-8 py-4 border border-editorial-cream/40 text-editorial-cream hover:bg-editorial-cream/10 rounded-none font-medium transition-colors"
+            >
+              Voir les témoignages ↓
+            </a>
           </div>
         </div>
       </div>
