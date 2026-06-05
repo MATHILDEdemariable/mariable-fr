@@ -8,7 +8,7 @@ export default function FinalCTASection() {
         className="absolute inset-x-0 bottom-0 h-1/2 pointer-events-none"
         style={{
           background:
-            'linear-gradient(to top, hsl(var(--editorial-olive) / 0.18), transparent)',
+            'linear-gradient(to top, rgba(99,116,90,0.20), transparent)',
         }}
       />
       <div className="relative container mx-auto px-6 text-center">
