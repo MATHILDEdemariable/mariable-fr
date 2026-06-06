@@ -13,12 +13,12 @@ export default function FinalCTASection() {
       />
       <div className="relative container mx-auto px-6 text-center">
         <h2 className="font-serif text-5xl md:text-7xl text-editorial-noir leading-[1.05] mb-6">
-          Tu n'oublieras rien.
+          Et si tu oubliais
           <br />
-          <span className="text-editorial-olive italic">Promis.</span>
+          <span className="text-editorial-olive italic">quelque chose&nbsp;?</span>
         </h2>
         <p className="text-editorial-gray text-lg mb-10">
-          Accès immédiat. 29€. Une fois.
+          Crée ton compte Mariable dès maintenant.
         </p>
         <Link
           to="/paiement"

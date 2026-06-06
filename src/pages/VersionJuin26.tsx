@@ -29,11 +29,11 @@ export default function VersionJuin26() {
         <main>
           <HeroV2 />
           <ReassuranceBar />
-          <EspaceApercu />
           <PainPointsSection />
+          <EspaceApercu />
           <IncludedSection />
           <DifferentiatorSection />
-          <div id="testimonials">
+          <div id="testimonials" className="bg-white [&_section]:!bg-white">
             <PremiumTestimonialsSection />
           </div>
           <PricingHighlight />

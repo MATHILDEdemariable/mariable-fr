@@ -10,7 +10,7 @@ export default function PricingHighlight() {
             Le prix
           </p>
           <h2 className="font-serif text-5xl md:text-6xl text-editorial-noir mb-8">
-            29€. Une fois. À vie.
+            Un investissement unique.
           </h2>
 
           <div className="flex items-baseline justify-center gap-4 mb-8">
