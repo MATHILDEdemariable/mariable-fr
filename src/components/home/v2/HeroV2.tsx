@@ -22,7 +22,7 @@ export default function HeroV2() {
             WEDDING PLANNING NOUVELLE GENERATION
           </p>
           <h1 className="font-serif text-[2.5rem] sm:text-5xl md:text-6xl lg:text-7xl leading-[1.05] mb-8">
-            <span className="block">Le premier wedding planner</span>
+            <span className="block">Le wedding planner</span>
             <span className="block italic">de poche.</span>
           </h1>
           <p className="text-base md:text-lg leading-relaxed mb-10 text-editorial-cream/85 max-w-2xl mx-auto">
@@ -37,7 +37,7 @@ export default function HeroV2() {
               <ArrowRight className="w-4 h-4" />
             </a>
             <p className="text-xs uppercase tracking-[0.2em] text-editorial-cream/70">
-              Gratuit pour commencer · Premium 29€ à vie
+              Gratuit pour commencer
             </p>
           </div>
         </div>
