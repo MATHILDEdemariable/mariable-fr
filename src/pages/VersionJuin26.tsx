@@ -8,6 +8,7 @@ import ReassuranceBar from '@/components/home/v2/ReassuranceBar';
 import EspaceApercu from '@/components/home/v2/EspaceApercu';
 import PainPointsSection from '@/components/home/v2/PainPointsSection';
 import IncludedSection from '@/components/home/v2/IncludedSection';
+import FreemiumSection from '@/components/home/v2/FreemiumSection';
 import DifferentiatorSection from '@/components/home/v2/DifferentiatorSection';
 import PricingHighlight from '@/components/home/v2/PricingHighlight';
 import FAQSection from '@/components/home/v2/FAQSection';
