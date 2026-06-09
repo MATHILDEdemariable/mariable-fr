@@ -40,6 +40,7 @@ const Callback = lazy(() => import("./pages/auth/Callback"));
 // Lazy load all other pages
 const Index = lazy(() => import("./pages/Index"));
 const VersionJuin26 = lazy(() => import("./pages/VersionJuin26"));
+const GuidesShop = lazy(() => import("./pages/GuidesShop"));
 const MoteurRecherche = lazy(() => import("./pages/MoteurRecherche"));
 const PlanningPersonnalise = lazy(() => import("./pages/PlanningPersonnalise"));
 const PlanningResultatsPersonnalises = lazy(() => import("./pages/PlanningResultatsPersonnalises"));
@@ -182,6 +183,7 @@ function App() {
                   <Route path="/" element={<Mariable />} />
                   <Route path="/accueil" element={<LandingCouple />} />
                   <Route path="/versionjuin26" element={<VersionJuin26 />} />
+                  <Route path="/guides" element={<GuidesShop />} />
                   <Route path="/mariable" element={<Mariable />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
