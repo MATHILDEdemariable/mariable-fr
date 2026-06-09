@@ -1,24 +1,24 @@
 import { Link } from 'react-router-dom';
-import { Check, Lock, ArrowRight } from 'lucide-react';
+import { Check, Lock, ArrowRight, BookOpen } from 'lucide-react';
 
 const freeFeatures = [
-  'Tous les outils (rétroplanning, budget, invités, plan de table, coordination)',
+  'Tous les services en ligne (rétroplanning, budget, invités, plan de table, coordination, calculateur de boissons)',
+  'Liste de prestataires recommandés Mariable',
   'Accès au blog & aux conseils',
-  'Calculateur de boissons',
 ];
 
 const freeLimits = [
-  '3 exports PDF maximum',
-  'Assistant IA limité (10 questions/mois)',
-  'Stockage documents limité',
+  'Génération planning IA limitée',
+  'Stockage documents & informations limités',
+  'Exports PDF des espaces & guides non inclus',
 ];
 
 const premiumFeatures = [
-  'Tous les outils — sans limite',
-  'Assistant IA wedding planner illimité',
-  'Exports PDF illimités',
+  'Tous les services — sans limite',
+  'Génération planning IA illimitée',
+  'Exports PDF illimités (espaces + guides)',
   'Stockage documents illimité',
-  'Accès à toute la bibliothèque de guides',
+  'Accès à toute la bibliothèque de guides & ebooks (témoins, mariée, prestataires, organisation débutant…)',
   'Support prioritaire & mises à jour à vie',
 ];
 
@@ -121,6 +121,36 @@ export default function FreemiumSection() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
+          </div>
+
+          {/* Carte e-shop guides à l'unité */}
+          <div className="mt-8 bg-editorial-beige border border-editorial-noir/10 p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+            <div className="flex items-start gap-4 flex-1">
+              <div className="bg-white border border-editorial-noir/10 p-3 flex-shrink-0">
+                <BookOpen className="w-6 h-6 text-editorial-olive" />
+              </div>
+              <div>
+                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">
+                  À l'unité
+                </p>
+                <h3 className="font-serif text-2xl text-editorial-noir mb-1">
+                  E-books & guides digitaux
+                </h3>
+                <p className="text-sm text-editorial-noir/70">
+                  À imprimer ou pas — dès <strong>4€</strong>. Witness, mariée, prestataires, organisation débutant…
+                  <span className="block text-xs italic mt-1 text-editorial-noir/55">
+                    Tous inclus gratuitement dans Premium (29€) — plus rentable dès 4 guides achetés.
+                  </span>
+                </p>
+              </div>
+            </div>
+            <Link
+              to="/guides"
+              className="inline-flex items-center justify-center gap-2 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 rounded-none font-medium transition-colors whitespace-nowrap"
+            >
+              Voir l'e-shop
+              <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
           <p className="text-center text-xs text-editorial-noir/50 mt-10 italic">

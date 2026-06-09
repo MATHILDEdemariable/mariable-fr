@@ -9,6 +9,19 @@ const tools = [
   'Calculateur de boissons',
 ];
 
+const sidebarItems = [
+  { label: 'Tableau de bord', active: true },
+  { label: 'Check-list' },
+  { label: 'Retroplanning' },
+  { label: 'Budget' },
+  { label: 'Prestataires' },
+  { label: 'Planning Jour-J', badge: 'Exclusif' },
+  { label: 'RSVP Invités' },
+  { label: 'Plan de table' },
+  { label: 'Moodboard' },
+  { label: 'Cérémonie' },
+];
+
 export default function EspaceApercu() {
   return (
     <section className="bg-white py-20 md:py-28">
@@ -21,57 +34,120 @@ export default function EspaceApercu() {
             Un aperçu de ce qui t'attend.
           </h2>
           <p className="text-editorial-gray">
-            Toutes les fonctionnalités centralisées dans un seul espace,
-            accessible où que tu sois.
+            Une plateforme web complète, accessible où que tu sois.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center max-w-5xl mx-auto">
-          {/* Mockup mobile */}
-          <div className="flex justify-center">
-            <div className="relative w-[280px] rounded-[2.5rem] border-[10px] border-editorial-noir bg-white shadow-2xl overflow-hidden">
-              {/* Status bar */}
-              <div className="flex items-center justify-between px-6 py-3 text-xs text-editorial-noir">
-                <span className="font-medium">9:41</span>
-                <span className="flex items-center gap-1 text-editorial-olive">
-                  <span className="inline-block w-5 h-2.5 border border-editorial-olive rounded-sm bg-editorial-olive/80" />
-                  100%
-                </span>
-              </div>
-              {/* Header sage */}
-              <div className="bg-editorial-olive px-5 py-6">
-                <h3 className="font-serif text-white text-xl leading-tight">
-                  Coordination Jour J
-                </h3>
-                <p className="text-white/90 text-sm">Votre mariage</p>
-              </div>
-              {/* Timeline */}
-              <div className="px-4 py-5 space-y-3">
-                <div className="bg-green-50 border-l-4 border-editorial-olive px-4 py-3">
-                  <p className="font-semibold text-editorial-noir text-sm">
-                    14:00 - Arrivée invités
-                  </p>
-                  <p className="text-xs text-editorial-gray">En cours ✓</p>
-                </div>
-                <div className="bg-gray-50 border-l-4 border-gray-300 px-4 py-3">
-                  <p className="font-semibold text-editorial-noir text-sm">
-                    15:30 - Cérémonie
-                  </p>
-                  <p className="text-xs text-editorial-gray">Préparation</p>
-                </div>
-                <div className="bg-editorial-beige border-l-4 border-editorial-beige px-4 py-3">
-                  <p className="font-semibold text-editorial-noir text-sm">
-                    17:00 - Cocktail
-                  </p>
-                  <p className="text-xs text-editorial-gray">À venir</p>
+        <div className="grid lg:grid-cols-[1.6fr_1fr] gap-12 items-center max-w-6xl mx-auto">
+          {/* Mockup navigateur */}
+          <div className="relative">
+            <div className="rounded-lg border border-editorial-noir/15 bg-white shadow-2xl overflow-hidden">
+              {/* Browser bar */}
+              <div className="flex items-center gap-2 px-4 py-2.5 bg-editorial-cream border-b border-editorial-noir/10">
+                <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-yellow-400" />
+                <span className="w-2.5 h-2.5 rounded-full bg-green-400" />
+                <div className="flex-1 flex justify-center">
+                  <div className="bg-white border border-editorial-noir/10 rounded px-3 py-0.5 text-[10px] text-editorial-noir/60">
+                    mariable.fr/dashboard
+                  </div>
                 </div>
               </div>
-              {/* Footer */}
-              <div className="mx-4 mb-5 border border-gray-200 px-4 py-3 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-green-500" />
-                <p className="text-xs text-editorial-noir">
-                  <strong>Photographe:</strong> En position
-                </p>
+
+              {/* App header */}
+              <div className="flex items-center justify-between px-4 py-2.5 border-b border-editorial-noir/10 bg-white">
+                <span className="font-serif text-base text-editorial-noir">M.</span>
+                <div className="flex items-center gap-2">
+                  <span className="bg-editorial-noir text-white text-[9px] px-2 py-1 uppercase tracking-wider">
+                    Mon compte
+                  </span>
+                </div>
+              </div>
+
+              {/* Body : sidebar + main */}
+              <div className="grid grid-cols-[140px_1fr] min-h-[280px]">
+                {/* Sidebar */}
+                <aside className="bg-white border-r border-editorial-noir/10 py-3 hidden sm:block">
+                  <p className="font-serif text-[11px] text-editorial-noir px-3 mb-2">
+                    Mon espace
+                  </p>
+                  <ul className="space-y-0.5">
+                    {sidebarItems.map((item) => (
+                      <li
+                        key={item.label}
+                        className={`flex items-center justify-between px-3 py-1.5 text-[10px] ${
+                          item.active
+                            ? 'bg-editorial-olive text-white'
+                            : 'text-editorial-noir/70'
+                        }`}
+                      >
+                        <span className="truncate">{item.label}</span>
+                        {item.badge && (
+                          <span className="bg-editorial-olive/15 text-editorial-olive text-[8px] px-1 py-0.5 rounded-sm uppercase">
+                            {item.badge}
+                          </span>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </aside>
+
+                {/* Main */}
+                <div className="p-4 sm:p-5 bg-editorial-cream/40">
+                  <h3 className="font-serif text-lg sm:text-xl text-editorial-noir mb-0.5">
+                    Bienvenue, Mathilde !
+                  </h3>
+                  <p className="text-[10px] text-editorial-gray mb-4">
+                    mardi 9 juin 2026
+                  </p>
+
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="bg-white border border-editorial-noir/10 p-2.5">
+                      <p className="text-[9px] uppercase tracking-wider text-editorial-gray mb-1">
+                        Compte à rebours
+                      </p>
+                      <p className="font-serif text-base text-editorial-noir">J-127</p>
+                    </div>
+                    <div className="bg-white border border-editorial-noir/10 p-2.5">
+                      <p className="text-[9px] uppercase tracking-wider text-editorial-gray mb-1">
+                        Invités
+                      </p>
+                      <p className="font-serif text-base text-editorial-noir">165</p>
+                    </div>
+                    <div className="bg-white border border-editorial-noir/10 p-2.5">
+                      <p className="text-[9px] uppercase tracking-wider text-editorial-gray mb-1">
+                        Organisation
+                      </p>
+                      <p className="font-serif text-base text-editorial-noir mb-1">85%</p>
+                      <div className="h-1 bg-editorial-noir/10">
+                        <div className="h-full bg-editorial-olive" style={{ width: '85%' }} />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <div className="bg-white border border-editorial-noir/10 px-3 py-2 flex items-center gap-2">
+                      <span className="text-sm">📖</span>
+                      <div className="flex-1">
+                        <p className="text-[10px] font-medium text-editorial-noir">
+                          Guide de démarrage
+                        </p>
+                        <p className="text-[9px] text-editorial-gray">
+                          Découvrez le concept Mariable
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-white border border-editorial-noir/10 px-3 py-2 flex items-center gap-2">
+                      <span className="text-sm">▶</span>
+                      <div className="flex-1">
+                        <p className="text-[10px] font-medium text-editorial-noir">
+                          Guide vidéo
+                        </p>
+                        <p className="text-[9px] text-editorial-gray">Tutoriel en vidéo</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -79,7 +155,7 @@ export default function EspaceApercu() {
           {/* Liste fonctionnalités */}
           <div>
             <h3 className="font-serif text-2xl md:text-3xl text-editorial-noir mb-6">
-              Tout, dans un seul espace.
+              Tout, dans un seul espace web.
             </h3>
             <ul className="space-y-4">
               {tools.map((tool) => (

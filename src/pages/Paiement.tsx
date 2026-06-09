@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -65,7 +65,7 @@ const Paiement = () => {
           telephone_whatsapp: formData.phone,
           date_mariage: formData.weddingDate,
           statut: 'en_attente',
-          montant: 39.00,
+          montant: 29.00,
           devise: 'EUR'
         });
 
@@ -134,11 +134,11 @@ const Paiement = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Paiement Accompagnement Mariable | Mariable</title>
-        <meta name="description" content="Souscrivez à l'accompagnement Mariable pour bénéficier d'un accompagnement personnalisé pour votre mariage" />
+        <title>Mariable Premium — 29€ à vie | Mariable</title>
+        <meta name="description" content="Débloquez tous les outils Mariable, exports PDF illimités, génération IA illimitée et toute la bibliothèque de guides pour 29€ à vie." />
       </Helmet>
       
-      <Header />
+      <PremiumHeader />
       
       <main className="flex-grow">
         <section className="py-16 md:py-20 bg-white">
@@ -156,10 +156,10 @@ const Paiement = () => {
 
               <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-5xl font-serif text-black mb-6">
-                  Application Jour-J Libre
+                  Mariable Premium
                 </h1>
                 <p className="text-lg text-gray-700 max-w-2xl mx-auto">
-                  Votre application Jour-J personnalisable pour organiser votre mariage en toute autonomie
+                  Tous les outils sans limite, exports illimités et toute la bibliothèque de guides — un paiement unique, à vie.
                 </p>
               </div>
 
@@ -168,13 +168,14 @@ const Paiement = () => {
                 <Card className="shadow-lg">
                   <CardHeader>
                     <CardTitle className="text-2xl font-serif text-center">
-                      Application Libre
+                      Mariable Premium
                     </CardTitle>
                     <div className="text-center">
-                      <div className="text-4xl font-bold text-wedding-olive mb-2">
-                        39€ TTC
+                      <div className="flex items-baseline justify-center gap-3 mb-2">
+                        <div className="text-4xl font-bold text-wedding-olive">29€ TTC</div>
+                        <span className="text-gray-400 line-through text-lg">59€</span>
                       </div>
-                      <p className="text-sm text-wedding-olive font-medium mt-2">💍 Application Jour-J personnalisable</p>
+                      <p className="text-sm text-wedding-olive font-medium mt-2">💍 Accès à vie · paiement unique</p>
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -301,7 +302,7 @@ const Paiement = () => {
                     <div className="pt-4 border-t">
                       <div className="flex items-center justify-between mb-4">
                         <span className="text-lg font-semibold">Total</span>
-                        <span className="text-2xl font-bold text-wedding-olive">39€ TTC</span>
+                        <span className="text-2xl font-bold text-wedding-olive">29€ TTC</span>
                       </div>
                       
       <Button 
