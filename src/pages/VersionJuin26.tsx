@@ -33,6 +33,7 @@ export default function VersionJuin26() {
           <PainPointsSection />
           <EspaceApercu />
           <IncludedSection />
+          <FreemiumSection />
           <DifferentiatorSection />
           <div id="testimonials" className="bg-white [&_section]:!bg-white">
             <PremiumTestimonialsSection />
