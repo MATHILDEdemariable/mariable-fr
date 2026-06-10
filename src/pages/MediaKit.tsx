@@ -306,9 +306,9 @@ export default function MediaKit() {
           {/* ============ SLIDE 3 — MARIABLE ============ */}
           <Slide id="mariable">
             <div className="max-w-6xl mx-auto">
-              <GoldLabel>03 — Mariable</GoldLabel>
-              <h2 className="font-serif text-3xl md:text-5xl leading-tight mb-6 max-w-4xl">
-                Le média mariage moderne, pour toutes les personnes mariables.
+              <GoldLabel>03 — Ce qu'est Mariable</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6 max-w-4xl">
+                La référence moderne dans l'univers du mariage.
               </h2>
               <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable: être en état de se marier.</p>
 
