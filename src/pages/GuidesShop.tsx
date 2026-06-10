@@ -32,7 +32,7 @@ export default function GuidesShop() {
               <h1 className="font-serif text-4xl md:text-6xl text-editorial-noir leading-tight mb-6">
                 Guides & ebooks
                 <br />
-                <span className="italic">à l'unité, dès 4€.</span>
+                <span className="italic">à l'unité, dès 4€ (A VENIR)</span>
               </h1>
               <p className="text-editorial-noir/70 text-base md:text-lg leading-relaxed">
                 Téléchargez un guide précis pour un sujet précis. À lire à l'écran ou à imprimer.
