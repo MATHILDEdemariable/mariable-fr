@@ -628,7 +628,7 @@ function ContactRow({
       className="flex items-center justify-center gap-4 border border-editorial-noir/20 hover:border-editorial-olive hover:bg-editorial-noir/5 px-6 py-4 transition-all group"
     >
       <span className="text-editorial-olive">{icon}</span>
-      <span className="text-editorial-noir group-hover:text-editorial-olive transition-colors">
+      <span className="text-editorial-noir transition-colors">
         {label}
       </span>
     </a>
