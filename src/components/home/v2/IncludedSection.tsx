@@ -87,9 +87,7 @@ export default function IncludedSection() {
             Le Carnet d'adresses Mariable
           </h3>
           <p className="text-editorial-noir/75 max-w-2xl">
-            Notre sélection curée de prestataires haut de gamme (lieux,
-            traiteurs, photographes, fleuristes, DJ…). Une short-list de
-            confiance, sans démarchage.
+            Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage.
           </p>
         </div>
       </div>

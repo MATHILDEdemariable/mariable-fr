@@ -128,24 +128,24 @@
     "modalTitle": "Démonstration de la coordination Jour J"
   },
   "testimonials": {
-    "titleLine1": "Ils ont vécu",
-    "titleLine2": "l'expérience Mariable",
+    "titleLine1": "Ils ont organisé",
+    "titleLine2": "leur mariage avec Mariable",
     "subtitle": "Découvrez les témoignages de couples qui ont fait confiance à notre plateforme",
     "items": {
       "1": {
-        "name": "Sarah & Thomas",
-        "location": "Provence",
-        "text": "Mariable a transformé notre organisation de mariage. La sélection de prestataires était exceptionnelle."
+        "name": "Sophie & Marc",
+        "location": "Mariage en Provence",
+        "text": "Les outils de planification sont incroyables ! Le budget tracker et la checklist nous ont permis de tout organiser sans stress."
       },
       "2": {
-        "name": "Julie & Marc",
-        "location": "Paris",
-        "text": "La coordination le jour J était parfaite. Nous avons pu profiter pleinement de notre journée."
+        "name": "Julie & Thomas",
+        "location": "Mariage à Paris",
+        "text": "On a trouvé notre lieu sur le guide et l'appli du jour-J change la donne. On a pu tout anticiper sans rien oublier et partager les infos à nos témoins. Chacun pouvait gérer facilement sur son smartphone, hyper pratique, on recommande !"
       },
       "3": {
-        "name": "Emma & Pierre",
-        "location": "Lyon",
-        "text": "Les prestataires recommandés par Mariable étaient tous formidables. Exactement ce que nous cherchions."
+        "name": "Emma & Lucas",
+        "location": "Mariage en Bretagne",
+        "text": "Le service WhatsApp est super pratique ! On a eu des réponses rapides et des conseils personnalisés pour notre mariage."
       }
     },
     "cta": "Créer mon compte gratuit",

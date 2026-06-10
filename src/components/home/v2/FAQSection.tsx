@@ -16,7 +16,7 @@ const faqs = [
   },
   {
     q: 'Et si je ne suis pas satisfait·e&nbsp;?',
-    a: 'Remboursement sans condition pendant 14 jours. On veut que tu sois sereine, pas coincée.',
+    a: 'Remboursement sans condition pendant 14 jours. On veut que tu sois serein·e, pas coincé·e.',
   },
   {
     q: 'Mon/ma partenaire peut aussi y accéder&nbsp;?',
