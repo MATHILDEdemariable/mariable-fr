@@ -477,15 +477,6 @@ export default function MediaKit() {
                     cta: 'Demander un devis',
                     href: 'mailto:contact@mariable.fr?subject=Devis%20Community%20%26%20Ads',
                   },
-                  {
-                    n: '05',
-                    title: "Conseil en pilotage d'entreprise et opérations",
-                    badge: 'Sur devis',
-                    text:
-                      "Revue de ",
-                    cta: 'Demander un devis',
-                    href: 'mailto:contact@mariable.fr?subject=Devis%20D%C3%A9veloppement%20digital',
-                  },
                 ].map((c) => (
                   <article
                     key={c.n}
