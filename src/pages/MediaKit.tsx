@@ -498,7 +498,7 @@ export default function MediaKit() {
               <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-12 text-editorial-noir">
                 Travaillons
                 <br />
-                <span className="italic text-editorial-olive">ensemble.</span>
+                <span className="italic text-editorial-noir">ensemble.</span>
               </h2>
 
               <div className="space-y-5 max-w-md mx-auto">
