@@ -40,6 +40,7 @@ const Callback = lazy(() => import("./pages/auth/Callback"));
 // Lazy load all other pages
 const Index = lazy(() => import("./pages/Index"));
 const VersionJuin26 = lazy(() => import("./pages/VersionJuin26"));
+const MediaKit = lazy(() => import("./pages/MediaKit"));
 const GuidesShop = lazy(() => import("./pages/GuidesShop"));
 const MoteurRecherche = lazy(() => import("./pages/MoteurRecherche"));
 const PlanningPersonnalise = lazy(() => import("./pages/PlanningPersonnalise"));
@@ -184,6 +185,9 @@ function App() {
                   <Route path="/accueil" element={<LandingCouple />} />
                   <Route path="/versionjuin26" element={<Navigate to="/" replace />} />
                   <Route path="/guides" element={<GuidesShop />} />
+                  <Route path="/media-kit" element={<MediaKit />} />
+                  <Route path="/kitmedia" element={<MediaKit />} />
+                  <Route path="/KITMEDIA" element={<MediaKit />} />
                   <Route path="/mariable" element={<Mariable />} />
                   <Route path="/mariable-v1" element={<Mariable />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
