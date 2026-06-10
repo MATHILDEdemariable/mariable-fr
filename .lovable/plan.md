@@ -1,27 +1,34 @@
-## Modifications du Kit Média (`/kitmedia`)
+## Modifications `/kitmedia` (`src/pages/MediaKit.tsx`)
 
-### 1. Fond beige unifié + cartes blanches
-Adopter le beige de `professionnelsmariable` (≈ `#f5f4ef` — déjà défini comme `editorial-cream`) pour le fond global des slides clairs, et passer toutes les cartes/blocs en fond blanc avec quelques touches discrètes de vert sauge (`editorial-olive`).
+### 1. Fond beige unifié
+Remplacer `bg-editorial-cream` (#f5f4ef) par `bg-editorial-beige/40` (le beige #E1DACA à 40% utilisé en première section de `/professionnelsmariable`) sur :
+- Le wrapper global de la page (ligne 213)
+- Le composant `Slide` clair (ligne 62)
+- Tous les badges/pastilles internes qui utilisent encore `bg-editorial-cream` (ex. ligne 474)
 
-Dans `src/pages/MediaKit.tsx` :
-- Conserver `bg-editorial-cream` pour les slides clairs (déjà beige `#f5f4ef`).
-- Slide 3 (Ce qu'est Mariable) : ajouter `bg-white` + bordure fine `border-editorial-olive/15` aux cartes du `grid md:grid-cols-2`.
-- Slide 5 (Offre Pros) : les `<article>` cartes — remplacer le fond actuel par `bg-white` (déjà le cas) en renforçant la bordure sauge `border-editorial-olive/20` au hover, badge en `bg-editorial-cream` (au lieu de beige plus foncé).
-- Slide 4 (Chiffres clés) : encadrer les `Stat` dans des blocs `bg-white p-8` pour ressortir sur le beige.
-- Touches sauge ponctuelles uniquement (labels, accents, séparateurs) — déjà via `editorial-olive`.
+### 2. Textes en noir, vert sauge réservé aux accents
+Règle : **aucun texte courant en `text-editorial-olive`**. Le vert sauge reste autorisé uniquement pour :
+- Les numéros / labels de slide (`GoldLabel` "01 — INTRO", etc.)
+- Les icônes (Newspaper, Wrench, etc.)
+- Les grands chiffres stats (valeur numérique uniquement)
+- Les filets/barres décoratives (`border-l-2 border-editorial-olive`, barres de progression)
 
-### 2. Slide Fondatrice
-- Réduire la taille du H2 "Mathilde" de `text-5xl md:text-7xl` → `text-4xl md:text-5xl`.
-- Ajouter un padding-top sur la colonne photo (`md:pt-12` ou `md:mt-12`) pour la descendre et l'aligner visuellement avec le bloc de texte.
-- Augmenter le gap entre colonnes : `md:gap-16` au lieu de `md:gap-12`.
+À repasser en noir (`text-editorial-noir` ou `text-editorial-noir/80`) :
+- Citation "Être Mariable : être en état de se marier." (l.321)
+- Paragraphe italique vide servant de séparateur (l.311) — sans effet visible mais conservé en noir par cohérence
+- Titres de cartes "Le Média / La Plateforme" déjà noirs — vérifier les `<h3>` voisins
+- Pourcentages dans la slide Audience (l.379) → noir
+- Chiffre `4.7M`/valeurs `Stat` secondaires en texte → noir, sauf le grand nombre principal
+- Numéros `c.n` des cartes Offre Pros (l.473) → noir
+- Hover des CTA (l.628-631) : retirer le passage en vert au survol, garder noir
+- Mot "ensemble." (l.501) → noir
+- Citation italique du hero (l.243) si elle est olive-light → la garder claire car sur fond noir (OK, reste lisible)
+- Lien retour (l.281) → noir avec soulignement au hover
 
-### 3. Slide 5 — Titre visible
-Le H2 "Ce que je propose aux pros." est masqué car la slide a une hauteur fixe `md:h-screen` et la grille 2×2 prend toute la place. Solutions :
-- Réduire le padding vertical de la slide (`py-12` au lieu de `py-16`) **et** le `mb-10` du paragraphe sous-titre à `mb-6`.
-- Réduire la taille du titre à `text-3xl md:text-4xl`.
-- Réduire `gap-6` → `gap-4` sur la grille de cartes et `p-6 md:p-7` → `p-5` à l'intérieur des articles.
-
-Cela libère l'espace en haut pour que le H2 reste visible sans scroll.
+### 3. Cartes & bordures
+- Conserver `bg-white` pour les cartes (slides 3, 4, 5).
+- Garder les filets sauge `border-l-2 border-editorial-olive` (accent décoratif autorisé).
+- Cartes Offre Pros : bordure sauge conservée comme accent, badge passe sur fond `bg-editorial-beige/40` avec texte noir.
 
 ### Fichier modifié
-- `src/pages/MediaKit.tsx` (uniquement)
+- `src/pages/MediaKit.tsx` uniquement.
