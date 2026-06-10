@@ -255,27 +255,50 @@ export default function MediaKit() {
 
           {/* ============ SLIDE 2 — MON HISTOIRE ============ */}
           <Slide id="histoire">
-            <div className="max-w-4xl mx-auto">
+            <div className="max-w-5xl mx-auto">
               <GoldLabel>02 — Fondatrice</GoldLabel>
-              <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
-              <p className="font-serif italic text-xl text-editorial-gray mb-12">
-                À l'origine de Mariable
-              </p>
-              <div className="space-y-6 text-base md:text-lg leading-relaxed text-editorial-noir/85 max-w-3xl">
-                <p>
-                  +7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat. Jeune
-                  mariée en 2024, diplômée d'école de commerce.
-                </p>
-                <p>
-                  L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée —
-                  où l'organisation fut compliquée et entachée d'erreurs dans le choix des
-                  prestataires.
-                </p>
-                <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
-                  L'idée : transformer l'organisation des mariages en une expérience simple, élégante
-                  et agréable, pour permettre aux futurs mariés de vivre pleinement le meilleur
-                  événement de leur vie.
-                </p>
+              <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
+                <div className="flex md:block justify-center">
+                  <div className="relative w-40 h-40 md:w-56 md:h-56 bg-white p-2 shadow-lg">
+                    <img
+                      src={mathildePortrait.url}
+                      alt="Mathilde Lambert, fondatrice de Mariable"
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
+                  <p className="font-serif italic text-xl text-editorial-gray mb-4">
+                    À l'origine de Mariable
+                  </p>
+                  <a
+                    href="https://www.linkedin.com/in/lambertmathilde/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-editorial-olive hover:underline mb-10"
+                  >
+                    <Linkedin className="w-4 h-4" />
+                    LinkedIn
+                  </a>
+                  <div className="space-y-6 text-base md:text-lg leading-relaxed text-editorial-noir/85 max-w-3xl">
+                    <p>
+                      +7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat. Jeune
+                      mariée en 2024, diplômée d'école de commerce.
+                    </p>
+                    <p>
+                      L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée —
+                      où l'organisation fut compliquée et entachée d'erreurs dans le choix des
+                      prestataires.
+                    </p>
+                    <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
+                      L'idée : transformer l'organisation des mariages en une expérience simple, élégante
+                      et agréable, pour permettre aux futurs mariés de vivre pleinement le meilleur
+                      événement de leur vie.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </Slide>
