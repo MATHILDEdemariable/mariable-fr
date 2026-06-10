@@ -244,7 +244,7 @@ export default function MediaKit() {
                 {"\n"}
               </p>
               <p className="text-base md:text-lg text-editorial-cream/85 max-w-xl mx-auto mb-16">
-                Le média du mariage moderne — de la demande aux anniversaires.
+                Le média du mariage moderne et élégant
               </p>
               <div className="space-y-1 text-sm text-editorial-cream/70 tracking-wider">
                 <p>{"\n"}</p>
