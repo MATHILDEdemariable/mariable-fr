@@ -283,15 +283,15 @@ export default function MediaKit() {
             <div className="max-w-6xl mx-auto">
               <GoldLabel>03 — Mariable</GoldLabel>
               <h2 className="font-serif text-3xl md:text-5xl leading-tight mb-6 max-w-4xl">
-                Le média mariage moderne, pour toutes les personnes Mariables.
+                Le média mariage moderne, pour toutes les personnes mariables.
               </h2>
-              <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable.</p>
+              <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable: être en état de se marier.</p>
 
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
                 <p className="font-serif italic text-xl">Le mariage ne dure pas qu'un jour.</p>
                 <p>
                   Mariable met en avant l'expérience du mariage et le parcours mariage — pas juste
-                  le jour J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
+                  le jour-J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
                 </p>
                 <p>Des fiançailles aux anniversaires de mariage, en passant par le jour J.</p>
                 <p className="font-serif italic text-editorial-olive">À chaque étape — Mariable.</p>
@@ -301,7 +301,7 @@ export default function MediaKit() {
                 {[
                   {
                     icon: <Newspaper className="w-6 h-6" />,
-                    title: 'Le Média',
+                    title: 'Le Média Instagram',
                     text:
                       "Haut de gamme, élégant, moderne. Contenu éditorial autour du parcours mariage complet : mise en avant de professionnels de l'événementiel, conseils pratiques, inspiration et curation de lieux.",
                   },
@@ -423,7 +423,7 @@ export default function MediaKit() {
                     title: 'Collab Créateurs de Contenu',
                     badge: 'Avantage nature',
                     text:
-                      "Mise en relation avec notre communauté de créatrices de contenu — couples, futurs ou jeunes mariés. En échange d'un avantage en nature (nuit offerte, expérience, produit), ils produisent du contenu authentique sur vos espaces.",
+                      "Mise en relation avec notre communauté de créateurs de contenus — couples, futurs ou jeunes marié.e.s. En échange d'un avantage en nature, ils produisent du contenu authentique, cross-posté sur nos réseaux.",
                     cta: 'En savoir plus',
                     href: 'mailto:contact@mariable.fr?subject=Collab%20Cr%C3%A9ateurs%20de%20contenu',
                   },
@@ -432,34 +432,34 @@ export default function MediaKit() {
                     title: 'Mise en Avant Sélection Mariable',
                     badge: 'Avantage nature / Bon procédé',
                     text:
-                      "Intégration dans notre sélection éditoriale sur Instagram et le carnet d'adresses Mariable. Votre lieu présenté à une audience qualifiée de futurs mariés actifs.",
+                      "Intégration dans notre sélection éditoriale sur Instagram et le carnet d'adresses Mariable.",
                     cta: 'En savoir plus',
                     href: 'mailto:contact@mariable.fr?subject=S%C3%A9lection%20Mariable',
                   },
                   {
                     n: '03',
-                    title: 'Stratégie Réseaux & Création de Contenu',
+                    title: 'Conseil en marketing digital & Community Management',
                     badge: 'Sur devis',
                     text:
-                      "Stratégie éditoriale, création de contenus, calendrier mensuel, publication et stories. Tout pour construire une présence sociale cohérente et engageante.",
+                      "Stratégie éditoriale, création de contenus, calendrier mensuel, Gestion complète de votre présence sociale + campagnes Meta Ads. ",
                     cta: 'Demander un devis',
                     href: 'mailto:contact@mariable.fr?subject=Devis%20Strat%C3%A9gie%20r%C3%A9seaux',
                   },
                   {
                     n: '04',
-                    title: 'Community Management & Acquisition Payante',
+                    title: 'Développement Digital & Conseil IA',
                     badge: 'Sur devis',
                     text:
-                      "Gestion complète de votre présence sociale + campagnes Meta Ads & TikTok Ads. Calendrier éditorial · DM & commentaires · Facebook & Instagram Ads · Reporting mensuel (portée, leads, CAC).",
+                      "Sites web vitrine ou application web ·  Guides digitaux interactifs  · CRM, newsletters & séquences mail · Outils sur-mesure · Conseil en stratégie IA et implémentation d'outils adaptés à votre activité.",
                     cta: 'Demander un devis',
                     href: 'mailto:contact@mariable.fr?subject=Devis%20Community%20%26%20Ads',
                   },
                   {
                     n: '05',
-                    title: 'Développement Digital & Outils de Conversion',
+                    title: "Conseil en pilotage d'entreprise et opérations",
                     badge: 'Sur devis',
                     text:
-                      "Sites web vitrine ou réservation (SEO optimisé) · Guides digitaux interactifs · Formulaires & espaces clients · CRM, newsletters & séquences mail · Outils sur-mesure pour transformer votre trafic en clients.",
+                      "Revue de ",
                     cta: 'Demander un devis',
                     href: 'mailto:contact@mariable.fr?subject=Devis%20D%C3%A9veloppement%20digital',
                   },
