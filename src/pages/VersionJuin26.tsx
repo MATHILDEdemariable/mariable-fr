@@ -18,12 +18,16 @@ export default function VersionJuin26() {
   return (
     <>
       <Helmet>
-        <title>Mariable — WEDDING PLANNING NOUVELLE GENERATION</title>
-        <meta name="robots" content="noindex,nofollow" />
+        <title>Mariable — Le wedding planner nouvelle génération</title>
         <meta
           name="description"
-          content="WEDDING PLANNING NOUVELLE GENERATION pour celles et ceux qui organisent eux-mêmes leur mariage."
+          content="Organisez vous-même votre mariage avec Mariable : outils digitaux, carnet d'adresses de prestataires vérifiés et application jour-J. Gratuit pour commencer."
         />
+        <link rel="canonical" href="https://www.mariable.fr/" />
+        <meta property="og:title" content="Mariable — Le wedding planner nouvelle génération" />
+        <meta property="og:description" content="Organisez vous-même votre mariage avec Mariable : outils, prestataires vérifiés et application jour-J." />
+        <meta property="og:url" content="https://www.mariable.fr/" />
+        <meta property="og:type" content="website" />
       </Helmet>
       <div className="min-h-screen bg-editorial-cream">
         <PremiumHeader />

@@ -180,11 +180,12 @@ function App() {
                   <PaymentSuccessHandler />
                   <Suspense fallback={<PageLoader />}>
                   <Routes>
-                  <Route path="/" element={<Mariable />} />
+                  <Route path="/" element={<VersionJuin26 />} />
                   <Route path="/accueil" element={<LandingCouple />} />
-                  <Route path="/versionjuin26" element={<VersionJuin26 />} />
+                  <Route path="/versionjuin26" element={<Navigate to="/" replace />} />
                   <Route path="/guides" element={<GuidesShop />} />
                   <Route path="/mariable" element={<Mariable />} />
+                  <Route path="/mariable-v1" element={<Mariable />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
                   <Route path="/accueilprofessionnels" element={<AccueilProfessionnels />} />
@@ -243,7 +244,9 @@ function App() {
 
                   {/* Auth routes */}
                    <Route path="/login" element={<Login />} />
-                   <Route path="/register" element={<Register />} />
+                   <Route path="/register" element={<Paiement />} />
+                   <Route path="/register-gratuit" element={<Register />} />
+                   <Route path="/inscription-gratuite" element={<Navigate to="/register-gratuit" replace />} />
                    <Route path="/auth" element={<Login />} />
                    <Route path="/auth/callback" element={<Callback />} />
                    <Route path="/auth/reset-password" element={<ResetPassword />} />

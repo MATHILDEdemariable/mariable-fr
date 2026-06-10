@@ -311,6 +311,18 @@ const Paiement = () => {
       >
         Acheter maintenant
       </Button>
+
+      <Link to="/register-gratuit" className="block mt-3">
+        <Button
+          variant="outline"
+          className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive/5 py-3"
+        >
+          Je veux utiliser la version gratuite d'abord
+        </Button>
+      </Link>
+      <p className="text-xs text-center text-gray-500 mt-2">
+        Inscription gratuite, sans carte bancaire. Vous pourrez passer Premium à tout moment.
+      </p>
                     </div>
 
                     <div className="space-y-3 pt-4 border-t">
