@@ -350,11 +350,11 @@ export default function MediaKit() {
           <Slide id="audience">
             <div ref={statsRef} className="max-w-6xl mx-auto">
               <GoldLabel>04 — Audience</GoldLabel>
-              <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
+              <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
                 <div className="bg-white border-l-2 border-editorial-olive p-6 md:p-8">
-                  <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
+                  <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram (depuis Septembre 2025 en organique)" />
                 </div>
                 <div className="bg-white border-l-2 border-editorial-olive p-6 md:p-8">
                   <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
