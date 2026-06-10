@@ -308,18 +308,19 @@ export default function MediaKit() {
             <div className="max-w-6xl mx-auto">
               <GoldLabel>03 — Ce qu'est Mariable</GoldLabel>
               <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6 max-w-4xl">
-                La référence moderne dans l'univers du mariage.
+                Mariable : la référence moderne dans l'univers du mariage.
               </h2>
-              <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable: être en état de se marier.</p>
+              <p className="font-serif italic text-2xl text-editorial-olive mb-10">{"\n"}</p>
 
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
                 <p className="font-serif italic text-xl">Le mariage ne dure pas qu'un jour.</p>
                 <p>
-                  Mariable met en avant l'expérience du mariage et le parcours mariage — pas juste
-                  le jour-J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
+                  Mariable met en avant l'expérience du mariage et le parcours mariage à chaque
+                  étape — pas juste le jour-J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
+                  Des fiançailles aux anniversaires de mariage, en passant par le jour J.
                 </p>
-                <p>Des fiançailles aux anniversaires de mariage, en passant par le jour J.</p>
-                <p className="font-serif italic text-editorial-olive">À chaque étape — Mariable.</p>
+                <p>{"\n"}</p>
+                <p className="font-serif italic text-editorial-olive">Être Mariable: être en état de se marier.</p>
               </div>
 
               <div className="grid md:grid-cols-3 gap-6">
