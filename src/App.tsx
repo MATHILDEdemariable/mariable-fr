@@ -180,11 +180,12 @@ function App() {
                   <PaymentSuccessHandler />
                   <Suspense fallback={<PageLoader />}>
                   <Routes>
-                  <Route path="/" element={<Mariable />} />
+                  <Route path="/" element={<VersionJuin26 />} />
                   <Route path="/accueil" element={<LandingCouple />} />
-                  <Route path="/versionjuin26" element={<VersionJuin26 />} />
+                  <Route path="/versionjuin26" element={<Navigate to="/" replace />} />
                   <Route path="/guides" element={<GuidesShop />} />
                   <Route path="/mariable" element={<Mariable />} />
+                  <Route path="/mariable-v1" element={<Mariable />} />
                   <Route path="/landing-generale" element={<LandingGenerale />} />
                   <Route path="/accueilclubmariable" element={<AccueilClubMariable />} />
                   <Route path="/accueilprofessionnels" element={<AccueilProfessionnels />} />
