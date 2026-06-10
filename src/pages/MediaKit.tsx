@@ -272,7 +272,7 @@ export default function MediaKit() {
                 <div>
                   <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
                   <p className="font-serif italic text-xl text-editorial-gray mb-4">
-                    À l'origine de Mariable
+                    Diplômée d'école de commerce.&nbsp;+7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat.&nbsp; Jeune mariée en 2024.
                   </p>
                   <a
                     href="https://www.linkedin.com/in/lambertmathilde/"
@@ -285,13 +285,12 @@ export default function MediaKit() {
                   </a>
                   <div className="space-y-6 text-base md:text-lg leading-relaxed text-editorial-noir/85 max-w-3xl">
                     <p>
-                      +7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat. Jeune
-                      mariée en 2024, diplômée d'école de commerce.
-                    </p>
-                    <p>
                       L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée —
                       où l'organisation fut compliquée et entachée d'erreurs dans le choix des
                       prestataires.
+                    </p>
+                    <p>
+                      {"\n"}
                     </p>
                     <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
                       L'idée : transformer l'organisation des mariages en une expérience simple, élégante
