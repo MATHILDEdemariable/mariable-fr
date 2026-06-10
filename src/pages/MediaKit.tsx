@@ -376,7 +376,7 @@ export default function MediaKit() {
                       <div key={r.l}>
                         <div className="flex justify-between text-sm mb-1.5 text-editorial-noir/85">
                           <span>{r.l}</span>
-                          <span className="font-serif text-editorial-olive">{r.v}%</span>
+                          <span className="font-serif text-editorial-noir">{r.v}%</span>
                         </div>
                         <div className="h-1.5 bg-editorial-noir/10 overflow-hidden">
                           <div
