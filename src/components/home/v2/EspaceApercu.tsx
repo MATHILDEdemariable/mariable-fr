@@ -1,4 +1,5 @@
 import { Check } from 'lucide-react';
+import carnetMockup from '@/assets/carnet-adresses-mockup.png.asset.json';
 
 const tools = [
   'Rétroplanning intelligent',
@@ -24,7 +25,7 @@ const sidebarItems = [
 
 export default function EspaceApercu() {
   return (
-    <section className="bg-white py-20 md:py-28">
+    <section id="espace-apercu" className="bg-white py-20 md:py-28">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
