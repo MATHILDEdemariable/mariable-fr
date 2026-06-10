@@ -59,7 +59,7 @@ function Slide({
     <section
       id={id}
       className={`w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen md:overflow-y-auto snap-start flex items-center relative ${
-        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-cream text-editorial-noir'
+        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-beige/40 text-editorial-noir'
       }`}
     >
       <div className="w-full container mx-auto px-6 py-20 md:py-16">{children}</div>
