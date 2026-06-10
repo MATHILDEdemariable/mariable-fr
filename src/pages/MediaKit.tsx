@@ -210,7 +210,7 @@ export default function MediaKit() {
 
       <main
         ref={rootRef}
-        className={`bg-editorial-beige/40 text-editorial-noir font-sans ${
+        className={`bg-[#F6F3EC] text-editorial-noir font-sans ${
           isFullscreen ? 'cursor-none' : ''
         }`}
         style={isFullscreen && !showControls ? { cursor: 'none' } : undefined}
