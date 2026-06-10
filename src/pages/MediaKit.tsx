@@ -260,7 +260,7 @@ export default function MediaKit() {
               <GoldLabel>02 — Fondatrice</GoldLabel>
               <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
                 <div className="flex md:block justify-center">
-                  <div className="relative w-40 h-40 md:w-56 md:h-56 bg-white p-2 shadow-lg">
+                  <div className="relative w-56 h-56 md:w-72 md:h-72 bg-white p-2 shadow-lg">
                     <img
                       src={mathildePortrait.url}
                       alt="Mathilde Lambert, fondatrice de Mariable"
