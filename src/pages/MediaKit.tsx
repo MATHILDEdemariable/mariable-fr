@@ -395,16 +395,12 @@ export default function MediaKit() {
                     <div className="flex h-3 overflow-hidden">
                       <div
                         className="bg-editorial-olive transition-all duration-1000"
-                        style={{ width: statsVisible ? '70%' : '0%' }}
-                      />
-                      <div
-                        className="bg-editorial-noir/15 transition-all duration-1000"
-                        style={{ width: statsVisible ? '30%' : '0%' }}
+                        style={{ width: statsVisible ? '100%' : '0%' }}
                       />
                     </div>
                     <div className="flex justify-between mt-3 text-sm text-editorial-noir/85">
-                      <span>70% Femmes</span>
-                      <span>30% Hommes</span>
+                      <span>{"\n"}</span>
+                      <span>{"\n"}</span>
                     </div>
                   </div>
 
