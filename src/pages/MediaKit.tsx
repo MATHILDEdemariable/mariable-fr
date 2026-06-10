@@ -67,7 +67,6 @@ export default function MediaKit() {
     mq.addEventListener('change', sync);
     return () => mq.removeEventListener('change', sync);
   }, []);
-  const statsRef = useRef<HTMLDivElement>(null);
 
   // Trigger stats animation when slide 3 (index 3 = chiffres) is shown OR scrolled into view
   useEffect(() => {
