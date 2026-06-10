@@ -610,11 +610,11 @@ export default function MediaKit() {
 function Stat({ value, label, sub }: { value: string; label: string; sub?: string }) {
   return (
     <div>
-      <p className="font-serif text-4xl md:text-6xl text-editorial-olive-light leading-none mb-3">
+      <p className="font-serif text-3xl md:text-5xl text-editorial-olive leading-none mb-3">
         {value}
       </p>
-      <p className="text-sm text-editorial-cream/85">{label}</p>
-      {sub && <p className="text-xs text-editorial-cream/55 mt-1">{sub}</p>}
+      <p className="text-sm text-editorial-noir/85">{label}</p>
+      {sub && <p className="text-xs text-editorial-noir/55 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -633,10 +633,10 @@ function ContactRow({
       href={href}
       target={href.startsWith('http') ? '_blank' : undefined}
       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      className="flex items-center justify-center gap-4 border border-editorial-cream/20 hover:border-editorial-olive-light hover:bg-editorial-cream/5 px-6 py-4 transition-all group"
+      className="flex items-center justify-center gap-4 border border-editorial-noir/20 hover:border-editorial-olive hover:bg-editorial-noir/5 px-6 py-4 transition-all group"
     >
-      <span className="text-editorial-olive-light">{icon}</span>
-      <span className="text-editorial-cream group-hover:text-editorial-olive-light transition-colors">
+      <span className="text-editorial-olive">{icon}</span>
+      <span className="text-editorial-noir group-hover:text-editorial-olive transition-colors">
         {label}
       </span>
     </a>
