@@ -363,8 +363,6 @@ export default function MediaKit() {
                 <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
                 <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
                 <Stat value={`${c3}%`} label="Femmes" />
-                <Stat value={`${c4}%`} label="Audience 25–34 ans" />
-                <Stat value={`${c5}%`} label="Audience 18–34 ans" />
                 <Stat
                   value={`+${formatNumber(c6)}`}
                   label="Utilisateurs plateforme"
