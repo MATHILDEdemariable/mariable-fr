@@ -543,6 +543,7 @@ export default function MediaKit() {
               </p>
             </div>
           </Slide>
+          </div>
         </div>
 
         {/* ============ Desktop slide controls ============ */}
