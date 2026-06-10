@@ -216,10 +216,11 @@ export default function MediaKit() {
         style={isFullscreen && !showControls ? { cursor: 'none' } : undefined}
       >
         {/* Slides container: horizontal on desktop, vertical scroll-snap on mobile */}
-        <div
-          className="flex flex-col md:flex-row md:overflow-hidden md:h-screen md:w-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
-          style={isDesktop ? { transform: `translateX(-${slide * 100}vw)` } : undefined}
-        >
+        <div className="md:overflow-hidden md:h-screen md:w-screen">
+          <div
+            className="flex flex-col md:flex-row md:h-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
+            style={isDesktop ? { transform: `translateX(-${slide * 100}vw)`, width: '600vw' } : undefined}
+          >
           {/* ============ SLIDE 1 — HERO ============ */}
           <Slide id="cover" dark>
             {/* Video background — confined to this slide only */}
