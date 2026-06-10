@@ -15,7 +15,7 @@ import {
   Minimize,
   Linkedin,
 } from 'lucide-react';
-import mathildePortrait from '@/assets/mathilde-portrait.png.asset.json';
+import mathildePortrait from '@/assets/mathilde-portrait-v2.jpg.asset.json';
 
 const VIDEO_URL =
   'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
@@ -260,7 +260,7 @@ export default function MediaKit() {
               <GoldLabel>02 — Fondatrice</GoldLabel>
               <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
                 <div className="flex md:block justify-center">
-                  <div className="relative w-40 h-40 md:w-56 md:h-56 bg-white p-2 shadow-lg">
+                  <div className="relative w-56 h-56 md:w-72 md:h-72 bg-white p-2 shadow-lg">
                     <img
                       src={mathildePortrait.url}
                       alt="Mathilde Lambert, fondatrice de Mariable"
@@ -292,7 +292,7 @@ export default function MediaKit() {
                     <p>
                       {"\n"}
                     </p>
-                    <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
+                    <p className="border-l-2 border-editorial-olive pl-6 text-sm md:text-base leading-relaxed text-editorial-noir/75">
                       L'idée : transformer l'organisation des mariages en une expérience simple, élégante
                       et agréable, pour permettre aux futurs mariés de vivre pleinement le meilleur
                       événement de leur vie.
@@ -306,9 +306,9 @@ export default function MediaKit() {
           {/* ============ SLIDE 3 — MARIABLE ============ */}
           <Slide id="mariable">
             <div className="max-w-6xl mx-auto">
-              <GoldLabel>03 — Mariable</GoldLabel>
-              <h2 className="font-serif text-3xl md:text-5xl leading-tight mb-6 max-w-4xl">
-                Le média mariage moderne, pour toutes les personnes mariables.
+              <GoldLabel>03 — Ce qu'est Mariable</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6 max-w-4xl">
+                La référence moderne dans l'univers du mariage.
               </h2>
               <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable: être en état de se marier.</p>
 
@@ -354,25 +354,20 @@ export default function MediaKit() {
           </Slide>
 
           {/* ============ SLIDE 4 — CHIFFRES ============ */}
-          <Slide id="audience" dark>
+          <Slide id="audience">
             <div ref={statsRef} className="max-w-6xl mx-auto">
-              <GoldLabel dark>04 — Audience</GoldLabel>
-              <h2 className="font-serif text-4xl md:text-5xl mb-12">Chiffres clés.</h2>
+              <GoldLabel>04 — Audience</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8 mb-12">
                 <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
                 <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
                 <Stat value={`${c3}%`} label="Femmes" />
-                <Stat
-                  value={`+${formatNumber(c6)}`}
-                  label="Utilisateurs plateforme"
-                  sub="en 6 mois — ouverture sept. 25 au salon du mariage"
-                />
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
                 <div>
-                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-6">
                     Répartition par âge
                   </p>
                   <div className="space-y-4">
@@ -383,13 +378,13 @@ export default function MediaKit() {
                       { l: '45+ ans', v: 6 },
                     ].map((r) => (
                       <div key={r.l}>
-                        <div className="flex justify-between text-sm mb-1.5 text-editorial-cream/85">
+                        <div className="flex justify-between text-sm mb-1.5 text-editorial-noir/85">
                           <span>{r.l}</span>
-                          <span className="font-serif text-editorial-olive-light">{r.v}%</span>
+                          <span className="font-serif text-editorial-olive">{r.v}%</span>
                         </div>
-                        <div className="h-1.5 bg-editorial-cream/10 overflow-hidden">
+                        <div className="h-1.5 bg-editorial-noir/10 overflow-hidden">
                           <div
-                            className="h-full bg-editorial-olive-light transition-all duration-1000 ease-out"
+                            className="h-full bg-editorial-olive transition-all duration-1000 ease-out"
                             style={{ width: statsVisible ? `${r.v}%` : '0%' }}
                           />
                         </div>
@@ -400,30 +395,30 @@ export default function MediaKit() {
 
                 <div className="space-y-10">
                   <div>
-                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-6">
                       Répartition par genre
                     </p>
                     <div className="flex h-3 overflow-hidden">
                       <div
-                        className="bg-editorial-olive-light transition-all duration-1000"
+                        className="bg-editorial-olive transition-all duration-1000"
                         style={{ width: statsVisible ? '70%' : '0%' }}
                       />
                       <div
-                        className="bg-editorial-cream/30 transition-all duration-1000"
+                        className="bg-editorial-noir/15 transition-all duration-1000"
                         style={{ width: statsVisible ? '30%' : '0%' }}
                       />
                     </div>
-                    <div className="flex justify-between mt-3 text-sm text-editorial-cream/85">
+                    <div className="flex justify-between mt-3 text-sm text-editorial-noir/85">
                       <span>70% Femmes</span>
                       <span>30% Hommes</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-editorial-cream/15 pt-8">
-                    <p className="font-serif text-5xl text-editorial-olive-light">
+                  <div className="border-t border-editorial-noir/15 pt-8">
+                    <p className="font-serif text-4xl md:text-5xl text-editorial-olive">
                       +{formatNumber(c7)}
                     </p>
-                    <p className="text-sm text-editorial-cream/75 mt-2">partenaires professionnels</p>
+                    <p className="text-sm text-editorial-noir/75 mt-2">partenaires professionnels</p>
                   </div>
                 </div>
               </div>
@@ -505,13 +500,13 @@ export default function MediaKit() {
           </Slide>
 
           {/* ============ SLIDE 6 — CONTACT ============ */}
-          <Slide id="contact" dark>
+          <Slide id="contact">
             <div className="max-w-3xl mx-auto text-center">
-              <GoldLabel dark>06 — Contact</GoldLabel>
-              <h2 className="font-serif text-5xl md:text-7xl leading-tight mb-14 text-editorial-cream">
+              <GoldLabel>06 — Contact</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-12 text-editorial-noir">
                 Travaillons
                 <br />
-                <span className="italic text-editorial-olive-light">ensemble.</span>
+                <span className="italic text-editorial-olive">ensemble.</span>
               </h2>
 
               <div className="space-y-5 max-w-md mx-auto">
@@ -537,7 +532,7 @@ export default function MediaKit() {
                 />
               </div>
 
-              <p className="mt-16 text-xs uppercase tracking-[0.3em] text-editorial-cream/50">
+              <p className="mt-16 text-xs uppercase tracking-[0.3em] text-editorial-noir/50">
                 Mariable © 2026 · Kit média
               </p>
             </div>
@@ -615,11 +610,11 @@ export default function MediaKit() {
 function Stat({ value, label, sub }: { value: string; label: string; sub?: string }) {
   return (
     <div>
-      <p className="font-serif text-4xl md:text-6xl text-editorial-olive-light leading-none mb-3">
+      <p className="font-serif text-3xl md:text-5xl text-editorial-olive leading-none mb-3">
         {value}
       </p>
-      <p className="text-sm text-editorial-cream/85">{label}</p>
-      {sub && <p className="text-xs text-editorial-cream/55 mt-1">{sub}</p>}
+      <p className="text-sm text-editorial-noir/85">{label}</p>
+      {sub && <p className="text-xs text-editorial-noir/55 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -638,10 +633,10 @@ function ContactRow({
       href={href}
       target={href.startsWith('http') ? '_blank' : undefined}
       rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
-      className="flex items-center justify-center gap-4 border border-editorial-cream/20 hover:border-editorial-olive-light hover:bg-editorial-cream/5 px-6 py-4 transition-all group"
+      className="flex items-center justify-center gap-4 border border-editorial-noir/20 hover:border-editorial-olive hover:bg-editorial-noir/5 px-6 py-4 transition-all group"
     >
-      <span className="text-editorial-olive-light">{icon}</span>
-      <span className="text-editorial-cream group-hover:text-editorial-olive-light transition-colors">
+      <span className="text-editorial-olive">{icon}</span>
+      <span className="text-editorial-noir group-hover:text-editorial-olive transition-colors">
         {label}
       </span>
     </a>
