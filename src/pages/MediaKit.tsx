@@ -354,10 +354,9 @@ export default function MediaKit() {
               <GoldLabel>04 — Audience</GoldLabel>
               <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 mb-12">
                 <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
                 <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
-                <Stat value={`${c3}%`} label="Femmes" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
