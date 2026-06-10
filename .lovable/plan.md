@@ -1,34 +1,22 @@
-## Modifications `/kitmedia` (`src/pages/MediaKit.tsx`)
+## Correction fond beige `/kitmedia`
 
-### 1. Fond beige unifié
-Remplacer `bg-editorial-cream` (#f5f4ef) par `bg-editorial-beige/40` (le beige #E1DACA à 40% utilisé en première section de `/professionnelsmariable`) sur :
-- Le wrapper global de la page (ligne 213)
-- Le composant `Slide` clair (ligne 62)
-- Tous les badges/pastilles internes qui utilisent encore `bg-editorial-cream` (ex. ligne 474)
+### Problème
+`bg-editorial-beige/40` est bien appliqué sur `<main>` et `<Slide>`, mais le rendu visuel diffère de `/professionnelsmariable` car derrière le `<main>` le fond n'est pas blanc (body hérite du theme global), donc l'opacité 40 % laisse passer une autre teinte.
 
-### 2. Textes en noir, vert sauge réservé aux accents
-Règle : **aucun texte courant en `text-editorial-olive`**. Le vert sauge reste autorisé uniquement pour :
-- Les numéros / labels de slide (`GoldLabel` "01 — INTRO", etc.)
-- Les icônes (Newspaper, Wrench, etc.)
-- Les grands chiffres stats (valeur numérique uniquement)
-- Les filets/barres décoratives (`border-l-2 border-editorial-olive`, barres de progression)
+### Solution
+Dans `src/pages/MediaKit.tsx`, remplacer les 2 occurrences `bg-editorial-beige/40` par la couleur résolue en dur — équivalent exact de `#E1DACA` à 40 % sur blanc :
+- `<main>` (l.213) : `bg-editorial-beige/40` → `bg-[#F6F3EC]`
+- `<Slide>` clair (l.62) : `bg-editorial-beige/40` → `bg-[#F6F3EC]`
 
-À repasser en noir (`text-editorial-noir` ou `text-editorial-noir/80`) :
-- Citation "Être Mariable : être en état de se marier." (l.321)
-- Paragraphe italique vide servant de séparateur (l.311) — sans effet visible mais conservé en noir par cohérence
-- Titres de cartes "Le Média / La Plateforme" déjà noirs — vérifier les `<h3>` voisins
-- Pourcentages dans la slide Audience (l.379) → noir
-- Chiffre `4.7M`/valeurs `Stat` secondaires en texte → noir, sauf le grand nombre principal
-- Numéros `c.n` des cartes Offre Pros (l.473) → noir
-- Hover des CTA (l.628-631) : retirer le passage en vert au survol, garder noir
-- Mot "ensemble." (l.501) → noir
-- Citation italique du hero (l.243) si elle est olive-light → la garder claire car sur fond noir (OK, reste lisible)
-- Lien retour (l.281) → noir avec soulignement au hover
+Cela garantit le même rendu beige clair que `/professionnelsmariable` quel que soit le fond parent.
 
-### 3. Cartes & bordures
-- Conserver `bg-white` pour les cartes (slides 3, 4, 5).
-- Garder les filets sauge `border-l-2 border-editorial-olive` (accent décoratif autorisé).
-- Cartes Offre Pros : bordure sauge conservée comme accent, badge passe sur fond `bg-editorial-beige/40` avec texte noir.
+### Bonus demandé précédemment — chiffres et barres en noir (slide Audience)
+Toujours à appliquer dans la même passe :
+- Pourcentages `{r.v}%` (l.379) : `text-editorial-olive` → `text-editorial-noir`
+- Barres de progression (l.383, l.399) : `bg-editorial-olive` → `bg-editorial-noir`
+- Grand chiffre partenaires `+{c7}` (l.410) : `text-editorial-olive` → `text-editorial-noir`
+
+Les bordures latérales sauge et les `GoldLabel` restent inchangées.
 
 ### Fichier modifié
-- `src/pages/MediaKit.tsx` uniquement.
+- `src/pages/MediaKit.tsx`

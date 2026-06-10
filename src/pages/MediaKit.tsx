@@ -59,7 +59,7 @@ function Slide({
     <section
       id={id}
       className={`w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen md:overflow-y-auto snap-start flex items-center relative ${
-        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-beige/40 text-editorial-noir'
+        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-[#F6F3EC] text-editorial-noir'
       }`}
     >
       <div className="w-full container mx-auto px-6 py-20 md:py-16">{children}</div>
@@ -210,7 +210,7 @@ export default function MediaKit() {
 
       <main
         ref={rootRef}
-        className={`bg-editorial-beige/40 text-editorial-noir font-sans ${
+        className={`bg-[#F6F3EC] text-editorial-noir font-sans ${
           isFullscreen ? 'cursor-none' : ''
         }`}
         style={isFullscreen && !showControls ? { cursor: 'none' } : undefined}
@@ -376,11 +376,11 @@ export default function MediaKit() {
                       <div key={r.l}>
                         <div className="flex justify-between text-sm mb-1.5 text-editorial-noir/85">
                           <span>{r.l}</span>
-                          <span className="font-serif text-editorial-olive">{r.v}%</span>
+                          <span className="font-serif text-editorial-noir">{r.v}%</span>
                         </div>
                         <div className="h-1.5 bg-editorial-noir/10 overflow-hidden">
                           <div
-                            className="h-full bg-editorial-olive transition-all duration-1000 ease-out"
+                            className="h-full bg-editorial-noir transition-all duration-1000 ease-out"
                             style={{ width: statsVisible ? `${r.v}%` : '0%' }}
                           />
                         </div>
@@ -396,7 +396,7 @@ export default function MediaKit() {
                     </p>
                     <div className="flex h-3 overflow-hidden">
                       <div
-                        className="bg-editorial-olive transition-all duration-1000"
+                        className="bg-editorial-noir transition-all duration-1000"
                         style={{ width: statsVisible ? '100%' : '0%' }}
                       />
                     </div>
@@ -407,7 +407,7 @@ export default function MediaKit() {
                   </div>
 
                   <div className="border-t border-editorial-noir/15 pt-8">
-                    <p className="font-serif text-4xl md:text-5xl text-editorial-olive">
+                    <p className="font-serif text-4xl md:text-5xl text-editorial-noir">
                       +{formatNumber(c7)}
                     </p>
                     <p className="text-sm text-editorial-noir/75 mt-2">partenaires professionnels</p>
