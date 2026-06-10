@@ -13,7 +13,9 @@ import {
   ArrowRight,
   Maximize,
   Minimize,
+  Linkedin,
 } from 'lucide-react';
+import mathildePortrait from '@/assets/mathilde-portrait.png.asset.json';
 
 const VIDEO_URL =
   'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
