@@ -354,25 +354,20 @@ export default function MediaKit() {
           </Slide>
 
           {/* ============ SLIDE 4 — CHIFFRES ============ */}
-          <Slide id="audience" dark>
+          <Slide id="audience">
             <div ref={statsRef} className="max-w-6xl mx-auto">
-              <GoldLabel dark>04 — Audience</GoldLabel>
-              <h2 className="font-serif text-4xl md:text-5xl mb-12">Chiffres clés.</h2>
+              <GoldLabel>04 — Audience</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 mb-16">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8 mb-12">
                 <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
                 <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
                 <Stat value={`${c3}%`} label="Femmes" />
-                <Stat
-                  value={`+${formatNumber(c6)}`}
-                  label="Utilisateurs plateforme"
-                  sub="en 6 mois — ouverture sept. 25 au salon du mariage"
-                />
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
                 <div>
-                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-6">
                     Répartition par âge
                   </p>
                   <div className="space-y-4">
@@ -383,13 +378,13 @@ export default function MediaKit() {
                       { l: '45+ ans', v: 6 },
                     ].map((r) => (
                       <div key={r.l}>
-                        <div className="flex justify-between text-sm mb-1.5 text-editorial-cream/85">
+                        <div className="flex justify-between text-sm mb-1.5 text-editorial-noir/85">
                           <span>{r.l}</span>
-                          <span className="font-serif text-editorial-olive-light">{r.v}%</span>
+                          <span className="font-serif text-editorial-olive">{r.v}%</span>
                         </div>
-                        <div className="h-1.5 bg-editorial-cream/10 overflow-hidden">
+                        <div className="h-1.5 bg-editorial-noir/10 overflow-hidden">
                           <div
-                            className="h-full bg-editorial-olive-light transition-all duration-1000 ease-out"
+                            className="h-full bg-editorial-olive transition-all duration-1000 ease-out"
                             style={{ width: statsVisible ? `${r.v}%` : '0%' }}
                           />
                         </div>
@@ -400,30 +395,30 @@ export default function MediaKit() {
 
                 <div className="space-y-10">
                   <div>
-                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-6">
                       Répartition par genre
                     </p>
                     <div className="flex h-3 overflow-hidden">
                       <div
-                        className="bg-editorial-olive-light transition-all duration-1000"
+                        className="bg-editorial-olive transition-all duration-1000"
                         style={{ width: statsVisible ? '70%' : '0%' }}
                       />
                       <div
-                        className="bg-editorial-cream/30 transition-all duration-1000"
+                        className="bg-editorial-noir/15 transition-all duration-1000"
                         style={{ width: statsVisible ? '30%' : '0%' }}
                       />
                     </div>
-                    <div className="flex justify-between mt-3 text-sm text-editorial-cream/85">
+                    <div className="flex justify-between mt-3 text-sm text-editorial-noir/85">
                       <span>70% Femmes</span>
                       <span>30% Hommes</span>
                     </div>
                   </div>
 
-                  <div className="border-t border-editorial-cream/15 pt-8">
-                    <p className="font-serif text-5xl text-editorial-olive-light">
+                  <div className="border-t border-editorial-noir/15 pt-8">
+                    <p className="font-serif text-4xl md:text-5xl text-editorial-olive">
                       +{formatNumber(c7)}
                     </p>
-                    <p className="text-sm text-editorial-cream/75 mt-2">partenaires professionnels</p>
+                    <p className="text-sm text-editorial-noir/75 mt-2">partenaires professionnels</p>
                   </div>
                 </div>
               </div>
