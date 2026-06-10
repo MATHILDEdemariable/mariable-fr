@@ -301,7 +301,7 @@ export default function MediaKit() {
                 {[
                   {
                     icon: <Newspaper className="w-6 h-6" />,
-                    title: 'Le Média',
+                    title: 'Le Média Instagram',
                     text:
                       "Haut de gamme, élégant, moderne. Contenu éditorial autour du parcours mariage complet : mise en avant de professionnels de l'événementiel, conseils pratiques, inspiration et curation de lieux.",
                   },
