@@ -30,7 +30,11 @@ export default function HeroV2() {
           </p>
           <div className="flex flex-col items-center gap-4">
             <a
-              href="#planner-included"
+              href="#espace-apercu"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('espace-apercu')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="inline-flex items-center justify-center gap-2 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-8 py-4 rounded-none font-medium transition-colors"
             >
               Découvrir Mariable

@@ -128,24 +128,24 @@
     "modalTitle": "Wedding-day coordination demo"
   },
   "testimonials": {
-    "titleLine1": "They lived",
-    "titleLine2": "the Mariable experience",
+    "titleLine1": "They planned",
+    "titleLine2": "their wedding with Mariable",
     "subtitle": "Read the stories of couples who trusted our platform",
     "items": {
       "1": {
-        "name": "Sarah & Thomas",
-        "location": "Provence",
-        "text": "Mariable completely transformed how we planned our wedding. The vendor selection was exceptional."
+        "name": "Sophie & Marc",
+        "location": "Wedding in Provence",
+        "text": "The planning tools are incredible! The budget tracker and checklist helped us organize everything without stress."
       },
       "2": {
-        "name": "Julie & Marc",
-        "location": "Paris",
-        "text": "The day-of coordination was flawless. We were able to fully enjoy our day."
+        "name": "Julie & Thomas",
+        "location": "Wedding in Paris",
+        "text": "We found our venue in the guide, and the day-of app is a game changer. We could anticipate everything, share info with our witnesses — each could handle it easily from their phone. Highly recommend!"
       },
       "3": {
-        "name": "Emma & Pierre",
-        "location": "Lyon",
-        "text": "All the vendors recommended by Mariable were wonderful. Exactly what we were looking for."
+        "name": "Emma & Lucas",
+        "location": "Wedding in Brittany",
+        "text": "The WhatsApp service is so convenient! We got fast replies and tailored advice for our wedding."
       }
     },
     "cta": "Create my free account",
