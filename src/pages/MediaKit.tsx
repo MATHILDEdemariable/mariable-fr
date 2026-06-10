@@ -56,7 +56,17 @@ function GoldLabel({ children, dark }: { children: React.ReactNode; dark?: boole
 export default function MediaKit() {
   const [slide, setSlide] = useState(0);
   const [statsVisible, setStatsVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const slidesRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
   const statsRef = useRef<HTMLDivElement>(null);
 
   // Trigger stats animation when slide 3 (index 3 = chiffres) is shown OR scrolled into view
@@ -77,13 +87,13 @@ export default function MediaKit() {
   // Keyboard nav (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (window.matchMedia('(max-width: 767px)').matches) return;
+      if (!isDesktop) return;
       if (e.key === 'ArrowRight') setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
       if (e.key === 'ArrowLeft') setSlide((s) => Math.max(0, s - 1));
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [isDesktop]);
 
   const next = () => setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
   const prev = () => setSlide((s) => Math.max(0, s - 1));
@@ -117,11 +127,7 @@ export default function MediaKit() {
         <div
           ref={slidesRef}
           className="md:flex md:flex-row md:overflow-hidden md:h-screen md:w-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
-          style={
-            window.matchMedia && window.matchMedia('(min-width: 768px)').matches
-              ? { transform: `translateX(-${slide * 100}vw)` }
-              : undefined
-          }
+          style={isDesktop ? { transform: `translateX(-${slide * 100}vw)` } : undefined}
         >
           {/* ============ SLIDE 1 — HERO ============ */}
           <Slide id="cover" dark>
