@@ -318,7 +318,7 @@ export default function MediaKit() {
                   Des fiançailles aux anniversaires de mariage, en passant par le jour J.
                 </p>
                 <p>{"\n"}</p>
-                <p className="font-serif italic text-editorial-olive">Être Mariable: être en état de se marier.</p>
+                <p className="font-serif italic text-editorial-noir">Être Mariable: être en état de se marier.</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
