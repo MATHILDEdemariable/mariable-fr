@@ -23,7 +23,7 @@ const PremiumHeader = () => {
     return null;
   }
 
-  const navLinks = [
+  const navLinks = isHomepage ? [] : [
     { label: t('header.nav.vendors'), href: "/professionnelsmariable" },
     { label: t('header.nav.tools'), href: "/#outils-planification" },
     { label: t('header.nav.pricing'), href: "/prix" },
