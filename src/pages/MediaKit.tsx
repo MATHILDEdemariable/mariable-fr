@@ -292,7 +292,7 @@ export default function MediaKit() {
                     <p>
                       {"\n"}
                     </p>
-                    <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
+                    <p className="border-l-2 border-editorial-olive pl-6 text-sm md:text-base leading-relaxed text-editorial-noir/75">
                       L'idée : transformer l'organisation des mariages en une expérience simple, élégante
                       et agréable, pour permettre aux futurs mariés de vivre pleinement le meilleur
                       événement de leur vie.
