@@ -258,8 +258,8 @@ export default function MediaKit() {
           <Slide id="histoire">
             <div className="max-w-5xl mx-auto">
               <GoldLabel>02 — Fondatrice</GoldLabel>
-              <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-12 items-start">
-                <div className="flex md:block justify-center">
+              <div className="grid md:grid-cols-[auto_1fr] gap-8 md:gap-16 items-start">
+                <div className="flex md:block justify-center md:pt-16">
                   <div className="relative w-56 h-56 md:w-72 md:h-72 bg-white p-2 shadow-lg">
                     <img
                       src={mathildePortrait.url}
@@ -270,7 +270,7 @@ export default function MediaKit() {
                   </div>
                 </div>
                 <div>
-                  <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
+                  <h2 className="font-serif text-4xl md:text-5xl mb-4">Mathilde</h2>
                   <p className="font-serif italic text-xl text-editorial-gray mb-4">
                     Diplômée d'école de commerce.&nbsp;+7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat.&nbsp; Jeune mariée en 2024.
                   </p>
@@ -352,9 +352,13 @@ export default function MediaKit() {
               <GoldLabel>04 — Audience</GoldLabel>
               <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 mb-12">
-                <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
-                <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
+                <div className="bg-white border-l-2 border-editorial-olive p-6 md:p-8">
+                  <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
+                </div>
+                <div className="bg-white border-l-2 border-editorial-olive p-6 md:p-8">
+                  <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
+                </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
@@ -417,12 +421,12 @@ export default function MediaKit() {
           <Slide id="offre">
             <div className="max-w-6xl mx-auto">
               <GoldLabel>05 — Offre Professionnels</GoldLabel>
-              <h2 className="font-serif text-4xl md:text-5xl mb-3">Ce que je propose aux pros.</h2>
-              <p className="text-editorial-gray text-base mb-10">
+              <h2 className="font-serif text-3xl md:text-4xl mb-2">Ce que je propose aux pros.</h2>
+              <p className="text-editorial-gray text-sm mb-6">
                 Des formats adaptés à chaque objectif.
               </p>
 
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="grid md:grid-cols-2 gap-4">
                 {[
                   {
                     n: '01',
@@ -463,16 +467,16 @@ export default function MediaKit() {
                 ].map((c) => (
                   <article
                     key={c.n}
-                    className="bg-white border border-editorial-noir/10 p-6 md:p-7 flex flex-col"
+                    className="bg-white border border-editorial-olive/20 p-5 flex flex-col"
                   >
-                    <div className="flex items-start justify-between gap-4 mb-4">
+                    <div className="flex items-start justify-between gap-4 mb-3">
                       <span className="font-serif text-editorial-olive text-xl">{c.n}</span>
-                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-beige text-editorial-olive px-3 py-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-cream text-editorial-olive px-3 py-1.5">
                         {c.badge}
                       </span>
                     </div>
-                    <h3 className="font-serif text-2xl mb-3 leading-snug">{c.title}</h3>
-                    <p className="text-sm leading-relaxed text-editorial-noir/75 mb-6 flex-1">
+                    <h3 className="font-serif text-xl md:text-2xl mb-2 leading-snug">{c.title}</h3>
+                    <p className="text-sm leading-relaxed text-editorial-noir/75 mb-4 flex-1">
                       {c.text}
                     </p>
                     <a
