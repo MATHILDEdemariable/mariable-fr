@@ -1,6 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { ChevronLeft, ChevronRight, Mail, Instagram, Globe, MessageCircle, Newspaper, Wrench, Handshake, ArrowRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  Mail,
+  Instagram,
+  Globe,
+  MessageCircle,
+  Newspaper,
+  Wrench,
+  Handshake,
+  ArrowRight,
+  Maximize,
+  Minimize,
+} from 'lucide-react';
 
 const VIDEO_URL =
   'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
@@ -31,11 +44,19 @@ function formatNumber(n: number) {
 }
 
 // ---------- Slide wrapper ----------
-function Slide({ children, dark = false, id }: { children: React.ReactNode; dark?: boolean; id: string }) {
+function Slide({
+  children,
+  dark = false,
+  id,
+}: {
+  children: React.ReactNode;
+  dark?: boolean;
+  id: string;
+}) {
   return (
     <section
       id={id}
-      className={`md:w-screen md:flex-shrink-0 md:h-screen md:overflow-y-auto snap-start min-h-screen flex items-center ${
+      className={`w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen md:overflow-y-auto snap-start flex items-center relative ${
         dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-cream text-editorial-noir'
       }`}
     >
@@ -46,7 +67,11 @@ function Slide({ children, dark = false, id }: { children: React.ReactNode; dark
 
 function GoldLabel({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
   return (
-    <p className={`uppercase tracking-[0.3em] text-xs mb-6 ${dark ? 'text-editorial-olive-light' : 'text-editorial-olive'}`}>
+    <p
+      className={`uppercase tracking-[0.3em] text-xs mb-6 ${
+        dark ? 'text-editorial-olive-light' : 'text-editorial-olive'
+      }`}
+    >
       {children}
     </p>
   );
@@ -57,9 +82,13 @@ export default function MediaKit() {
   const [slide, setSlide] = useState(0);
   const [statsVisible, setStatsVisible] = useState(false);
   const [isDesktop, setIsDesktop] = useState(false);
-  const slidesRef = useRef<HTMLDivElement>(null);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControls, setShowControls] = useState(true);
   const statsRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const inactivityTimer = useRef<number | null>(null);
 
+  // Responsive detection
   useEffect(() => {
     const mq = window.matchMedia('(min-width: 768px)');
     const sync = () => setIsDesktop(mq.matches);
@@ -68,7 +97,7 @@ export default function MediaKit() {
     return () => mq.removeEventListener('change', sync);
   }, []);
 
-  // Trigger stats animation when slide 3 (index 3 = chiffres) is shown OR scrolled into view
+  // Trigger stats animation when slide 3 shown
   useEffect(() => {
     if (slide === 3) setStatsVisible(true);
   }, [slide]);
@@ -83,21 +112,74 @@ export default function MediaKit() {
     return () => obs.disconnect();
   }, []);
 
+  const next = useCallback(
+    () => setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1)),
+    []
+  );
+  const prev = useCallback(() => setSlide((s) => Math.max(0, s - 1)), []);
+
   // Keyboard nav (desktop)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (!isDesktop) return;
-      if (e.key === 'ArrowRight') setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
-      if (e.key === 'ArrowLeft') setSlide((s) => Math.max(0, s - 1));
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        next();
+      }
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prev();
+      }
+      if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isDesktop]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDesktop, next, prev]);
 
-  const next = () => setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
-  const prev = () => setSlide((s) => Math.max(0, s - 1));
+  // Fullscreen handling
+  const toggleFullscreen = useCallback(async () => {
+    try {
+      if (!document.fullscreenElement) {
+        await (rootRef.current ?? document.documentElement).requestFullscreen();
+      } else {
+        await document.exitFullscreen();
+      }
+    } catch (error) {
+      console.error('Fullscreen toggle failed:', error);
+    }
+  }, []);
 
-  // ---------- Counters ----------
+  useEffect(() => {
+    const onChange = () => setIsFullscreen(!!document.fullscreenElement);
+    document.addEventListener('fullscreenchange', onChange);
+    return () => document.removeEventListener('fullscreenchange', onChange);
+  }, []);
+
+  // Auto-hide controls in fullscreen
+  useEffect(() => {
+    if (!isFullscreen) {
+      setShowControls(true);
+      return;
+    }
+    const reset = () => {
+      setShowControls(true);
+      if (inactivityTimer.current) window.clearTimeout(inactivityTimer.current);
+      inactivityTimer.current = window.setTimeout(() => setShowControls(false), 2500);
+    };
+    reset();
+    window.addEventListener('mousemove', reset);
+    window.addEventListener('keydown', reset);
+    return () => {
+      window.removeEventListener('mousemove', reset);
+      window.removeEventListener('keydown', reset);
+      if (inactivityTimer.current) window.clearTimeout(inactivityTimer.current);
+    };
+  }, [isFullscreen]);
+
+  // Counters
   const c1 = useCountUp(6000, statsVisible);
   const c2 = useCountUp(200000, statsVisible);
   const c3 = useCountUp(70, statsVisible);
@@ -116,47 +198,55 @@ export default function MediaKit() {
         />
         <link rel="canonical" href="https://mariable-fr.lovable.app/media-kit" />
         <meta property="og:title" content="Kit Média Mariable 2026" />
-        <meta property="og:description" content="Le média du mariage moderne — audience, offres et services partenaires." />
+        <meta
+          property="og:description"
+          content="Le média du mariage moderne — audience, offres et services partenaires."
+        />
         <meta property="og:url" content="https://mariable-fr.lovable.app/media-kit" />
         <meta property="og:type" content="website" />
       </Helmet>
 
-      <main className="bg-editorial-cream text-editorial-noir font-sans">
-        {/* Slides container: horizontal on desktop, vertical on mobile */}
+      <main
+        ref={rootRef}
+        className={`bg-editorial-cream text-editorial-noir font-sans ${
+          isFullscreen ? 'cursor-none' : ''
+        }`}
+        style={isFullscreen && !showControls ? { cursor: 'none' } : undefined}
+      >
+        {/* Slides container: horizontal on desktop, vertical scroll-snap on mobile */}
         <div
-          ref={slidesRef}
-          className="md:flex md:flex-row md:overflow-hidden md:h-screen md:w-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
+          className="flex flex-col md:flex-row md:overflow-hidden md:h-screen md:w-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
           style={isDesktop ? { transform: `translateX(-${slide * 100}vw)` } : undefined}
         >
           {/* ============ SLIDE 1 — HERO ============ */}
           <Slide id="cover" dark>
-            <div className="relative">
+            {/* Video background — confined to this slide only */}
+            <div className="absolute inset-0 overflow-hidden -z-0">
               <video
                 autoPlay
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover -z-10"
+                className="absolute inset-0 w-full h-full object-cover"
                 src={VIDEO_URL}
-                style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}
               />
-              <div className="fixed inset-0 bg-editorial-noir/70 -z-10" />
-              <div className="relative text-center max-w-3xl mx-auto text-editorial-cream py-16">
-                <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-olive-light">
-                  01 — Kit Média & Partenaires 2026
-                </p>
-                <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] mb-6">Mariable</h1>
-                <p className="font-serif italic text-2xl md:text-3xl text-editorial-olive-light mb-8">
-                  Avant, pendant, longtemps après.
-                </p>
-                <p className="text-base md:text-lg text-editorial-cream/85 max-w-xl mx-auto mb-16">
-                  Le média du mariage moderne — de la demande aux anniversaires.
-                </p>
-                <div className="space-y-1 text-sm text-editorial-cream/70 tracking-wider">
-                  <p>mariable.fr</p>
-                  <p>@mariable</p>
-                  <p>contact@mariable.fr</p>
-                </div>
+              <div className="absolute inset-0 bg-editorial-noir/70" />
+            </div>
+            <div className="relative z-10 text-center max-w-3xl mx-auto text-editorial-cream py-16">
+              <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-olive-light">
+                01 — Kit Média & Partenaires 2026
+              </p>
+              <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] mb-6">Mariable</h1>
+              <p className="font-serif italic text-2xl md:text-3xl text-editorial-olive-light mb-8">
+                Avant, pendant, longtemps après.
+              </p>
+              <p className="text-base md:text-lg text-editorial-cream/85 max-w-xl mx-auto mb-16">
+                Le média du mariage moderne — de la demande aux anniversaires.
+              </p>
+              <div className="space-y-1 text-sm text-editorial-cream/70 tracking-wider">
+                <p>mariable.fr</p>
+                <p>@mariable</p>
+                <p>contact@mariable.fr</p>
               </div>
             </div>
           </Slide>
@@ -166,15 +256,18 @@ export default function MediaKit() {
             <div className="max-w-4xl mx-auto">
               <GoldLabel>02 — Fondatrice</GoldLabel>
               <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
-              <p className="font-serif italic text-xl text-editorial-gray mb-12">À l'origine de Mariable</p>
+              <p className="font-serif italic text-xl text-editorial-gray mb-12">
+                À l'origine de Mariable
+              </p>
               <div className="space-y-6 text-base md:text-lg leading-relaxed text-editorial-noir/85 max-w-3xl">
                 <p>
                   +7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat. Jeune
                   mariée en 2024, diplômée d'école de commerce.
                 </p>
                 <p>
-                  L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée — où
-                  l'organisation fut compliquée et entachée d'erreurs dans le choix des prestataires.
+                  L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée —
+                  où l'organisation fut compliquée et entachée d'erreurs dans le choix des
+                  prestataires.
                 </p>
                 <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
                   L'idée : transformer l'organisation des mariages en une expérience simple, élégante
@@ -197,8 +290,8 @@ export default function MediaKit() {
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
                 <p className="font-serif italic text-xl">Le mariage ne dure pas qu'un jour.</p>
                 <p>
-                  Mariable met en avant l'expérience du mariage et le parcours mariage — pas
-                  juste le jour J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
+                  Mariable met en avant l'expérience du mariage et le parcours mariage — pas juste
+                  le jour J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
                 </p>
                 <p>Des fiançailles aux anniversaires de mariage, en passant par le jour J.</p>
                 <p className="font-serif italic text-editorial-olive">À chaque étape — Mariable.</p>
@@ -247,13 +340,18 @@ export default function MediaKit() {
                 <Stat value={`${c3}%`} label="Femmes" />
                 <Stat value={`${c4}%`} label="Audience 25–34 ans" />
                 <Stat value={`${c5}%`} label="Audience 18–34 ans" />
-                <Stat value={`+${formatNumber(c6)}`} label="Utilisateurs plateforme" sub="en 6 mois — ouverture sept. 25 au salon du mariage" />
+                <Stat
+                  value={`+${formatNumber(c6)}`}
+                  label="Utilisateurs plateforme"
+                  sub="en 6 mois — ouverture sept. 25 au salon du mariage"
+                />
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
-                {/* Age breakdown */}
                 <div>
-                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">Répartition par âge</p>
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                    Répartition par âge
+                  </p>
                   <div className="space-y-4">
                     {[
                       { l: '25–34 ans', v: 52 },
@@ -277,10 +375,11 @@ export default function MediaKit() {
                   </div>
                 </div>
 
-                {/* Gender + partenaires */}
                 <div className="space-y-10">
                   <div>
-                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">Répartition par genre</p>
+                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">
+                      Répartition par genre
+                    </p>
                     <div className="flex h-3 overflow-hidden">
                       <div
                         className="bg-editorial-olive-light transition-all duration-1000"
@@ -298,7 +397,9 @@ export default function MediaKit() {
                   </div>
 
                   <div className="border-t border-editorial-cream/15 pt-8">
-                    <p className="font-serif text-5xl text-editorial-olive-light">+{formatNumber(c7)}</p>
+                    <p className="font-serif text-5xl text-editorial-olive-light">
+                      +{formatNumber(c7)}
+                    </p>
                     <p className="text-sm text-editorial-cream/75 mt-2">partenaires professionnels</p>
                   </div>
                 </div>
@@ -311,7 +412,9 @@ export default function MediaKit() {
             <div className="max-w-6xl mx-auto">
               <GoldLabel>05 — Offre Professionnels</GoldLabel>
               <h2 className="font-serif text-4xl md:text-5xl mb-3">Ce que je propose aux pros.</h2>
-              <p className="text-editorial-gray text-base mb-10">Des formats adaptés à chaque objectif.</p>
+              <p className="text-editorial-gray text-base mb-10">
+                Des formats adaptés à chaque objectif.
+              </p>
 
               <div className="grid md:grid-cols-2 gap-6">
                 {[
@@ -372,7 +475,9 @@ export default function MediaKit() {
                       </span>
                     </div>
                     <h3 className="font-serif text-2xl mb-3 leading-snug">{c.title}</h3>
-                    <p className="text-sm leading-relaxed text-editorial-noir/75 mb-6 flex-1">{c.text}</p>
+                    <p className="text-sm leading-relaxed text-editorial-noir/75 mb-6 flex-1">
+                      {c.text}
+                    </p>
                     <a
                       href={c.href}
                       className="inline-flex items-center gap-2 text-sm font-medium text-editorial-olive hover:underline self-start"
@@ -426,7 +531,11 @@ export default function MediaKit() {
         </div>
 
         {/* ============ Desktop slide controls ============ */}
-        <div className="hidden md:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-4 bg-editorial-noir/80 backdrop-blur px-5 py-3">
+        <div
+          className={`hidden md:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-4 bg-editorial-noir/80 backdrop-blur px-5 py-3 transition-opacity duration-300 ${
+            showControls ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
           <button
             onClick={prev}
             disabled={slide === 0}
@@ -458,11 +567,29 @@ export default function MediaKit() {
           >
             <ChevronRight className="w-5 h-5" />
           </button>
+          <div className="w-px h-5 bg-editorial-cream/20 mx-1" />
+          <button
+            onClick={toggleFullscreen}
+            aria-label={isFullscreen ? 'Quitter le plein écran' : 'Plein écran'}
+            title={isFullscreen ? 'Quitter (Esc)' : 'Plein écran (F)'}
+            className="text-editorial-cream hover:text-editorial-olive-light transition-colors"
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+          </button>
         </div>
 
-        {/* Mobile floating nav hint */}
-        <div className="md:hidden fixed bottom-4 right-4 z-50 bg-editorial-noir/80 text-editorial-cream text-[10px] uppercase tracking-[0.2em] px-3 py-2">
-          Scroll ↓
+        {/* Mobile floating fullscreen + hint */}
+        <div className="md:hidden fixed bottom-4 right-4 z-50 flex items-center gap-2">
+          <button
+            onClick={toggleFullscreen}
+            aria-label="Plein écran"
+            className="bg-editorial-noir/80 text-editorial-cream px-3 py-2"
+          >
+            {isFullscreen ? <Minimize className="w-4 h-4" /> : <Maximize className="w-4 h-4" />}
+          </button>
+          <div className="bg-editorial-noir/80 text-editorial-cream text-[10px] uppercase tracking-[0.2em] px-3 py-2">
+            Scroll ↓
+          </div>
         </div>
       </main>
     </>
@@ -482,7 +609,15 @@ function Stat({ value, label, sub }: { value: string; label: string; sub?: strin
   );
 }
 
-function ContactRow({ icon, label, href }: { icon: React.ReactNode; label: string; href: string }) {
+function ContactRow({
+  icon,
+  label,
+  href,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  href: string;
+}) {
   return (
     <a
       href={href}
