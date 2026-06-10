@@ -323,7 +323,7 @@ export default function MediaKit() {
                 <p className="font-serif italic text-editorial-olive">Être Mariable: être en état de se marier.</p>
               </div>
 
-              <div className="grid md:grid-cols-3 gap-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 {[
                   {
                     icon: <Newspaper className="w-6 h-6" />,
@@ -336,12 +336,6 @@ export default function MediaKit() {
                     title: 'La Plateforme',
                     text:
                       "Mariable.fr — le service en ligne de wedding planning digital pour les couples. Outils d'organisation, ressources digitales, guides pratiques et wedding planner de poche.",
-                  },
-                  {
-                    icon: <Handshake className="w-6 h-6" />,
-                    title: 'Les Services Pro',
-                    text:
-                      "Un écosystème dédié aux professionnels du mariage : mise en relation, visibilité, création de contenu et développement digital.",
                   },
                 ].map((c) => (
                   <article key={c.title} className="bg-white border-t-2 border-editorial-olive p-7">
