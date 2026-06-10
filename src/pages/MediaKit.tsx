@@ -59,7 +59,7 @@ function Slide({
     <section
       id={id}
       className={`w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen md:overflow-y-auto snap-start flex items-center relative ${
-        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-cream text-editorial-noir'
+        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-beige/40 text-editorial-noir'
       }`}
     >
       <div className="w-full container mx-auto px-6 py-20 md:py-16">{children}</div>
@@ -210,7 +210,7 @@ export default function MediaKit() {
 
       <main
         ref={rootRef}
-        className={`bg-editorial-cream text-editorial-noir font-sans ${
+        className={`bg-editorial-beige/40 text-editorial-noir font-sans ${
           isFullscreen ? 'cursor-none' : ''
         }`}
         style={isFullscreen && !showControls ? { cursor: 'none' } : undefined}
@@ -278,7 +278,7 @@ export default function MediaKit() {
                     href="https://www.linkedin.com/in/lambertmathilde/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-editorial-olive hover:underline mb-10"
+                    className="inline-flex items-center gap-2 text-sm text-editorial-noir hover:underline mb-10"
                   >
                     <Linkedin className="w-4 h-4" />
                     LinkedIn
@@ -308,7 +308,7 @@ export default function MediaKit() {
               <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6 max-w-4xl">
                 Mariable : la référence moderne dans l'univers du mariage.
               </h2>
-              <p className="font-serif italic text-2xl text-editorial-olive mb-10">{"\n"}</p>
+              <p className="font-serif italic text-2xl text-editorial-noir mb-10">{"\n"}</p>
 
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
                 <p className="font-serif italic text-xl">{"\n"}</p>
@@ -318,7 +318,7 @@ export default function MediaKit() {
                   Des fiançailles aux anniversaires de mariage, en passant par le jour J.
                 </p>
                 <p>{"\n"}</p>
-                <p className="font-serif italic text-editorial-olive">Être Mariable: être en état de se marier.</p>
+                <p className="font-serif italic text-editorial-noir">Être Mariable: être en état de se marier.</p>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -471,7 +471,7 @@ export default function MediaKit() {
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <span className="font-serif text-editorial-olive text-xl">{c.n}</span>
-                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-cream text-editorial-olive px-3 py-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-beige/40 text-editorial-noir px-3 py-1.5">
                         {c.badge}
                       </span>
                     </div>
@@ -481,7 +481,7 @@ export default function MediaKit() {
                     </p>
                     <a
                       href={c.href}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-editorial-olive hover:underline self-start"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-editorial-noir hover:underline self-start"
                     >
                       {c.cta} <ArrowRight className="w-3.5 h-3.5" />
                     </a>
@@ -498,7 +498,7 @@ export default function MediaKit() {
               <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-12 text-editorial-noir">
                 Travaillons
                 <br />
-                <span className="italic text-editorial-olive">ensemble.</span>
+                <span className="italic text-editorial-noir">ensemble.</span>
               </h2>
 
               <div className="space-y-5 max-w-md mx-auto">
@@ -628,7 +628,7 @@ function ContactRow({
       className="flex items-center justify-center gap-4 border border-editorial-noir/20 hover:border-editorial-olive hover:bg-editorial-noir/5 px-6 py-4 transition-all group"
     >
       <span className="text-editorial-olive">{icon}</span>
-      <span className="text-editorial-noir group-hover:text-editorial-olive transition-colors">
+      <span className="text-editorial-noir transition-colors">
         {label}
       </span>
     </a>
