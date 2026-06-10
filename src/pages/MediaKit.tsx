@@ -331,7 +331,7 @@ export default function MediaKit() {
                   },
                   {
                     icon: <Wrench className="w-6 h-6" />,
-                    title: 'La Plateforme',
+                    title: 'La Plateforme : une solution IA',
                     text:
                       "Mariable.fr — le service en ligne de wedding planning digital pour les couples. Outils d'organisation, ressources digitales, guides pratiques et wedding planner de poche.",
                   },
