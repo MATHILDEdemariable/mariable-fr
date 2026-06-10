@@ -1,0 +1,499 @@
+import { useEffect, useRef, useState } from 'react';
+import { Helmet } from 'react-helmet-async';
+import { ChevronLeft, ChevronRight, Mail, Instagram, Globe, MessageCircle, Newspaper, Wrench, Handshake, ArrowRight } from 'lucide-react';
+
+const VIDEO_URL =
+  'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
+
+const TOTAL_SLIDES = 6;
+
+// ---------- Counter helper ----------
+function useCountUp(target: number, active: boolean, duration = 1600) {
+  const [value, setValue] = useState(0);
+  useEffect(() => {
+    if (!active) return;
+    let raf = 0;
+    const start = performance.now();
+    const tick = (now: number) => {
+      const p = Math.min(1, (now - start) / duration);
+      const eased = 1 - Math.pow(1 - p, 3);
+      setValue(Math.round(target * eased));
+      if (p < 1) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [target, active, duration]);
+  return value;
+}
+
+function formatNumber(n: number) {
+  return n.toLocaleString('fr-FR').replace(/\u202f|\s/g, ' ');
+}
+
+// ---------- Slide wrapper ----------
+function Slide({ children, dark = false, id }: { children: React.ReactNode; dark?: boolean; id: string }) {
+  return (
+    <section
+      id={id}
+      className={`md:w-screen md:flex-shrink-0 md:h-screen md:overflow-y-auto snap-start min-h-screen flex items-center ${
+        dark ? 'bg-editorial-noir text-editorial-cream' : 'bg-editorial-cream text-editorial-noir'
+      }`}
+    >
+      <div className="w-full container mx-auto px-6 py-20 md:py-16">{children}</div>
+    </section>
+  );
+}
+
+function GoldLabel({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
+  return (
+    <p className={`uppercase tracking-[0.3em] text-xs mb-6 ${dark ? 'text-editorial-olive-light' : 'text-editorial-olive'}`}>
+      {children}
+    </p>
+  );
+}
+
+// ---------- Page ----------
+export default function MediaKit() {
+  const [slide, setSlide] = useState(0);
+  const [statsVisible, setStatsVisible] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
+  const slidesRef = useRef<HTMLDivElement>(null);
+  const statsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    const sync = () => setIsDesktop(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
+  // Trigger stats animation when slide 3 (index 3 = chiffres) is shown OR scrolled into view
+  useEffect(() => {
+    if (slide === 3) setStatsVisible(true);
+  }, [slide]);
+
+  useEffect(() => {
+    if (!statsRef.current) return;
+    const obs = new IntersectionObserver(
+      ([e]) => e.isIntersecting && setStatsVisible(true),
+      { threshold: 0.3 }
+    );
+    obs.observe(statsRef.current);
+    return () => obs.disconnect();
+  }, []);
+
+  // Keyboard nav (desktop)
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (!isDesktop) return;
+      if (e.key === 'ArrowRight') setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
+      if (e.key === 'ArrowLeft') setSlide((s) => Math.max(0, s - 1));
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isDesktop]);
+
+  const next = () => setSlide((s) => Math.min(TOTAL_SLIDES - 1, s + 1));
+  const prev = () => setSlide((s) => Math.max(0, s - 1));
+
+  // ---------- Counters ----------
+  const c1 = useCountUp(6000, statsVisible);
+  const c2 = useCountUp(200000, statsVisible);
+  const c3 = useCountUp(70, statsVisible);
+  const c4 = useCountUp(52, statsVisible);
+  const c5 = useCountUp(74, statsVisible);
+  const c6 = useCountUp(1500, statsVisible);
+  const c7 = useCountUp(200, statsVisible);
+
+  return (
+    <>
+      <Helmet>
+        <title>Kit Média & Partenaires 2026 — Mariable</title>
+        <meta
+          name="description"
+          content="Mariable, le média du mariage moderne. Audience, chiffres clés, offres partenaires et services pour les professionnels de l'événementiel."
+        />
+        <link rel="canonical" href="https://mariable-fr.lovable.app/media-kit" />
+        <meta property="og:title" content="Kit Média Mariable 2026" />
+        <meta property="og:description" content="Le média du mariage moderne — audience, offres et services partenaires." />
+        <meta property="og:url" content="https://mariable-fr.lovable.app/media-kit" />
+        <meta property="og:type" content="website" />
+      </Helmet>
+
+      <main className="bg-editorial-cream text-editorial-noir font-sans">
+        {/* Slides container: horizontal on desktop, vertical on mobile */}
+        <div
+          ref={slidesRef}
+          className="md:flex md:flex-row md:overflow-hidden md:h-screen md:w-screen md:transition-transform md:duration-700 md:ease-out snap-y snap-mandatory md:snap-none"
+          style={isDesktop ? { transform: `translateX(-${slide * 100}vw)` } : undefined}
+        >
+          {/* ============ SLIDE 1 — HERO ============ */}
+          <Slide id="cover" dark>
+            <div className="relative">
+              <video
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="absolute inset-0 w-full h-full object-cover -z-10"
+                src={VIDEO_URL}
+                style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', zIndex: -1 }}
+              />
+              <div className="fixed inset-0 bg-editorial-noir/70 -z-10" />
+              <div className="relative text-center max-w-3xl mx-auto text-editorial-cream py-16">
+                <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-olive-light">
+                  01 — Kit Média & Partenaires 2026
+                </p>
+                <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] mb-6">Mariable</h1>
+                <p className="font-serif italic text-2xl md:text-3xl text-editorial-olive-light mb-8">
+                  Avant, pendant, longtemps après.
+                </p>
+                <p className="text-base md:text-lg text-editorial-cream/85 max-w-xl mx-auto mb-16">
+                  Le média du mariage moderne — de la demande aux anniversaires.
+                </p>
+                <div className="space-y-1 text-sm text-editorial-cream/70 tracking-wider">
+                  <p>mariable.fr</p>
+                  <p>@mariable</p>
+                  <p>contact@mariable.fr</p>
+                </div>
+              </div>
+            </div>
+          </Slide>
+
+          {/* ============ SLIDE 2 — MON HISTOIRE ============ */}
+          <Slide id="histoire">
+            <div className="max-w-4xl mx-auto">
+              <GoldLabel>02 — Fondatrice</GoldLabel>
+              <h2 className="font-serif text-5xl md:text-7xl mb-4">Mathilde</h2>
+              <p className="font-serif italic text-xl text-editorial-gray mb-12">À l'origine de Mariable</p>
+              <div className="space-y-6 text-base md:text-lg leading-relaxed text-editorial-noir/85 max-w-3xl">
+                <p>
+                  +7 ans d'expérience partagée entre finance d'entreprise et entrepreneuriat. Jeune
+                  mariée en 2024, diplômée d'école de commerce.
+                </p>
+                <p>
+                  L'histoire de Mariable commence avec mon expérience personnelle de jeune mariée — où
+                  l'organisation fut compliquée et entachée d'erreurs dans le choix des prestataires.
+                </p>
+                <p className="border-l-2 border-editorial-olive pl-6 font-serif italic text-xl md:text-2xl text-editorial-noir">
+                  L'idée : transformer l'organisation des mariages en une expérience simple, élégante
+                  et agréable, pour permettre aux futurs mariés de vivre pleinement le meilleur
+                  événement de leur vie.
+                </p>
+              </div>
+            </div>
+          </Slide>
+
+          {/* ============ SLIDE 3 — MARIABLE ============ */}
+          <Slide id="mariable">
+            <div className="max-w-6xl mx-auto">
+              <GoldLabel>03 — Mariable</GoldLabel>
+              <h2 className="font-serif text-3xl md:text-5xl leading-tight mb-6 max-w-4xl">
+                Le média mariage moderne, pour toutes les personnes Mariables.
+              </h2>
+              <p className="font-serif italic text-2xl text-editorial-olive mb-10">Être Mariable.</p>
+
+              <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
+                <p className="font-serif italic text-xl">Le mariage ne dure pas qu'un jour.</p>
+                <p>
+                  Mariable met en avant l'expérience du mariage et le parcours mariage — pas
+                  juste le jour J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
+                </p>
+                <p>Des fiançailles aux anniversaires de mariage, en passant par le jour J.</p>
+                <p className="font-serif italic text-editorial-olive">À chaque étape — Mariable.</p>
+              </div>
+
+              <div className="grid md:grid-cols-3 gap-6">
+                {[
+                  {
+                    icon: <Newspaper className="w-6 h-6" />,
+                    title: 'Le Média',
+                    text:
+                      "Haut de gamme, élégant, moderne. Contenu éditorial autour du parcours mariage complet : mise en avant de professionnels de l'événementiel, conseils pratiques, inspiration et curation de lieux.",
+                  },
+                  {
+                    icon: <Wrench className="w-6 h-6" />,
+                    title: 'La Plateforme',
+                    text:
+                      "Mariable.fr — le service en ligne de wedding planning digital pour les couples. Outils d'organisation, ressources digitales, guides pratiques et wedding planner de poche.",
+                  },
+                  {
+                    icon: <Handshake className="w-6 h-6" />,
+                    title: 'Les Services Pro',
+                    text:
+                      "Un écosystème dédié aux professionnels du mariage : mise en relation, visibilité, création de contenu et développement digital.",
+                  },
+                ].map((c) => (
+                  <article key={c.title} className="bg-white border-t-2 border-editorial-olive p-7">
+                    <div className="text-editorial-olive mb-4">{c.icon}</div>
+                    <h3 className="font-serif text-2xl mb-3">{c.title}</h3>
+                    <p className="text-sm leading-relaxed text-editorial-noir/75">{c.text}</p>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </Slide>
+
+          {/* ============ SLIDE 4 — CHIFFRES ============ */}
+          <Slide id="audience" dark>
+            <div ref={statsRef} className="max-w-6xl mx-auto">
+              <GoldLabel dark>04 — Audience</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl mb-12">Chiffres clés.</h2>
+
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-x-8 gap-y-12 mb-16">
+                <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
+                <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
+                <Stat value={`${c3}%`} label="Femmes" />
+                <Stat value={`${c4}%`} label="Audience 25–34 ans" />
+                <Stat value={`${c5}%`} label="Audience 18–34 ans" />
+                <Stat value={`+${formatNumber(c6)}`} label="Utilisateurs plateforme" sub="en 6 mois — ouverture sept. 25 au salon du mariage" />
+              </div>
+
+              <div className="grid md:grid-cols-2 gap-12 md:gap-20">
+                {/* Age breakdown */}
+                <div>
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">Répartition par âge</p>
+                  <div className="space-y-4">
+                    {[
+                      { l: '25–34 ans', v: 52 },
+                      { l: '18–24 ans', v: 22 },
+                      { l: '35–44 ans', v: 14 },
+                      { l: '45+ ans', v: 6 },
+                    ].map((r) => (
+                      <div key={r.l}>
+                        <div className="flex justify-between text-sm mb-1.5 text-editorial-cream/85">
+                          <span>{r.l}</span>
+                          <span className="font-serif text-editorial-olive-light">{r.v}%</span>
+                        </div>
+                        <div className="h-1.5 bg-editorial-cream/10 overflow-hidden">
+                          <div
+                            className="h-full bg-editorial-olive-light transition-all duration-1000 ease-out"
+                            style={{ width: statsVisible ? `${r.v}%` : '0%' }}
+                          />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Gender + partenaires */}
+                <div className="space-y-10">
+                  <div>
+                    <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive-light mb-6">Répartition par genre</p>
+                    <div className="flex h-3 overflow-hidden">
+                      <div
+                        className="bg-editorial-olive-light transition-all duration-1000"
+                        style={{ width: statsVisible ? '70%' : '0%' }}
+                      />
+                      <div
+                        className="bg-editorial-cream/30 transition-all duration-1000"
+                        style={{ width: statsVisible ? '30%' : '0%' }}
+                      />
+                    </div>
+                    <div className="flex justify-between mt-3 text-sm text-editorial-cream/85">
+                      <span>70% Femmes</span>
+                      <span>30% Hommes</span>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-editorial-cream/15 pt-8">
+                    <p className="font-serif text-5xl text-editorial-olive-light">+{formatNumber(c7)}</p>
+                    <p className="text-sm text-editorial-cream/75 mt-2">partenaires professionnels</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Slide>
+
+          {/* ============ SLIDE 5 — OFFRE PROS ============ */}
+          <Slide id="offre">
+            <div className="max-w-6xl mx-auto">
+              <GoldLabel>05 — Offre Professionnels</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl mb-3">Ce que je propose aux pros.</h2>
+              <p className="text-editorial-gray text-base mb-10">Des formats adaptés à chaque objectif.</p>
+
+              <div className="grid md:grid-cols-2 gap-6">
+                {[
+                  {
+                    n: '01',
+                    title: 'Collab Créateurs de Contenu',
+                    badge: 'Avantage nature',
+                    text:
+                      "Mise en relation avec notre communauté de créatrices de contenu — couples, futurs ou jeunes mariés. En échange d'un avantage en nature (nuit offerte, expérience, produit), ils produisent du contenu authentique sur vos espaces.",
+                    cta: 'En savoir plus',
+                    href: 'mailto:contact@mariable.fr?subject=Collab%20Cr%C3%A9ateurs%20de%20contenu',
+                  },
+                  {
+                    n: '02',
+                    title: 'Mise en Avant Sélection Mariable',
+                    badge: 'Avantage nature / Bon procédé',
+                    text:
+                      "Intégration dans notre sélection éditoriale sur Instagram et le carnet d'adresses Mariable. Votre lieu présenté à une audience qualifiée de futurs mariés actifs.",
+                    cta: 'En savoir plus',
+                    href: 'mailto:contact@mariable.fr?subject=S%C3%A9lection%20Mariable',
+                  },
+                  {
+                    n: '03',
+                    title: 'Stratégie Réseaux & Création de Contenu',
+                    badge: 'Sur devis',
+                    text:
+                      "Stratégie éditoriale, création de contenus, calendrier mensuel, publication et stories. Tout pour construire une présence sociale cohérente et engageante.",
+                    cta: 'Demander un devis',
+                    href: 'mailto:contact@mariable.fr?subject=Devis%20Strat%C3%A9gie%20r%C3%A9seaux',
+                  },
+                  {
+                    n: '04',
+                    title: 'Community Management & Acquisition Payante',
+                    badge: 'Sur devis',
+                    text:
+                      "Gestion complète de votre présence sociale + campagnes Meta Ads & TikTok Ads. Calendrier éditorial · DM & commentaires · Facebook & Instagram Ads · Reporting mensuel (portée, leads, CAC).",
+                    cta: 'Demander un devis',
+                    href: 'mailto:contact@mariable.fr?subject=Devis%20Community%20%26%20Ads',
+                  },
+                  {
+                    n: '05',
+                    title: 'Développement Digital & Outils de Conversion',
+                    badge: 'Sur devis',
+                    text:
+                      "Sites web vitrine ou réservation (SEO optimisé) · Guides digitaux interactifs · Formulaires & espaces clients · CRM, newsletters & séquences mail · Outils sur-mesure pour transformer votre trafic en clients.",
+                    cta: 'Demander un devis',
+                    href: 'mailto:contact@mariable.fr?subject=Devis%20D%C3%A9veloppement%20digital',
+                  },
+                ].map((c) => (
+                  <article
+                    key={c.n}
+                    className="bg-white border border-editorial-noir/10 p-6 md:p-7 flex flex-col"
+                  >
+                    <div className="flex items-start justify-between gap-4 mb-4">
+                      <span className="font-serif text-editorial-olive text-xl">{c.n}</span>
+                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-beige text-editorial-olive px-3 py-1.5">
+                        {c.badge}
+                      </span>
+                    </div>
+                    <h3 className="font-serif text-2xl mb-3 leading-snug">{c.title}</h3>
+                    <p className="text-sm leading-relaxed text-editorial-noir/75 mb-6 flex-1">{c.text}</p>
+                    <a
+                      href={c.href}
+                      className="inline-flex items-center gap-2 text-sm font-medium text-editorial-olive hover:underline self-start"
+                    >
+                      {c.cta} <ArrowRight className="w-3.5 h-3.5" />
+                    </a>
+                  </article>
+                ))}
+              </div>
+            </div>
+          </Slide>
+
+          {/* ============ SLIDE 6 — CONTACT ============ */}
+          <Slide id="contact" dark>
+            <div className="max-w-3xl mx-auto text-center">
+              <GoldLabel dark>06 — Contact</GoldLabel>
+              <h2 className="font-serif text-5xl md:text-7xl leading-tight mb-14 text-editorial-cream">
+                Travaillons
+                <br />
+                <span className="italic text-editorial-olive-light">ensemble.</span>
+              </h2>
+
+              <div className="space-y-5 max-w-md mx-auto">
+                <ContactRow
+                  icon={<Mail className="w-5 h-5" />}
+                  label="mathilde@mariable.fr"
+                  href="mailto:mathilde@mariable.fr"
+                />
+                <ContactRow
+                  icon={<Instagram className="w-5 h-5" />}
+                  label="@mariable"
+                  href="https://instagram.com/mariable"
+                />
+                <ContactRow
+                  icon={<Globe className="w-5 h-5" />}
+                  label="mariable.fr"
+                  href="https://mariable.fr"
+                />
+                <ContactRow
+                  icon={<MessageCircle className="w-5 h-5" />}
+                  label="WhatsApp · 07 60 10 81 89"
+                  href="https://wa.me/33760108189"
+                />
+              </div>
+
+              <p className="mt-16 text-xs uppercase tracking-[0.3em] text-editorial-cream/50">
+                Mariable © 2026 · Kit média
+              </p>
+            </div>
+          </Slide>
+        </div>
+
+        {/* ============ Desktop slide controls ============ */}
+        <div className="hidden md:flex fixed bottom-6 left-1/2 -translate-x-1/2 z-50 items-center gap-4 bg-editorial-noir/80 backdrop-blur px-5 py-3">
+          <button
+            onClick={prev}
+            disabled={slide === 0}
+            aria-label="Précédent"
+            className="text-editorial-cream disabled:opacity-30 hover:text-editorial-olive-light transition-colors"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <div className="flex items-center gap-2">
+            {Array.from({ length: TOTAL_SLIDES }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setSlide(i)}
+                aria-label={`Slide ${i + 1}`}
+                className={`h-1.5 transition-all ${
+                  i === slide ? 'w-8 bg-editorial-olive-light' : 'w-2 bg-editorial-cream/40'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-xs text-editorial-cream/70 font-serif">
+            {String(slide + 1).padStart(2, '0')} / {String(TOTAL_SLIDES).padStart(2, '0')}
+          </span>
+          <button
+            onClick={next}
+            disabled={slide === TOTAL_SLIDES - 1}
+            aria-label="Suivant"
+            className="text-editorial-cream disabled:opacity-30 hover:text-editorial-olive-light transition-colors"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Mobile floating nav hint */}
+        <div className="md:hidden fixed bottom-4 right-4 z-50 bg-editorial-noir/80 text-editorial-cream text-[10px] uppercase tracking-[0.2em] px-3 py-2">
+          Scroll ↓
+        </div>
+      </main>
+    </>
+  );
+}
+
+// ---------- Sub-components ----------
+function Stat({ value, label, sub }: { value: string; label: string; sub?: string }) {
+  return (
+    <div>
+      <p className="font-serif text-4xl md:text-6xl text-editorial-olive-light leading-none mb-3">
+        {value}
+      </p>
+      <p className="text-sm text-editorial-cream/85">{label}</p>
+      {sub && <p className="text-xs text-editorial-cream/55 mt-1">{sub}</p>}
+    </div>
+  );
+}
+
+function ContactRow({ icon, label, href }: { icon: React.ReactNode; label: string; href: string }) {
+  return (
+    <a
+      href={href}
+      target={href.startsWith('http') ? '_blank' : undefined}
+      rel={href.startsWith('http') ? 'noopener noreferrer' : undefined}
+      className="flex items-center justify-center gap-4 border border-editorial-cream/20 hover:border-editorial-olive-light hover:bg-editorial-cream/5 px-6 py-4 transition-all group"
+    >
+      <span className="text-editorial-olive-light">{icon}</span>
+      <span className="text-editorial-cream group-hover:text-editorial-olive-light transition-colors">
+        {label}
+      </span>
+    </a>
+  );
+}
