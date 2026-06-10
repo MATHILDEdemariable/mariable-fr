@@ -336,7 +336,7 @@ export default function MediaKit() {
                       "Mariable.fr — le service en ligne de wedding planning digital pour les couples. Outils d'organisation, ressources digitales, guides pratiques et wedding planner de poche.",
                   },
                 ].map((c) => (
-                  <article key={c.title} className="bg-white border-t-2 border-editorial-olive p-7">
+                  <article key={c.title} className="bg-white border-t-2 border-editorial-noir p-7">
                     <div className="text-editorial-olive mb-4">{c.icon}</div>
                     <h3 className="font-serif text-2xl mb-3">{c.title}</h3>
                     <p className="text-sm leading-relaxed text-editorial-noir/75">{c.text}</p>
