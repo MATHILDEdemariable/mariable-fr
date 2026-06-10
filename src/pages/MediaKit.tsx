@@ -471,7 +471,7 @@ export default function MediaKit() {
                   >
                     <div className="flex items-start justify-between gap-4 mb-3">
                       <span className="font-serif text-editorial-olive text-xl">{c.n}</span>
-                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-cream text-editorial-olive px-3 py-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.2em] bg-editorial-beige/40 text-editorial-noir px-3 py-1.5">
                         {c.badge}
                       </span>
                     </div>
