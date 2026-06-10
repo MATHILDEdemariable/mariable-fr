@@ -396,7 +396,7 @@ export default function MediaKit() {
                     </p>
                     <div className="flex h-3 overflow-hidden">
                       <div
-                        className="bg-editorial-olive transition-all duration-1000"
+                        className="bg-editorial-noir transition-all duration-1000"
                         style={{ width: statsVisible ? '100%' : '0%' }}
                       />
                     </div>
