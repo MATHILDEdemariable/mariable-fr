@@ -2,10 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 
 const pains = [
   'Tu te réveilles la nuit avec une checklist mentale qui ne s\'arrête plus.',
-  'Tu jongles entre Excel, Pinterest, Notes iPhone et WhatsApp — et tu perds le fil.',
+  'Tu jongles entre Excel, Pinterest, Instagram, Notes et WhatsApp.',
   'Tu as peur d\'oublier un détail le jour J et que ça gâche tout.',
-  'Tes prestataires t\'envoient 12 mails par jour, tu ne sais plus où donner de la tête.',
-  'Tu voudrais quelqu\'un pour t\'aider, sans déléguer tout le contrôle.',
+  'Tu as du mal à savoir qui sont les bons prestataires et tu as peur de faire le mauvais choix.',
+  'Tu voudrais quelqu\'un pour t\'aider le jour-J, mais tu ne préféres pas payer une prestation en plus.',
 ];
 
 export default function PainPointsSection() {
@@ -35,9 +35,8 @@ export default function PainPointsSection() {
               c'est un second job.
             </h2>
             <p className="text-editorial-gray leading-relaxed">
-              Tu n'as pas signé pour ça. Tu voulais juste te marier — sereinement,
-              avec celles et ceux que tu aimes. Pas devenir cheffe de projet à
-              temps plein.
+              Tu voulais juste te marier — sereinement, avec celles et ceux que tu
+              aimes. Pas devenir cheffe de projet à temps plein.
             </p>
           </div>
           <ul className="space-y-6">
