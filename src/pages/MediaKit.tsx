@@ -238,15 +238,15 @@ export default function MediaKit() {
               </p>
               <h1 className="font-serif text-6xl md:text-8xl leading-[0.95] mb-6">Mariable</h1>
               <p className="font-serif italic text-2xl md:text-3xl text-editorial-olive-light mb-8">
-                Avant, pendant, longtemps après.
+                {"\n"}
               </p>
               <p className="text-base md:text-lg text-editorial-cream/85 max-w-xl mx-auto mb-16">
                 Le média du mariage moderne — de la demande aux anniversaires.
               </p>
               <div className="space-y-1 text-sm text-editorial-cream/70 tracking-wider">
-                <p>mariable.fr</p>
-                <p>@mariable</p>
-                <p>contact@mariable.fr</p>
+                <p>{"\n"}</p>
+                <p>{"\n"}</p>
+                <p>par Mathilde Lambert&nbsp;</p>
               </div>
             </div>
           </Slide>
