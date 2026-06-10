@@ -380,7 +380,7 @@ export default function MediaKit() {
                         </div>
                         <div className="h-1.5 bg-editorial-noir/10 overflow-hidden">
                           <div
-                            className="h-full bg-editorial-olive transition-all duration-1000 ease-out"
+                            className="h-full bg-editorial-noir transition-all duration-1000 ease-out"
                             style={{ width: statsVisible ? `${r.v}%` : '0%' }}
                           />
                         </div>
