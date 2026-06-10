@@ -171,6 +171,52 @@ export default function EspaceApercu() {
             </ul>
           </div>
         </div>
+
+        {/* Sous-section : Carnet d'adresses */}
+        <div className="mt-24 md:mt-32 grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
+          <div className="order-2 lg:order-1">
+            <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
+              Carnet d'adresses
+            </p>
+            <h3 className="font-serif text-3xl md:text-4xl text-editorial-noir mb-5 leading-tight">
+              Un carnet d'adresses haut de gamme.
+            </h3>
+            <p className="text-editorial-gray text-base leading-relaxed mb-6">
+              Sélection de lieux et de professionnels vérifiés pour votre mariage —
+              accessible directement depuis votre espace Mariable.
+            </p>
+            <ul className="space-y-3">
+              {[
+                'Lieux d\'exception, traiteurs, photographes, fleuristes, DJ…',
+                'Filtres par région, style et budget',
+                'Prestataires vérifiés et recommandés',
+              ].map((item) => (
+                <li key={item} className="flex items-start gap-3 text-editorial-noir text-sm">
+                  <Check className="w-4 h-4 text-editorial-olive flex-shrink-0 mt-1" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div className="order-1 lg:order-2">
+            <div className="rounded-lg border border-editorial-noir/15 bg-white shadow-2xl overflow-hidden">
+              <img
+                src={carnetMockup.url}
+                alt="Aperçu du carnet d'adresses Mariable — Explorer le guide"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto block"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Note multi-device */}
+        <p className="text-center text-xs md:text-sm text-editorial-noir/55 italic mt-16 max-w-2xl mx-auto leading-relaxed">
+          Plateforme web — accessible depuis mobile et tablette via le navigateur.
+          Vous pouvez ajouter un raccourci sur l'écran d'accueil de votre mobile
+          grâce à un tuto dédié.
+        </p>
       </div>
     </section>
   );
