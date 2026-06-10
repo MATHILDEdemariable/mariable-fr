@@ -308,7 +308,7 @@ export default function MediaKit() {
               <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-6 max-w-4xl">
                 Mariable : la référence moderne dans l'univers du mariage.
               </h2>
-              <p className="font-serif italic text-2xl text-editorial-olive mb-10">{"\n"}</p>
+              <p className="font-serif italic text-2xl text-editorial-noir mb-10">{"\n"}</p>
 
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
                 <p className="font-serif italic text-xl">{"\n"}</p>
