@@ -313,9 +313,9 @@ export default function MediaKit() {
               <p className="font-serif italic text-2xl text-editorial-olive mb-10">{"\n"}</p>
 
               <div className="border-l-2 border-editorial-olive pl-6 mb-14 max-w-3xl space-y-3 text-editorial-noir/85">
-                <p className="font-serif italic text-xl">Le mariage ne dure pas qu'un jour.</p>
+                <p className="font-serif italic text-xl">{"\n"}</p>
                 <p>
-                  Mariable met en avant l'expérience du mariage et le parcours mariage à chaque
+                  Mariable met en avant l'expérience du mariage à chaque
                   étape — pas juste le jour-J, mais tout ce qui l'entoure, l'anticipe et le prolonge.
                   Des fiançailles aux anniversaires de mariage, en passant par le jour J.
                 </p>
