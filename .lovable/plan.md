@@ -1,35 +1,49 @@
-## Modifications sur `/kitmedia` (`src/pages/MediaKit.tsx`)
+## Modifications du Kit Média (/kitmedia)
 
-### 1. Bug flèches desktop / tablette
-Les boutons Précédent/Suivant et les points de navigation ne déclenchent pas le changement de slide.
+### 1. Nouvelle photo Mathilde
+- Uploader `user-uploads://photomathilde.jpeg` via `lovable-assets` vers `src/assets/mathilde-portrait-v2.jpg.asset.json`.
+- Remplacer l'import existant `mathildePortrait` par la nouvelle photo.
+- Supprimer l'ancien asset `mathilde-portrait.png.asset.json`.
 
-Diagnostic à confirmer en exécution, mais cause probable : le conteneur des slides a `snap-y snap-mandatory` qui s'applique aussi en tablette (`md:` ne couvre pas tous les cas) et le `translateX` est appliqué uniquement quand `isDesktop` (>=768px) — sur tablette portrait (<768), pas de translation, donc clic = pas d'effet visible.
+### 2. Slide 2 — Fondatrice (layout photo gauche / texte droite)
+- Conserver la grille `md:grid-cols-[auto_1fr]` (photo gauche, texte droite déjà en place).
+- Agrandir la photo carrée : `w-56 h-56 md:w-72 md:h-72`, garder cadre blanc + ombre.
+- Réduire la taille du bloc « L'idée : transformer l'organisation… » :
+  - Passer de `font-serif italic text-xl md:text-2xl` à `text-sm md:text-base not-italic font-sans` (texte courant, plus discret).
+  - Garder la bordure gauche olive.
 
-Correctif :
-- Retirer `snap-y snap-mandatory` du conteneur desktop (garder seulement en mobile via classe conditionnelle).
-- Garantir que les boutons (`z-50`, `fixed`) ne sont jamais bloqués par `pointer-events-none` au premier render (`showControls` initial = true, OK).
-- Vérifier au runtime que `setSlide(i)` se déclenche bien (log temporaire si besoin).
+### 3. Slide 3 — Mariable : ajouter le label numéroté
+- Le `GoldLabel` existe déjà (`03 — Mariable`) — le remplacer par : `03 — Ce qu'est Mariable` 
+- Mettre à jour le titre h2 : « La référence moderne dans l'univers du mariage. » (remplace l'actuel « Le média mariage moderne, pour toutes les personnes mariables. »)
+- Conserver le reste (sous-titre, cartes).
 
-### 2. Section Mathilde (slide 2 — Fondatrice)
-- Ajouter la photo de Mathilde en **pastille carrée** (coins légèrement arrondis, anneau crème, ombre douce) à gauche du texte sur desktop / au-dessus sur mobile.
-- Photo uploadée → intégrée via `lovable-assets` (CDN) puis importée dans le composant.
-- Ajouter un lien LinkedIn sous le nom :
-  - Icône Linkedin (lucide-react) + libellé "LinkedIn"
-  - `href="https://www.linkedin.com/in/lambertmathilde/"` · `target="_blank"` · `rel="noopener noreferrer"`
+### 4. Thème clair uniforme (fond beige, texte noir)
+- Slide 4 (`audience`) : retirer `dark` → `<Slide id="audience">` (sans prop dark).
+- Slide 6 (`contact`) : retirer `dark` → `<Slide id="contact">`.
+- Slide 1 (hero) : conserver `dark` (vidéo de fond → garde l'overlay noir). Confirmer plus bas si l'utilisateur veut aussi changer le hero.
+- Adapter les couleurs internes des slides 4 et 6 :
+  - `GoldLabel dark` → `GoldLabel` (olive foncé sur beige).
+  - `text-editorial-cream` → `text-editorial-noir`.
+  - `text-editorial-cream/85` → `text-editorial-noir/80`.
+  - `text-editorial-olive-light` → `text-editorial-olive`.
+  - Barres âge : fond `bg-editorial-noir/10`, remplissage `bg-editorial-olive`.
+  - Barre genre : `bg-editorial-olive` + `bg-editorial-noir/15`.
+  - Cartes contact : bordures `border-editorial-noir/15`, hover olive.
 
-### 3. Slide 4 — Chiffres clés / Audience
-Dans la grille des stats du haut, **supprimer** :
-- `52%` — Audience 25–34 ans
-- `74%` — Audience 18–34 ans
+### 5. Slide 4 — Chiffres clés
+- Supprimer la `Stat` « Utilisateurs plateforme » (c6).
+- Grille passe à `grid-cols-1 md:grid-cols-3` avec 3 stats (Abonnés, Vues, Femmes).
+- Réduire la taille du titre h2 : `text-3xl md:text-4xl` (au lieu de `text-4xl md:text-5xl`) + `mb-8` pour libérer de l'espace vertical.
+- Réduire la taille des chiffres dans `Stat` : `text-3xl md:text-5xl` (au lieu de `text-4xl md:text-6xl`).
+- Réduire l'espacement vertical du contenu (mb-12 → mb-8, gap-y-12 → gap-y-8) pour que le titre soit visible.
 
-Conserver : abonnés, vues mensuelles, 70 % femmes, +1 500 utilisateurs plateforme.
-La section "Répartition par âge" (barres) reste intacte — c'est elle qui porte le détail par tranche.
+### 6. Homogénéisation typographique
+- Titres slides : tous en `font-serif text-4xl md:text-5xl` (slides 2, 3, 4, 5 alignées ; slide 6 reste plus grande comme finale, slide 1 reste hero).
+- Labels numérotés : tous via `GoldLabel` (déjà cohérent).
+- Texte courant : `text-base leading-relaxed text-editorial-noir/80`.
+- Aucun changement de routing, SEO, ou logique de slider.
 
-### 4. Slide 5 — Offre Professionnels
-Supprimer entièrement la carte **n° 05 "Conseil en pilotage d'entreprise et opérations"** (celle qui contenait juste "Revue de ").
-Conserver les 4 autres cartes (01 à 04). Grille `md:grid-cols-2` reste cohérente avec 4 cartes.
-
-### Détails techniques
-- Fichiers modifiés : `src/pages/MediaKit.tsx` uniquement.
-- Nouvel asset : `src/assets/mathilde-portrait.jpg.asset.json` (via `lovable-assets create`).
-- Pas de changement de routing, SEO, ni de la logique fullscreen/keyboard.
+### Fichiers touchés
+- `src/pages/MediaKit.tsx` (édits ciblés).
+- `src/assets/mathilde-portrait-v2.jpg.asset.json` (création).
+- `src/assets/mathilde-portrait.png.asset.json` (suppression).
