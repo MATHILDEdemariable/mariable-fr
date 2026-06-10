@@ -421,7 +421,7 @@ export default function MediaKit() {
           <Slide id="offre">
             <div className="max-w-6xl mx-auto">
               <GoldLabel>05 — Offre Professionnels</GoldLabel>
-              <h2 className="font-serif text-3xl md:text-4xl mb-2">Ce que je propose aux pros.</h2>
+              <h2 className="font-serif text-3xl md:text-4xl mb-2">Ce que je propose aux professionnels.</h2>
               <p className="text-editorial-gray text-sm mb-6">
                 Des formats adaptés à chaque objectif.
               </p>
