@@ -278,7 +278,7 @@ export default function MediaKit() {
                     href="https://www.linkedin.com/in/lambertmathilde/"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-sm text-editorial-olive hover:underline mb-10"
+                    className="inline-flex items-center gap-2 text-sm text-editorial-noir hover:underline mb-10"
                   >
                     <Linkedin className="w-4 h-4" />
                     LinkedIn
