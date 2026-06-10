@@ -481,7 +481,7 @@ export default function MediaKit() {
                     </p>
                     <a
                       href={c.href}
-                      className="inline-flex items-center gap-2 text-sm font-medium text-editorial-olive hover:underline self-start"
+                      className="inline-flex items-center gap-2 text-sm font-medium text-editorial-noir hover:underline self-start"
                     >
                       {c.cta} <ArrowRight className="w-3.5 h-3.5" />
                     </a>
