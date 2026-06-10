@@ -354,10 +354,9 @@ export default function MediaKit() {
               <GoldLabel>04 — Audience</GoldLabel>
               <h2 className="font-serif text-4xl md:text-5xl mb-8">Chiffres clés.</h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-x-8 gap-y-8 mb-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-8 mb-12">
                 <Stat value={`+${formatNumber(c1)}`} label="Abonnés Instagram" />
                 <Stat value={`+${formatNumber(c2)}`} label="Vues mensuelles (pic à 1M)" />
-                <Stat value={`${c3}%`} label="Femmes" />
               </div>
 
               <div className="grid md:grid-cols-2 gap-12 md:gap-20">
@@ -396,16 +395,12 @@ export default function MediaKit() {
                     <div className="flex h-3 overflow-hidden">
                       <div
                         className="bg-editorial-olive transition-all duration-1000"
-                        style={{ width: statsVisible ? '70%' : '0%' }}
-                      />
-                      <div
-                        className="bg-editorial-noir/15 transition-all duration-1000"
-                        style={{ width: statsVisible ? '30%' : '0%' }}
+                        style={{ width: statsVisible ? '100%' : '0%' }}
                       />
                     </div>
                     <div className="flex justify-between mt-3 text-sm text-editorial-noir/85">
-                      <span>70% Femmes</span>
-                      <span>30% Hommes</span>
+                      <span>{"\n"}</span>
+                      <span>{"\n"}</span>
                     </div>
                   </div>
 
