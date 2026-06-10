@@ -407,7 +407,7 @@ export default function MediaKit() {
                   </div>
 
                   <div className="border-t border-editorial-noir/15 pt-8">
-                    <p className="font-serif text-4xl md:text-5xl text-editorial-olive">
+                    <p className="font-serif text-4xl md:text-5xl text-editorial-noir">
                       +{formatNumber(c7)}
                     </p>
                     <p className="text-sm text-editorial-noir/75 mt-2">partenaires professionnels</p>
