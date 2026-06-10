@@ -500,13 +500,13 @@ export default function MediaKit() {
           </Slide>
 
           {/* ============ SLIDE 6 — CONTACT ============ */}
-          <Slide id="contact" dark>
+          <Slide id="contact">
             <div className="max-w-3xl mx-auto text-center">
-              <GoldLabel dark>06 — Contact</GoldLabel>
-              <h2 className="font-serif text-5xl md:text-7xl leading-tight mb-14 text-editorial-cream">
+              <GoldLabel>06 — Contact</GoldLabel>
+              <h2 className="font-serif text-4xl md:text-5xl leading-tight mb-12 text-editorial-noir">
                 Travaillons
                 <br />
-                <span className="italic text-editorial-olive-light">ensemble.</span>
+                <span className="italic text-editorial-olive">ensemble.</span>
               </h2>
 
               <div className="space-y-5 max-w-md mx-auto">
@@ -532,7 +532,7 @@ export default function MediaKit() {
                 />
               </div>
 
-              <p className="mt-16 text-xs uppercase tracking-[0.3em] text-editorial-cream/50">
+              <p className="mt-16 text-xs uppercase tracking-[0.3em] text-editorial-noir/50">
                 Mariable © 2026 · Kit média
               </p>
             </div>
