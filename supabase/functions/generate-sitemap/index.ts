@@ -4,9 +4,10 @@ const BASE_URL = "https://www.mariable.fr";
 
 const staticPages = [
   { url: "/", lastmod: "2026-02-16", priority: "1.0", changefreq: "daily" },
+  { url: "/accueil", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
   { url: "/selection", lastmod: "2026-02-16", priority: "1.0", changefreq: "daily" },
   { url: "/vibewedding", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
-  { url: "/services/prestataires", lastmod: "2026-02-16", priority: "1.0", changefreq: "weekly" },
+  { url: "/domainedelafontaine", lastmod: "2026-02-16", priority: "0.6", changefreq: "monthly" },
   { url: "/services/budget", lastmod: "2026-02-16", priority: "0.9", changefreq: "monthly" },
   { url: "/prix", lastmod: "2026-02-16", priority: "0.9", changefreq: "monthly" },
   { url: "/comparatif", lastmod: "2026-02-16", priority: "0.8", changefreq: "monthly" },
