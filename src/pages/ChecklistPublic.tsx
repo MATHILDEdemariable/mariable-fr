@@ -133,6 +133,7 @@ const ChecklistPublic: React.FC = () => {
       <Helmet>
         <title>Checklist de mariage partagée | Mariable</title>
         <meta name="description" content="Consultez cette checklist de mariage partagée" />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">

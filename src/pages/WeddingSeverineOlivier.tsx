@@ -120,6 +120,7 @@ const WeddingSeverineOlivier: React.FC = () => {
       <Helmet>
         <title>Mariage de Séverine & Olivier - 5 septembre 2026</title>
         <meta name="description" content="Nous avons le plaisir de vous convier à notre mariage le 5 septembre 2026 au Château de Saint Clair. Retrouvez toutes les informations pratiques sur cette page." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       {/* Header Sticky */}

@@ -299,6 +299,7 @@ const PlanningPublicProject: React.FC = () => {
       <Helmet>
         <title>{coordination.title} - Mission Mariage partagée | Mariable</title>
         <meta name="description" content={`Planning Mission Mariage partagé : ${coordination.title}`} />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       <div className="min-h-screen bg-gray-50">
