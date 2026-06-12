@@ -87,6 +87,7 @@ const ExempleSite: React.FC = () => {
       <Helmet>
         <title>Exemple de site de mariage — Mariable.fr</title>
         <meta name="description" content="Découvrez un exemple de site de mariage personnalisé créé par Mariable.fr. Countdown, programme, hébergements et plus." />
+        <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
       {/* Header */}
