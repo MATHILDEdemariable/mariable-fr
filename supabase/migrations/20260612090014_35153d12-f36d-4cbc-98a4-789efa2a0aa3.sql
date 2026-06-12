@@ -1,0 +1,1 @@
+UPDATE public.blog_posts SET updated_at = '2026-06-12T10:00:00+00:00'::timestamptz WHERE slug = 'temoins-de-mariage-vos-allies-indispensables-pour-un-jour-inoubliable';
