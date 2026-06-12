@@ -4,11 +4,13 @@ import LanguageDetector from 'i18next-browser-languagedetector';
 
 import frCommon from './locales/fr/common.json';
 import frHome from './locales/fr/home.json';
+import frHomeV2 from './locales/fr/homeV2.json';
 import frPricing from './locales/fr/pricing.json';
 import frProfessionals from './locales/fr/professionals.json';
 import frPartenariat from './locales/fr/partenariat.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
+import enHomeV2 from './locales/en/homeV2.json';
 import enPricing from './locales/en/pricing.json';
 import enProfessionals from './locales/en/professionals.json';
 import enPartenariat from './locales/en/partenariat.json';
@@ -20,6 +22,7 @@ const resources = {
   fr: {
     common: frCommon,
     home: frHome,
+    homeV2: frHomeV2,
     pricing: frPricing,
     professionals: frProfessionals,
     partenariat: frPartenariat,
@@ -27,6 +30,7 @@ const resources = {
   en: {
     common: enCommon,
     home: enHome,
+    homeV2: enHomeV2,
     pricing: enPricing,
     professionals: enProfessionals,
     partenariat: enPartenariat,
@@ -63,7 +67,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'pricing', 'professionals', 'partenariat'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat'],
     interpolation: {
       escapeValue: false,
     },

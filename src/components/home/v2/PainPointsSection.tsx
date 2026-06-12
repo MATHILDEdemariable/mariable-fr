@@ -1,14 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-
-const pains = [
-  'Tu te réveilles la nuit avec une checklist mentale qui ne s\'arrête plus.',
-  'Tu jongles entre Excel, Pinterest, Instagram, Notes et WhatsApp.',
-  'Tu as peur d\'oublier un détail le jour J et que ça gâche tout.',
-  'Tu as du mal à savoir qui sont les bons prestataires et tu as peur de faire le mauvais choix.',
-  'Tu voudrais quelqu\'un pour t\'aider le jour-J, mais tu ne préféres pas payer une prestation en plus.',
-];
+import { useTranslation } from 'react-i18next';
 
 export default function PainPointsSection() {
+  const { t } = useTranslation('homeV2');
+  const pains = t('painPoints.items', { returnObjects: true }) as string[];
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
@@ -27,16 +22,15 @@ export default function PainPointsSection() {
         <div ref={ref} className="grid md:grid-cols-2 gap-16 lg:gap-24">
           <div>
             <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
-              Tu te reconnais&nbsp;?
+              {t('painPoints.eyebrow')}
             </p>
             <h2 className="font-serif text-4xl md:text-5xl text-editorial-noir leading-tight mb-6">
-              Organiser un mariage,
+              {t('painPoints.titleLine1')}
               <br />
-              c'est un second job.
+              {t('painPoints.titleLine2')}
             </h2>
             <p className="text-editorial-gray leading-relaxed">
-              Tu voulais juste te marier — sereinement, avec celles et ceux que tu
-              aimes. Pas devenir cheffe de projet à temps plein.
+              {t('painPoints.subtitle')}
             </p>
           </div>
           <ul className="space-y-6">

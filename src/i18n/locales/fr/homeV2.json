@@ -1,0 +1,201 @@
+{
+  "hero": {
+    "eyebrow": "WEDDING PLANNING NOUVELLE GENERATION",
+    "titleLine1": "Le wedding planner",
+    "titleLine2": "de poche.",
+    "subtitle": "Pour les futurs mariés qui organisent eux-mêmes.",
+    "cta": "Découvrir Mariable",
+    "freeNote": "Gratuit pour commencer"
+  },
+  "reassurance": {
+    "items": [
+      "100% web — pas de téléchargement",
+      "Mobile, tablette, ordinateur",
+      "Accès à vie",
+      "Mis à jour en continu"
+    ]
+  },
+  "painPoints": {
+    "eyebrow": "Tu te reconnais ?",
+    "titleLine1": "Organiser un mariage,",
+    "titleLine2": "c'est un second job.",
+    "subtitle": "Tu voulais juste te marier — sereinement, avec celles et ceux que tu aimes. Pas devenir cheffe de projet à temps plein.",
+    "items": [
+      "Tu te réveilles la nuit avec une checklist mentale qui ne s'arrête plus.",
+      "Tu jongles entre Excel, Pinterest, Instagram, Notes et WhatsApp.",
+      "Tu as peur d'oublier un détail le jour J et que ça gâche tout.",
+      "Tu as du mal à savoir qui sont les bons prestataires et tu as peur de faire le mauvais choix.",
+      "Tu voudrais quelqu'un pour t'aider le jour-J, mais tu ne préféres pas payer une prestation en plus."
+    ]
+  },
+  "apercu": {
+    "eyebrow": "Ton espace Mariable",
+    "title": "Un aperçu de ce qui t'attend.",
+    "subtitle": "Une plateforme web complète, accessible où que tu sois.",
+    "toolsTitle": "Tout, dans un seul espace web.",
+    "tools": [
+      "Rétroplanning intelligent",
+      "Budget réel & alertes",
+      "Liste invités & RSVP",
+      "Plan de table interactif",
+      "Coordination Jour J",
+      "Calculateur de boissons"
+    ],
+    "sidebarTitle": "Mon espace",
+    "sidebar": {
+      "dashboard": "Tableau de bord",
+      "checklist": "Check-list",
+      "planning": "Retroplanning",
+      "budget": "Budget",
+      "vendors": "Prestataires",
+      "dayPlanning": "Planning Jour-J",
+      "exclusiveBadge": "Exclusif",
+      "rsvp": "RSVP Invités",
+      "seating": "Plan de table",
+      "moodboard": "Moodboard",
+      "ceremony": "Cérémonie"
+    },
+    "account": "Mon compte",
+    "welcome": "Bienvenue, Mathilde !",
+    "date": "mardi 9 juin 2026",
+    "kpi": {
+      "countdown": "Compte à rebours",
+      "guests": "Invités",
+      "progress": "Organisation"
+    },
+    "cards": {
+      "startTitle": "Guide de démarrage",
+      "startDesc": "Découvrez le concept Mariable",
+      "videoTitle": "Guide vidéo",
+      "videoDesc": "Tutoriel en vidéo"
+    },
+    "carnet": {
+      "eyebrow": "Carnet d'adresses",
+      "title": "Un carnet d'adresses haut de gamme.",
+      "desc": "Sélection de lieux et de professionnels vérifiés pour votre mariage — accessible directement depuis votre espace Mariable.",
+      "items": [
+        "Lieux d'exception, traiteurs, photographes, fleuristes, DJ…",
+        "Filtres par région, style et budget",
+        "Prestataires vérifiés et recommandés"
+      ],
+      "imageAlt": "Aperçu du carnet d'adresses Mariable — Explorer le guide"
+    },
+    "note": "Plateforme web — accessible depuis mobile et tablette via le navigateur. Vous pouvez ajouter un raccourci sur l'écran d'accueil de votre mobile grâce à un tuto dédié."
+  },
+  "included": {
+    "eyebrow": "Ce qui est inclus",
+    "title": "Le service en détail.",
+    "subtitle": "WEDDING PLANNING NOUVELLE GENERATION — 6 fonctionnalités pensées ensemble pour t'accompagner du oui au jour J.",
+    "cards": [
+      { "tag": "Planification", "title": "Rétroplanning intelligent", "desc": "Une timeline personnalisée selon ta date et ton style. Chaque tâche au bon moment, sans oubli." },
+      { "tag": "Finances", "title": "Budget réel & alertes", "desc": "Suis tes dépenses prestataire par prestataire. Reçois une alerte avant de dépasser." },
+      { "tag": "Invités", "title": "Liste invités & RSVP", "desc": "Gère 200 invités sans tableau Excel. Allergies, plus-ones, hébergement — tout est là." },
+      { "tag": "Réception", "title": "Plan de table interactif", "desc": "Drag & drop pour placer tes invités. Imprime ton plan en un clic." },
+      { "tag": "Jour J", "title": "Coordination minute par minute", "desc": "Le déroulé du jour J partagé avec ton équipe (témoins, famille, prestataires)." },
+      { "tag": "Boissons", "title": "Calculateur de boissons", "desc": "Calcule précisément les quantités d'alcool et boissons selon ton nombre d'invités, le format de réception et la durée." }
+    ],
+    "bonus": {
+      "label": "Bonus inclus",
+      "title": "Le Carnet d'adresses Mariable",
+      "desc": "Explorez notre sélection de lieux d'exception et de professionnels vérifiés pour votre mariage."
+    }
+  },
+  "freemium": {
+    "eyebrow": "Comment ça marche",
+    "titleLine1": "Gratuit pour commencer.",
+    "titleLine2": "Premium pour aller plus loin.",
+    "free": {
+      "label": "Mariable Gratuit",
+      "price": "0€",
+      "priceUnit": "/ pour toujours",
+      "desc": "Pour démarrer l'organisation de ton mariage sans engagement.",
+      "features": [
+        "Tous les services en ligne (rétroplanning, budget, invités, plan de table, coordination, calculateur de boissons)",
+        "Liste de prestataires recommandés Mariable",
+        "Accès au blog & aux conseils"
+      ],
+      "limitsLabel": "Limites",
+      "limits": [
+        "Génération planning IA limitée",
+        "Stockage documents & informations limités",
+        "Exports PDF des espaces & guides non inclus"
+      ],
+      "cta": "Créer un compte gratuit"
+    },
+    "premium": {
+      "badge": "Recommandé",
+      "label": "Mariable Premium",
+      "price": "29€",
+      "oldPrice": "59€",
+      "priceUnit": "· à vie",
+      "desc": "Un seul paiement. Aucun abonnement. Mises à jour incluses.",
+      "features": [
+        "Tous les services — sans limite",
+        "Génération planning IA illimitée",
+        "Exports PDF illimités (espaces + guides)",
+        "Stockage documents illimité",
+        "Accès à toute la bibliothèque de guides & ebooks (témoins, mariée, prestataires, organisation débutant…)",
+        "Support prioritaire & mises à jour à vie"
+      ],
+      "cta": "Passer Premium — 29€"
+    },
+    "eshop": {
+      "eyebrow": "À l'unité",
+      "title": "E-books & guides digitaux",
+      "desc": "À imprimer ou pas — dès <strong>4€</strong>. Witness, mariée, prestataires, organisation débutant…",
+      "subnote": "Tous inclus gratuitement dans Premium (29€) — plus rentable dès 4 guides achetés.",
+      "cta": "Voir l'e-shop"
+    },
+    "footnote": "vs un wedding planner à partir de 2 000€ — ≈ 70× moins cher."
+  },
+  "differentiator": {
+    "eyebrow": "La différence",
+    "titleLine1": "Pas un tableur Excel.",
+    "titleLine2": "Un service pensé pour ton mariage.",
+    "othersTitle": "Les autres",
+    "mariableTitle": "Mariable",
+    "others": [
+      "Tableur Excel rigide et impersonnel",
+      "Pinterest infini, zéro structure",
+      "Notes éparpillées sur 5 apps",
+      "Wedding planner à 2 000€ qui décide pour toi"
+    ],
+    "mariable": [
+      "Guides, conseils et modèles pré-paramétrés boostés à l'IA",
+      "Pensé comme un wedding planner professionnel — pas un assistant générique",
+      "Tout centralisé, partout, tout le temps",
+      "29€, une fois, à vie — tu gardes le contrôle"
+    ],
+    "footnote": "ChatGPT répond à tes questions. Mariable, lui, est déjà paramétré comme un wedding planner — chaque outil, chaque modèle, chaque étape a été pensé pour coordonner ton mariage. Un service de travail, pas un assistant."
+  },
+  "pricing": {
+    "eyebrow": "Le prix",
+    "title": "Un investissement unique.",
+    "price": "29€",
+    "oldPrice": "59€",
+    "subtitle": "Accès immédiat · Paiement unique · Remboursé si pas satisfait·e",
+    "cta": "Accéder à Mariable — 29€",
+    "compareLine1": "vs un wedding planner à partir de <strong>2 000€</strong>",
+    "compareLine2": "≈ 70× moins cher — et 100% de contrôle sur ton mariage."
+  },
+  "faq": {
+    "eyebrow": "Questions fréquentes",
+    "title": "On répond à tout.",
+    "items": [
+      { "q": "Comment ça marche, concrètement&nbsp;?", "a": "Tu paies 29€ une fois. Tu accèdes immédiatement à ton espace Mariable depuis n'importe quel navigateur. Tout est là, prêt à l'emploi." },
+      { "q": "C'est vraiment à vie&nbsp;?", "a": "Oui. Un paiement, accès illimité jusqu'à ton mariage (et même après pour les souvenirs). Mises à jour incluses." },
+      { "q": "Et si je ne suis pas satisfait·e&nbsp;?", "a": "Remboursement sans condition pendant 14 jours. On veut que tu sois serein·e, pas coincé·e." },
+      { "q": "Mon/ma partenaire peut aussi y accéder&nbsp;?", "a": "Bien sûr. Vous partagez le même espace, vous éditez à deux, en temps réel." },
+      { "q": "Je peux partager avec mes témoins ou ma famille&nbsp;?", "a": "Oui. Le planning Jour J et certaines vues sont partageables via un simple lien." },
+      { "q": "Il faut télécharger une app&nbsp;?", "a": "Non. Mariable fonctionne directement dans ton navigateur — ordinateur, tablette ou mobile. Aucun téléchargement." }
+    ]
+  },
+  "finalCta": {
+    "titleLine1": "Et si tu oubliais",
+    "titleLine2": "quelque chose ?",
+    "subtitle": "Crée ton compte Mariable dès maintenant.",
+    "cta": "Accéder à mon compte Mariable",
+    "footnote": "Remboursé si pas satisfait·e · Aucune installation · Accès à vie",
+    "instagram": "Suis Mariable sur Instagram →"
+  }
+}

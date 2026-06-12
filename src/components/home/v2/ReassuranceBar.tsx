@@ -1,11 +1,8 @@
-const items = [
-  '100% web — pas de téléchargement',
-  'Mobile, tablette, ordinateur',
-  'Accès à vie',
-  'Mis à jour en continu',
-];
+import { useTranslation } from 'react-i18next';
 
 export default function ReassuranceBar() {
+  const { t } = useTranslation('homeV2');
+  const items = t('reassurance.items', { returnObjects: true }) as string[];
   return (
     <section className="bg-editorial-noir text-editorial-cream py-6">
       <div className="container mx-auto px-6">

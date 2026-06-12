@@ -1,0 +1,201 @@
+{
+  "hero": {
+    "eyebrow": "NEXT-GENERATION WEDDING PLANNING",
+    "titleLine1": "The pocket-sized",
+    "titleLine2": "wedding planner.",
+    "subtitle": "For couples who plan their own wedding.",
+    "cta": "Discover Mariable",
+    "freeNote": "Free to get started"
+  },
+  "reassurance": {
+    "items": [
+      "100% web — no download",
+      "Mobile, tablet, desktop",
+      "Lifetime access",
+      "Continuously updated"
+    ]
+  },
+  "painPoints": {
+    "eyebrow": "Sound familiar?",
+    "titleLine1": "Planning a wedding",
+    "titleLine2": "is a second job.",
+    "subtitle": "You just wanted to get married — peacefully, with the people you love. Not become a full-time project manager.",
+    "items": [
+      "You wake up at night with a mental checklist that won't stop.",
+      "You juggle Excel, Pinterest, Instagram, Notes and WhatsApp.",
+      "You're afraid to forget a detail on the big day and ruin everything.",
+      "You struggle to identify the right vendors and fear making the wrong choice.",
+      "You'd love someone to help you on the day, but don't want to pay for an extra service."
+    ]
+  },
+  "apercu": {
+    "eyebrow": "Your Mariable space",
+    "title": "A glimpse of what's waiting for you.",
+    "subtitle": "A complete web platform, accessible wherever you are.",
+    "toolsTitle": "Everything, in a single web space.",
+    "tools": [
+      "Smart planning timeline",
+      "Real budget & alerts",
+      "Guest list & RSVP",
+      "Interactive seating plan",
+      "Wedding-day coordination",
+      "Drinks calculator"
+    ],
+    "sidebarTitle": "My space",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "checklist": "Checklist",
+      "planning": "Timeline",
+      "budget": "Budget",
+      "vendors": "Vendors",
+      "dayPlanning": "Day-of Planning",
+      "exclusiveBadge": "Exclusive",
+      "rsvp": "Guest RSVP",
+      "seating": "Seating plan",
+      "moodboard": "Moodboard",
+      "ceremony": "Ceremony"
+    },
+    "account": "My account",
+    "welcome": "Welcome, Mathilde!",
+    "date": "Tuesday, June 9, 2026",
+    "kpi": {
+      "countdown": "Countdown",
+      "guests": "Guests",
+      "progress": "Progress"
+    },
+    "cards": {
+      "startTitle": "Getting started guide",
+      "startDesc": "Discover the Mariable concept",
+      "videoTitle": "Video guide",
+      "videoDesc": "Video tutorial"
+    },
+    "carnet": {
+      "eyebrow": "Address book",
+      "title": "A premium vendor address book.",
+      "desc": "Curated venues and verified professionals for your wedding — accessible directly from your Mariable space.",
+      "items": [
+        "Exceptional venues, caterers, photographers, florists, DJs…",
+        "Filter by region, style and budget",
+        "Verified and recommended vendors"
+      ],
+      "imageAlt": "Preview of the Mariable address book — Explore the guide"
+    },
+    "note": "Web platform — accessible from mobile and tablet via your browser. You can add a shortcut to your phone's home screen using a dedicated tutorial."
+  },
+  "included": {
+    "eyebrow": "What's included",
+    "title": "The service in detail.",
+    "subtitle": "NEXT-GENERATION WEDDING PLANNING — 6 features designed together to support you from the yes to the big day.",
+    "cards": [
+      { "tag": "Planning", "title": "Smart timeline", "desc": "A personalized timeline based on your date and style. Every task at the right time, nothing forgotten." },
+      { "tag": "Finance", "title": "Real budget & alerts", "desc": "Track your spending vendor by vendor. Get alerted before you go over budget." },
+      { "tag": "Guests", "title": "Guest list & RSVP", "desc": "Manage 200 guests without a spreadsheet. Allergies, plus-ones, lodging — everything in one place." },
+      { "tag": "Reception", "title": "Interactive seating plan", "desc": "Drag & drop to seat your guests. Print your plan in one click." },
+      { "tag": "Wedding day", "title": "Minute-by-minute coordination", "desc": "Share the day's schedule with your team (witnesses, family, vendors)." },
+      { "tag": "Drinks", "title": "Drinks calculator", "desc": "Precisely calculate alcohol and drink quantities based on your guest count, reception format and duration." }
+    ],
+    "bonus": {
+      "label": "Bonus included",
+      "title": "The Mariable Address Book",
+      "desc": "Explore our selection of exceptional venues and verified professionals for your wedding."
+    }
+  },
+  "freemium": {
+    "eyebrow": "How it works",
+    "titleLine1": "Free to start.",
+    "titleLine2": "Premium to go further.",
+    "free": {
+      "label": "Mariable Free",
+      "price": "€0",
+      "priceUnit": "/ forever",
+      "desc": "Start planning your wedding with no commitment.",
+      "features": [
+        "All online services (timeline, budget, guests, seating, coordination, drinks calculator)",
+        "List of Mariable-recommended vendors",
+        "Access to the blog & advice"
+      ],
+      "limitsLabel": "Limits",
+      "limits": [
+        "Limited AI planning generation",
+        "Limited document & information storage",
+        "PDF exports of spaces & guides not included"
+      ],
+      "cta": "Create a free account"
+    },
+    "premium": {
+      "badge": "Recommended",
+      "label": "Mariable Premium",
+      "price": "€29",
+      "oldPrice": "€59",
+      "priceUnit": "· lifetime",
+      "desc": "One payment. No subscription. Updates included.",
+      "features": [
+        "All services — no limits",
+        "Unlimited AI planning generation",
+        "Unlimited PDF exports (spaces + guides)",
+        "Unlimited document storage",
+        "Access to the full library of guides & ebooks (witnesses, bride, vendors, beginner planning…)",
+        "Priority support & lifetime updates"
+      ],
+      "cta": "Go Premium — €29"
+    },
+    "eshop": {
+      "eyebrow": "À la carte",
+      "title": "E-books & digital guides",
+      "desc": "Print them or not — from <strong>€4</strong>. Witness, bride, vendors, beginner planning…",
+      "subnote": "All included for free in Premium (€29) — better value after just 4 guides.",
+      "cta": "Visit the e-shop"
+    },
+    "footnote": "vs a wedding planner starting at €2,000 — ≈ 70× cheaper."
+  },
+  "differentiator": {
+    "eyebrow": "The difference",
+    "titleLine1": "Not a spreadsheet.",
+    "titleLine2": "A service designed for your wedding.",
+    "othersTitle": "The others",
+    "mariableTitle": "Mariable",
+    "others": [
+      "Rigid, impersonal Excel spreadsheet",
+      "Endless Pinterest, zero structure",
+      "Notes scattered across 5 apps",
+      "€2,000 wedding planner who decides for you"
+    ],
+    "mariable": [
+      "AI-powered guides, advice and pre-configured templates",
+      "Designed like a professional wedding planner — not a generic assistant",
+      "Everything centralized, anywhere, anytime",
+      "€29, once, lifetime — you stay in control"
+    ],
+    "footnote": "ChatGPT answers your questions. Mariable is already configured like a wedding planner — every tool, every template, every step was built to coordinate your wedding. A workspace, not an assistant."
+  },
+  "pricing": {
+    "eyebrow": "The price",
+    "title": "A one-time investment.",
+    "price": "€29",
+    "oldPrice": "€59",
+    "subtitle": "Instant access · One-time payment · Refunded if not satisfied",
+    "cta": "Access Mariable — €29",
+    "compareLine1": "vs a wedding planner starting at <strong>€2,000</strong>",
+    "compareLine2": "≈ 70× cheaper — and 100% control over your wedding."
+  },
+  "faq": {
+    "eyebrow": "Frequently asked",
+    "title": "We answer everything.",
+    "items": [
+      { "q": "How does it work, concretely?", "a": "You pay €29 once. You instantly access your Mariable space from any browser. Everything is there, ready to use." },
+      { "q": "Is it really lifetime?", "a": "Yes. One payment, unlimited access until your wedding (and even after, for the memories). Updates included." },
+      { "q": "What if I'm not satisfied?", "a": "No-questions-asked refund within 14 days. We want you serene, not stuck." },
+      { "q": "Can my partner access it too?", "a": "Of course. You share the same space, you edit together, in real time." },
+      { "q": "Can I share with my witnesses or family?", "a": "Yes. The wedding-day plan and some views are shareable via a simple link." },
+      { "q": "Do I need to download an app?", "a": "No. Mariable runs directly in your browser — desktop, tablet or mobile. No download." }
+    ]
+  },
+  "finalCta": {
+    "titleLine1": "What if you forgot",
+    "titleLine2": "something?",
+    "subtitle": "Create your Mariable account right now.",
+    "cta": "Access my Mariable account",
+    "footnote": "Refunded if not satisfied · No installation · Lifetime access",
+    "instagram": "Follow Mariable on Instagram →"
+  }
+}
