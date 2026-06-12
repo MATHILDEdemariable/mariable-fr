@@ -67,7 +67,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'pricing', 'professionals', 'partenariat'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat'],
     interpolation: {
       escapeValue: false,
     },
