@@ -1,40 +1,25 @@
 import { Link } from 'react-router-dom';
 import { Check, Lock, ArrowRight, BookOpen } from 'lucide-react';
-
-const freeFeatures = [
-  'Tous les services en ligne (rétroplanning, budget, invités, plan de table, coordination, calculateur de boissons)',
-  'Liste de prestataires recommandés Mariable',
-  'Accès au blog & aux conseils',
-];
-
-const freeLimits = [
-  'Génération planning IA limitée',
-  'Stockage documents & informations limités',
-  'Exports PDF des espaces & guides non inclus',
-];
-
-const premiumFeatures = [
-  'Tous les services — sans limite',
-  'Génération planning IA illimitée',
-  'Exports PDF illimités (espaces + guides)',
-  'Stockage documents illimité',
-  'Accès à toute la bibliothèque de guides & ebooks (témoins, mariée, prestataires, organisation débutant…)',
-  'Support prioritaire & mises à jour à vie',
-];
+import { useTranslation, Trans } from 'react-i18next';
 
 export default function FreemiumSection() {
+  const { t } = useTranslation('homeV2');
+  const freeFeatures = t('freemium.free.features', { returnObjects: true }) as string[];
+  const freeLimits = t('freemium.free.limits', { returnObjects: true }) as string[];
+  const premiumFeatures = t('freemium.premium.features', { returnObjects: true }) as string[];
+
   return (
     <section className="bg-editorial-cream py-24 md:py-32">
       <div className="container mx-auto px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
             <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
-              Comment ça marche
+              {t('freemium.eyebrow')}
             </p>
             <h2 className="font-serif text-4xl md:text-5xl text-editorial-noir leading-tight">
-              Gratuit pour commencer.
+              {t('freemium.titleLine1')}
               <br />
-              <span className="italic">Premium pour aller plus loin.</span>
+              <span className="italic">{t('freemium.titleLine2')}</span>
             </h2>
           </div>
 
@@ -43,14 +28,14 @@ export default function FreemiumSection() {
             <div className="bg-white border border-editorial-noir/10 p-8 md:p-10 flex flex-col">
               <div className="mb-8">
                 <p className="uppercase tracking-[0.2em] text-xs text-editorial-gray mb-3">
-                  Mariable Gratuit
+                  {t('freemium.free.label')}
                 </p>
                 <div className="flex items-baseline gap-2 mb-2">
-                  <span className="font-serif text-5xl text-editorial-noir">0€</span>
-                  <span className="text-editorial-gray text-sm">/ pour toujours</span>
+                  <span className="font-serif text-5xl text-editorial-noir">{t('freemium.free.price')}</span>
+                  <span className="text-editorial-gray text-sm">{t('freemium.free.priceUnit')}</span>
                 </div>
                 <p className="text-sm text-editorial-noir/70">
-                  Pour démarrer l'organisation de ton mariage sans engagement.
+                  {t('freemium.free.desc')}
                 </p>
               </div>
 
@@ -63,7 +48,7 @@ export default function FreemiumSection() {
                 ))}
                 <div className="pt-3 mt-3 border-t border-editorial-noir/10">
                   <p className="text-xs text-editorial-noir/50 uppercase tracking-wide font-semibold mb-3">
-                    Limites
+                    {t('freemium.free.limitsLabel')}
                   </p>
                   {freeLimits.map((l) => (
                     <div key={l} className="flex items-start gap-3 mb-2">
@@ -78,7 +63,7 @@ export default function FreemiumSection() {
                 to="/register"
                 className="inline-flex items-center justify-center gap-2 w-full border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3.5 rounded-none font-medium transition-colors"
               >
-                Créer un compte gratuit
+                {t('freemium.free.cta')}
               </Link>
             </div>
 
@@ -86,21 +71,21 @@ export default function FreemiumSection() {
             <div className="bg-editorial-noir text-white p-8 md:p-10 flex flex-col relative">
               <div className="absolute -top-3 left-8">
                 <span className="bg-editorial-olive text-white px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
-                  Recommandé
+                  {t('freemium.premium.badge')}
                 </span>
               </div>
 
               <div className="mb-8">
                 <p className="uppercase tracking-[0.2em] text-xs text-editorial-cream/70 mb-3">
-                  Mariable Premium
+                  {t('freemium.premium.label')}
                 </p>
                 <div className="flex items-baseline gap-3 mb-2">
-                  <span className="font-serif text-5xl">29€</span>
-                  <span className="text-editorial-cream/50 line-through text-lg">59€</span>
-                  <span className="text-editorial-cream/70 text-sm">· à vie</span>
+                  <span className="font-serif text-5xl">{t('freemium.premium.price')}</span>
+                  <span className="text-editorial-cream/50 line-through text-lg">{t('freemium.premium.oldPrice')}</span>
+                  <span className="text-editorial-cream/70 text-sm">{t('freemium.premium.priceUnit')}</span>
                 </div>
                 <p className="text-sm text-editorial-cream/75">
-                  Un seul paiement. Aucun abonnement. Mises à jour incluses.
+                  {t('freemium.premium.desc')}
                 </p>
               </div>
 
@@ -117,7 +102,7 @@ export default function FreemiumSection() {
                 to="/paiement"
                 className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3.5 rounded-none font-medium transition-colors"
               >
-                Passer Premium — 29€
+                {t('freemium.premium.cta')}
                 <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
@@ -131,15 +116,15 @@ export default function FreemiumSection() {
               </div>
               <div>
                 <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">
-                  À l'unité
+                  {t('freemium.eshop.eyebrow')}
                 </p>
                 <h3 className="font-serif text-2xl text-editorial-noir mb-1">
-                  E-books & guides digitaux
+                  {t('freemium.eshop.title')}
                 </h3>
                 <p className="text-sm text-editorial-noir/70">
-                  À imprimer ou pas — dès <strong>4€</strong>. Witness, mariée, prestataires, organisation débutant…
+                  <Trans i18nKey="freemium.eshop.desc" ns="homeV2" components={{ strong: <strong /> }} />
                   <span className="block text-xs italic mt-1 text-editorial-noir/55">
-                    Tous inclus gratuitement dans Premium (29€) — plus rentable dès 4 guides achetés.
+                    {t('freemium.eshop.subnote')}
                   </span>
                 </p>
               </div>
@@ -148,13 +133,13 @@ export default function FreemiumSection() {
               to="/guides"
               className="inline-flex items-center justify-center gap-2 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 rounded-none font-medium transition-colors whitespace-nowrap"
             >
-              Voir l'e-shop
+              {t('freemium.eshop.cta')}
               <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
 
           <p className="text-center text-xs text-editorial-noir/50 mt-10 italic">
-            vs un wedding planner à partir de 2 000€ — ≈ 70× moins cher.
+            {t('freemium.footnote')}
           </p>
         </div>
       </div>
