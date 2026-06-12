@@ -22,6 +22,7 @@ const resources = {
   fr: {
     common: frCommon,
     home: frHome,
+    homeV2: frHomeV2,
     pricing: frPricing,
     professionals: frProfessionals,
     partenariat: frPartenariat,
@@ -29,6 +30,7 @@ const resources = {
   en: {
     common: enCommon,
     home: enHome,
+    homeV2: enHomeV2,
     pricing: enPricing,
     professionals: enProfessionals,
     partenariat: enPartenariat,
