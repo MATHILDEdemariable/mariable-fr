@@ -61,9 +61,19 @@ const Footer = () => {
               <li><Link to="/mariage-paris" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.paris')}</Link></li>
               <li><Link to="/mariage-auvergne-rhone-alpes" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.rhoneAlpes')}</Link></li>
               <li><Link to="/mariage-nouvelle-aquitaine" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.aquitaine')}</Link></li>
+              <li><Link to="/mariage-bretagne" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.bretagne')}</Link></li>
+              <li><Link to="/mariage-normandie" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.normandie')}</Link></li>
+              <li><Link to="/mariage-occitanie" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.occitanie')}</Link></li>
+              <li><Link to="/mariage-pays-de-la-loire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.paysLoire')}</Link></li>
+              <li><Link to="/mariage-centre-val-de-loire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.centreValLoire')}</Link></li>
+              <li><Link to="/mariage-hauts-de-france" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.hautsFrance')}</Link></li>
+              <li><Link to="/mariage-bourgogne-franche-comte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.bourgogne')}</Link></li>
+              <li><Link to="/mariage-grand-est" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.grandEst')}</Link></li>
+              <li><Link to="/mariage-corse" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.corse')}</Link></li>
               <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">{t('footer.links.allRegions')}</Link></li>
             </ul>
           </div>
+
 
           {/* À Propos */}
           <div>
