@@ -13,6 +13,7 @@ import DifferentiatorSection from '@/components/home/v2/DifferentiatorSection';
 import PricingHighlight from '@/components/home/v2/PricingHighlight';
 import FAQSection from '@/components/home/v2/FAQSection';
 import FinalCTASection from '@/components/home/v2/FinalCTASection';
+import RegionalLinksSection from '@/components/home/v2/RegionalLinksSection';
 
 export default function VersionJuin26() {
   return (
@@ -45,6 +46,7 @@ export default function VersionJuin26() {
           <PricingHighlight />
           <FAQSection />
           <BlogSection />
+          <RegionalLinksSection />
           <FinalCTASection />
         </main>
         <Footer />
