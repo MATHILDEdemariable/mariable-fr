@@ -1,9 +1,27 @@
 import { Check } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import carnetMockup from '@/assets/carnet-adresses-mockup.png.asset.json';
 
+const REGIONS = [
+  { path: '/mariage-provence', key: 'provence' },
+  { path: '/mariage-paris', key: 'paris' },
+  { path: '/mariage-auvergne-rhone-alpes', key: 'rhoneAlpes' },
+  { path: '/mariage-nouvelle-aquitaine', key: 'aquitaine' },
+  { path: '/mariage-bretagne', key: 'bretagne' },
+  { path: '/mariage-normandie', key: 'normandie' },
+  { path: '/mariage-occitanie', key: 'occitanie' },
+  { path: '/mariage-pays-de-la-loire', key: 'paysLoire' },
+  { path: '/mariage-centre-val-de-loire', key: 'centreValLoire' },
+  { path: '/mariage-hauts-de-france', key: 'hautsFrance' },
+  { path: '/mariage-bourgogne-franche-comte', key: 'bourgogne' },
+  { path: '/mariage-grand-est', key: 'grandEst' },
+  { path: '/mariage-corse', key: 'corse' },
+] as const;
+
 export default function EspaceApercu() {
-  const { t } = useTranslation('homeV2');
+  const { t, i18n } = useTranslation('homeV2');
+  const tCommon = useTranslation('common').t;
   const tools = t('apercu.tools', { returnObjects: true }) as string[];
   const carnetItems = t('apercu.carnet.items', { returnObjects: true }) as string[];
   const sidebarItems = [
@@ -185,6 +203,25 @@ export default function EspaceApercu() {
                 </li>
               ))}
             </ul>
+
+            {/* Régions — liens compacts 3 colonnes */}
+            <div className="mt-8 pt-6 border-t border-editorial-noir/10">
+              <p className="uppercase tracking-[0.25em] text-[10px] mb-3 text-editorial-olive">
+                {i18n.language?.startsWith('en') ? 'By region' : 'Par région'}
+              </p>
+              <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
+                {REGIONS.map(({ path, key }) => (
+                  <li key={path}>
+                    <Link
+                      to={path}
+                      className="text-xs text-editorial-noir/70 hover:text-editorial-olive transition-colors"
+                    >
+                      {tCommon(`footer.links.${key}`)}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
           <div className="order-1 lg:order-2">
             <div className="rounded-lg border border-editorial-noir/15 bg-white shadow-2xl overflow-hidden">
