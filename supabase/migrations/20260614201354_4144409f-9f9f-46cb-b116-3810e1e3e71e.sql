@@ -1,0 +1,2 @@
+ALTER TABLE public.blog_posts ADD COLUMN IF NOT EXISTS language text NOT NULL DEFAULT 'fr';
+CREATE INDEX IF NOT EXISTS idx_blog_posts_language_status ON public.blog_posts(language, status) WHERE status='published';
