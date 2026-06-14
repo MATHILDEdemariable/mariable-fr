@@ -311,7 +311,7 @@ function App() {
                   <Route path="/prestataires" element={<Prestataires />} />
                   <Route path="/prestataires/:slug" element={<Prestataire />} />
                   <Route path="/prestataire/:slug" element={<Prestataire />} />
-                  <Route path="/professionnelsmariable" element={<ProfessionnelsMariable />} />
+                  <Route path="/professionnelsmariable" element={<ProtectedRoute><ProfessionnelsMariable /></ProtectedRoute>} />
 
                    {/* Admin routes */}
                    <Route path="/admin/dashboard" element={<AdminDashboard />} />

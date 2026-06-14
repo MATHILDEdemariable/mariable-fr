@@ -266,6 +266,16 @@ const MariageAuvergneRhoneAlpes = () => {
                   </Link>
                 </Button>
                 <Button 
+                  asChild
+                  size="lg"
+                  variant="outline"
+                  className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
+                >
+                  <Link to="/register-gratuit">
+                    Créer mon compte gratuit
+                  </Link>
+                </Button>
+                <Button 
                   variant="outline"
                   size="lg"
                   asChild
