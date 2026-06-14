@@ -264,6 +264,7 @@ export type Database = {
           h1_title: string | null
           h2_titles: Json | null
           id: string
+          language: string
           meta_description: string | null
           meta_title: string | null
           order_index: number
@@ -285,6 +286,7 @@ export type Database = {
           h1_title?: string | null
           h2_titles?: Json | null
           id?: string
+          language?: string
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
@@ -306,6 +308,7 @@ export type Database = {
           h1_title?: string | null
           h2_titles?: Json | null
           id?: string
+          language?: string
           meta_description?: string | null
           meta_title?: string | null
           order_index?: number
