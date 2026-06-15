@@ -8,12 +8,16 @@ import frHomeV2 from './locales/fr/homeV2.json';
 import frPricing from './locales/fr/pricing.json';
 import frProfessionals from './locales/fr/professionals.json';
 import frPartenariat from './locales/fr/partenariat.json';
+import frBlog from './locales/fr/blog.json';
+import frAuth from './locales/fr/auth.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enHomeV2 from './locales/en/homeV2.json';
 import enPricing from './locales/en/pricing.json';
 import enProfessionals from './locales/en/professionals.json';
 import enPartenariat from './locales/en/partenariat.json';
+import enBlog from './locales/en/blog.json';
+import enAuth from './locales/en/auth.json';
 
 export const SUPPORTED_LANGUAGES = ['fr', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -26,6 +30,8 @@ const resources = {
     pricing: frPricing,
     professionals: frProfessionals,
     partenariat: frPartenariat,
+    blog: frBlog,
+    auth: frAuth,
   },
   en: {
     common: enCommon,
@@ -34,6 +40,8 @@ const resources = {
     pricing: enPricing,
     professionals: enProfessionals,
     partenariat: enPartenariat,
+    blog: enBlog,
+    auth: enAuth,
   },
 };
 
@@ -67,7 +75,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth'],
     interpolation: {
       escapeValue: false,
     },

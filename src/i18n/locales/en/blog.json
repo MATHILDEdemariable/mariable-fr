@@ -1,0 +1,29 @@
+{
+  "hero": {
+    "backHome": "Back to home",
+    "title": "Wedding advice & guides",
+    "subtitle": "Expert tips and guides to plan your perfect wedding in France"
+  },
+  "filter": {
+    "all": "All",
+    "fr": "French",
+    "en": "International"
+  },
+  "card": {
+    "readArticle": "Read article",
+    "minutes": "min",
+    "featured": "Featured",
+    "international": "EN"
+  },
+  "empty": {
+    "noneInCategory": "No articles found in this selection.",
+    "noPosts": "No articles to display yet."
+  },
+  "newsletter": {
+    "title": "Stay in the loop",
+    "subtitle": "Get our latest tips and tricks to plan your perfect wedding.",
+    "cta": "Join the community"
+  },
+  "loading": "Loading blog...",
+  "error": "Failed to load blog."
+}
