@@ -1,0 +1,29 @@
+{
+  "hero": {
+    "backHome": "Retour à l'accueil",
+    "title": "Conseils pour votre mariage",
+    "subtitle": "Découvrez nos conseils d'experts pour organiser votre mariage parfait"
+  },
+  "filter": {
+    "all": "Tous",
+    "fr": "Français",
+    "en": "International"
+  },
+  "card": {
+    "readArticle": "Lire l'article",
+    "minutes": "min",
+    "featured": "À la une",
+    "international": "EN"
+  },
+  "empty": {
+    "noneInCategory": "Aucun article trouvé dans cette sélection.",
+    "noPosts": "Aucun article à afficher pour le moment."
+  },
+  "newsletter": {
+    "title": "Restez informés",
+    "subtitle": "Recevez nos derniers conseils et astuces pour organiser votre mariage parfait.",
+    "cta": "Rejoindre la communauté"
+  },
+  "loading": "Chargement du blog...",
+  "error": "Erreur de chargement du blog."
+}
