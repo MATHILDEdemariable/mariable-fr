@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,6 +18,7 @@ import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics'
 import { useAuth } from '@/contexts/AuthContext';
 
 const Register = () => {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -30,8 +32,7 @@ const Register = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { user } = useAuth();
-  
-  // Rediriger si déjà connecté
+
   useEffect(() => {
     if (user) {
       navigate('/dashboard');
@@ -40,32 +41,30 @@ const Register = () => {
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!email || !password || !firstName || !lastName || !referralSource || !registrationPurpose) {
       toast({
-        title: "Erreur",
-        description: "Veuillez remplir tous les champs obligatoires",
+        title: t('register.errors.genericError'),
+        description: t('register.errors.missingFields'),
         variant: "destructive",
       });
       return;
     }
-    
+
     if (!acceptTerms) {
       toast({
-        title: "Erreur",
-        description: "Vous devez accepter les conditions d'utilisation",
+        title: t('register.errors.genericError'),
+        description: t('register.errors.missingTerms'),
         variant: "destructive",
       });
       return;
     }
-    
+
     try {
       setIsLoading(true);
-      
-      // Définir l'URL de redirection pour les emails de confirmation
       const origin = window.location.origin;
       const redirectTo = `${origin}/`;
-      
+
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -80,52 +79,41 @@ const Register = () => {
           emailRedirectTo: redirectTo,
         },
       });
-      
+
       if (error) throw error;
-      
-      // Vérifier si l'email nécessite une confirmation
+
       if (data.user && data.user.identities && data.user.identities.length === 0) {
-        // L'utilisateur existe déjà
         toast({
-          title: "Erreur",
-          description: "Un compte avec cette adresse email existe déjà",
+          title: t('register.errors.genericError'),
+          description: t('register.errors.emailExists'),
           variant: "destructive",
         });
         return;
       }
-      
-      // Stocker l'email pour permettre le renvoi en cas d'expiration
+
       localStorage.setItem('pending_verification_email', email);
-      
-      // 🎯 TRACKING META + GA4
+
       trackMetaRegistration();
       trackUserRegistration('email');
-      
-      // Afficher l'alerte pour vérifier les mails indésirables
+
       setShowEmailAlert(true);
-      
-      // Rediriger vers la page de confirmation d'email après un délai
+
       setTimeout(() => {
         navigate('/auth/email-confirmation');
       }, 3000);
-      
+
     } catch (error: any) {
       console.error('🚨 Registration error:', error);
-      
-      let errorMessage = "Une erreur technique est survenue lors de l'inscription. ";
-      
-      if (error.message?.includes('Database error') || error.message?.includes('database')) {
-        errorMessage += "N'hésitez pas à nous contacter à mathilde@mariable.fr pour que nous puissions vous aider.";
-      } else if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
-        errorMessage = "Un compte avec cette adresse email existe déjà. Essayez de vous connecter ou de réinitialiser votre mot de passe.";
-      } else if (error.message) {
+
+      let errorMessage = t('register.errors.generic');
+      if (error.message?.includes('already registered') || error.message?.includes('User already registered')) {
+        errorMessage = t('register.errors.alreadyRegistered');
+      } else if (error.message && !error.message?.includes('Database error') && !error.message?.includes('database')) {
         errorMessage = error.message;
-      } else {
-        errorMessage += "N'hésitez pas à nous contacter à mathilde@mariable.fr si le problème persiste.";
       }
-      
+
       toast({
-        title: "Erreur d'inscription",
+        title: t('register.errors.registrationFailed'),
         description: errorMessage,
         variant: "destructive",
         duration: 8000,
@@ -137,38 +125,33 @@ const Register = () => {
 
   return (
     <div className="min-h-screen bg-[#efeee9]">
-      <SEO
-        title="Inscription | Mariable"
-        description="Créez votre compte Mariable pour organiser votre mariage et accéder à nos outils de planification."
-      />
+      <SEO title={t('register.seoTitle')} description={t('register.seoDescription')} />
       <PremiumHeader />
-      
+
       <main className="container max-w-md mx-auto pb-12 px-4 page-content">
         {showEmailAlert && (
           <Alert className="mb-6 border-wedding-olive bg-wedding-olive/10">
             <Mail className="h-4 w-4" />
             <AlertDescription className="text-sm">
-              <strong>N'oubliez pas de regarder dans vos mails indésirables pour le mail de confirmation !</strong>
+              <strong>{t('register.emailAlert')}</strong>
             </AlertDescription>
           </Alert>
         )}
-        
+
         <Card className="w-full">
           <CardHeader className="space-y-1">
-            <CardTitle className="text-2xl font-serif text-center">Inscription</CardTitle>
-            <CardDescription className="text-center">
-              Créez votre compte Mariable pour commencer à planifier votre mariage
-            </CardDescription>
+            <CardTitle className="text-2xl font-serif text-center">{t('register.title')}</CardTitle>
+            <CardDescription className="text-center">{t('register.subtitle')}</CardDescription>
             <div className="flex items-start gap-2 p-3 bg-wedding-olive/5 rounded-lg border border-wedding-olive/15 text-sm text-muted-foreground">
               <Smartphone className="h-4 w-4 mt-0.5 flex-shrink-0 text-wedding-olive" />
-              <p>Utilisation des outils en ligne recommandée sur <strong>ordinateur ou tablette</strong> — sauf l'appli du Jour-J spécialement conçue pour mobile !</p>
+              <p dangerouslySetInnerHTML={{ __html: t('register.deviceHint') }} />
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="firstName">Prénom *</Label>
+                  <Label htmlFor="firstName">{t('register.firstName')} *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
@@ -181,9 +164,9 @@ const Register = () => {
                     />
                   </div>
                 </div>
-                
+
                 <div className="space-y-2">
-                  <Label htmlFor="lastName">Nom *</Label>
+                  <Label htmlFor="lastName">{t('register.lastName')} *</Label>
                   <div className="relative">
                     <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input
@@ -197,15 +180,15 @@ const Register = () => {
                   </div>
                 </div>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email">{t('register.email')} *</Label>
                 <div className="relative">
                   <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="email"
                     type="email"
-                    placeholder="votre@email.com"
+                    placeholder={t('register.emailPlaceholder')}
                     className="pl-10"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -213,31 +196,29 @@ const Register = () => {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="phone">Téléphone (optionnel)</Label>
+                <Label htmlFor="phone">{t('register.phone')}</Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
                     id="phone"
                     type="tel"
-                    placeholder="06 12 34 56 78"
+                    placeholder={t('register.phonePlaceholder')}
                     className="pl-10"
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     disabled={isLoading}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Numéro de téléphone français (optionnel)
-                </p>
+                <p className="text-xs text-muted-foreground">{t('register.phoneHint')}</p>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="referralSource">Comment nous avez-vous connu ? *</Label>
+                <Label htmlFor="referralSource">{t('register.referralSource')} *</Label>
                 <Select value={referralSource} onValueChange={setReferralSource} disabled={isLoading}>
                   <SelectTrigger id="referralSource">
-                    <SelectValue placeholder="Sélectionnez une option" />
+                    <SelectValue placeholder={t('register.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="Instagram">Instagram</SelectItem>
@@ -246,28 +227,28 @@ const Register = () => {
                     <SelectItem value="LinkedIn">LinkedIn</SelectItem>
                     <SelectItem value="Pinterest">Pinterest</SelectItem>
                     <SelectItem value="Google">Google</SelectItem>
-                    <SelectItem value="Bouche à oreille">Bouche à oreille</SelectItem>
-                    <SelectItem value="Autre">Autre</SelectItem>
+                    <SelectItem value="Bouche à oreille">{t('register.referralOptions.wordOfMouth')}</SelectItem>
+                    <SelectItem value="Autre">{t('register.referralOptions.other')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="registrationPurpose">Pourquoi vous inscrivez-vous ? *</Label>
+                <Label htmlFor="registrationPurpose">{t('register.registrationPurpose')} *</Label>
                 <Select value={registrationPurpose} onValueChange={setRegistrationPurpose} disabled={isLoading}>
                   <SelectTrigger id="registrationPurpose">
-                    <SelectValue placeholder="Sélectionnez une option" />
+                    <SelectValue placeholder={t('register.selectPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="guide_prestataires">Pour le guide des prestataires</SelectItem>
-                    <SelectItem value="outils_en_ligne">Pour les outils en ligne</SelectItem>
-                    <SelectItem value="les_deux">Les deux</SelectItem>
+                    <SelectItem value="guide_prestataires">{t('register.purposeOptions.guide_prestataires')}</SelectItem>
+                    <SelectItem value="outils_en_ligne">{t('register.purposeOptions.outils_en_ligne')}</SelectItem>
+                    <SelectItem value="les_deux">{t('register.purposeOptions.les_deux')}</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+
               <div className="space-y-2">
-                <Label htmlFor="password">Mot de passe *</Label>
+                <Label htmlFor="password">{t('register.password')} *</Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                   <Input
@@ -279,43 +260,41 @@ const Register = () => {
                     disabled={isLoading}
                   />
                 </div>
-                <p className="text-xs text-muted-foreground">
-                  Minimum 6 caractères
-                </p>
+                <p className="text-xs text-muted-foreground">{t('register.passwordHint')}</p>
               </div>
-              
+
               <div className="flex items-center space-x-2">
-                <Checkbox 
-                  id="terms" 
-                  checked={acceptTerms} 
+                <Checkbox
+                  id="terms"
+                  checked={acceptTerms}
                   onCheckedChange={(checked) => setAcceptTerms(checked === true)}
                 />
                 <label
                   htmlFor="terms"
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  J'accepte les{" "}
+                  {t('register.acceptTerms')}{" "}
                   <Link to="/cgv-couples" className="text-wedding-olive hover:underline" target="_blank">
-                    conditions générales d'utilisation
+                    {t('register.termsLink')}
                   </Link>
                 </label>
               </div>
-              
-              <Button 
-                type="submit" 
-                className="w-full bg-wedding-olive hover:bg-wedding-olive/90" 
+
+              <Button
+                type="submit"
+                className="w-full bg-wedding-olive hover:bg-wedding-olive/90"
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                S'inscrire
+                {t('register.submit')}
               </Button>
             </form>
           </CardContent>
           <CardFooter className="flex flex-col gap-2">
             <div className="text-center text-sm">
-              Déjà inscrit(e) ?{" "}
+              {t('register.alreadyAccount')}{" "}
               <Link to="/login" className="text-wedding-olive hover:underline font-medium">
-                Se connecter
+                {t('register.signIn')}
               </Link>
             </div>
           </CardFooter>
