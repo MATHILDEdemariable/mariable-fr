@@ -2,6 +2,7 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { BlogPost } from '@/types/blog';
 import PremiumHeader from '@/components/home/PremiumHeader';
@@ -88,8 +89,18 @@ const BlogArticlePage = () => {
   const metaTitle = post.meta_title || post.title;
   const metaDescription = post.meta_description || post.subtitle;
 
+  const articleLang = (post as any).language || 'fr';
+  const isEnglish = articleLang === 'en';
+
   return (
     <>
+      {isEnglish && (
+        <Helmet>
+          <html lang="en" />
+          <meta name="language" content="en" />
+          <meta property="og:locale" content="en_US" />
+        </Helmet>
+      )}
       <SEO 
         title={metaTitle}
         description={metaDescription || undefined}
