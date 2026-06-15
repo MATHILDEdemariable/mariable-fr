@@ -1,94 +1,74 @@
-## Phase A + B — Backfill meta_descriptions FR puis 5 articles SEO/GEO EN
+## 1. Page `/conseilsmariage` — filtres FR / International
 
-### Phase A — Backfill meta_descriptions (23 articles FR)
+Remplacer le filtre par catégorie (Administratif, Conseils, Guides pratiques…) par un filtre binaire basé sur la langue de l'article :
 
-**Constat** : 23 articles publiés ont `meta_description IS NULL` → Google génère un snippet pauvre, CTR amputé.
+- **Tous** (par défaut)
+- **Français** → `language = 'fr'` (ou null pour les anciens articles)
+- **International (English guides)** → `language = 'en'`
 
-**Approche** : script local one-shot via skill `ai-gateway` (Lovable AI Gateway, modèle `google/gemini-3-flash-preview`).
+Implémentation dans `src/pages/Blog.tsx` :
+- Remplacer le `<Select>` actuel par un groupe de 3 boutons / Tabs (style éditorial, cohérent avec la charte sage green / rounded-none).
+- `state` : `'all' | 'fr' | 'en'`.
+- Filtre : `posts.filter(p => filter === 'all' || (p.language ?? 'fr') === filter)`.
+- Afficher un petit badge "EN" sur les cards des articles internationaux (au lieu du badge catégorie actuel) pour clarifier.
 
-Étapes :
-1. Pour chaque article sans meta, extraire les 600 premiers caractères de `content` (HTML strip).
-2. Prompt unique → output JSON `{ slug, meta_description }` (140-155 caractères, format actif, intègre 1 mot-clé du titre, finit sans ellipse).
-3. Boucle 23 appels (delay 1s) → fichier `/tmp/meta-backfill.json`.
-4. Relecture rapide manuelle dans le chat (résumé tableau) → si OK, `supabase--insert` en batch UPDATE.
+## 2. Traduire la page `/conseilsmariage` (core) FR/EN
 
-Pas de migration. Pas de touchage du `content`. Pas de touche au front (le rendu Helmet lit déjà `meta_description`).
+Ajouter un namespace `blog` (fr + en) à `src/i18n/locales/{fr,en}/blog.json` avec les clés du core de la page :
+- `hero.backHome`, `hero.title`, `hero.subtitle`
+- `filter.all`, `filter.fr`, `filter.en`
+- `card.readArticle`, `card.minutes`
+- `empty.noneInCategory`, `empty.noPosts`
+- `newsletter.title`, `newsletter.subtitle`, `newsletter.cta`
+- `loading`, `error`
 
-### Phase B — 5 articles EN destination wedding France
+Brancher `useTranslation('blog')` dans `Blog.tsx` et enregistrer le namespace dans `src/i18n/index.ts`. Le contenu des articles (titre/contenu) reste dans la langue de l'article — seul le chrome est traduit.
 
-#### B.1 — Schéma : ajouter `language` à `blog_posts`
+Note : la page d'un article (`BlogPost.tsx`) gère déjà `lang="en"` via Helmet — pas de changement nécessaire ici.
 
-Migration unique :
-```sql
-ALTER TABLE public.blog_posts ADD COLUMN language text NOT NULL DEFAULT 'fr';
-CREATE INDEX idx_blog_posts_language ON public.blog_posts(language) WHERE status='published';
-```
-Backfill implicite : tous les articles existants restent `fr`. Les 5 nouveaux insérés en `en`.
+## 3. Traduire `/register` et `/login` (sign-in) FR/EN
 
-#### B.2 — Front : exposition bilingue
+Ajouter namespace `auth` (fr + en) couvrant :
+- Login : titre, sous-titre, labels email/password, "mot de passe oublié", bouton connexion, lien vers register, messages d'erreur génériques.
+- Register : titre, labels (nom, email, password, confirm), CGU, bouton inscription, lien vers login, message de confirmation email.
+- Composants partagés du flow auth si réutilisés (ex. callback / email confirmation : hors scope sauf si trivial).
 
-Hook lecteur :
-- `src/pages/Blog.tsx` (liste) : filtrer par `language` selon `i18n.language` (fr par défaut). Toggle FR/EN existant déclenche le refetch.
-- `src/pages/BlogArticle.tsx` (détail) : pas de changement de route — slugs uniques côté EN, lecture transparente. Ajouter `<html lang={article.language}>` via Helmet et `<link rel="alternate" hreflang>` si la traduction FR existe (futur).
+Brancher `useTranslation('auth')` dans `src/pages/auth/Register.tsx` et `src/pages/auth/Login.tsx`. Pas de changement de logique métier (Supabase auth inchangé).
 
-Pas de route `/en/blog/…` : on garde `/blog/{slug}` et on s'appuie sur la langue de l'article (cohérent avec la décision routing). Sitemap continue d'inclure les 5 nouvelles URLs sans préfixe.
+## 4. Indexation Google Search Console
 
-#### B.3 — Génération des 5 articles via Lovable AI Gateway
+Je peux automatiser via le connecteur Google Search Console déjà disponible :
 
-Script `/tmp/generate-en-articles.py` (skill ai-gateway), un appel par article avec :
+1. Lister les articles publiés (`blog_posts` where `status='published'`) → construire toutes les URLs `https://mariable.fr/conseilsmariage/{slug}`.
+2. Vérifier que `mariable.fr` est bien une propriété GSC vérifiée.
+3. Confirmer que le sitemap (`generate-sitemap` edge function) liste bien tous les articles (déjà OK selon le contexte précédent).
+4. (Re)soumettre le sitemap via l'API GSC pour forcer un recrawl.
 
-- System prompt = règles du prompt blog SEO Mariable (mem://features/blog-seo-generation-prompt) traduit EN
-- Structured output schema : `{ title, meta_title, meta_description, h1_title, slug, h2_titles[], content (HTML), tags[] }`
-- Modèle : `google/gemini-3-flash-preview` (suffisant et économique pour rédaction longue)
+⚠️ L'API GSC **ne permet pas** de forcer l'indexation URL par URL (l'ancien endpoint `urlNotifications` est réservé aux JobPosting / BroadcastEvent). Le seul levier officiel est :
+- soumission/resoumission du sitemap (que je peux faire),
+- ou clic manuel "Demander l'indexation" dans GSC URL Inspection (à faire par toi, 10 URLs/jour max).
 
-Articles à produire :
+Je te livrerai donc :
+- la confirmation que les ~33 URLs sont dans le sitemap,
+- la resoumission du sitemap auto,
+- la liste des URLs des 5 articles EN à soumettre manuellement en priorité dans GSC URL Inspection (action manuelle, 5 min).
 
-| # | Slug EN | Keyword primaire | Angle |
-|---|---|---|---|
-| 1 | `how-to-plan-a-wedding-in-france` | destination wedding france | Pilier : timeline + équipe + budget + venue finder Mariable |
-| 2 | `best-wedding-venues-france-foreigners` | wedding venues france | Châteaux + Provence + Loire + lien direct vers `/professionnelsmariable` |
-| 3 | `getting-married-in-france-as-a-foreigner` | wedding in france foreigner | Légal civil + symbolique + 28 jours obligatoires |
-| 4 | `wedding-planner-vs-mariable-app` | do i need a wedding planner france | Comparatif 5000€ planner vs 29€ Mariable Premium |
-| 5 | `where-to-get-married-in-france-region-guide` | where to get married in france | Comparatif régions, maille vers les 13 pages `/mariage-*` |
+## Détails techniques
 
-Structure imposée à chaque article :
-- 1500-2200 mots
-- H1 unique, H2 en format question-réponse (≥6)
-- 3-5 liens internes (`/professionnelsmariable`, `/mon-jour-m`, pages régionales)
-- Encart "Mariable's hand-picked vendor book" (CTA carnet d'adresses)
-- Mention Instagram `@mariable.fr` avec lien dans la conclusion
-- 1 FAQ (5 Q/R) en fin d'article → injectée comme `FAQPage` JSON-LD côté `BlogArticle.tsx` (le composant lit déjà `h2_titles`/structure)
-- `tags`: `['destination-wedding', 'france', 'international', 'english']`
-- `category`: `'international-guides'`
+- Aucune migration DB (la colonne `blog_posts.language` existe déjà).
+- Aucun changement RLS, aucun nouveau secret.
+- Fichiers touchés :
+  - `src/pages/Blog.tsx` (filtres + i18n)
+  - `src/pages/auth/Login.tsx`, `src/pages/auth/Register.tsx` (i18n)
+  - `src/i18n/index.ts` (+ resources `blog`, `auth`)
+  - `src/i18n/locales/fr/blog.json`, `src/i18n/locales/en/blog.json`
+  - `src/i18n/locales/fr/auth.json`, `src/i18n/locales/en/auth.json`
+- Respect des règles projet : pas de refacto autre, Playfair / rounded-none / Sage Green conservés, semantic headings inchangés.
 
-#### B.4 — Insertion en base
+## Hors scope (à confirmer si tu les veux ensuite)
 
-Une fois les 5 articles validés (drafts inspectables dans `/tmp/`), insertion via `supabase--insert` :
-- `status = 'published'`
-- `language = 'en'`
-- `published_at = now()`
-- `featured = true` (les 5)
+- Traduction des emails transactionnels d'auth Supabase (templates).
+- Traduction de `ResetPassword.tsx` / `EmailConfirmation.tsx` / `Callback.tsx`.
+- Détection auto de la langue à l'arrivée sur `/conseilsmariage/:slug` EN pour basculer l'UI globale.
 
-#### B.5 — Sitemap + indexation
-
-- Vérifier que `supabase/functions/generate-sitemap/index.ts` inclut bien `blog_posts` toutes langues confondues. Si filtre `language='fr'`, retirer.
-- Après publication : pinger Google via GSC sitemap submit (URL `https://www.mariable.fr/sitemap.xml` déjà soumise → re-submit pour forcer re-crawl).
-
-### Phase C (différée — déjà actée memory) — Renforcement marque
-
-Hors scope de ce plan, à proposer ensuite :
-- CTA persistante "Browse the address book" dans le layout `BlogArticle.tsx`
-- Lien Instagram dans le footer EN
-
-### Fichiers modifiés
-- **Migration** : 1 (ajout colonne `language`)
-- **Script génération** : `/tmp/generate-en-articles.py` (jetable)
-- **Script meta-backfill** : `/tmp/backfill-meta.py` (jetable)
-- **Front** : `src/pages/Blog.tsx` (filtre language)
-- **Détail blog** : `src/pages/BlogArticle.tsx` (hreflang + lang attr + FAQPage JSON-LD si non présent)
-- **Sitemap** : `supabase/functions/generate-sitemap/index.ts` (vérif filtre)
-
-### Validation
-- Tableau récap des 23 meta dans le chat avant insert
-- Pour les 5 articles EN : title + meta + premier H2 affichés dans le chat avant insert (pas tout le corps)
-- Post-publication : test manuel `https://www.mariable.fr/blog/how-to-plan-a-wedding-in-france` → vérif Helmet, JSON-LD, langue
+Confirme-moi et je passe en build.
