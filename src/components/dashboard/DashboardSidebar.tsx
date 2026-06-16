@@ -251,7 +251,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isCalculatriceActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Calculator className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Budget</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.budget')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
@@ -273,7 +273,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isPrestatairesActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Store className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Prestataires</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.vendors')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
             {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
@@ -361,7 +361,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/moodboard') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Palette className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Moodboard</span>
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.moodboard')}</span>
           {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
