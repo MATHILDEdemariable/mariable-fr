@@ -13,6 +13,7 @@ import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
 
 const BudgetPage: React.FC = () => {
+  const { t } = useTranslation('budget');
   const [activeTab, setActiveTab] = useState<string>('calculator');
   const [showTutorial, setShowTutorial] = useState(false);
   const { isPremium, loading: loadingProfile } = useUserProfile();
