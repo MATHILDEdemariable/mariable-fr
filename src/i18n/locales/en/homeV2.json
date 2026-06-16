@@ -35,7 +35,7 @@
     "toolsTitle": "Everything, in a single web space.",
     "tools": [
       "Smart planning timeline",
-      "Real budget & alerts",
+      "Real budget\u00a0",
       "Guest list & RSVP",
       "Interactive seating plan",
       "Wedding-day coordination",
@@ -88,7 +88,7 @@
     "subtitle": "NEXT-GENERATION WEDDING PLANNING — 6 features designed together to support you from the yes to the big day.",
     "cards": [
       { "tag": "Planning", "title": "Smart timeline", "desc": "A personalized timeline based on your date and style. Every task at the right time, nothing forgotten." },
-      { "tag": "Finance", "title": "Real budget & alerts", "desc": "Track your spending vendor by vendor. Get alerted before you go over budget." },
+      { "tag": "Finance", "title": "Real budget\u00a0", "desc": "Track your spending vendor by vendor.\u00a0" },
       { "tag": "Guests", "title": "Guest list & RSVP", "desc": "Manage 200 guests without a spreadsheet. Allergies, plus-ones, lodging — everything in one place." },
       { "tag": "Reception", "title": "Interactive seating plan", "desc": "Drag & drop to seat your guests. Print your plan in one click." },
       { "tag": "Wedding day", "title": "Minute-by-minute coordination", "desc": "Share the day's schedule with your team (witnesses, family, vendors)." },
