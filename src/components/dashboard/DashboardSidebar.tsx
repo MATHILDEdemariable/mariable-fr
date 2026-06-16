@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone, Palette, Globe } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
