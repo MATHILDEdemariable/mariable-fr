@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DashboardSidebar from './DashboardSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -18,6 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation('dashboard');
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
@@ -84,13 +86,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Home className="h-4 w-4 mr-1" />
-              Accueil
+              {t('header.home')}
             </Button>
           </Link>
           <Link to="/professionnelsmariable">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Users className="h-4 w-4 mr-1" />
-              ​Sélection de professionnels                              
+              {t('header.vendorSelection')}
             </Button>
           </Link>
         </div>
@@ -110,7 +112,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <div className="mb-4 p-3 bg-editorial-beige border border-editorial-noir/10 flex items-start gap-3">
                 <Info className="h-5 w-5 text-editorial-noir shrink-0 mt-0.5" />
                 <p className="text-sm text-editorial-noir/80 flex-1">
-                  Pour une meilleure expérience, utilisez un ordinateur ou une tablette pour les modules d'organisation. Seul le module Jour-J est optimisé pour mobile.
+                  {t('banner.mobileTip')}
                 </p>
                 <button
                   onClick={() => {

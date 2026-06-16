@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   LayoutDashboard, 
   CheckSquare, 
@@ -40,33 +41,37 @@ interface NavItem {
   isMain?: boolean;
 }
 
-const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard', isMain: true },
-  { icon: CheckSquare, label: 'Check-list', path: '/dashboard/checklist-mariage', isMain: true },
-  { icon: Calculator, label: 'Budget', path: '/dashboard/budget', isMain: true },
-  { icon: Calendar, label: 'Jour-J', path: '/mon-jour-m', isMain: true },
-];
-
-const drawerNavItems: NavItem[] = [
-  { icon: ClipboardList, label: 'Retroplanning', path: '/dashboard/mon-mariage/retroplanning' },
-  { icon: Users, label: 'RSVP Invités', path: '/dashboard/rsvp' },
-  { icon: Utensils, label: 'Plan de table', path: '/dashboard/seating-plan' },
-  { icon: Hotel, label: 'Logements', path: '/dashboard/accommodations' },
-  { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie' },
-  { icon: Building2, label: 'Mairie', path: '/dashboard/mairie-civil' },
-  { icon: Users, label: 'Prestataires', path: '/dashboard/suivi' },
-  { icon: FileText, label: 'Documents', path: '/dashboard/documents' },
-  { icon: QrCode, label: 'QR Code', path: '/dashboard/qr-code' },
-  { icon: BookOpen, label: 'Guides', path: '/dashboard/guides' },
-];
-
-const bonusItems: NavItem[] = [
-  { icon: Palette, label: 'Moodboard', path: '/dashboard/moodboard' },
-  { icon: Sparkles, label: 'ChatGPT Mariage', path: '/dashboard/chat-gpt-mariage' },
-  { icon: MessageSquare, label: 'Assistant IA', path: '/dashboard/assistant-mariage' },
-];
+const useNavData = () => {
+  const { t } = useTranslation('dashboard');
+  const mainNavItems: NavItem[] = [
+    { icon: LayoutDashboard, label: t('mobileNav.home'), path: '/dashboard', isMain: true },
+    { icon: CheckSquare, label: t('mobileNav.checklist'), path: '/dashboard/checklist-mariage', isMain: true },
+    { icon: Calculator, label: t('mobileNav.budget'), path: '/dashboard/budget', isMain: true },
+    { icon: Calendar, label: t('mobileNav.weddingDay'), path: '/mon-jour-m', isMain: true },
+  ];
+  const drawerNavItems: NavItem[] = [
+    { icon: ClipboardList, label: t('mobileNav.retroplanning'), path: '/dashboard/mon-mariage/retroplanning' },
+    { icon: Users, label: t('mobileNav.rsvp'), path: '/dashboard/rsvp' },
+    { icon: Utensils, label: t('mobileNav.seatingPlan'), path: '/dashboard/seating-plan' },
+    { icon: Hotel, label: t('mobileNav.accommodations'), path: '/dashboard/accommodations' },
+    { icon: Church, label: t('mobileNav.ceremony'), path: '/dashboard/ceremonie' },
+    { icon: Building2, label: t('mobileNav.civil'), path: '/dashboard/mairie-civil' },
+    { icon: Users, label: t('mobileNav.vendors'), path: '/dashboard/suivi' },
+    { icon: FileText, label: t('mobileNav.documents'), path: '/dashboard/documents' },
+    { icon: QrCode, label: t('mobileNav.qrCode'), path: '/dashboard/qr-code' },
+    { icon: BookOpen, label: t('mobileNav.guides'), path: '/dashboard/guides' },
+  ];
+  const bonusItems: NavItem[] = [
+    { icon: Palette, label: t('mobileNav.moodboard'), path: '/dashboard/moodboard' },
+    { icon: Sparkles, label: t('mobileNav.chatGPT'), path: '/dashboard/chat-gpt-mariage' },
+    { icon: MessageSquare, label: t('mobileNav.aiAssistant'), path: '/dashboard/assistant-mariage' },
+  ];
+  return { mainNavItems, drawerNavItems, bonusItems };
+};
 
 const MobileBottomNav: React.FC = () => {
+  const { t } = useTranslation('dashboard');
+  const { mainNavItems, drawerNavItems, bonusItems } = useNavData();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
@@ -120,7 +125,7 @@ const MobileBottomNav: React.FC = () => {
             className="flex flex-col items-center justify-center flex-1 h-full py-2 text-gray-500 transition-colors hover:text-wedding-olive"
           >
             <Menu className="h-5 w-5" />
-            <span className="text-[10px] mt-1 font-medium">Plus</span>
+            <span className="text-[10px] mt-1 font-medium">{t("mobileNav.more")}</span>
           </button>
         </div>
       </nav>
@@ -129,7 +134,7 @@ const MobileBottomNav: React.FC = () => {
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="flex items-center justify-between border-b pb-4">
-            <DrawerTitle className="text-lg font-semibold">Tous les outils</DrawerTitle>
+            <DrawerTitle className="text-lg font-semibold">{t("mobileNav.allTools")}</DrawerTitle>
             <DrawerClose asChild>
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <X className="h-5 w-5" />
@@ -164,7 +169,7 @@ const MobileBottomNav: React.FC = () => {
 
             {/* Bonus Section */}
             <div className="mb-6">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Bonus IA</h3>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t("mobileNav.bonusAi")}</h3>
               <div className="grid grid-cols-2 gap-3">
                 {bonusItems.map((item) => {
                   const Icon = item.icon;
@@ -197,14 +202,14 @@ const MobileBottomNav: React.FC = () => {
                 className="flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"
               >
                 <Settings className="h-5 w-5" />
-                <span className="text-sm font-medium">Paramètres</span>
+                <span className="text-sm font-medium">{t("mobileNav.settings")}</span>
               </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 p-3 rounded-xl text-red-500 hover:bg-red-50 transition-all w-full text-left"
               >
                 <LogOut className="h-5 w-5" />
-                <span className="text-sm font-medium">Déconnexion</span>
+                <span className="text-sm font-medium">{t("mobileNav.logout")}</span>
               </button>
             </div>
           </div>

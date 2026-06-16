@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
@@ -24,6 +25,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 const SeatingPlan = () => {
+  const { t } = useTranslation('seating');
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [guests, setGuests] = useState<SeatingAssignment[]>([]);
@@ -42,8 +44,8 @@ const SeatingPlan = () => {
     showPremiumModal, 
     closePremiumModal 
   } = usePremiumAction({
-    feature: "Plan de table",
-    description: "Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+    feature: t('premium.feature'),
+    description: t('premium.description')
   });
 
   useEffect(() => {
@@ -67,7 +69,7 @@ const SeatingPlan = () => {
       if (!plans || plans.length === 0) {
         const { data: newPlan } = await supabase
           .from('seating_plans')
-          .insert({ user_id: user.id, name: 'Mon Plan de Table' })
+          .insert({ user_id: user.id, name: t('toast.defaultPlanName') })
           .select()
           .single();
         setPlan(newPlan);
@@ -95,8 +97,8 @@ const SeatingPlan = () => {
     } catch (error) {
       console.error('Erreur chargement plan de table:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger le plan de table',
+        title: t('toast.errorTitle'),
+        description: t('toast.loadError'),
         variant: 'destructive'
       });
     } finally {
@@ -123,7 +125,7 @@ const SeatingPlan = () => {
         .eq('id', guestId);
 
       if (error) {
-        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
         return;
       }
 
@@ -155,7 +157,7 @@ const SeatingPlan = () => {
       .eq('id', guestId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
@@ -193,13 +195,13 @@ const SeatingPlan = () => {
       .eq('id', tableId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
       setTables(tables.filter(t => t.id !== tableId));
       setGuests(guests.filter(g => g.table_id !== tableId));
-      toast({ title: 'Table supprimée' });
+      toast({ title: t('toast.tableDeleted') });
     });
   };
 
@@ -210,12 +212,12 @@ const SeatingPlan = () => {
       .eq('id', guestId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
     setGuests(guests.filter(g => g.id !== guestId));
-    toast({ title: 'Invité supprimé' });
+    toast({ title: t('toast.guestDeleted') });
   };
 
   const handleDeleteAllUnassignedGuests = async () => {
@@ -228,12 +230,12 @@ const SeatingPlan = () => {
       .in('id', unassigned.map(g => g.id));
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
     setGuests(guests.filter(g => g.table_id));
-    toast({ title: `${unassigned.length} invité(s) supprimé(s)` });
+    toast({ title: t('toast.guestsDeleted', { count: unassigned.length }) });
   };
 
   const unassignedGuests = guests.filter(g => !g.table_id);
@@ -244,7 +246,7 @@ const SeatingPlan = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Chargement du plan de table...</p>
+          <p className=\"text-muted-foreground\">{t('page.loading')}</p>
         </div>
       </div>
     );
@@ -253,16 +255,16 @@ const SeatingPlan = () => {
   return (
     <>
       <Helmet>
-        <title>Plan de Table - Mariable</title>
-        <meta name="description" content="Organisez votre plan de table de mariage" />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
 
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-serif text-foreground">Plan de Table</h1>
+            <h1 className="text-3xl font-serif text-foreground">{t('page.title')}</h1>
             <p className="text-muted-foreground mt-1">
-              Organisez vos invités avec drag & drop <Badge variant="secondary" className="ml-2">BETA</Badge>
+              {t('page.subtitle')} <Badge variant="secondary" className="ml-2">BETA</Badge>
             </p>
           </div>
         </div>
@@ -271,12 +273,10 @@ const SeatingPlan = () => {
         <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
           <TabsList className="bg-gray-100 border border-gray-300">
             <TabsTrigger value="list" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
-              <List className="h-4 w-4 mr-2" />
-              Liste
+              <List className="h-4 w-4 mr-2" />{t('tabs.list')}
             </TabsTrigger>
             <TabsTrigger value="visual" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
-              <LayoutGrid className="h-4 w-4 mr-2" />
-              Vue Visuelle
+              <LayoutGrid className="h-4 w-4 mr-2" />{t('tabs.visual')}
             </TabsTrigger>
           </TabsList>
 
@@ -288,24 +288,19 @@ const SeatingPlan = () => {
                 <div className="col-span-12 lg:col-span-3 space-y-4">
                   <div className="space-y-2">
                     <Button onClick={handleAddTable} className="w-full">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Nouvelle Table
+                      <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
-                      <Users className="h-4 w-4 mr-2" />
-                      Importer depuis RSVP
+                      <Users className="h-4 w-4 mr-2" />{t('actions.importRsvp')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportGuestList(true))} variant="outline" className="w-full">
-                      <Users className="h-4 w-4 mr-2" />
-                      Importer liste manuelle
+                      <Users className="h-4 w-4 mr-2" />{t('actions.importManual')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
-                      <FileSpreadsheet className="h-4 w-4 mr-2" />
-                      Importer CSV
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />{t('actions.importCsv')}
                     </Button>
                     <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
-                      <Play className="h-4 w-4 mr-2" />
-                      Tuto vidéo
+                      <Play className="h-4 w-4 mr-2" />{t('actions.tutorial')}
                     </Button>
                     <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                   </div>
@@ -348,8 +343,7 @@ const SeatingPlan = () => {
               <div className="col-span-12 lg:col-span-3 space-y-4">
                 <div className="space-y-2">
                   <Button onClick={handleAddTable} className="w-full">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle Table
+                    <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                   <ExportVisualPDFButton />
@@ -424,8 +418,8 @@ const SeatingPlan = () => {
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Plan de table"
-        description="Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+        feature={t('premium.feature')}
+        description={t('premium.description')}
       />
     </>
   );

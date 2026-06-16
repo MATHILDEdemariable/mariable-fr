@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut, Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins, ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift, Sparkles, ShoppingCart, Building2, Smartphone, Palette, Globe } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -14,90 +15,91 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   isReaderMode = false
 }) => {
   const location = useLocation();
+  const { t } = useTranslation('dashboard');
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
 
   // Menu déroulant Tableau de bord
   const dashboardItems = [{
-    label: 'Tableau de bord',
+    label: t('sidebar.dashboardHome'),
     icon: <LayoutDashboard className="h-4 w-4" />,
     path: '/dashboard'
   }, {
-    label: 'Mon Mariage',
+    label: t('sidebar.myWedding'),
     icon: <Heart className="h-4 w-4" />,
     path: '/dashboard/mon-mariage'
   }];
 
   // Menu déroulant Check-list
   const checklistItems = [{
-    label: 'En 10 étapes',
+    label: t('sidebar.checklistSteps'),
     icon: <CheckSquare className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=etapes'
   }, {
-    label: 'Check-list manuelle',
+    label: t('sidebar.checklistManual'),
     icon: <ListChecks className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=manuelle'
   }, {
-    label: 'Check-list intelligente',
+    label: t('sidebar.checklistSmart'),
     icon: <Lightbulb className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=intelligente'
   }];
 
   // Menu déroulant Calculatrice
   const calculatriceItems = [{
-    label: 'Calculatrice Budget',
+    label: t('sidebar.budgetCalculator'),
     icon: <Coins className="h-4 w-4" />,
     path: '/dashboard/budget'
   }, {
-    label: 'Calculatrice Boisson',
+    label: t('sidebar.drinksCalculator'),
     icon: <Wine className="h-4 w-4" />,
     path: '/dashboard/drinks'
   }];
 
   // Menu déroulant Prestataires
   const prestatairesItems = [{
-    label: 'Tous les prestataires',
+    label: t('sidebar.vendorsAll'),
     icon: <Store className="h-4 w-4" />,
     path: '/professionnelsmariable'
   }, {
-    label: 'Mon panier',
+    label: t('sidebar.vendorsCart'),
     icon: <ShoppingCart className="h-4 w-4" />,
     path: '/dashboard/panier'
   }, {
-    label: 'Suivi',
+    label: t('sidebar.vendorsTracking'),
     icon: <Settings className="h-4 w-4" />,
     path: '/dashboard/suivi'
   }, {
-    label: 'Mes messages',
+    label: t('sidebar.vendorsMessages'),
     icon: <MessageSquare className="h-4 w-4" />,
     path: '/dashboard/messages'
   }];
 
-  // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
+  // Menu déroulant Jour-J
   const jourMItems = [{
-    label: 'Planning Jour-J',
+    label: t('sidebar.weddingDayPlanning'),
     icon: <Calendar className="h-4 w-4" />,
     path: '/mon-jour-m'
   }, {
-    label: 'Coordinateurs',
+    label: t('sidebar.weddingDayCoordinators'),
     icon: <Users className="h-4 w-4" />,
     path: '/dashboard/coordinateurs'
   }];
 
   // Menu déroulant Bonus
   const bonusItems = [{
-    label: 'Moodboard',
+    label: t('sidebar.moodboard'),
     icon: <Palette className="h-4 w-4" />,
     path: '/dashboard/moodboard',
     external: false
   }, {
-    label: 'ChatGPT Mariage',
+    label: t('sidebar.bonusChatGPT'),
     icon: <MessageSquare className="h-4 w-4" />,
     path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
     external: true
   }, {
-    label: 'Assistant Virtuel',
+    label: t('sidebar.bonusAssistant'),
     icon: <MessageCircleQuestion className="h-4 w-4" />,
     path: '/dashboard/assistant',
     external: false
@@ -186,7 +188,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
     paddingTop: 'var(--header-h)'
   }}>
       <div className="flex items-center px-4 sm:px-6 py-3 sm:py-4">
-        <span className="font-bold text-lg sm:text-xl">Mon espace</span>
+        <span className="font-bold text-lg sm:text-xl">{t('header.myWorkspace')}</span>
       </div>
       
       <nav className="py-2 sm:py-4 px-2 sm:px-3 space-y-1">
@@ -194,9 +196,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isDashboardActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <LayoutDashboard className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Tableau de bord</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.dashboard')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {dashboardItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -216,9 +218,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isChecklistActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <CheckSquare className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Check-list</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.checklist')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {checklistItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -241,17 +243,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/mon-mariage/retroplanning') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Calendar className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Retroplanning</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.retroplanning')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Menu déroulant Calculatrice */}
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isCalculatriceActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Calculator className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Budget</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.budget')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {calculatriceItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -271,9 +273,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isPrestatairesActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Store className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Prestataires</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.vendors')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {prestatairesItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -294,10 +296,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isJourMActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Planning Jour-J</span>
-            <span className="ml-2 px-1.5 py-0.5 text-xs bg-wedding-olive text-white rounded-full font-semibold">Exclusif</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.weddingDay')}</span>
+            <span className="ml-2 px-1.5 py-0.5 text-xs bg-wedding-olive text-white rounded-full font-semibold">{t('header.exclusive')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {jourMItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -321,10 +323,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isRSVPActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <UserCheck className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
-            RSVP Invités
-            
+            {t('sidebar.rsvp')}
           </span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Gestion des logements */}
@@ -335,10 +336,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isAccommodationsActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Home className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight flex items-center gap-1.5">
-            Gestion des logements
-            
+            {t('sidebar.accommodations')}
           </span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Plan de table */}
@@ -349,9 +349,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isSeatingPlanActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Table className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">
-            Plan de table
+            {t('sidebar.seatingPlan')}
           </span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Moodboard */}
@@ -361,8 +361,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/moodboard') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Palette className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Moodboard</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.moodboard')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Site Internet */}
@@ -375,7 +375,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
           )}
         >
           <Globe className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Site Internet</span>
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.website')}</span>
         </button>
 
         {/* Cérémonie Laïque */}
@@ -385,8 +385,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/ceremonie') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Heart className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Cérémonie</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Mairie - Civil */}
@@ -396,8 +396,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/mairie-civil') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Building2 className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Mairie - Civil</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Générateur QR Code */}
@@ -407,9 +407,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isQRCodeActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <QrCode className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Liste de mariage
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.qrCode')}
         </span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Documents */}
@@ -419,8 +419,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/documents') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <FileText className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Documents</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.documents')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Après le jour-J */}
@@ -430,17 +430,17 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isApresJourJActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <CheckSquare className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Après le jour-J</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.afterDay')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Menu déroulant Bonus */}
         <DropdownMenu>
           <DropdownMenuTrigger className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors w-full justify-start", isBonusActive() ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')} disabled={isReaderMode}>
             <Gift className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">Bonus</span>
+            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.bonus')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
-            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+            {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
           </DropdownMenuTrigger>
           <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
             {bonusItems.map(subItem => <DropdownMenuItem key={subItem.path} asChild>
@@ -472,8 +472,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/guides') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <FileText className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Guides PDF</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.guidesPdf')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
 
@@ -484,14 +484,14 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         }
       }} className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/settings') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive', isReaderMode ? 'pointer-events-none opacity-70' : '')}>
           <Settings className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Paramètres</span>
-          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">(Lecture seule)</span>}
+          <span className="ml-2 sm:ml-3 leading-tight">{t('header.settings')}</span>
+          {isReaderMode && <span className="ml-auto text-xs text-gray-400 hidden sm:inline">{t('header.readOnly')}</span>}
         </Link>
 
         {/* Installer l'app */}
         <Link to="/dashboard/installer-app" className={cn("flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors", isActive('/dashboard/installer-app') ? 'bg-wedding-olive text-white shadow-sm' : 'text-gray-600 hover:bg-wedding-olive/10 hover:text-wedding-olive')}>
           <Smartphone className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">Installer l'app</span>
+          <span className="ml-2 sm:ml-3 leading-tight">{t('header.installApp')}</span>
         </Link>
 
       </nav>
@@ -506,20 +506,20 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
         {/* Un problème ? */}
         <button onClick={() => setShowProblemModal(true)} className="flex items-center w-full px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md transition-colors text-gray-600 hover:bg-red-50 hover:text-red-600 border border-transparent hover:border-red-200 mt-2">
           <AlertCircle className="h-4 w-4 text-red-500" />
-          <span className="ml-2 sm:ml-3 leading-tight">Un problème ?</span>
+          <span className="ml-2 sm:ml-3 leading-tight">{t('header.reportIssue')}</span>
         </button>
       </div>
       
       <div className="px-2 sm:px-3 py-2">
         <button onClick={handleLogout} className="flex items-center px-2 sm:px-3 py-2 sm:py-2.5 text-xs sm:text-sm font-medium rounded-md text-gray-600 hover:bg-gray-100 w-full justify-start" disabled={isReaderMode}>
           <LogOut className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3">Déconnexion</span>
+          <span className="ml-2 sm:ml-3">{t('header.logout')}</span>
         </button>
       </div>
       
       {isReaderMode && <div className="px-2 sm:px-3 py-4 mt-auto border-t border-gray-200">
           <div className="bg-wedding-olive/10 p-3 rounded-md text-xs text-gray-700">
-            Vous êtes en mode lecture seule. Les modifications ne sont pas possibles dans ce mode.
+            {t('header.readOnlyBanner')}
           </div>
         </div>}
       

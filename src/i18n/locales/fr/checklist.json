@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Check-list Mariage | Mariable",
+    "description": "Gérez votre check-list de mariage avec nos outils interactifs"
+  },
+  "page": {
+    "title": "Check-list Mariage",
+    "subtitle": "Organisez votre mariage avec nos outils de check-list",
+    "tutorial": "Tuto vidéo"
+  },
+  "tabs": {
+    "stepsShort": "10 Étapes",
+    "stepsLong": "En 10 étapes",
+    "manualShort": "Manuelle",
+    "manualLong": "Check-list manuelle",
+    "smartShort": "IA",
+    "smartLong": "Check-list intelligente"
+  },
+  "cards": {
+    "stepsTitle": "Checklist en 10 étapes essentielles",
+    "manualTitle": "Checklist personnalisable",
+    "smartTitle": "Checklist générée par IA"
+  }
+}

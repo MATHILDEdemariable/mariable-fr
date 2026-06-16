@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const ChecklistMariagePage: React.FC = () => {
+  const { t } = useTranslation('checklist');
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('etapes');
@@ -33,16 +35,16 @@ const ChecklistMariagePage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Check-list Mariage | Mariable</title>
-        <meta name="description" content="Gérez votre check-list de mariage avec nos outils interactifs" />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
       
       <div className="space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold text-foreground mb-2">Check-list Mariage</h1>
+            <h1 className="text-3xl font-bold text-foreground mb-2">{t('page.title')}</h1>
             <p className="text-muted-foreground">
-              Organisez votre mariage avec nos outils de check-list
+              {t('page.subtitle')}
             </p>
           </div>
           <Button
@@ -52,7 +54,7 @@ const ChecklistMariagePage: React.FC = () => {
             className="flex items-center gap-2"
           >
             <Play className="h-4 w-4" />
-            Tuto vidéo
+            {t('page.tutorial')}
           </Button>
         </div>
 
@@ -62,26 +64,26 @@ const ChecklistMariagePage: React.FC = () => {
               value="etapes"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              {isMobile ? '10 Étapes' : 'En 10 étapes'}
+              {isMobile ? t('tabs.stepsShort') : t('tabs.stepsLong')}
             </TabsTrigger>
             <TabsTrigger 
               value="manuelle"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              {isMobile ? 'Manuelle' : 'Check-list manuelle'}
+              {isMobile ? t('tabs.manualShort') : t('tabs.manualLong')}
             </TabsTrigger>
             <TabsTrigger 
               value="intelligente"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
-              {isMobile ? 'IA' : 'Check-list intelligente'}
+              {isMobile ? t('tabs.smartShort') : t('tabs.smartLong')}
             </TabsTrigger>
           </TabsList>
           
           <TabsContent value="etapes" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Checklist en 10 étapes essentielles</CardTitle>
+                <CardTitle>{t('cards.stepsTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ChecklistDixEtapes />
@@ -92,7 +94,7 @@ const ChecklistMariagePage: React.FC = () => {
           <TabsContent value="manuelle" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Checklist personnalisable</CardTitle>
+                <CardTitle>{t('cards.manualTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ChecklistMariageManuelle />
@@ -103,7 +105,7 @@ const ChecklistMariagePage: React.FC = () => {
           <TabsContent value="intelligente" className="space-y-6">
             <Card>
               <CardHeader>
-                <CardTitle>Checklist générée par IA</CardTitle>
+                <CardTitle>{t('cards.smartTitle')}</CardTitle>
               </CardHeader>
               <CardContent>
                 <ChecklistIntelligente />

@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "title": "Wedding Checklist | Mariable",
+    "description": "Manage your wedding checklist with our interactive tools"
+  },
+  "page": {
+    "title": "Wedding Checklist",
+    "subtitle": "Plan your wedding with our checklist tools",
+    "tutorial": "Video tutorial"
+  },
+  "tabs": {
+    "stepsShort": "10 Steps",
+    "stepsLong": "In 10 steps",
+    "manualShort": "Manual",
+    "manualLong": "Manual checklist",
+    "smartShort": "AI",
+    "smartLong": "Smart checklist"
+  },
+  "cards": {
+    "stepsTitle": "Checklist in 10 essential steps",
+    "manualTitle": "Customizable checklist",
+    "smartTitle": "AI-generated checklist"
+  }
+}
