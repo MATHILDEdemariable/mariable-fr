@@ -39,10 +39,6 @@ export default function PricingHighlight() {
           <div className="mt-12 pt-10 border-t border-editorial-noir/15">
             <p className="italic text-editorial-noir/75 text-base md:text-lg leading-relaxed">
               <Trans i18nKey="pricing.compareLine1" ns="homeV2" components={{ strong: <strong /> }} />
-              <br />
-              <span className="text-editorial-olive font-medium not-italic">
-                {t('pricing.compareLine2')}
-              </span>
             </p>
           </div>
         </div>
