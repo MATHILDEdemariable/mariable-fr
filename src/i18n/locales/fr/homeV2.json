@@ -35,7 +35,7 @@
     "toolsTitle": "Tout, dans un seul espace web.",
     "tools": [
       "Rétroplanning intelligent",
-      "Budget réel & alertes",
+      "Budget réel\u00a0",
       "Liste invités & RSVP",
       "Plan de table interactif",
       "Coordination Jour J",
@@ -88,7 +88,7 @@
     "subtitle": "WEDDING PLANNING NOUVELLE GENERATION — 6 fonctionnalités pensées ensemble pour t'accompagner du oui au jour J.",
     "cards": [
       { "tag": "Planification", "title": "Rétroplanning intelligent", "desc": "Une timeline personnalisée selon ta date et ton style. Chaque tâche au bon moment, sans oubli." },
-      { "tag": "Finances", "title": "Budget réel & alertes", "desc": "Suis tes dépenses prestataire par prestataire. Reçois une alerte avant de dépasser." },
+      { "tag": "Finances", "title": "Budget réel\u00a0", "desc": "Suis tes dépenses prestataire par prestataire.\u00a0" },
       { "tag": "Invités", "title": "Liste invités & RSVP", "desc": "Gère 200 invités sans tableau Excel. Allergies, plus-ones, hébergement — tout est là." },
       { "tag": "Réception", "title": "Plan de table interactif", "desc": "Drag & drop pour placer tes invités. Imprime ton plan en un clic." },
       { "tag": "Jour J", "title": "Coordination minute par minute", "desc": "Le déroulé du jour J partagé avec ton équipe (témoins, famille, prestataires)." },
