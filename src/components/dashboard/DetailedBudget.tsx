@@ -511,14 +511,14 @@ const DetailedBudget: React.FC = () => {
       document.body.removeChild(link);
 
       toast({
-        title: "Export réussi",
-        description: "Le budget a été exporté en CSV"
+        title: t('detailed.toasts.csvSuccess.title'),
+        description: t('detailed.toasts.csvSuccess.description'),
       });
     } catch (error) {
       console.error("Erreur lors de l'export CSV:", error);
       toast({
-        title: "Erreur d'export",
-        description: "Une erreur s'est produite lors de l'export en CSV",
+        title: t('detailed.toasts.csvError.title'),
+        description: t('detailed.toasts.csvError.description'),
         variant: "destructive"
       });
     }
