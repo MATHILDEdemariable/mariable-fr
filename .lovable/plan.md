@@ -1,74 +1,63 @@
-## 1. Page `/conseilsmariage` — filtres FR / International
+## Objectif
 
-Remplacer le filtre par catégorie (Administratif, Conseils, Guides pratiques…) par un filtre binaire basé sur la langue de l'article :
+Rendre le toggle EN/FR fonctionnel sur tout `/dashboard` pour :
+1. **Chrome** : sidebar, mobile bottom nav, header, bannières, modales d'onboarding, boutons "Accueil / Sélection de professionnels", titres et meta `<Helmet>` des pages dashboard.
+2. **3 pages prioritaires entièrement traduites** : Budget, Plan de table (Seating), Checklist mariage.
 
-- **Tous** (par défaut)
-- **Français** → `language = 'fr'` (ou null pour les anciens articles)
-- **International (English guides)** → `language = 'en'`
+Le toggle EN/FR existe déjà dans `PremiumHeader` (utilisé par `DashboardLayout`) → aucune nouvelle UI à créer, on branche juste les clés.
 
-Implémentation dans `src/pages/Blog.tsx` :
-- Remplacer le `<Select>` actuel par un groupe de 3 boutons / Tabs (style éditorial, cohérent avec la charte sage green / rounded-none).
-- `state` : `'all' | 'fr' | 'en'`.
-- Filtre : `posts.filter(p => filter === 'all' || (p.language ?? 'fr') === filter)`.
-- Afficher un petit badge "EN" sur les cards des articles internationaux (au lieu du badge catégorie actuel) pour clarifier.
+**Hors scope** (V1) : autres pages dashboard (Planning, Mon Jour-M, Invités, Moodboard, Guides PDF, RSVP, Drinks, Coordination, etc.) — elles restent en FR mais la langue est mémorisée et le toggle visible partout. Contenus dynamiques DB (noms prestataires, tâches générées par IA, descriptions) → restent dans leur langue d'origine.
 
-## 2. Traduire la page `/conseilsmariage` (core) FR/EN
+## Architecture i18n (réutilise l'existant)
 
-Ajouter un namespace `blog` (fr + en) à `src/i18n/locales/{fr,en}/blog.json` avec les clés du core de la page :
-- `hero.backHome`, `hero.title`, `hero.subtitle`
-- `filter.all`, `filter.fr`, `filter.en`
-- `card.readArticle`, `card.minutes`
-- `empty.noneInCategory`, `empty.noPosts`
-- `newsletter.title`, `newsletter.subtitle`, `newsletter.cta`
-- `loading`, `error`
+`react-i18next` est déjà configuré (`src/i18n/index.ts`) avec `localStorage: mariable_lang`. On ajoute **3 nouveaux namespaces** :
 
-Brancher `useTranslation('blog')` dans `Blog.tsx` et enregistrer le namespace dans `src/i18n/index.ts`. Le contenu des articles (titre/contenu) reste dans la langue de l'article — seul le chrome est traduit.
+```
+src/i18n/locales/{fr,en}/
+  dashboard.json     ← chrome partagé (sidebar, mobile nav, bannières, boutons globaux, helmet titles)
+  budget.json        ← page Budget complète
+  seating.json       ← Plan de table complet
+  checklist.json     ← Checklist mariage complète
+```
 
-Note : la page d'un article (`BlogPost.tsx`) gère déjà `lang="en"` via Helmet — pas de changement nécessaire ici.
+Enregistrement dans `src/i18n/index.ts` (ajout aux imports, à `resources`, à `ns: [...]`).
 
-## 3. Traduire `/register` et `/login` (sign-in) FR/EN
+## Pages & composants à modifier
 
-Ajouter namespace `auth` (fr + en) couvrant :
-- Login : titre, sous-titre, labels email/password, "mot de passe oublié", bouton connexion, lien vers register, messages d'erreur génériques.
-- Register : titre, labels (nom, email, password, confirm), CGU, bouton inscription, lien vers login, message de confirmation email.
-- Composants partagés du flow auth si réutilisés (ex. callback / email confirmation : hors scope sauf si trivial).
+**Chrome (namespace `dashboard`)**
+- `src/components/dashboard/DashboardLayout.tsx` — boutons "Accueil", "Sélection de professionnels", bannière mobile, alt textes.
+- `src/components/dashboard/DashboardSidebar.tsx` — labels de navigation.
+- `src/components/dashboard/MobileBottomNav.tsx` — labels mobile.
+- `src/components/dashboard/SatisfactionModal.tsx` — textes modale (titres/CTA).
+- Titres `<Helmet>` génériques des pages dashboard (CoordinatorsPage, GuidesPage, etc.) — uniquement le `<title>` et `<meta description>`, pour cohérence SEO/onglet.
 
-Brancher `useTranslation('auth')` dans `src/pages/auth/Register.tsx` et `src/pages/auth/Login.tsx`. Pas de changement de logique métier (Supabase auth inchangé).
+**Pages prioritaires entièrement traduites**
+- `src/pages/dashboard/BudgetPage.tsx` + `src/components/dashboard/BudgetCalculator.tsx` + `BudgetSummary.tsx` + `DetailedBudget.tsx` (namespace `budget`).
+- `src/pages/SeatingPlan.tsx` + composants enfants de plan de table (namespace `seating`). À vérifier au moment de l'implémentation : lister les sous-composants utilisés et les traduire ensemble.
+- `src/pages/dashboard/ChecklistMariagePage.tsx` + `ChecklistMariageManuelle.tsx` + `ChecklistIntelligente.tsx` + `ChecklistDixEtapes.tsx` + `TasksList.tsx` (namespace `checklist`).
 
-## 4. Indexation Google Search Console
+Pour chaque composant : remplacer les chaînes FR en dur par `t('cle.explicite')` (convention métier, pas d'abréviations).
 
-Je peux automatiser via le connecteur Google Search Console déjà disponible :
+## Règles & garde-fous
 
-1. Lister les articles publiés (`blog_posts` where `status='published'`) → construire toutes les URLs `https://mariable.fr/conseilsmariage/{slug}`.
-2. Vérifier que `mariable.fr` est bien une propriété GSC vérifiée.
-3. Confirmer que le sitemap (`generate-sitemap` edge function) liste bien tous les articles (déjà OK selon le contexte précédent).
-4. (Re)soumettre le sitemap via l'API GSC pour forcer un recrawl.
+- **Ne pas toucher** à la logique métier, aux requêtes Supabase, aux exports PDF (les PDF restent en FR — c'est cohérent avec un produit FR-first et évite de refondre `budgetExportService` / `seating` export).
+- **Contenus DB** non traduits : descriptions, noms, tâches générées par IA s'affichent tels quels.
+- **Boutons toast/erreurs** des 3 pages prioritaires : traduits. Toasts des pages hors scope : restent en FR.
+- **Clés i18n** : convention `page.section.element` (ex: `budget.summary.totalEstimated`, `checklist.task.markDone`).
+- **Pluriels** : utiliser la syntaxe i18next `key_one` / `key_other` quand pertinent (ex: nb invités, nb tâches).
+- **Dates et nombres** : formater via `Intl.DateTimeFormat(i18n.language)` / `Intl.NumberFormat` pour budget (€ reste affiché, séparateurs adaptés).
 
-⚠️ L'API GSC **ne permet pas** de forcer l'indexation URL par URL (l'ancien endpoint `urlNotifications` est réservé aux JobPosting / BroadcastEvent). Le seul levier officiel est :
-- soumission/resoumission du sitemap (que je peux faire),
-- ou clic manuel "Demander l'indexation" dans GSC URL Inspection (à faire par toi, 10 URLs/jour max).
+## Livrables
 
-Je te livrerai donc :
-- la confirmation que les ~33 URLs sont dans le sitemap,
-- la resoumission du sitemap auto,
-- la liste des URLs des 5 articles EN à soumettre manuellement en priorité dans GSC URL Inspection (action manuelle, 5 min).
+1. 8 fichiers JSON (`fr` + `en` × 4 namespaces).
+2. `src/i18n/index.ts` : enregistrement des namespaces.
+3. Chrome dashboard traduit (4-5 composants).
+4. 3 pages prioritaires + sous-composants traduits.
+5. Vérification manuelle : toggle EN dans le header → sidebar/mobile-nav/3 pages basculent ; reload → langue persistée ; les autres pages dashboard restent lisibles (FR par défaut, pas d'erreurs).
 
-## Détails techniques
+## Hors scope explicite (à traiter dans une V2 si besoin)
 
-- Aucune migration DB (la colonne `blog_posts.language` existe déjà).
-- Aucun changement RLS, aucun nouveau secret.
-- Fichiers touchés :
-  - `src/pages/Blog.tsx` (filtres + i18n)
-  - `src/pages/auth/Login.tsx`, `src/pages/auth/Register.tsx` (i18n)
-  - `src/i18n/index.ts` (+ resources `blog`, `auth`)
-  - `src/i18n/locales/fr/blog.json`, `src/i18n/locales/en/blog.json`
-  - `src/i18n/locales/fr/auth.json`, `src/i18n/locales/en/auth.json`
-- Respect des règles projet : pas de refacto autre, Playfair / rounded-none / Sage Green conservés, semantic headings inchangés.
-
-## Hors scope (à confirmer si tu les veux ensuite)
-
-- Traduction des emails transactionnels d'auth Supabase (templates).
-- Traduction de `ResetPassword.tsx` / `EmailConfirmation.tsx` / `Callback.tsx`.
-- Détection auto de la langue à l'arrivée sur `/conseilsmariage/:slug` EN pour basculer l'UI globale.
-
-Confirme-moi et je passe en build.
+- Pages dashboard : Planning, Mon Jour-M (et sous-pages), Invités/RSVP, Moodboard, Guides PDF, Drinks Calculator, Coordination, Documents, Hébergements, QR Code, Wishlist, Messages, etc.
+- Traduction des exports PDF (budget, plan de table, checklist).
+- Traduction des contenus DB / IA.
+- Emails transactionnels dashboard.
