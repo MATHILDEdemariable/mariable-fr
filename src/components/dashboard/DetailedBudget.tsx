@@ -200,8 +200,8 @@ const DetailedBudget: React.FC = () => {
     onError: (error) => {
       console.error("Error deleting budget item:", error);
       toast({
-        title: "Erreur de suppression",
-        description: "Impossible de supprimer l'élément.",
+        title: t('detailed.toasts.deleteError.title'),
+        description: t('detailed.toasts.deleteError.description'),
         variant: "destructive",
       });
     }
