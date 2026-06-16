@@ -246,7 +246,7 @@ const SeatingPlan = () => {
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4" />
-          <p className="text-muted-foreground">Chargement du plan de table...</p>
+          <p className=\"text-muted-foreground\">{t('page.loading')}</p>
         </div>
       </div>
     );
@@ -273,12 +273,10 @@ const SeatingPlan = () => {
         <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
           <TabsList className="bg-gray-100 border border-gray-300">
             <TabsTrigger value="list" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
-              <List className="h-4 w-4 mr-2" />
-              Liste
+              <List className="h-4 w-4 mr-2" />{t('tabs.list')}
             </TabsTrigger>
             <TabsTrigger value="visual" className="data-[state=active]:bg-black data-[state=active]:text-white font-medium">
-              <LayoutGrid className="h-4 w-4 mr-2" />
-              Vue Visuelle
+              <LayoutGrid className="h-4 w-4 mr-2" />{t('tabs.visual')}
             </TabsTrigger>
           </TabsList>
 
@@ -290,24 +288,19 @@ const SeatingPlan = () => {
                 <div className="col-span-12 lg:col-span-3 space-y-4">
                   <div className="space-y-2">
                     <Button onClick={handleAddTable} className="w-full">
-                      <Plus className="h-4 w-4 mr-2" />
-                      Nouvelle Table
+                      <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
-                      <Users className="h-4 w-4 mr-2" />
-                      Importer depuis RSVP
+                      <Users className="h-4 w-4 mr-2" />{t('actions.importRsvp')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportGuestList(true))} variant="outline" className="w-full">
-                      <Users className="h-4 w-4 mr-2" />
-                      Importer liste manuelle
+                      <Users className="h-4 w-4 mr-2" />{t('actions.importManual')}
                     </Button>
                     <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
-                      <FileSpreadsheet className="h-4 w-4 mr-2" />
-                      Importer CSV
+                      <FileSpreadsheet className="h-4 w-4 mr-2" />{t('actions.importCsv')}
                     </Button>
                     <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
-                      <Play className="h-4 w-4 mr-2" />
-                      Tuto vidéo
+                      <Play className="h-4 w-4 mr-2" />{t('actions.tutorial')}
                     </Button>
                     <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                   </div>
@@ -350,8 +343,7 @@ const SeatingPlan = () => {
               <div className="col-span-12 lg:col-span-3 space-y-4">
                 <div className="space-y-2">
                   <Button onClick={handleAddTable} className="w-full">
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nouvelle Table
+                    <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                   <ExportVisualPDFButton />
