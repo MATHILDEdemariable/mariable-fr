@@ -15,90 +15,91 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({
   isReaderMode = false
 }) => {
   const location = useLocation();
+  const { t } = useTranslation('dashboard');
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
 
   // Menu déroulant Tableau de bord
   const dashboardItems = [{
-    label: 'Tableau de bord',
+    label: t('sidebar.dashboardHome'),
     icon: <LayoutDashboard className="h-4 w-4" />,
     path: '/dashboard'
   }, {
-    label: 'Mon Mariage',
+    label: t('sidebar.myWedding'),
     icon: <Heart className="h-4 w-4" />,
     path: '/dashboard/mon-mariage'
   }];
 
   // Menu déroulant Check-list
   const checklistItems = [{
-    label: 'En 10 étapes',
+    label: t('sidebar.checklistSteps'),
     icon: <CheckSquare className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=etapes'
   }, {
-    label: 'Check-list manuelle',
+    label: t('sidebar.checklistManual'),
     icon: <ListChecks className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=manuelle'
   }, {
-    label: 'Check-list intelligente',
+    label: t('sidebar.checklistSmart'),
     icon: <Lightbulb className="h-4 w-4" />,
     path: '/dashboard/checklist-mariage?tab=intelligente'
   }];
 
   // Menu déroulant Calculatrice
   const calculatriceItems = [{
-    label: 'Calculatrice Budget',
+    label: t('sidebar.budgetCalculator'),
     icon: <Coins className="h-4 w-4" />,
     path: '/dashboard/budget'
   }, {
-    label: 'Calculatrice Boisson',
+    label: t('sidebar.drinksCalculator'),
     icon: <Wine className="h-4 w-4" />,
     path: '/dashboard/drinks'
   }];
 
   // Menu déroulant Prestataires
   const prestatairesItems = [{
-    label: 'Tous les prestataires',
+    label: t('sidebar.vendorsAll'),
     icon: <Store className="h-4 w-4" />,
     path: '/professionnelsmariable'
   }, {
-    label: 'Mon panier',
+    label: t('sidebar.vendorsCart'),
     icon: <ShoppingCart className="h-4 w-4" />,
     path: '/dashboard/panier'
   }, {
-    label: 'Suivi',
+    label: t('sidebar.vendorsTracking'),
     icon: <Settings className="h-4 w-4" />,
     path: '/dashboard/suivi'
   }, {
-    label: 'Mes messages',
+    label: t('sidebar.vendorsMessages'),
     icon: <MessageSquare className="h-4 w-4" />,
     path: '/dashboard/messages'
   }];
 
-  // Menu déroulant Jour-J (seulement Jour-J et Coordinateurs)
+  // Menu déroulant Jour-J
   const jourMItems = [{
-    label: 'Planning Jour-J',
+    label: t('sidebar.weddingDayPlanning'),
     icon: <Calendar className="h-4 w-4" />,
     path: '/mon-jour-m'
   }, {
-    label: 'Coordinateurs',
+    label: t('sidebar.weddingDayCoordinators'),
     icon: <Users className="h-4 w-4" />,
     path: '/dashboard/coordinateurs'
   }];
 
   // Menu déroulant Bonus
   const bonusItems = [{
-    label: 'Moodboard',
+    label: t('sidebar.moodboard'),
     icon: <Palette className="h-4 w-4" />,
     path: '/dashboard/moodboard',
     external: false
   }, {
-    label: 'ChatGPT Mariage',
+    label: t('sidebar.bonusChatGPT'),
     icon: <MessageSquare className="h-4 w-4" />,
     path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable',
     external: true
   }, {
-    label: 'Assistant Virtuel',
+    label: t('sidebar.bonusAssistant'),
     icon: <MessageCircleQuestion className="h-4 w-4" />,
     path: '/dashboard/assistant',
     external: false
