@@ -41,31 +41,33 @@ interface NavItem {
   isMain?: boolean;
 }
 
-const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard', isMain: true },
-  { icon: CheckSquare, label: 'Check-list', path: '/dashboard/checklist-mariage', isMain: true },
-  { icon: Calculator, label: 'Budget', path: '/dashboard/budget', isMain: true },
-  { icon: Calendar, label: 'Jour-J', path: '/mon-jour-m', isMain: true },
-];
-
-const drawerNavItems: NavItem[] = [
-  { icon: ClipboardList, label: 'Retroplanning', path: '/dashboard/mon-mariage/retroplanning' },
-  { icon: Users, label: 'RSVP Invités', path: '/dashboard/rsvp' },
-  { icon: Utensils, label: 'Plan de table', path: '/dashboard/seating-plan' },
-  { icon: Hotel, label: 'Logements', path: '/dashboard/accommodations' },
-  { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie' },
-  { icon: Building2, label: 'Mairie', path: '/dashboard/mairie-civil' },
-  { icon: Users, label: 'Prestataires', path: '/dashboard/suivi' },
-  { icon: FileText, label: 'Documents', path: '/dashboard/documents' },
-  { icon: QrCode, label: 'QR Code', path: '/dashboard/qr-code' },
-  { icon: BookOpen, label: 'Guides', path: '/dashboard/guides' },
-];
-
-const bonusItems: NavItem[] = [
-  { icon: Palette, label: 'Moodboard', path: '/dashboard/moodboard' },
-  { icon: Sparkles, label: 'ChatGPT Mariage', path: '/dashboard/chat-gpt-mariage' },
-  { icon: MessageSquare, label: 'Assistant IA', path: '/dashboard/assistant-mariage' },
-];
+const useNavData = () => {
+  const { t } = useTranslation('dashboard');
+  const mainNavItems: NavItem[] = [
+    { icon: LayoutDashboard, label: t('mobileNav.home'), path: '/dashboard', isMain: true },
+    { icon: CheckSquare, label: t('mobileNav.checklist'), path: '/dashboard/checklist-mariage', isMain: true },
+    { icon: Calculator, label: t('mobileNav.budget'), path: '/dashboard/budget', isMain: true },
+    { icon: Calendar, label: t('mobileNav.weddingDay'), path: '/mon-jour-m', isMain: true },
+  ];
+  const drawerNavItems: NavItem[] = [
+    { icon: ClipboardList, label: t('mobileNav.retroplanning'), path: '/dashboard/mon-mariage/retroplanning' },
+    { icon: Users, label: t('mobileNav.rsvp'), path: '/dashboard/rsvp' },
+    { icon: Utensils, label: t('mobileNav.seatingPlan'), path: '/dashboard/seating-plan' },
+    { icon: Hotel, label: t('mobileNav.accommodations'), path: '/dashboard/accommodations' },
+    { icon: Church, label: t('mobileNav.ceremony'), path: '/dashboard/ceremonie' },
+    { icon: Building2, label: t('mobileNav.civil'), path: '/dashboard/mairie-civil' },
+    { icon: Users, label: t('mobileNav.vendors'), path: '/dashboard/suivi' },
+    { icon: FileText, label: t('mobileNav.documents'), path: '/dashboard/documents' },
+    { icon: QrCode, label: t('mobileNav.qrCode'), path: '/dashboard/qr-code' },
+    { icon: BookOpen, label: t('mobileNav.guides'), path: '/dashboard/guides' },
+  ];
+  const bonusItems: NavItem[] = [
+    { icon: Palette, label: t('mobileNav.moodboard'), path: '/dashboard/moodboard' },
+    { icon: Sparkles, label: t('mobileNav.chatGPT'), path: '/dashboard/chat-gpt-mariage' },
+    { icon: MessageSquare, label: t('mobileNav.aiAssistant'), path: '/dashboard/assistant-mariage' },
+  ];
+  return { mainNavItems, drawerNavItems, bonusItems };
+};
 
 const MobileBottomNav: React.FC = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
