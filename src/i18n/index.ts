@@ -40,6 +40,10 @@ const resources = {
     partenariat: frPartenariat,
     blog: frBlog,
     auth: frAuth,
+    dashboard: frDashboard,
+    budget: frBudget,
+    checklist: frChecklist,
+    seating: frSeating,
   },
   en: {
     common: enCommon,
@@ -50,6 +54,10 @@ const resources = {
     partenariat: enPartenariat,
     blog: enBlog,
     auth: enAuth,
+    dashboard: enDashboard,
+    budget: enBudget,
+    checklist: enChecklist,
+    seating: enSeating,
   },
 };
 
