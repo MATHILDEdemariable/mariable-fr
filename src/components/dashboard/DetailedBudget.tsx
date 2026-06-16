@@ -83,6 +83,7 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
 ];
 
 const DetailedBudget: React.FC = () => {
+  const { t } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
@@ -94,8 +95,8 @@ const DetailedBudget: React.FC = () => {
     feature,
     description 
   } = usePremiumAction({
-    feature: "Budget Détaillé",
-    description: "Ajoutez et modifiez vos postes de budget avec l'abonnement Premium"
+    feature: t('detailed.premiumFeature'),
+    description: t('detailed.premiumDescription')
   });
   const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [totalEstimated, setTotalEstimated] = useState(0);
