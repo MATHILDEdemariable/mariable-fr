@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "title": "Wedding Ceremony — Complete Guide | Mariable",
+    "description": "Complete guide for your wedding ceremony: secular ceremony, Catholic wedding, rituals, vows, music and logistics."
+  },
+  "page": {
+    "title": "Wedding Ceremony",
+    "subtitle": "Complete guides for your celebration"
+  },
+  "tabs": {
+    "laique": "Secular Ceremony",
+    "catholique": "Catholic Ceremony"
+  },
+  "common": {
+    "share": "Share",
+    "shareToast": "Link copied to clipboard!",
+    "downloadChecklist": "Download the checklist",
+    "advice": "Tip",
+    "important": "Important",
+    "moment": "Moment",
+    "downloadedToastLaique": "Secular ceremony checklist downloaded!",
+    "downloadedToastCatholique": "Catholic wedding checklist downloaded!",
+    "premiumLaiqueFeature": "Secular Ceremony Checklist PDF",
+    "premiumLaiqueDescription": "Download the complete checklist for your secular ceremony.",
+    "premiumCatholiqueFeature": "Catholic Wedding Checklist PDF",
+    "premiumCatholiqueDescription": "Download the complete checklist for your Catholic wedding."
+  },
+  "laique": {
+    "fondamentauxTitle": "The fundamentals",
+    "fondamentauxIntro": "The secular ceremony is the emotional centerpiece of the wedding — a space of total freedom where your story becomes the heart of the narrative.",
+    "fondamentaux": [
+      { "label": "Ideal duration", "value": "45 to 60 minutes" },
+      { "label": "Legal value", "value": "None — civil wedding required first" },
+      { "label": "Possible venues", "value": "Gardens, estates, beaches, museums, unusual venues" }
+    ],
+    "derouleTitle": "The 10-step flow",
+    "deroulementEtapes": [
+      { "titre": "Prelude and seating", "description": "Background music, logistical announcements (phones silenced)" },
+      { "titre": "Procession entry", "description": "Bride and groom on a parent's arm, witnesses, flower children" },
+      { "titre": "Welcome address", "description": "The officiant sets the tone; tribute to absent loved ones possible" },
+      { "titre": "The couple's story", "description": "Story of how they met, hardships overcome, plans for the future" },
+      { "titre": "Loved ones' interventions", "description": "3 to 5 interventions max (witnesses, family)" },
+      { "titre": "Symbolic ritual", "description": "Sand, ribbons, tree... a tangible gesture to sacralize the union" },
+      { "titre": "Vow exchange", "description": "The couple speaks directly to each other — the most moving moment" },
+      { "titre": "Ring exchange", "description": "Explicit consent guided by the officiant" },
+      { "titre": "Conclusion and kiss", "description": "Final declaration, recessional music" },
+      { "titre": "Recessional", "description": "Cheers, flower petals or soap bubbles" }
+    ],
+    "officiantTitle": "Choosing your officiant",
+    "officiantAvantages": "Strengths",
+    "officiantVigilances": "Things to watch",
+    "typesOfficiants": [
+      { "type": "Professional", "avantages": ["Technical mastery", "Neutrality", "Structured support over several months"], "vigilances": ["Financial cost", "Less intimate relationship at first"] },
+      { "type": "Loved one (Friend/Family)", "avantages": ["Strong emotion", "Knows the couple intimately", "Free"], "vigilances": ["Public-speaking stress", "Lack of technical experience"] },
+      { "type": "The couple themselves", "avantages": ["Total control", "Very intimate format"], "vigilances": ["Higher mental load on the day", "Pacing is harder to manage"] }
+    ],
+    "rituelsTitle": "Catalogue of symbolic rituals",
+    "rituels": [
+      { "nom": "Sand ritual", "description": "Mix two sands of different colors into a single vase. The grains blend irreversibly, symbolizing the union of two personalities.", "conseils": "Pick contrasting colors. Keep the vase as a keepsake." },
+      { "nom": "Handfasting (Ribbons)", "description": "Of Celtic origin, this ritual binds the couple's hands with ribbons of different colors. Each ribbon can be brought by a loved one.", "conseils": "Ribbons of at least 1.2 m long and 4 cm wide for a striking visual effect." },
+      { "nom": "Tree planting", "description": "The couple plants a sapling together, symbolizing the growth of their love and the need to nurture it daily.", "conseils": "Pick a tree suited to your garden. Roots = foundations, branches = shared future." },
+      { "nom": "Stones / Pebbles", "description": "Each guest holds a stone and symbolically places a wish for the couple on it. The stones are collected in a jar.", "conseils": "Great for involving a large audience silently and solemnly." },
+      { "nom": "Ball of yarn", "description": "A ball of yarn is tossed among the guests, creating a physical web that ties everyone to the couple.", "conseils": "Not recommended if guests have elaborate hairdos or large hats!" }
+    ],
+    "prochesTitle": "Involving loved ones",
+    "prochesRolesTitle": "Possible roles",
+    "prochesTimidesTitle": "Alternatives for the shy",
+    "rolesProches": [
+      { "role": "Speeches and readings", "description": "Share an anecdote, a poem or a literary text" },
+      { "role": "Carrying the rings", "description": "A trusted role, often given to children or witnesses" },
+      { "role": "Participating in rituals", "description": "Lighting a candle, tying a ribbon, pouring sand" },
+      { "role": "Signing the certificate", "description": "Solemn moment at the end of the ceremony" }
+    ],
+    "alternativesTimides": [
+      "Speaking as a duo (two people for mutual support)",
+      "Silent roles (carrying the rings, handing out programs)",
+      "A photo or video montage to project",
+      "Reading texts from famous authors (less intimidating than writing your own)"
+    ],
+    "voeuxTitle": "Vow-writing guide",
+    "voeuxPreparation": "Preparation",
+    "voeuxPreparationItems": [
+      "Start jotting down ideas 2–3 months ahead in a small notebook",
+      "Collect memories, daily proofs of love, inspiring quotes",
+      "Finalize the version 15 days before to stay connected to the emotion"
+    ],
+    "voeuxStructure": "Recommended structure",
+    "voeuxStructureItems": [
+      { "title": "1. The past", "desc": "Recall a striking memory or your first meeting" },
+      { "title": "2. The present", "desc": "What your partner means today (refuge, strength, certainty)" },
+      { "title": "3. The future", "desc": "Concrete promises, big plans and small everyday details" },
+      { "title": "4. The conclusion", "desc": "A simple sentence sealing the commitment" }
+    ],
+    "voeuxConseils": "Delivery tips",
+    "voeuxConseilsItems": [
+      "Length: 2 to 3 minutes to captivate without dragging",
+      "Authenticity: if you're funny, add humor. If you're reserved, simplicity is enough",
+      "Format: avoid the phone! Use beautiful paper for the photos",
+      "Emotion: don't be afraid to cry or pause"
+    ],
+    "logistiqueTitle": "Logistics and tech",
+    "planBTitle": "Weather backup plan",
+    "planBItems": [
+      "Plan a backup venue (hall, barn, marquee)",
+      "Think through the transfer logistics",
+      "In case of heat wave: shade and refreshments"
+    ],
+    "sonoTitle": "Sound",
+    "sonoItems": [
+      "At least 2 wireless mics for 50+ guests",
+      "Speakers near the guests (not behind the couple)",
+      "Check power outlets or rent a silent generator"
+    ],
+    "amenagementTitle": "Layout",
+    "amenagementItems": [
+      "Arc layout for better visibility",
+      "Cover plastic chairs (they get hot in the sun)",
+      "Couple at a 3/4 angle to the audience"
+    ],
+    "musiqueTitle": "Musical program",
+    "musiqueColMoment": "Moment",
+    "musiqueColType": "Type of music",
+    "musiqueColConseil": "Recommendation",
+    "musiqueNote": "A live band can adapt in real time. If using a DJ: share the precise cue sheet.",
+    "programmationMusicale": [
+      { "moment": "Seating", "type": "Instrumental / Ambient", "conseil": "Moderate volume to allow chatting" },
+      { "moment": "Entry", "type": "Lyrical / Moving song", "conseil": "Strong volume, marked start" },
+      { "moment": "Rituals", "type": "Instrumental / Loop", "conseil": "Fade behind the officiant's voice" },
+      { "moment": "Vows", "type": "Silence or quiet pad", "conseil": "Don't mask vocal emotion" },
+      { "moment": "Recessional", "type": "Upbeat / Festive", "conseil": "Build progressively after the kiss" }
+    ],
+    "retroplanningTitle": "Retro-planning",
+    "retroplanning": [
+      { "delai": "M-1", "action": "Finalize the script with the officiant, send music to the DJ, confirm speakers" },
+      { "delai": "D-7", "action": "Read your vows aloud, prepare an emergency kit (tissues, water, makeup)" },
+      { "delai": "D-1", "action": "On-site rehearsal, set up decor, check the mics" },
+      { "delai": "Wedding day", "action": "Take 5 minutes together before the start to recenter" }
+    ],
+    "checklistTitle": "Wedding-Day checklist",
+    "checklistJourJ": [
+      { "categorie": "Ceremony", "items": ["Ceremony programs", "Petals/confetti", "Rings", "Tissues", "Bottles of water"] },
+      { "categorie": "Tech", "items": ["Charged speakers", "Mics tested", "Playlist ready", "Cables and extensions"] },
+      { "categorie": "Comfort", "items": ["Signage to the venue", "Shade (parasols)", "Cold drinks on arrival"] },
+      { "categorie": "Post-ceremony", "items": ["Someone to collect ritual objects", "Clear leftover programs", "Guide guests to the cocktail"] }
+    ],
+    "citation": "\"The secular ceremony, far more than a simple alternative to a religious setting, is a true engineering of emotion. By placing the couple's story at the center, it turns guests from spectators into active witnesses of the commitment.\""
+  },
+  "catholique": {
+    "introTitle": "The Catholic Wedding",
+    "introDuree": "Duration",
+    "introDureeValue": "1h to 1h30 (nuptial Mass)",
+    "introPreparation": "Preparation",
+    "introPreparationValue": "6 to 12 months before the wedding",
+    "introNature": "Nature",
+    "introNatureValue": "Sacramental act, indissoluble covenant",
+    "introQuote": "The Catholic wedding is a sacramental act where the divine meets the human to seal an indissoluble covenant.",
+    "alertText": "The civil wedding must take place before the religious one. Preparation should ideally start 1 year ahead, or at least 6 months before.",
+    "dossierTitle": "Catholicity file",
+    "dossierColDocument": "Document",
+    "dossierColNature": "Nature",
+    "dossierColValidite": "Validity",
+    "documentsCatholicite": [
+      { "document": "Birth certificate", "nature": "Full extract with filiation", "validite": "Less than 3 months old" },
+      { "document": "Baptism certificate", "nature": "Copy for wedding use only", "validite": "Requested by the priest" },
+      { "document": "Civil wedding certificate", "nature": "Official document from city hall", "validite": "Required before the ceremony" },
+      { "document": "Declaration of intent", "nature": "Handwritten and personal", "validite": "Expression of the 4 pillars" },
+      { "document": "Diocesan authorization", "nature": "Dispensation or special permission", "validite": "For mixed or interfaith weddings" }
+    ],
+    "mixtesTitle": "Mixed weddings and disparity of cult",
+    "mixteCardTitle": "Mixed marriage",
+    "mixteCardText": "Union between two baptized persons (e.g. Catholic and Protestant).",
+    "mixteCardNote": "Requires the bishop's authorization, requested by the priest.",
+    "disparityCardTitle": "Disparity of cult",
+    "disparityCardText": "Union between a Catholic and an unbaptized person.",
+    "disparityCardNote": "Requires a dispensation. The Catholic spouse commits to the children's baptism.",
+    "piliersTitle": "The 4 pillars of Catholic marriage",
+    "piliersNote": "Each spouse writes a handwritten declaration of intent expressing their adherence to these 4 pillars.",
+    "piliersMariage": [
+      { "pilier": "Freedom", "definition": "Conscious choice without outside pressure", "pratique": "Mature commitment, free from family or social pressure" },
+      { "pilier": "Fidelity", "definition": "Exclusivity and permanence of love", "pratique": "Promise of mutual support in sickness and in health" },
+      { "pilier": "Indissolubility", "definition": "A lifelong commitment", "pratique": "Willingness to build a lasting home, until death do us part" },
+      { "pilier": "Fruitfulness", "definition": "Openness to life and self-giving", "pratique": "Desire to welcome children or generous openness to others" }
+    ],
+    "preparationTitle": "Spiritual preparation",
+    "prepPretreTitle": "Meetings with the priest",
+    "prepPretreText": "3 to 4 meetings to explore the couple's spiritual dimension, their understanding of the sacrament, and the writing of the declarations of intent.",
+    "prepCpmTitle": "CPM sessions (Marriage Preparation Center)",
+    "prepCpmText": "Day or weekend sessions with other engaged couples to address communication, conflict management, sexuality, and life plans.",
+    "derouleTitle": "Ceremony flow",
+    "derouleCatholique": [
+      { "titre": "Entrance procession", "description": "The groom enters on his mother's arm, followed by the procession, then the bride on her father's arm" },
+      { "titre": "Liturgy of the Word", "description": "Biblical readings (Old Testament, Epistles, Gospel) and the priest's homily" },
+      { "titre": "Initial dialogue", "description": "The priest asks the couple about their freedom and commitment" },
+      { "titre": "Exchange of consents", "description": "The couple bestows the sacrament on each other" },
+      { "titre": "Blessing of the rings", "description": "The rings are blessed and exchanged as a sign of the covenant" },
+      { "titre": "Nuptial blessing", "description": "Solemn prayer invoking the strength of the Holy Spirit on the couple" },
+      { "titre": "Signing the registers", "description": "Accompanied by music, followed by the offering" },
+      { "titre": "Triumphal recessional", "description": "The couple leaves the church amid cheers" }
+    ],
+    "decoTitle": "Decoration and flowers",
+    "decoNote": "Plan a team to remove the decorations after the ceremony.",
+    "decoAutelTitle": "The altar",
+    "decoAutelText": "Focal point of the liturgy. Floral compositions at the base or on the sides, never directly on the altar.",
+    "decoAlleeTitle": "The central aisle",
+    "decoAlleeText": "Pew-end bouquets, silk or satin ribbons, flower petals if the parish allows.",
+    "decoBougiesTitle": "The candles",
+    "decoBougiesText": "They symbolize the light of Christ. Possible ritual: together lighting a central candle from two side candles.",
+    "musiqueTitle": "Sacred music",
+    "musiqueColMoment": "Moment",
+    "musiqueColExemples": "Repertoire examples",
+    "musiqueNote": "The organ remains the instrument of choice. A gospel choir or string quartet are possible for a personal touch.",
+    "musiqueSacree": [
+      { "moment": "Procession entry", "exemples": "Mendelssohn's Wedding March, Pachelbel's Canon" },
+      { "moment": "Psalm and Alleluia", "exemples": "Psalm 127, Alleluia from Taizé or Handel" },
+      { "moment": "Ring exchange", "exemples": "Ave Maria (Schubert or Gounod), Panis Angelicus" },
+      { "moment": "Communion (if Mass)", "exemples": "Cantique de Jean Racine, Anima Christi" },
+      { "moment": "Signing the registers", "exemples": "Aria (Bach), Oh Happy Day (Gospel)" }
+    ],
+    "rolesTitle": "Participants' roles",
+    "rolesTemoinsTitle": "The witnesses",
+    "rolesTemoinsItems": [
+      "At least 2 witnesses (1 per spouse), not necessarily baptized",
+      "They sign the register to certify the exchange of consents",
+      "Logistical anchors for guest management"
+    ],
+    "rolesEnfantsTitle": "Children of honor",
+    "rolesEnfantsItems": [
+      "Carry the rings on a cushion",
+      "Toss flower petals before the bride",
+      "Hold the train of the dress if needed",
+      "Ideal age: 5 to 10 years old to minimize surprises"
+    ],
+    "rolesPhotosTitle": "Photographers",
+    "rolesPhotosItems": [
+      "Introduce themselves to the priest before the ceremony",
+      "Stay outside the choir, with slow and discreet movements",
+      "Favor telephoto lenses to keep their distance",
+      "Key moments: entry, rings, blessing, signing"
+    ],
+    "sortieTitle": "Leaving the church",
+    "sortieColTradition": "Tradition",
+    "sortieColSignification": "Meaning",
+    "sortieColContrainte": "Constraint",
+    "sortieNote": "Check with the parish what is allowed. Plan for cleaning the forecourt.",
+    "traditionsSortie": [
+      { "tradition": "Rice tossing", "signification": "Symbol of prosperity and fertility", "contrainte": "Often forbidden for cleaning reasons" },
+      { "tradition": "Soap bubbles", "signification": "Magical effect, ideal for photos", "contrainte": "Requires individual bottles" },
+      { "tradition": "Lavender / Petals", "signification": "Natural fragrance and romance", "contrainte": "Requires sweeping afterwards" },
+      { "tradition": "Jingle sticks", "signification": "Sound and visual animation", "contrainte": "Eco-friendly and residue-free" }
+    ],
+    "checklistTitle": "Catholic wedding checklist",
+    "checklistCatholique": [
+      { "categorie": "Documents", "items": ["Birth certificate (less than 3 months old)", "Baptism certificate", "Civil wedding certificate", "Declaration of intent"] },
+      { "categorie": "Preparation", "items": ["Meetings with the priest (3–4)", "CPM sessions (weekend)", "Write the declaration of intent", "Choose the readings"] },
+      { "categorie": "Church logistics", "items": ["Confirm the date with the parish", "Meet the organist", "Plan the floral decoration", "Confirm the witnesses"] },
+      { "categorie": "Wedding day", "items": ["Rings", "Mass programs", "Offering envelopes", "Church florist"] }
+    ],
+    "citation": "\"The Catholic wedding is a delicate balance between liturgical rigor and the expression of personal love. The celebration is not an end in itself, but the beginning of a covenant sustained by faith and community.\""
+  },
+  "pdf": {
+    "headerLaique": "Secular Ceremony Checklist",
+    "headerCatholique": "Catholic Wedding Checklist",
+    "retroplanningTitle": "Retro-planning",
+    "notesTitle": "Important notes",
+    "notes": [
+      "Preparation should start 6 to 12 months before the wedding",
+      "The civil wedding must precede the religious one",
+      "Plan 3 to 4 meetings with the priest and CPM sessions",
+      "The ceremony lasts approximately 1h to 1h30 (nuptial Mass)"
+    ],
+    "generatedOn": "Generated on"
+  }
+}

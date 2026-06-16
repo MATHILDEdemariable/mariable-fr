@@ -14,6 +14,7 @@ import frDashboard from './locales/fr/dashboard.json';
 import frBudget from './locales/fr/budget.json';
 import frChecklist from './locales/fr/checklist.json';
 import frSeating from './locales/fr/seating.json';
+import frCeremonie from './locales/fr/ceremonie.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enHomeV2 from './locales/en/homeV2.json';
@@ -26,6 +27,7 @@ import enDashboard from './locales/en/dashboard.json';
 import enBudget from './locales/en/budget.json';
 import enChecklist from './locales/en/checklist.json';
 import enSeating from './locales/en/seating.json';
+import enCeremonie from './locales/en/ceremonie.json';
 
 export const SUPPORTED_LANGUAGES = ['fr', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -44,6 +46,7 @@ const resources = {
     budget: frBudget,
     checklist: frChecklist,
     seating: frSeating,
+    ceremonie: frCeremonie,
   },
   en: {
     common: enCommon,
@@ -58,6 +61,7 @@ const resources = {
     budget: enBudget,
     checklist: enChecklist,
     seating: enSeating,
+    ceremonie: enCeremonie,
   },
 };
 
@@ -91,7 +95,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie'],
     interpolation: {
       escapeValue: false,
     },

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Calendar, Users, CheckCircle2, Trophy, Crown } from 'lucide-react';
 import { format, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
+import { useTranslation } from 'react-i18next';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
@@ -27,29 +28,31 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   onWeddingDateChange,
   onGuestCountChange
 }) => {
+  const { t, i18n } = useTranslation('dashboard');
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
   const { isPremium } = useUserProfile();
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const dateLocale = i18n.language?.startsWith('en') ? enUS : fr;
 
   const handlePremiumClick = async () => {
     try {
       setCheckoutLoading(true);
       const { data, error } = await supabase.functions.invoke('create-checkout-session');
       if (error || !data?.url) {
-        toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
+        toast({ title: t('hero.errorTitle'), description: t('hero.errorCheckout'), variant: "destructive" });
         return;
       }
       window.location.href = data.url;
     } catch {
-      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
+      toast({ title: t('hero.errorTitle'), description: t('hero.errorGeneric'), variant: "destructive" });
     } finally {
       setCheckoutLoading(false);
     }
   };
 
-  const greeting = firstName ? `Bienvenue, ${firstName} !` : "Bienvenue dans l'univers Mariable !";
+  const greeting = firstName ? t('hero.welcomeWithName', { name: firstName }) : t('hero.welcomeGeneric');
 
   return (
     <div className="glass-card-dark rounded-2xl p-6 md:p-8 space-y-6">
@@ -58,7 +61,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
         <div className="space-y-2">
           <h1 className="text-2xl md:text-3xl font-serif text-foreground">{greeting}</h1>
           <p className="text-muted-foreground">
-            {format(today, "EEEE d MMMM yyyy", { locale: fr })}
+            {format(today, "EEEE d MMMM yyyy", { locale: dateLocale })}
           </p>
         </div>
       </div>
@@ -74,7 +77,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
             <Popover>
               <PopoverTrigger asChild>
                 <Button variant="ghost" size="sm" className="text-xs opacity-70 hover:opacity-100">
-                  Modifier
+                  {t('hero.edit')}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
@@ -95,22 +98,22 @@ const HeroStats: React.FC<HeroStatsProps> = ({
                 <p className="text-4xl font-bold text-foreground">
                   J-{daysUntilWedding}
                 </p>
-                <p className="text-sm text-muted-foreground">jours restants</p>
+                <p className="text-sm text-muted-foreground">{t('hero.daysRemaining')}</p>
               </>
             ) : daysUntilWedding === 0 ? (
               <>
-                <p className="text-2xl font-bold text-[#7F9474]">🎊 C'est le jour J !</p>
-                <p className="text-sm text-muted-foreground">Félicitations !</p>
+                <p className="text-2xl font-bold text-[#7F9474]">{t('hero.weddingDay')}</p>
+                <p className="text-sm text-muted-foreground">{t('hero.congrats')}</p>
               </>
             ) : weddingDate ? (
               <>
-                <p className="text-2xl font-bold text-foreground">Félicitations !</p>
-                <p className="text-sm text-muted-foreground">Mariage passé</p>
+                <p className="text-2xl font-bold text-foreground">{t('hero.congrats')}</p>
+                <p className="text-sm text-muted-foreground">{t('hero.weddingPast')}</p>
               </>
             ) : (
               <>
                 <p className="text-xl font-semibold text-muted-foreground">--</p>
-                <p className="text-sm text-muted-foreground">Définir la date</p>
+                <p className="text-sm text-muted-foreground">{t('hero.setDate')}</p>
               </>
             )}
           </div>
@@ -144,12 +147,12 @@ const HeroStats: React.FC<HeroStatsProps> = ({
                 min="1"
               />
             </div>
-            <p className="text-sm text-muted-foreground">invités prévus</p>
+            <p className="text-sm text-muted-foreground">{t('hero.guestsPlanned')}</p>
           </div>
           
           <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
             <span className="inline-block w-2 h-2 rounded-full bg-[#7F9474]"></span>
-            Modifiez le nombre ci-dessus
+            {t('hero.editCountAbove')}
           </div>
         </div>
 
@@ -162,7 +165,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
             <div className="flex items-center gap-2">
               {isPremium ? (
                 <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[#d4af37]/10 text-[#d4af37] text-xs font-semibold rounded">
-                  <Crown className="w-3 h-3" /> Premium
+                  <Crown className="w-3 h-3" /> {t('hero.premium')}
                 </span>
               ) : (
                 <Button
@@ -172,7 +175,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
                   className="bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none text-xs px-3 py-1 h-auto"
                 >
                   <Crown className="w-3 h-3 mr-1" />
-                  {checkoutLoading ? "..." : "Premium"}
+                  {checkoutLoading ? "..." : t('hero.premium')}
                 </Button>
               )}
               <Trophy className="w-4 h-4 text-[#d4af37]" />
@@ -183,7 +186,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
             <p className="text-4xl font-bold text-foreground">
               {completionPercentage}%
             </p>
-            <p className="text-sm text-muted-foreground">organisation complétée</p>
+            <p className="text-sm text-muted-foreground">{t('hero.organizationComplete')}</p>
           </div>
           
           <div className="mt-3 progress-gaming">

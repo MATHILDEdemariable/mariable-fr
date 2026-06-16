@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,6 +83,7 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
 ];
 
 const DetailedBudget: React.FC = () => {
+  const { t } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
@@ -93,8 +95,8 @@ const DetailedBudget: React.FC = () => {
     feature,
     description 
   } = usePremiumAction({
-    feature: "Budget Détaillé",
-    description: "Ajoutez et modifiez vos postes de budget avec l'abonnement Premium"
+    feature: t('detailed.premiumFeature'),
+    description: t('detailed.premiumDescription')
   });
   const [categories, setCategories] = useState<BudgetCategory[]>(DEFAULT_CATEGORIES);
   const [totalEstimated, setTotalEstimated] = useState(0);
@@ -198,8 +200,8 @@ const DetailedBudget: React.FC = () => {
     onError: (error) => {
       console.error("Error deleting budget item:", error);
       toast({
-        title: "Erreur de suppression",
-        description: "Impossible de supprimer l'élément.",
+        title: t('detailed.toasts.deleteError.title'),
+        description: t('detailed.toasts.deleteError.description'),
         variant: "destructive",
       });
     }
@@ -378,16 +380,15 @@ const DetailedBudget: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDashboard'] });
       toast({
-        title: "Budget sauvegardé",
-        description: "Les modifications ont été enregistrées avec succès.",
+        title: t('detailed.toasts.saved.title'),
+        description: t('detailed.toasts.saved.description'),
       });
     },
     onError: (error: any) => {
       console.error("Error saving budget:", error);
-      // Show informative message instead of destructive error
       toast({
-        title: "Sauvegarde automatique active",
-        description: "Vos modifications sont enregistrées automatiquement.",
+        title: t('detailed.toasts.autosave.title'),
+        description: t('detailed.toasts.autosave.description'),
         variant: "default",
       });
     }
@@ -402,8 +403,8 @@ const DetailedBudget: React.FC = () => {
 
     if (!categories.length) {
       toast({
-        title: "Erreur",
-        description: "Aucune donnée de budget à exporter",
+        title: t('detailed.toasts.noData.title'),
+        description: t('detailed.toasts.noData.description'),
         variant: "destructive"
       });
       return;
@@ -413,8 +414,8 @@ const DetailedBudget: React.FC = () => {
 
     try {
       toast({
-        title: "Export PDF en cours",
-        description: "Préparation de votre budget..."
+        title: t('detailed.toasts.pdfStart.title'),
+        description: t('detailed.toasts.pdfStart.description'),
       });
 
       const success = await exportBudgetToPDF({
@@ -427,21 +428,21 @@ const DetailedBudget: React.FC = () => {
 
       if (success) {
         toast({
-          title: "Export réussi",
-          description: "Votre budget a été exporté en PDF"
+          title: t('detailed.toasts.pdfSuccess.title'),
+          description: t('detailed.toasts.pdfSuccess.description'),
         });
       } else {
         toast({
-          title: "Erreur d'export",
-          description: "Une erreur s'est produite lors de l'export en PDF",
+          title: t('detailed.toasts.pdfError.title'),
+          description: t('detailed.toasts.pdfError.description'),
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error("Erreur lors de l'export PDF:", error);
       toast({
-        title: "Erreur d'export",
-        description: "Une erreur s'est produite lors de l'export en PDF",
+        title: t('detailed.toasts.pdfError.title'),
+        description: t('detailed.toasts.pdfError.description'),
         variant: "destructive"
       });
     } finally {
@@ -458,8 +459,8 @@ const DetailedBudget: React.FC = () => {
 
     if (!categories.length) {
       toast({
-        title: "Erreur",
-        description: "Aucune donnée de budget à exporter",
+        title: t('detailed.toasts.noData.title'),
+        description: t('detailed.toasts.noData.description'),
         variant: "destructive"
       });
       return;
@@ -510,14 +511,14 @@ const DetailedBudget: React.FC = () => {
       document.body.removeChild(link);
 
       toast({
-        title: "Export réussi",
-        description: "Le budget a été exporté en CSV"
+        title: t('detailed.toasts.csvSuccess.title'),
+        description: t('detailed.toasts.csvSuccess.description'),
       });
     } catch (error) {
       console.error("Erreur lors de l'export CSV:", error);
       toast({
-        title: "Erreur d'export",
-        description: "Une erreur s'est produite lors de l'export en CSV",
+        title: t('detailed.toasts.csvError.title'),
+        description: t('detailed.toasts.csvError.description'),
         variant: "destructive"
       });
     }
@@ -627,8 +628,8 @@ const DetailedBudget: React.FC = () => {
   const handleImportFromCart = () => {
     if (cartItems.length === 0) {
       toast({
-        title: "Panier vide",
-        description: "Ajoutez d'abord des prestataires à votre panier",
+        title: t('detailed.toasts.cartEmpty.title'),
+        description: t('detailed.toasts.cartEmpty.description'),
         variant: "destructive"
       });
       return;
@@ -660,7 +661,7 @@ const DetailedBudget: React.FC = () => {
           actual: 0,
           deposit: 0,
           remaining: itemPrice,
-          payment_note: `Importé depuis le panier (${cartItem.category})`
+          payment_note: t('detailed.cartImportNote', { category: cartItem.category })
         };
 
         newCategories[categoryIndex].items.push(newItem);
@@ -673,13 +674,13 @@ const DetailedBudget: React.FC = () => {
       setCategories(updatedCategories);
       
       toast({
-        title: "Import réussi",
-        description: `${importedCount} prestataire(s) importé(s) depuis le panier`
+        title: t('detailed.toasts.importSuccess.title'),
+        description: t('detailed.toasts.importSuccess.description', { count: importedCount })
       });
     } else {
       toast({
-        title: "Aucun import",
-        description: "Tous les prestataires du panier sont déjà dans le budget"
+        title: t('detailed.toasts.importNone.title'),
+        description: t('detailed.toasts.importNone.description')
       });
     }
   };
@@ -687,7 +688,7 @@ const DetailedBudget: React.FC = () => {
   if (isLoadingDetails) {
     return (
       <div className="text-center py-12">
-        <p>Chargement du budget détaillé...</p>
+        <p>{t('detailed.loading')}</p>
       </div>
     );
   }
@@ -702,7 +703,7 @@ const DetailedBudget: React.FC = () => {
       />
       <Card className="border shadow-sm max-w-full overflow-hidden">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
-        <CardTitle className="text-lg sm:text-xl font-serif">Budget Détaillé</CardTitle>
+        <CardTitle className="text-lg sm:text-xl font-serif">{t('detailed.title')}</CardTitle>
         <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
           <Button 
             onClick={handleImportFromCart}
@@ -712,7 +713,7 @@ const DetailedBudget: React.FC = () => {
             disabled={cartItems.length === 0}
           >
             <ShoppingCart className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Importer ({cartItems.length})</span>
+            <span className="hidden sm:inline">{t('detailed.import', { count: cartItems.length })}</span>
             <span className="sm:hidden ml-1">({cartItems.length})</span>
           </Button>
           <Button 
@@ -724,12 +725,12 @@ const DetailedBudget: React.FC = () => {
             {updateBudgetMutation.isPending ? (
               <span className="flex items-center">
                 <span className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-                <span className="hidden sm:inline">Enregistrement...</span>
+                <span className="hidden sm:inline">{t('detailed.saving')}</span>
               </span>
             ) : (
               <span className="flex items-center">
                 <Save className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Enregistrer</span>
+                <span className="hidden sm:inline">{t('detailed.save')}</span>
               </span>
             )}
           </Button>
@@ -749,7 +750,7 @@ const DetailedBudget: React.FC = () => {
               <span className="flex items-center">
                 {!isPremium && <Lock className="h-4 w-4 mr-1" />}
                 <Download className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">PDF</span>
+                <span className="hidden sm:inline">{t('detailed.pdf')}</span>
               </span>
             )}
           </Button>
@@ -763,7 +764,7 @@ const DetailedBudget: React.FC = () => {
             <span className="flex items-center">
               {!isPremium && <Lock className="h-4 w-4 mr-1" />}
               <Download className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">CSV</span>
+              <span className="hidden sm:inline">{t('detailed.csv')}</span>
             </span>
           </Button>
         </div>
@@ -773,13 +774,13 @@ const DetailedBudget: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-y">
-                <th className="px-4 py-3 text-left font-medium">Catégorie / Élément</th>
-                <th className="px-4 py-3 text-right font-medium">Budget Estimé (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Acompte Versé (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Reste à Payer (€)</th>
-                <th className="px-4 py-3 text-center font-medium">Commentaire</th>
-                <th className="px-4 py-3 text-center font-medium">Actions</th>
+                <th className="px-4 py-3 text-left font-medium">{t('detailed.columns.category')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.estimated')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.actual')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.deposit')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.remaining')}</th>
+                <th className="px-4 py-3 text-center font-medium">{t('detailed.columns.comment')}</th>
+                <th className="px-4 py-3 text-center font-medium">{t('detailed.columns.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -810,10 +811,10 @@ const DetailedBudget: React.FC = () => {
                       >
                         {!isPremium && category.items.length >= 3 && <Lock className="h-3 w-3 mr-1" />}
                         <Plus className="h-4 w-4 mr-1" />
-                        <span>Ajouter</span>
+                        <span>{t('detailed.add')}</span>
                       </Button>
                       {!isPremium && category.items.length >= 3 && (
-                        <p className="text-xs text-muted-foreground mt-1">Limite atteinte</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('detailed.limitReached')}</p>
                       )}
                     </td>
                   </tr>
@@ -827,7 +828,7 @@ const DetailedBudget: React.FC = () => {
                           value={item.name || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
                           className="h-8 border-gray-200"
-                          placeholder="Nom de l'élément"
+                          placeholder={t('detailed.placeholders.itemName')}
                           disabled={!isPremium}
                         />
                       </td>
@@ -873,7 +874,7 @@ const DetailedBudget: React.FC = () => {
                           value={item.payment_note || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'payment_note', e.target.value)}
                           className="h-8 border-gray-200"
-                          placeholder="Ex: Mariée, Marié, Parents..."
+                          placeholder={t('detailed.placeholders.comment')}
                           disabled={!isPremium}
                         />
                       </td>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { useToast } from '@/hooks/use-toast';
@@ -99,11 +100,22 @@ const INITIAL_WEDDING_TASKS = [
 ];
 
 const ChecklistDixEtapes: React.FC = () => {
+  const { t, i18n } = useTranslation('checklist');
   const [tasks, setTasks] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [dataSource, setDataSource] = useState<string>('');
   const { toast } = useToast();
+  
+  // Translated labels lookup by position (1..10): used to override DB-saved FR text when UI is in EN.
+  const localizedItems = (t('tenSteps.items', { returnObjects: true }) as Array<{ label: string; description: string }>) || [];
+  const localizeTask = (task: any) => {
+    if (i18n.language?.startsWith('en') && task?.position && localizedItems[task.position - 1]) {
+      return { ...task, label: localizedItems[task.position - 1].label, description: localizedItems[task.position - 1].description };
+    }
+    return task;
+  };
+
   
   useEffect(() => {
     console.log('🚀 ChecklistDixEtapes component mounted');
@@ -262,8 +274,8 @@ const ChecklistDixEtapes: React.FC = () => {
     setDataSource(`default-${reason}`);
     
     toast({
-      title: "Mode hors ligne",
-      description: "Utilisation des tâches par défaut. Vos modifications ne seront pas sauvegardées.",
+      title: t('tenSteps.offlineToast.title'),
+      description: t('tenSteps.offlineToast.description'),
     });
   };
   
@@ -313,8 +325,8 @@ const ChecklistDixEtapes: React.FC = () => {
         setTasks(revertedTasks);
         
         toast({
-          title: "Erreur de synchronisation",
-          description: "Impossible de mettre à jour la tâche. Veuillez réessayer.",
+          title: t('tenSteps.syncErrorToast.title'),
+          description: t('tenSteps.syncErrorToast.description'),
           variant: "destructive"
         });
       }
@@ -354,7 +366,7 @@ const ChecklistDixEtapes: React.FC = () => {
       <Card>
         <CardHeader>
           <CardTitle className="text-xl flex items-center">
-            <span>Votre progression</span>
+            <span>{t('tenSteps.progressTitle')}</span>
             <div className="ml-auto text-wedding-olive">{getProgressPercentage()}%</div>
           </CardTitle>
           <div className="w-full h-2 bg-gray-200 rounded-full mt-2">
@@ -368,29 +380,31 @@ const ChecklistDixEtapes: React.FC = () => {
 
       <Card>
         <CardHeader>
-          <CardTitle className="text-xl">Les 10 étapes clés de l'organisation</CardTitle>
+          <CardTitle className="text-xl">{t('tenSteps.stepsTitle')}</CardTitle>
           <CardDescription>
-            Cochez les étapes au fur et à mesure de votre avancement
+            {t('tenSteps.stepsDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent>
           {isLoading ? (
             <div className="flex justify-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-wedding-olive"></div>
-              <p className="ml-4">Chargement des tâches de planification...</p>
+              <p className="ml-4">{t('tenSteps.loading')}</p>
             </div>
           ) : tasks.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-red-600 font-medium">
-                🚨 Aucune tâche trouvée - Ceci ne devrait pas arriver !
+                {t('tenSteps.emptyError')}
               </p>
               <p className="text-sm text-muted-foreground mt-2">
-                Merci de signaler ce problème avec les détails de la console.
+                {t('tenSteps.emptyHelp')}
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              {tasks.map((task, index) => (
+              {tasks.map((rawTask, index) => {
+                const task = localizeTask(rawTask);
+                return (
                 <div key={task.id || index} className="border-l-2 border-wedding-olive/30 pl-4 ml-2">
                   <div className="flex items-start space-x-2">
                     <Checkbox 
@@ -412,7 +426,8 @@ const ChecklistDixEtapes: React.FC = () => {
                     </div>
                   </div>
                 </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </CardContent>

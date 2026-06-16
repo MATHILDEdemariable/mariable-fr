@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Sparkles, ShoppingBag } from 'lucide-react';
 
 interface Tool {
@@ -9,62 +10,23 @@ interface Tool {
   path: string;
 }
 
-const tools: Tool[] = [
-  {
-    title: 'Quiz Mariage',
-    description: 'Testez votre niveau',
-    icon: '❓',
-    path: '/dashboard/planning'
-  },
-  {
-    title: 'Budget',
-    description: 'Gérez vos dépenses',
-    icon: '💰',
-    path: '/dashboard/budget'
-  },
-  {
-    title: 'RSVP Invités',
-    description: 'Confirmations',
-    icon: '✉️',
-    path: '/dashboard/rsvp'
-  },
-  {
-    title: 'Check-list',
-    description: 'Vos préparatifs',
-    icon: '✅',
-    path: '/dashboard/checklist-mariage'
-  },
-  {
-    title: 'Boissons',
-    description: 'Calculatrice',
-    icon: '🥂',
-    path: '/dashboard/drinks'
-  },
-  {
-    title: 'Plan de table',
-    description: 'Placez vos invités',
-    icon: '🪑',
-    path: '/dashboard/seating-plan'
-  }
-];
-
-const advancedTools: Tool[] = [
-  {
-    title: 'Coordination Jour J',
-    description: 'Planning détaillé',
-    icon: '📅',
-    path: '/mon-jour-m'
-  },
-  {
-    title: 'Après le mariage',
-    description: 'Conseils post jour J',
-    icon: '💕',
-    path: '/dashboard/apres-jour-j'
-  }
-];
-
 const ToolsGrid: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation('dashboard');
+
+  const tools: Tool[] = [
+    { title: t('tools.items.quiz.title'), description: t('tools.items.quiz.description'), icon: '❓', path: '/dashboard/planning' },
+    { title: t('tools.items.budget.title'), description: t('tools.items.budget.description'), icon: '💰', path: '/dashboard/budget' },
+    { title: t('tools.items.rsvp.title'), description: t('tools.items.rsvp.description'), icon: '✉️', path: '/dashboard/rsvp' },
+    { title: t('tools.items.checklist.title'), description: t('tools.items.checklist.description'), icon: '✅', path: '/dashboard/checklist-mariage' },
+    { title: t('tools.items.drinks.title'), description: t('tools.items.drinks.description'), icon: '🥂', path: '/dashboard/drinks' },
+    { title: t('tools.items.seating.title'), description: t('tools.items.seating.description'), icon: '🪑', path: '/dashboard/seating-plan' }
+  ];
+
+  const advancedTools: Tool[] = [
+    { title: t('tools.items.coordination.title'), description: t('tools.items.coordination.description'), icon: '📅', path: '/mon-jour-m' },
+    { title: t('tools.items.after.title'), description: t('tools.items.after.description'), icon: '💕', path: '/dashboard/apres-jour-j' }
+  ];
 
   return (
     <div className="space-y-8">
@@ -79,14 +41,14 @@ const ToolsGrid: React.FC = () => {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-lg text-foreground flex items-center gap-2">
-              🛒 Votre sélection mariage
+              {t('tools.selectionTitle')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Découvrez nos prestataires certifiés et composez votre équipe de rêve
+              {t('tools.selectionSubtitle')}
             </p>
           </div>
           <div className="hidden md:flex items-center gap-2 text-[#7F9474] font-medium">
-            <span>Explorer</span>
+            <span>{t('tools.explore')}</span>
             <span className="group-hover:translate-x-1 transition-transform">→</span>
           </div>
         </div>
@@ -96,7 +58,7 @@ const ToolsGrid: React.FC = () => {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <Sparkles className="w-5 h-5 text-[#7F9474]" />
-          <h2 className="text-xl font-serif text-foreground">Votre arsenal</h2>
+          <h2 className="text-xl font-serif text-foreground">{t('tools.arsenalHeading')}</h2>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -118,7 +80,7 @@ const ToolsGrid: React.FC = () => {
       <div className="space-y-4">
         <div className="flex items-center gap-2">
           <span className="text-lg">🎯</span>
-          <h2 className="text-xl font-serif text-foreground">Dernière ligne droite</h2>
+          <h2 className="text-xl font-serif text-foreground">{t('tools.finalStretchHeading')}</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

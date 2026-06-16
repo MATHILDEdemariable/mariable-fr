@@ -20,5 +20,33 @@
     "stepsTitle": "Checklist en 10 étapes essentielles",
     "manualTitle": "Checklist personnalisable",
     "smartTitle": "Checklist générée par IA"
+  },
+  "tenSteps": {
+    "progressTitle": "Votre progression",
+    "stepsTitle": "Les 10 étapes clés de l'organisation",
+    "stepsDescription": "Cochez les étapes au fur et à mesure de votre avancement",
+    "loading": "Chargement des tâches de planification...",
+    "emptyError": "🚨 Aucune tâche trouvée - Ceci ne devrait pas arriver !",
+    "emptyHelp": "Merci de signaler ce problème avec les détails de la console.",
+    "offlineToast": {
+      "title": "Mode hors ligne",
+      "description": "Utilisation des tâches par défaut. Vos modifications ne seront pas sauvegardées."
+    },
+    "syncErrorToast": {
+      "title": "Erreur de synchronisation",
+      "description": "Impossible de mettre à jour la tâche. Veuillez réessayer."
+    },
+    "items": [
+      { "label": "Posez les bases", "description": "Définissez la vision de votre mariage : style, ambiance, type de cérémonie." },
+      { "label": "Estimez le nombre d'invités", "description": "Même approximatif, cela guidera vos choix logistiques et budgétaires." },
+      { "label": "Calibrez votre budget", "description": "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies." },
+      { "label": "Choisissez une période ou une date cible", "description": "Cela conditionne les disponibilités des lieux et prestataires." },
+      { "label": "Réservez les prestataires clés", "description": "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc." },
+      { "label": "Gérez les démarches officielles", "description": "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc." },
+      { "label": "Anticipez la coordination du jour J", "description": "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts." },
+      { "label": "Préparez vos éléments personnels", "description": "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés." },
+      { "label": "Consolidez votre organisation", "description": "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements." },
+      { "label": "Vivez pleinement votre journée", "description": "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !" }
+    ]
   }
 }

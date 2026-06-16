@@ -72,5 +72,78 @@
     "moodboard": "Moodboard",
     "chatGPT": "Wedding ChatGPT",
     "aiAssistant": "AI Assistant"
+  },
+  "hero": {
+    "welcomeWithName": "Welcome, {{name}}!",
+    "welcomeGeneric": "Welcome to the Mariable world!",
+    "edit": "Edit",
+    "daysRemaining": "days to go",
+    "weddingDay": "🎊 It's the big day!",
+    "congrats": "Congratulations!",
+    "weddingPast": "Wedding past",
+    "setDate": "Set the date",
+    "guestsPlanned": "expected guests",
+    "editCountAbove": "Edit the number above",
+    "premium": "Premium",
+    "organizationComplete": "planning complete",
+    "errorTitle": "Error",
+    "errorCheckout": "Could not create the payment session.",
+    "errorGeneric": "Something went wrong."
+  },
+  "quickActions": {
+    "guideTitle": "📖 Getting started guide",
+    "guideSubtitle": "Discover the Mariable concept",
+    "videoTitle": "🎬 Video guide",
+    "videoSubtitle": "Video tutorial",
+    "instagramTitle": "Follow us on Instagram",
+    "instagramHandle": "@mariable.fr",
+    "instagramCta": "Follow",
+    "videoModalTitle": "Getting started video",
+    "guideModalTitle": "Getting started guide — Discover Mariable"
+  },
+  "quests": {
+    "heading": "Your next quests",
+    "pending": "{{count}} pending",
+    "priority": "Priority",
+    "done": "Done",
+    "defaults": {
+      "budget": { "title": "Set your budget", "description": "Essential first step" },
+      "rsvp": { "title": "Send invitations", "description": "Create your online RSVP" },
+      "venue": { "title": "Find a venue", "description": "Browse the estates" },
+      "checklist": { "title": "Wedding checklist", "description": "Track your progress" }
+    }
+  },
+  "tools": {
+    "selectionTitle": "🛒 Your wedding selection",
+    "selectionSubtitle": "Discover our certified vendors and build your dream team",
+    "explore": "Explore",
+    "arsenalHeading": "Your toolkit",
+    "finalStretchHeading": "The final stretch",
+    "items": {
+      "quiz": { "title": "Wedding Quiz", "description": "Test your knowledge" },
+      "budget": { "title": "Budget", "description": "Manage your spending" },
+      "rsvp": { "title": "Guest RSVP", "description": "Confirmations" },
+      "checklist": { "title": "Checklist", "description": "Your preparations" },
+      "drinks": { "title": "Drinks", "description": "Calculator" },
+      "seating": { "title": "Seating plan", "description": "Place your guests" },
+      "coordination": { "title": "Wedding-Day coordination", "description": "Detailed planning" },
+      "after": { "title": "After the wedding", "description": "Post-wedding tips" }
+    }
+  },
+  "achievements": {
+    "heading": "Your achievements",
+    "unlocked": "{{count}}/{{total}} unlocked",
+    "next": "Next badge",
+    "badges": {
+      "firstSteps": { "name": "First steps", "description": "Wedding date set" },
+      "budgetMaster": { "name": "Budget master", "description": "Initial budget set up" },
+      "guestList": { "name": "Golden list", "description": "Over 50 guests" },
+      "taskStarter": { "name": "5 tasks", "description": "Complete 5 tasks" },
+      "taskChampion": { "name": "Champion", "description": "Complete 20 tasks" },
+      "perfectionist": { "name": "Perfectionist", "description": "Complete 50 tasks" }
+    }
+  },
+  "summary": {
+    "priceModalTitle": "Pricing details"
   }
 }
