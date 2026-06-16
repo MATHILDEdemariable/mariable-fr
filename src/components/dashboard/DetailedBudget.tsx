@@ -403,8 +403,8 @@ const DetailedBudget: React.FC = () => {
 
     if (!categories.length) {
       toast({
-        title: "Erreur",
-        description: "Aucune donnée de budget à exporter",
+        title: t('detailed.toasts.noData.title'),
+        description: t('detailed.toasts.noData.description'),
         variant: "destructive"
       });
       return;
@@ -414,8 +414,8 @@ const DetailedBudget: React.FC = () => {
 
     try {
       toast({
-        title: "Export PDF en cours",
-        description: "Préparation de votre budget..."
+        title: t('detailed.toasts.pdfStart.title'),
+        description: t('detailed.toasts.pdfStart.description'),
       });
 
       const success = await exportBudgetToPDF({
@@ -428,21 +428,21 @@ const DetailedBudget: React.FC = () => {
 
       if (success) {
         toast({
-          title: "Export réussi",
-          description: "Votre budget a été exporté en PDF"
+          title: t('detailed.toasts.pdfSuccess.title'),
+          description: t('detailed.toasts.pdfSuccess.description'),
         });
       } else {
         toast({
-          title: "Erreur d'export",
-          description: "Une erreur s'est produite lors de l'export en PDF",
+          title: t('detailed.toasts.pdfError.title'),
+          description: t('detailed.toasts.pdfError.description'),
           variant: "destructive"
         });
       }
     } catch (error) {
       console.error("Erreur lors de l'export PDF:", error);
       toast({
-        title: "Erreur d'export",
-        description: "Une erreur s'est produite lors de l'export en PDF",
+        title: t('detailed.toasts.pdfError.title'),
+        description: t('detailed.toasts.pdfError.description'),
         variant: "destructive"
       });
     } finally {
