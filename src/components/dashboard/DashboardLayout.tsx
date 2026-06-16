@@ -112,7 +112,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <div className="mb-4 p-3 bg-editorial-beige border border-editorial-noir/10 flex items-start gap-3">
                 <Info className="h-5 w-5 text-editorial-noir shrink-0 mt-0.5" />
                 <p className="text-sm text-editorial-noir/80 flex-1">
-                  Pour une meilleure expérience, utilisez un ordinateur ou une tablette pour les modules d'organisation. Seul le module Jour-J est optimisé pour mobile.
+                  {t('banner.mobileTip')}
                 </p>
                 <button
                   onClick={() => {
