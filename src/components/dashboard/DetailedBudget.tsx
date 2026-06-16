@@ -828,7 +828,7 @@ const DetailedBudget: React.FC = () => {
                           value={item.name || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
                           className="h-8 border-gray-200"
-                          placeholder="Nom de l'élément"
+                          placeholder={t('detailed.placeholders.itemName')}
                           disabled={!isPremium}
                         />
                       </td>
