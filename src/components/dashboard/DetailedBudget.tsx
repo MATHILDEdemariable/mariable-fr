@@ -688,7 +688,7 @@ const DetailedBudget: React.FC = () => {
   if (isLoadingDetails) {
     return (
       <div className="text-center py-12">
-        <p>Chargement du budget détaillé...</p>
+        <p>{t('detailed.loading')}</p>
       </div>
     );
   }
