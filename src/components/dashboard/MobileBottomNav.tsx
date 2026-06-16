@@ -70,6 +70,8 @@ const useNavData = () => {
 };
 
 const MobileBottomNav: React.FC = () => {
+  const { t } = useTranslation('dashboard');
+  const { mainNavItems, drawerNavItems, bonusItems } = useNavData();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
