@@ -72,5 +72,78 @@
     "moodboard": "Moodboard",
     "chatGPT": "ChatGPT Mariage",
     "aiAssistant": "Assistant IA"
+  },
+  "hero": {
+    "welcomeWithName": "Bienvenue, {{name}} !",
+    "welcomeGeneric": "Bienvenue dans l'univers Mariable !",
+    "edit": "Modifier",
+    "daysRemaining": "jours restants",
+    "weddingDay": "🎊 C'est le jour J !",
+    "congrats": "Félicitations !",
+    "weddingPast": "Mariage passé",
+    "setDate": "Définir la date",
+    "guestsPlanned": "invités prévus",
+    "editCountAbove": "Modifiez le nombre ci-dessus",
+    "premium": "Premium",
+    "organizationComplete": "organisation complétée",
+    "errorTitle": "Erreur",
+    "errorCheckout": "Impossible de créer la session de paiement.",
+    "errorGeneric": "Une erreur est survenue."
+  },
+  "quickActions": {
+    "guideTitle": "📖 Guide de démarrage",
+    "guideSubtitle": "Découvrez le concept Mariable",
+    "videoTitle": "🎬 Guide vidéo",
+    "videoSubtitle": "Tutoriel en vidéo",
+    "instagramTitle": "Suivez-nous sur Instagram",
+    "instagramHandle": "@mariable.fr",
+    "instagramCta": "Suivre",
+    "videoModalTitle": "Guide vidéo de démarrage",
+    "guideModalTitle": "Guide de démarrage - Découvrez Mariable"
+  },
+  "quests": {
+    "heading": "Vos prochaines quêtes",
+    "pending": "{{count}} en attente",
+    "priority": "Priorité",
+    "done": "Fait",
+    "defaults": {
+      "budget": { "title": "Définir votre budget", "description": "Première étape essentielle" },
+      "rsvp": { "title": "Lancer les invitations", "description": "Créer vos RSVP en ligne" },
+      "venue": { "title": "Trouver un lieu", "description": "Explorer les domaines" },
+      "checklist": { "title": "Check-list mariage", "description": "Suivre vos préparatifs" }
+    }
+  },
+  "tools": {
+    "selectionTitle": "🛒 Votre sélection mariage",
+    "selectionSubtitle": "Découvrez nos prestataires certifiés et composez votre équipe de rêve",
+    "explore": "Explorer",
+    "arsenalHeading": "Votre arsenal",
+    "finalStretchHeading": "Dernière ligne droite",
+    "items": {
+      "quiz": { "title": "Quiz Mariage", "description": "Testez votre niveau" },
+      "budget": { "title": "Budget", "description": "Gérez vos dépenses" },
+      "rsvp": { "title": "RSVP Invités", "description": "Confirmations" },
+      "checklist": { "title": "Check-list", "description": "Vos préparatifs" },
+      "drinks": { "title": "Boissons", "description": "Calculatrice" },
+      "seating": { "title": "Plan de table", "description": "Placez vos invités" },
+      "coordination": { "title": "Coordination Jour J", "description": "Planning détaillé" },
+      "after": { "title": "Après le mariage", "description": "Conseils post jour J" }
+    }
+  },
+  "achievements": {
+    "heading": "Vos accomplissements",
+    "unlocked": "{{count}}/{{total}} débloqués",
+    "next": "Prochain badge",
+    "badges": {
+      "firstSteps": { "name": "Premiers pas", "description": "Date de mariage définie" },
+      "budgetMaster": { "name": "Maître du budget", "description": "Budget initial configuré" },
+      "guestList": { "name": "Liste d'or", "description": "Plus de 50 invités" },
+      "taskStarter": { "name": "5 tâches", "description": "Complétez 5 tâches" },
+      "taskChampion": { "name": "Champion", "description": "Complétez 20 tâches" },
+      "perfectionist": { "name": "Perfectionniste", "description": "Complétez 50 tâches" }
+    }
+  },
+  "summary": {
+    "priceModalTitle": "Détail des tarifs"
   }
 }

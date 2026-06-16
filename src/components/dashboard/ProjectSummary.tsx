@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
@@ -24,6 +25,7 @@ interface Task {
 }
 
 const ProjectSummary = () => {
+  const { t } = useTranslation('dashboard');
   const { profile, loading, updateProfile } = useUserProfile();
   const [localWeddingDate, setLocalWeddingDate] = useState<Date | undefined>();
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
@@ -263,7 +265,7 @@ const ProjectSummary = () => {
       <Dialog open={showPrixModal} onOpenChange={setShowPrixModal}>
         <DialogContent className="sm:max-w-5xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Détail des tarifs</DialogTitle>
+            <DialogTitle>{t('summary.priceModalTitle')}</DialogTitle>
           </DialogHeader>
           <PricingContent />
         </DialogContent>

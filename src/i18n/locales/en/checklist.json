@@ -20,5 +20,33 @@
     "stepsTitle": "Checklist in 10 essential steps",
     "manualTitle": "Customizable checklist",
     "smartTitle": "AI-generated checklist"
+  },
+  "tenSteps": {
+    "progressTitle": "Your progress",
+    "stepsTitle": "The 10 key planning steps",
+    "stepsDescription": "Check the steps off as you make progress",
+    "loading": "Loading your planning tasks...",
+    "emptyError": "🚨 No task found - This should not happen!",
+    "emptyHelp": "Please report this issue with the console details.",
+    "offlineToast": {
+      "title": "Offline mode",
+      "description": "Using default tasks. Your changes will not be saved."
+    },
+    "syncErrorToast": {
+      "title": "Sync error",
+      "description": "Could not update the task. Please try again."
+    },
+    "items": [
+      { "label": "Lay the groundwork", "description": "Define your wedding vision: style, vibe, type of ceremony." },
+      { "label": "Estimate your guest count", "description": "Even a rough number will guide your logistics and budget choices." },
+      { "label": "Calibrate your budget", "description": "Assess your means and prioritize the items that matter most to you." },
+      { "label": "Pick a period or a target date", "description": "It dictates venue and vendor availability." },
+      { "label": "Book your key vendors", "description": "Venue, caterer, photographer first. Then DJ, decor, entertainment, etc." },
+      { "label": "Handle the official paperwork", "description": "City hall, religious or secular ceremonies, contracts, insurance, etc." },
+      { "label": "Anticipate wedding-day coordination", "description": "Plan a coordinator (recommended), beauty prep, logistics (transport, accommodations) and key moments." },
+      { "label": "Prepare your personal items", "description": "Outfits, rings, accessories, stationery, DIY or personal touches." },
+      { "label": "Consolidate your organization", "description": "Review every detail with your vendors: timing, deliveries, technical needs, final adjustments." },
+      { "label": "Live your day to the fullest", "description": "You've planned everything: now it's time to enjoy 100%!" }
+    ]
   }
 }

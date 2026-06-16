@@ -1,5 +1,6 @@
 import React from 'react';
 import { Trophy, Lock } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 
 interface Badge {
@@ -27,57 +28,15 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
   hasSetDate = false,
   guestCount = 0
 }) => {
+  const { t } = useTranslation('dashboard');
+
   const badges: Badge[] = [
-    {
-      id: 'first-steps',
-      name: 'Premiers pas',
-      description: 'Date de mariage définie',
-      icon: '📅',
-      unlocked: hasSetDate
-    },
-    {
-      id: 'budget-master',
-      name: 'Maître du budget',
-      description: 'Budget initial configuré',
-      icon: '💰',
-      unlocked: hasSetBudget
-    },
-    {
-      id: 'guest-list',
-      name: 'Liste d\'or',
-      description: 'Plus de 50 invités',
-      icon: '👥',
-      unlocked: guestCount >= 50,
-      progress: guestCount,
-      target: 50
-    },
-    {
-      id: 'task-starter',
-      name: '5 tâches',
-      description: 'Complétez 5 tâches',
-      icon: '✅',
-      unlocked: completedTasks >= 5,
-      progress: completedTasks,
-      target: 5
-    },
-    {
-      id: 'task-champion',
-      name: 'Champion',
-      description: 'Complétez 20 tâches',
-      icon: '🏆',
-      unlocked: completedTasks >= 20,
-      progress: completedTasks,
-      target: 20
-    },
-    {
-      id: 'perfectionist',
-      name: 'Perfectionniste',
-      description: 'Complétez 50 tâches',
-      icon: '⭐',
-      unlocked: completedTasks >= 50,
-      progress: completedTasks,
-      target: 50
-    }
+    { id: 'first-steps', name: t('achievements.badges.firstSteps.name'), description: t('achievements.badges.firstSteps.description'), icon: '📅', unlocked: hasSetDate },
+    { id: 'budget-master', name: t('achievements.badges.budgetMaster.name'), description: t('achievements.badges.budgetMaster.description'), icon: '💰', unlocked: hasSetBudget },
+    { id: 'guest-list', name: t('achievements.badges.guestList.name'), description: t('achievements.badges.guestList.description'), icon: '👥', unlocked: guestCount >= 50, progress: guestCount, target: 50 },
+    { id: 'task-starter', name: t('achievements.badges.taskStarter.name'), description: t('achievements.badges.taskStarter.description'), icon: '✅', unlocked: completedTasks >= 5, progress: completedTasks, target: 5 },
+    { id: 'task-champion', name: t('achievements.badges.taskChampion.name'), description: t('achievements.badges.taskChampion.description'), icon: '🏆', unlocked: completedTasks >= 20, progress: completedTasks, target: 20 },
+    { id: 'perfectionist', name: t('achievements.badges.perfectionist.name'), description: t('achievements.badges.perfectionist.description'), icon: '⭐', unlocked: completedTasks >= 50, progress: completedTasks, target: 50 }
   ];
 
   const unlockedCount = badges.filter(b => b.unlocked).length;
@@ -88,10 +47,10 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="w-5 h-5 text-[#d4af37]" />
-          <h2 className="text-xl font-serif text-foreground">Vos accomplissements</h2>
+          <h2 className="text-xl font-serif text-foreground">{t('achievements.heading')}</h2>
         </div>
         <span className="text-sm text-muted-foreground">
-          {unlockedCount}/{badges.length} débloqués
+          {t('achievements.unlocked', { count: unlockedCount, total: badges.length })}
         </span>
       </div>
 
@@ -136,7 +95,7 @@ const AchievementBadges: React.FC<AchievementBadgesProps> = ({
         <div className="pt-3 border-t border-border">
           <div className="flex items-center justify-between text-sm mb-2">
             <span className="text-muted-foreground">
-              Prochain badge : <span className="font-medium text-foreground">{nextBadge.name}</span>
+              {t('achievements.next')} : <span className="font-medium text-foreground">{nextBadge.name}</span>
             </span>
             <span className="text-muted-foreground">
               {nextBadge.progress}/{nextBadge.target}

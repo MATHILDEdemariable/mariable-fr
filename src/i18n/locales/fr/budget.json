@@ -12,5 +12,47 @@
   "tabs": {
     "detailed": "Détail",
     "calculator": "Calcul"
+  },
+  "detailed": {
+    "title": "Budget Détaillé",
+    "import": "Importer ({{count}})",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "pdf": "PDF",
+    "csv": "CSV",
+    "loading": "Chargement du budget détaillé...",
+    "premiumFeature": "Budget Détaillé",
+    "premiumDescription": "Ajoutez et modifiez vos postes de budget avec l'abonnement Premium",
+    "columns": {
+      "category": "Catégorie / Élément",
+      "estimated": "Budget Estimé (€)",
+      "actual": "Coût Réel (€)",
+      "deposit": "Acompte Versé (€)",
+      "remaining": "Reste à Payer (€)",
+      "comment": "Commentaire",
+      "actions": "Actions"
+    },
+    "add": "Ajouter",
+    "limitReached": "Limite atteinte",
+    "total": "TOTAL",
+    "placeholders": {
+      "itemName": "Nom de l'élément",
+      "comment": "Ex: Mariée, Marié, Parents..."
+    },
+    "toasts": {
+      "saved": { "title": "Budget sauvegardé", "description": "Les modifications ont été enregistrées avec succès." },
+      "autosave": { "title": "Sauvegarde automatique active", "description": "Vos modifications sont enregistrées automatiquement." },
+      "deleteError": { "title": "Erreur de suppression", "description": "Impossible de supprimer l'élément." },
+      "noData": { "title": "Erreur", "description": "Aucune donnée de budget à exporter" },
+      "pdfStart": { "title": "Export PDF en cours", "description": "Préparation de votre budget..." },
+      "pdfSuccess": { "title": "Export réussi", "description": "Votre budget a été exporté en PDF" },
+      "pdfError": { "title": "Erreur d'export", "description": "Une erreur s'est produite lors de l'export en PDF" },
+      "csvSuccess": { "title": "Export réussi", "description": "Le budget a été exporté en CSV" },
+      "csvError": { "title": "Erreur d'export", "description": "Une erreur s'est produite lors de l'export en CSV" },
+      "cartEmpty": { "title": "Panier vide", "description": "Ajoutez d'abord des prestataires à votre panier" },
+      "importSuccess": { "title": "Import réussi", "description": "{{count}} prestataire(s) importé(s) depuis le panier" },
+      "importNone": { "title": "Aucun import", "description": "Tous les prestataires du panier sont déjà dans le budget" }
+    },
+    "cartImportNote": "Importé depuis le panier ({{category}})"
   }
 }

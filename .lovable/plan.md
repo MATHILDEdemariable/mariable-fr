@@ -1,63 +1,75 @@
+
 ## Objectif
 
-Rendre le toggle EN/FR fonctionnel sur tout `/dashboard` pour :
-1. **Chrome** : sidebar, mobile bottom nav, header, bannières, modales d'onboarding, boutons "Accueil / Sélection de professionnels", titres et meta `<Helmet>` des pages dashboard.
-2. **3 pages prioritaires entièrement traduites** : Budget, Plan de table (Seating), Checklist mariage.
+Faire fonctionner le toggle FR/EN sur 4 pages dashboard. Le toggle est déjà installé dans le PremiumHeader, react-i18next est configuré, et des namespaces `budget`/`checklist`/`dashboard`/`seating` existent déjà partiellement. Cette tâche complète les traductions manquantes.
 
-Le toggle EN/FR existe déjà dans `PremiumHeader` (utilisé par `DashboardLayout`) → aucune nouvelle UI à créer, on branche juste les clés.
+## Périmètre
 
-**Hors scope** (V1) : autres pages dashboard (Planning, Mon Jour-M, Invités, Moodboard, Guides PDF, RSVP, Drinks, Coordination, etc.) — elles restent en FR mais la langue est mémorisée et le toggle visible partout. Contenus dynamiques DB (noms prestataires, tâches générées par IA, descriptions) → restent dans leur langue d'origine.
+### 1. /dashboard (page d'accueil)
+Composants à traduire (chrome complet) :
+- `src/components/dashboard/ProjectSummary.tsx` — modal "Détail des tarifs", textes système
+- `src/components/dashboard/gaming/HeroStats.tsx` — "Bienvenue", "Félicitations", "Mariage passé", "invités prévus", "Modifiez le nombre", "organisation complétée", badge Premium, date FR
+- `src/components/dashboard/gaming/QuickActions.tsx` — "Guide de démarrage", "Découvrez le concept", "Guide vidéo", "Tutoriel en vidéo", "Suivez-nous sur Instagram", "Suivre"
+- `src/components/dashboard/gaming/QuestCards.tsx` — titres et CTA cartes
+- `src/components/dashboard/gaming/ToolsGrid.tsx` — labels des outils
+- `src/components/dashboard/gaming/AchievementBadges.tsx` — noms et descriptions des badges
 
-## Architecture i18n (réutilise l'existant)
+→ Étendre `src/i18n/locales/{fr,en}/dashboard.json`
 
-`react-i18next` est déjà configuré (`src/i18n/index.ts`) avec `localStorage: mariable_lang`. On ajoute **3 nouveaux namespaces** :
+### 2. /dashboard/checklist-mariage
+- `src/pages/dashboard/ChecklistMariagePage.tsx` — titre page, tabs ("En 10 étapes", "Checklist manuelle", "Suggestions")
+- `src/components/dashboard/Checklist10Steps.tsx` (ou similaire) — "Checklist en 10 étapes essentielles", "Votre progression", "Les 10 étapes clés de l'organisation", "Cochez les étapes au fur et à mesure", **les 10 étapes** (titres + descriptions)
+- Composant "Checklist manuelle" — colonnes, boutons d'ajout, catégories
 
-```
-src/i18n/locales/{fr,en}/
-  dashboard.json     ← chrome partagé (sidebar, mobile nav, bannières, boutons globaux, helmet titles)
-  budget.json        ← page Budget complète
-  seating.json       ← Plan de table complet
-  checklist.json     ← Checklist mariage complète
-```
+→ Étendre `src/i18n/locales/{fr,en}/checklist.json`
 
-Enregistrement dans `src/i18n/index.ts` (ajout aux imports, à `resources`, à `ns: [...]`).
+### 3. /dashboard/budget
+- `src/pages/dashboard/BudgetPage.tsx` — déjà câblé (`useTranslation('budget')`), compléter les clés manquantes
+- `src/components/dashboard/DetailedBudget.tsx` (~915 lignes) — "Wedding Budget"/"Budget de mariage", "Budget Détaillé", boutons "Importer", "Enregistrer", "PDF", "CSV", colonnes ("Catégorie/Élément", "Budget Estimé", "Coût Réel", "Acompte Versé", "Reste à Payer", "Commentaire", "Actions"), catégories par défaut, placeholders, toasts
+- `src/components/dashboard/BudgetCalculator.tsx` (~846 lignes) — labels formulaire (région, saison, invités, style…), résultats, recommandations
+- Onglet "Calculator" / "Details"
 
-## Pages & composants à modifier
+→ Étendre `src/i18n/locales/{fr,en}/budget.json`
 
-**Chrome (namespace `dashboard`)**
-- `src/components/dashboard/DashboardLayout.tsx` — boutons "Accueil", "Sélection de professionnels", bannière mobile, alt textes.
-- `src/components/dashboard/DashboardSidebar.tsx` — labels de navigation.
-- `src/components/dashboard/MobileBottomNav.tsx` — labels mobile.
-- `src/components/dashboard/SatisfactionModal.tsx` — textes modale (titres/CTA).
-- Titres `<Helmet>` génériques des pages dashboard (CoordinatorsPage, GuidesPage, etc.) — uniquement le `<title>` et `<meta description>`, pour cohérence SEO/onglet.
+### 4. /dashboard/ceremonie (laïque + catholique)
+- `src/pages/dashboard/CeremoniePage.tsx` (~1224 lignes) — traduction **intégrale du contenu éditorial** :
+  - Onglets Laïque / Catholique
+  - Section Laïque : fondamentaux, déroulement (10 étapes), types d'officiants, rituels symboliques, conseils musique, plan B météo, checklist PDF
+  - Section Catholique : étapes de préparation, déroulement liturgique, lectures, musiques, traditions, checklist PDF
+  - Boutons de téléchargement PDF, modals premium
+  - Génération PDF (titres jsPDF)
 
-**Pages prioritaires entièrement traduites**
-- `src/pages/dashboard/BudgetPage.tsx` + `src/components/dashboard/BudgetCalculator.tsx` + `BudgetSummary.tsx` + `DetailedBudget.tsx` (namespace `budget`).
-- `src/pages/SeatingPlan.tsx` + composants enfants de plan de table (namespace `seating`). À vérifier au moment de l'implémentation : lister les sous-composants utilisés et les traduire ensemble.
-- `src/pages/dashboard/ChecklistMariagePage.tsx` + `ChecklistMariageManuelle.tsx` + `ChecklistIntelligente.tsx` + `ChecklistDixEtapes.tsx` + `TasksList.tsx` (namespace `checklist`).
+→ Créer `src/i18n/locales/{fr,en}/ceremonie.json` (nouveau namespace, contenu volumineux)
 
-Pour chaque composant : remplacer les chaînes FR en dur par `t('cle.explicite')` (convention métier, pas d'abréviations).
+## Approche technique
 
-## Règles & garde-fous
+**Pattern uniforme par composant** :
+1. Importer `useTranslation` avec le namespace approprié
+2. Remplacer chaque chaîne FR par `t('clé')`
+3. Mettre les chaînes FR existantes dans `fr/<ns>.json`, traduire en anglais idiomatique dans `en/<ns>.json`
+4. Pour les listes (étapes, badges, catégories) : structurer en tableaux d'objets dans le JSON et lire avec `t('clé', { returnObjects: true })`
+5. Enregistrer le namespace `ceremonie` dans `src/i18n/index.ts`
 
-- **Ne pas toucher** à la logique métier, aux requêtes Supabase, aux exports PDF (les PDF restent en FR — c'est cohérent avec un produit FR-first et évite de refondre `budgetExportService` / `seating` export).
-- **Contenus DB** non traduits : descriptions, noms, tâches générées par IA s'affichent tels quels.
-- **Boutons toast/erreurs** des 3 pages prioritaires : traduits. Toasts des pages hors scope : restent en FR.
-- **Clés i18n** : convention `page.section.element` (ex: `budget.summary.totalEstimated`, `checklist.task.markDone`).
-- **Pluriels** : utiliser la syntaxe i18next `key_one` / `key_other` quand pertinent (ex: nb invités, nb tâches).
-- **Dates et nombres** : formater via `Intl.DateTimeFormat(i18n.language)` / `Intl.NumberFormat` pour budget (€ reste affiché, séparateurs adaptés).
+**Date du dashboard** ("mardi 16 juin 2026") : utiliser `date-fns` avec locale dynamique (`fr` ou `enUS`) selon `i18n.language`.
 
-## Livrables
+**Ce qui ne change PAS** :
+- Contenus DB (catégories budget personnalisées par user, commentaires, items checklist manuelle, etc.) — restent dans leur langue d'origine, conformément à la règle existante
+- Logique métier, requêtes, RLS, calculs
 
-1. 8 fichiers JSON (`fr` + `en` × 4 namespaces).
-2. `src/i18n/index.ts` : enregistrement des namespaces.
-3. Chrome dashboard traduit (4-5 composants).
-4. 3 pages prioritaires + sous-composants traduits.
-5. Vérification manuelle : toggle EN dans le header → sidebar/mobile-nav/3 pages basculent ; reload → langue persistée ; les autres pages dashboard restent lisibles (FR par défaut, pas d'erreurs).
+## Estimation volume
 
-## Hors scope explicite (à traiter dans une V2 si besoin)
+- ~300-400 clés de traduction au total
+- ~150 clés rien que pour CeremoniePage (volume éditorial)
+- ~60-80 clés pour DetailedBudget + BudgetCalculator
+- ~40 clés pour la checklist 10 étapes
+- ~30 clés pour le dashboard d'accueil
 
-- Pages dashboard : Planning, Mon Jour-M (et sous-pages), Invités/RSVP, Moodboard, Guides PDF, Drinks Calculator, Coordination, Documents, Hébergements, QR Code, Wishlist, Messages, etc.
-- Traduction des exports PDF (budget, plan de table, checklist).
-- Traduction des contenus DB / IA.
-- Emails transactionnels dashboard.
+Travail conséquent mais sans risque sur la logique : remplacement de littéraux par `t()` uniquement.
+
+## Validation
+
+1. Build sans erreur
+2. Toggle EN sur /dashboard → tous les textes chrome passent en anglais, date affichée en EN
+3. Idem sur /dashboard/checklist-mariage, /dashboard/budget, /dashboard/ceremonie (onglet Laïque ET Catholique)
+4. Toggle FR remet tout en français
+5. Le contenu DB (catégories budget user, items ajoutés) reste inchangé dans les deux langues

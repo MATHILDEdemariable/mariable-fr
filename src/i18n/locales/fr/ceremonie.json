@@ -1,0 +1,273 @@
+{
+  "meta": {
+    "title": "Cérémonie de Mariage - Guide Complet | Mariable",
+    "description": "Guide complet pour votre cérémonie de mariage : cérémonie laïque, mariage catholique, rituels, vœux, musique et logistique."
+  },
+  "page": {
+    "title": "Cérémonie de Mariage",
+    "subtitle": "Guides complets pour votre célébration"
+  },
+  "tabs": {
+    "laique": "Cérémonie Laïque",
+    "catholique": "Cérémonie Catholique"
+  },
+  "common": {
+    "share": "Partager",
+    "shareToast": "Lien copié dans le presse-papier !",
+    "downloadChecklist": "Télécharger la checklist",
+    "advice": "Conseil",
+    "important": "Important",
+    "moment": "Moment",
+    "downloadedToastLaique": "Checklist cérémonie laïque téléchargée !",
+    "downloadedToastCatholique": "Checklist mariage catholique téléchargée !",
+    "premiumLaiqueFeature": "Checklist Cérémonie Laïque PDF",
+    "premiumLaiqueDescription": "Téléchargez la checklist complète pour votre cérémonie laïque.",
+    "premiumCatholiqueFeature": "Checklist Mariage Catholique PDF",
+    "premiumCatholiqueDescription": "Téléchargez la checklist complète pour votre mariage catholique."
+  },
+  "laique": {
+    "fondamentauxTitle": "Les fondamentaux",
+    "fondamentauxIntro": "La cérémonie laïque est le pivot émotionnel du mariage — un espace de liberté absolue où votre histoire devient le centre de la narration.",
+    "fondamentaux": [
+      { "label": "Durée optimale", "value": "45 à 60 minutes" },
+      { "label": "Valeur juridique", "value": "Aucune - Mariage civil obligatoire avant" },
+      { "label": "Lieux possibles", "value": "Jardins, domaines, plages, musées, lieux atypiques" }
+    ],
+    "derouleTitle": "Le déroulé en 10 étapes",
+    "deroulementEtapes": [
+      { "titre": "Prélude et installation", "description": "Musique d'ambiance, annonces logistiques (téléphones éteints)" },
+      { "titre": "Entrée du cortège", "description": "Mariés au bras des parents, témoins, enfants d'honneur" },
+      { "titre": "Mot de bienvenue", "description": "L'officiant pose le cadre, hommage aux absents possible" },
+      { "titre": "Histoire du couple", "description": "Récit de la rencontre, épreuves traversées, projets d'avenir" },
+      { "titre": "Interventions des proches", "description": "3 à 5 interventions maximum (témoins, famille)" },
+      { "titre": "Rituel symbolique", "description": "Sable, rubans, arbre... un geste concret pour sacraliser l'union" },
+      { "titre": "Échange des vœux", "description": "Les mariés se parlent directement - moment le plus émouvant" },
+      { "titre": "Échange des alliances", "description": "Consentement explicite guidé par l'officiant" },
+      { "titre": "Conclusion et baiser", "description": "Déclaration finale, musique de sortie" },
+      { "titre": "Sortie des mariés", "description": "Acclamations, pétales de fleurs ou bulles de savon" }
+    ],
+    "officiantTitle": "Choisir son officiant",
+    "officiantAvantages": "Avantages",
+    "officiantVigilances": "Points de vigilance",
+    "typesOfficiants": [
+      { "type": "Professionnel", "avantages": ["Maîtrise technique", "Neutralité", "Accompagnement structuré sur plusieurs mois"], "vigilances": ["Coût financier", "Relation initialement moins intime"] },
+      { "type": "Proche (Ami/Famille)", "avantages": ["Émotion forte", "Connaissance parfaite du couple", "Gratuit"], "vigilances": ["Stress de la prise de parole", "Manque d'expérience technique"] },
+      { "type": "Mariés eux-mêmes", "avantages": ["Contrôle total", "Format très intime"], "vigilances": ["Charge mentale accrue le jour J", "Complexité de gestion du rythme"] }
+    ],
+    "rituelsTitle": "Catalogue des rituels symboliques",
+    "rituels": [
+      { "nom": "Rituel du sable", "description": "Mélanger deux sables de couleurs différentes dans un vase commun. Les grains se mélangent de façon irréversible, symbolisant l'union des deux personnalités.", "conseils": "Choisir des couleurs contrastées. Conserver le vase en souvenir." },
+      { "nom": "Handfasting (Rubans)", "description": "D'origine celte, ce rituel consiste à lier les mains des mariés avec des rubans de différentes couleurs. Chaque ruban peut être apporté par un proche.", "conseils": "Rubans de 1,2m de long et 4cm de large minimum pour un bel effet visuel." },
+      { "nom": "Arbre à planter", "description": "Les mariés plantent ensemble un arbuste symbolisant la croissance de leur amour et la nécessité d'en prendre soin quotidiennement.", "conseils": "Choisir un arbre adapté à votre jardin. Les racines = fondations, les branches = avenir commun." },
+      { "nom": "Pierres / Galets", "description": "Chaque invité tient une pierre et y dépose symboliquement un vœu pour le couple. Les pierres sont collectées dans un bocal.", "conseils": "Excellent pour impliquer une grande assemblée de manière silencieuse et solennelle." },
+      { "nom": "Pelote de laine", "description": "Une pelote est lancée entre les invités, créant un maillage physique qui relie tout le monde aux mariés.", "conseils": "Déconseillé en cas de coiffures complexes ou de chapeaux volumineux !" }
+    ],
+    "prochesTitle": "Impliquer les proches",
+    "prochesRolesTitle": "Rôles possibles",
+    "prochesTimidesTitle": "Alternatives pour les timides",
+    "rolesProches": [
+      { "role": "Discours et lectures", "description": "Partager une anecdote, un poème ou un texte littéraire" },
+      { "role": "Transport des alliances", "description": "Rôle de confiance, souvent confié aux enfants ou témoins" },
+      { "role": "Participation aux rituels", "description": "Allumer une bougie, nouer un ruban, verser du sable" },
+      { "role": "Signature du certificat", "description": "Moment solennel en fin de cérémonie" }
+    ],
+    "alternativesTimides": [
+      "Intervention en duo (parler à deux pour se soutenir)",
+      "Rôles muets (apporter les alliances, distribuer les livrets)",
+      "Montage photo ou vidéo à projeter",
+      "Lecture de textes d'auteurs célèbres (moins intimidant que d'écrire)"
+    ],
+    "voeuxTitle": "Guide de rédaction des vœux",
+    "voeuxPreparation": "Préparation",
+    "voeuxPreparationItems": [
+      "Commencer à noter des idées 2-3 mois avant dans un petit carnet",
+      "Recueillir des souvenirs, preuves d'amour quotidiennes, citations inspirantes",
+      "Finaliser la version définitive 15 jours avant pour rester connecté à l'émotion"
+    ],
+    "voeuxStructure": "Structure recommandée",
+    "voeuxStructureItems": [
+      { "title": "1. Le passé", "desc": "Évoquer un souvenir marquant ou la première rencontre" },
+      { "title": "2. Le présent", "desc": "Ce que l'autre représente aujourd'hui (refuge, force, évidence)" },
+      { "title": "3. Le futur", "desc": "Promesses concrètes, grands projets et petits détails du quotidien" },
+      { "title": "4. La conclusion", "desc": "Une phrase simple scellant l'engagement" }
+    ],
+    "voeuxConseils": "Conseils de proclamation",
+    "voeuxConseilsItems": [
+      "Durée : 2 à 3 minutes pour captiver sans lasser",
+      "Authenticité : Si vous êtes drôle, incluez de l'humour. Si vous êtes pudique, la simplicité suffit",
+      "Support : Éviter le téléphone ! Utiliser un beau papier pour les photos",
+      "Émotion : N'ayez pas peur de pleurer ou de marquer des silences"
+    ],
+    "logistiqueTitle": "Logistique et technique",
+    "planBTitle": "Plan B météo",
+    "planBItems": [
+      "Prévoir un lieu de repli (salle, grange, barnum)",
+      "Réfléchir à la logistique de transfert",
+      "En cas de canicule : ombre et rafraîchissements"
+    ],
+    "sonoTitle": "Sonorisation",
+    "sonoItems": [
+      "Minimum 2 micros sans fil pour +50 personnes",
+      "Enceintes près des invités (pas derrière les mariés)",
+      "Vérifier les prises ou louer un générateur silencieux"
+    ],
+    "amenagementTitle": "Aménagement",
+    "amenagementItems": [
+      "Disposition en arc de cercle pour une meilleure visibilité",
+      "Recouvrir les chaises plastique (brûlent au soleil)",
+      "Mariés 3/4 face à l'assemblée"
+    ],
+    "musiqueTitle": "Programmation musicale",
+    "musiqueColMoment": "Moment",
+    "musiqueColType": "Type de musique",
+    "musiqueColConseil": "Recommandation",
+    "musiqueNote": "Un groupe live peut s'adapter en temps réel. Si DJ : lui transmettre le conducteur précis.",
+    "programmationMusicale": [
+      { "moment": "Installation", "type": "Instrumentale / Ambiance", "conseil": "Volume modéré pour permettre la discussion" },
+      { "moment": "Entrée", "type": "Chanson à texte / Émouvante", "conseil": "Volume soutenu, début marqué" },
+      { "moment": "Rituels", "type": "Instrumentale / Boucle", "conseil": "S'effacer derrière la voix de l'officiant" },
+      { "moment": "Vœux", "type": "Silence ou nappe discrète", "conseil": "Ne pas masquer les émotions vocales" },
+      { "moment": "Sortie", "type": "Rythmée / Festive", "conseil": "Augmentation progressive après le baiser" }
+    ],
+    "retroplanningTitle": "Rétroplanning",
+    "retroplanning": [
+      { "delai": "M-1", "action": "Finaliser la trame avec l'officiant, envoyer les musiques au DJ, confirmer les intervenants" },
+      { "delai": "J-7", "action": "Relire ses vœux à voix haute, préparer le kit de secours (mouchoirs, eau, maquillage)" },
+      { "delai": "J-1", "action": "Répétition sur place, installer la décoration, vérifier les micros" },
+      { "delai": "Jour J", "action": "Prendre 5 minutes à deux avant le début pour se recentrer" }
+    ],
+    "checklistTitle": "Checklist Jour-J",
+    "checklistJourJ": [
+      { "categorie": "Cérémonie", "items": ["Livrets de cérémonie", "Pétales/confettis", "Alliances", "Mouchoirs", "Bouteilles d'eau"] },
+      { "categorie": "Technique", "items": ["Enceintes chargées", "Micros testés", "Playlist prête", "Câbles et rallonges"] },
+      { "categorie": "Confort", "items": ["Signalétique vers le lieu", "Ombre (parasols)", "Boissons fraîches à l'arrivée"] },
+      { "categorie": "Après-cérémonie", "items": ["Quelqu'un pour collecter les objets du rituel", "Ranger les livrets restants", "Guider vers le cocktail"] }
+    ],
+    "citation": "\"La cérémonie laïque, bien plus qu'une simple alternative au cadre religieux, est une véritable ingénierie de l'émotion. En plaçant l'histoire du couple au centre, elle transforme les invités de simples spectateurs en témoins actifs de l'engagement.\""
+  },
+  "catholique": {
+    "introTitle": "Le Mariage Catholique",
+    "introDuree": "Durée",
+    "introDureeValue": "1h à 1h30 (messe nuptiale)",
+    "introPreparation": "Préparation",
+    "introPreparationValue": "6 à 12 mois avant le mariage",
+    "introNature": "Nature",
+    "introNatureValue": "Acte sacramentel, alliance indissoluble",
+    "introQuote": "Le mariage catholique représente un acte sacramentel où le divin rencontre l'humain pour sceller une alliance indissoluble.",
+    "alertText": "Le mariage civil doit obligatoirement précéder le mariage religieux. La préparation doit être initiée idéalement 1 an à l'avance, ou au minimum 6 mois avant.",
+    "dossierTitle": "Dossier de catholicité",
+    "dossierColDocument": "Document",
+    "dossierColNature": "Nature",
+    "dossierColValidite": "Validité",
+    "documentsCatholicite": [
+      { "document": "Acte de naissance", "nature": "Extrait intégral avec filiation", "validite": "Moins de 3 mois" },
+      { "document": "Acte de baptême", "nature": "Copie pour mariage uniquement", "validite": "Demandée par le prêtre" },
+      { "document": "Certificat de mariage civil", "nature": "Document officiel de la mairie", "validite": "Indispensable avant la cérémonie" },
+      { "document": "Déclaration d'intention", "nature": "Manuscrite et personnelle", "validite": "Expression des 4 piliers" },
+      { "document": "Autorisation de l'évêché", "nature": "Dispense ou autorisation spéciale", "validite": "Pour mariages mixtes ou dispars" }
+    ],
+    "mixtesTitle": "Mariages mixtes et disparité de culte",
+    "mixteCardTitle": "Mariage mixte",
+    "mixteCardText": "Union entre deux baptisés (ex : catholique et protestant).",
+    "mixteCardNote": "Nécessite une autorisation de l'évêque, sollicitée par le prêtre.",
+    "disparityCardTitle": "Disparité de culte",
+    "disparityCardText": "Union entre un catholique et une personne non baptisée.",
+    "disparityCardNote": "Nécessite une dispense. Le conjoint catholique s'engage pour le baptême des enfants.",
+    "piliersTitle": "Les 4 piliers du mariage catholique",
+    "piliersNote": "Chaque époux rédige une déclaration d'intention manuscrite exprimant son adhésion à ces 4 piliers.",
+    "piliersMariage": [
+      { "pilier": "Liberté", "definition": "Choix conscient sans contrainte externe", "pratique": "Engagement mûri, exempt de pressions familiales ou sociales" },
+      { "pilier": "Fidélité", "definition": "Exclusivité et permanence de l'amour", "pratique": "Promesse de soutien mutuel dans la santé comme dans la maladie" },
+      { "pilier": "Indissolubilité", "definition": "Engagement pour la vie entière", "pratique": "Volonté de bâtir un foyer durable, jusqu'à ce que la mort nous sépare" },
+      { "pilier": "Fécondité", "definition": "Ouverture à la vie et don de soi", "pratique": "Désir d'accueillir des enfants ou ouverture généreuse aux autres" }
+    ],
+    "preparationTitle": "Préparation spirituelle",
+    "prepPretreTitle": "Rencontres avec le prêtre",
+    "prepPretreText": "3 à 4 rencontres pour explorer la dimension spirituelle du couple, leur compréhension du sacrement et la rédaction des déclarations d'intention.",
+    "prepCpmTitle": "Sessions CPM (Centre de Préparation au Mariage)",
+    "prepCpmText": "Journées ou week-ends avec d'autres fiancés pour aborder la communication, la gestion des conflits, la sexualité et le projet de vie.",
+    "derouleTitle": "Déroulé de la cérémonie",
+    "derouleCatholique": [
+      { "titre": "Procession d'entrée", "description": "Le marié entre au bras de sa mère, suivi du cortège, puis la mariée au bras de son père" },
+      { "titre": "Liturgie de la Parole", "description": "Lectures bibliques (Ancien Testament, Épîtres, Évangile) et homélie du prêtre" },
+      { "titre": "Dialogue initial", "description": "Le prêtre interroge les mariés sur leur liberté et engagement" },
+      { "titre": "Échange des consentements", "description": "Les mariés se donnent mutuellement le sacrement" },
+      { "titre": "Bénédiction des alliances", "description": "Les anneaux sont bénis et échangés en signe d'alliance" },
+      { "titre": "Bénédiction nuptiale", "description": "Prière solennelle invoquant la force de l'Esprit Saint sur le couple" },
+      { "titre": "Signature des registres", "description": "Accompagnée d'un morceau de musique, puis la quête" },
+      { "titre": "Sortie triomphale", "description": "Les mariés quittent l'église sous les acclamations" }
+    ],
+    "decoTitle": "Décoration et fleurs",
+    "decoNote": "Prévoyez une équipe pour retirer les décorations après la cérémonie.",
+    "decoAutelTitle": "L'autel",
+    "decoAutelText": "Point focal de la liturgie. Compositions florales au pied ou sur les côtés, jamais directement sur l'autel.",
+    "decoAlleeTitle": "L'allée centrale",
+    "decoAlleeText": "Bouquets en bout de banc, rubans de soie ou satin, pétales de fleurs si la paroisse l'autorise.",
+    "decoBougiesTitle": "Les bougies",
+    "decoBougiesText": "Symbolisent la lumière du Christ. Rituel possible : allumer ensemble un cierge central depuis deux bougies.",
+    "musiqueTitle": "Musique sacrée",
+    "musiqueColMoment": "Moment",
+    "musiqueColExemples": "Exemples de répertoire",
+    "musiqueNote": "L'orgue reste l'instrument par excellence. Chorale gospel ou quatuor à cordes possibles pour personnaliser.",
+    "musiqueSacree": [
+      { "moment": "Entrée du cortège", "exemples": "Marche de Mendelssohn, Canon de Pachelbel" },
+      { "moment": "Psaume et Alléluia", "exemples": "Psaume 127, Alléluia de Taizé ou de Haendel" },
+      { "moment": "Échange des alliances", "exemples": "Ave Maria (Schubert ou Gounod), Panis Angelicus" },
+      { "moment": "Communion (si messe)", "exemples": "Cantique de Jean Racine, Anima Christi" },
+      { "moment": "Signature des registres", "exemples": "Aria (Bach), Oh Happy Day (Gospel)" }
+    ],
+    "rolesTitle": "Rôles des participants",
+    "rolesTemoinsTitle": "Les témoins",
+    "rolesTemoinsItems": [
+      "Minimum 2 témoins (1 par marié), pas obligatoirement baptisés",
+      "Signent le registre pour certifier l'échange des consentements",
+      "Piliers logistiques pour la gestion des invités"
+    ],
+    "rolesEnfantsTitle": "Enfants d'honneur",
+    "rolesEnfantsItems": [
+      "Portent les alliances sur un coussin",
+      "Lancent des pétales de fleurs devant la mariée",
+      "Tiennent la traîne de la robe si nécessaire",
+      "Âge idéal : 5 à 10 ans pour minimiser les imprévus"
+    ],
+    "rolesPhotosTitle": "Photographes",
+    "rolesPhotosItems": [
+      "Se présenter au prêtre avant la cérémonie",
+      "Rester hors du chœur, déplacements lents et discrets",
+      "Privilégier les téléobjectifs pour rester à distance",
+      "Moments clés : entrée, alliances, bénédiction, signature"
+    ],
+    "sortieTitle": "La sortie de l'église",
+    "sortieColTradition": "Tradition",
+    "sortieColSignification": "Signification",
+    "sortieColContrainte": "Contrainte",
+    "sortieNote": "Vérifiez auprès de la paroisse ce qui est autorisé. Prévoyez le nettoyage du parvis.",
+    "traditionsSortie": [
+      { "tradition": "Lancer de riz", "signification": "Symbole de prospérité et fertilité", "contrainte": "Souvent interdit pour des raisons de nettoyage" },
+      { "tradition": "Bulles de savon", "signification": "Effet féerique, idéal pour les photos", "contrainte": "Nécessite des flacons individuels" },
+      { "tradition": "Lavande / Pétales", "signification": "Parfum et romantisme naturel", "contrainte": "Nécessite un balayage après" },
+      { "tradition": "Baguettes à grelots", "signification": "Animation sonore et visuelle", "contrainte": "Écologique et sans résidus" }
+    ],
+    "checklistTitle": "Checklist mariage catholique",
+    "checklistCatholique": [
+      { "categorie": "Documents", "items": ["Acte de naissance (moins de 3 mois)", "Acte de baptême", "Certificat mariage civil", "Déclaration d'intention"] },
+      { "categorie": "Préparation", "items": ["Rencontres avec le prêtre (3-4)", "Sessions CPM (week-end)", "Rédaction déclaration d'intention", "Choix des lectures"] },
+      { "categorie": "Logistique église", "items": ["Valider la date avec la paroisse", "Rencontrer l'organiste", "Prévoir la décoration florale", "Confirmer les témoins"] },
+      { "categorie": "Jour J", "items": ["Alliances", "Livrets de messe", "Arrhes/quête", "Fleuriste église"] }
+    ],
+    "citation": "\"Le mariage catholique est un équilibre subtil entre la rigueur liturgique et l'expression d'un amour personnel. La célébration n'est pas une fin en soi, mais le début d'une alliance soutenue par la foi et la communauté.\""
+  },
+  "pdf": {
+    "headerLaique": "Checklist Ceremonie Laique",
+    "headerCatholique": "Checklist Mariage Catholique",
+    "retroplanningTitle": "Retroplanning",
+    "notesTitle": "Notes importantes",
+    "notes": [
+      "Preparation a commencer 6 a 12 mois avant le mariage",
+      "Le mariage civil doit obligatoirement preceder le mariage religieux",
+      "Prevoir 3 a 4 rencontres avec le pretre et des sessions CPM",
+      "La ceremonie dure environ 1h a 1h30 (messe nuptiale)"
+    ],
+    "generatedOn": "Genere le"
+  }
+}

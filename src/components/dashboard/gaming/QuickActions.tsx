@@ -1,5 +1,6 @@
 import React from 'react';
 import { Play, BookOpen } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { LoomVideoEmbed } from '@/components/tutorials/LoomVideoEmbed';
@@ -19,6 +20,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
   showGuideModal,
   setShowGuideModal
 }) => {
+  const { t } = useTranslation('dashboard');
   return (
     <>
       <div className="glass-card rounded-2xl p-4 space-y-3">
@@ -32,10 +34,10 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-foreground flex items-center gap-2">
-              📖 Guide de démarrage
+              {t('quickActions.guideTitle')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Découvrez le concept Mariable
+              {t('quickActions.guideSubtitle')}
             </p>
           </div>
         </button>
@@ -52,10 +54,10 @@ const QuickActions: React.FC<QuickActionsProps> = ({
           </div>
           <div className="flex-1">
             <h3 className="font-medium text-foreground flex items-center gap-2">
-              🎬 Guide vidéo
+              {t('quickActions.videoTitle')}
             </h3>
             <p className="text-sm text-muted-foreground">
-              Tutoriel en vidéo
+              {t('quickActions.videoSubtitle')}
             </p>
           </div>
         </button>
@@ -72,10 +74,10 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             </div>
             <div>
               <p className="text-sm font-medium text-foreground">
-                Suivez-nous sur Instagram
+                {t('quickActions.instagramTitle')}
               </p>
               <p className="text-xs text-muted-foreground">
-                @mariable.fr
+                {t('quickActions.instagramHandle')}
               </p>
             </div>
           </div>
@@ -85,7 +87,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
             onClick={() => window.open('https://www.instagram.com/mariable.fr/', '_blank', 'noopener,noreferrer')}
             className="shrink-0 border-[#7F9474] text-[#7F9474] hover:bg-[#7F9474]/10"
           >
-            Suivre
+            {t('quickActions.instagramCta')}
           </Button>
         </div>
       </div>
@@ -94,7 +96,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       <Dialog open={showVideoModal} onOpenChange={setShowVideoModal}>
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Guide vidéo de démarrage</DialogTitle>
+            <DialogTitle>{t('quickActions.videoModalTitle')}</DialogTitle>
           </DialogHeader>
           <LoomVideoEmbed
             videoId={TUTORIAL_VIDEOS.welcome.loomId}
@@ -107,7 +109,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({
       <Dialog open={showGuideModal} onOpenChange={setShowGuideModal}>
         <DialogContent className="sm:max-w-4xl max-h-[85vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Guide de démarrage - Découvrez Mariable</DialogTitle>
+            <DialogTitle>{t('quickActions.guideModalTitle')}</DialogTitle>
           </DialogHeader>
           <GuideStartupContent />
         </DialogContent>
