@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "title": "Budget | Mariable",
+    "description": "Manage your wedding budget"
+  },
+  "page": {
+    "title": "Wedding Budget",
+    "mobileTip": "Best experienced on desktop",
+    "tutorial": "Video tutorial",
+    "tutorialShort": "Tutorial"
+  },
+  "tabs": {
+    "detailed": "Details",
+    "calculator": "Calculator"
+  }
+}
