@@ -628,8 +628,8 @@ const DetailedBudget: React.FC = () => {
   const handleImportFromCart = () => {
     if (cartItems.length === 0) {
       toast({
-        title: "Panier vide",
-        description: "Ajoutez d'abord des prestataires à votre panier",
+        title: t('detailed.toasts.cartEmpty.title'),
+        description: t('detailed.toasts.cartEmpty.description'),
         variant: "destructive"
       });
       return;
