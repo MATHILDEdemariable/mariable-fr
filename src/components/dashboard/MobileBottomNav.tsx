@@ -125,7 +125,7 @@ const MobileBottomNav: React.FC = () => {
             className="flex flex-col items-center justify-center flex-1 h-full py-2 text-gray-500 transition-colors hover:text-wedding-olive"
           >
             <Menu className="h-5 w-5" />
-            <span className="text-[10px] mt-1 font-medium">Plus</span>
+            <span className="text-[10px] mt-1 font-medium">{t("mobileNav.more")}</span>
           </button>
         </div>
       </nav>
@@ -134,7 +134,7 @@ const MobileBottomNav: React.FC = () => {
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="flex items-center justify-between border-b pb-4">
-            <DrawerTitle className="text-lg font-semibold">Tous les outils</DrawerTitle>
+            <DrawerTitle className="text-lg font-semibold">{t("mobileNav.allTools")}</DrawerTitle>
             <DrawerClose asChild>
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <X className="h-5 w-5" />
@@ -169,7 +169,7 @@ const MobileBottomNav: React.FC = () => {
 
             {/* Bonus Section */}
             <div className="mb-6">
-              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Bonus IA</h3>
+              <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">{t("mobileNav.bonusAi")}</h3>
               <div className="grid grid-cols-2 gap-3">
                 {bonusItems.map((item) => {
                   const Icon = item.icon;
@@ -202,14 +202,14 @@ const MobileBottomNav: React.FC = () => {
                 className="flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"
               >
                 <Settings className="h-5 w-5" />
-                <span className="text-sm font-medium">Paramètres</span>
+                <span className="text-sm font-medium">{t("mobileNav.settings")}</span>
               </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-3 p-3 rounded-xl text-red-500 hover:bg-red-50 transition-all w-full text-left"
               >
                 <LogOut className="h-5 w-5" />
-                <span className="text-sm font-medium">Déconnexion</span>
+                <span className="text-sm font-medium">{t("mobileNav.logout")}</span>
               </button>
             </div>
           </div>
