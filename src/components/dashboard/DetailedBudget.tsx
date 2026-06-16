@@ -750,7 +750,7 @@ const DetailedBudget: React.FC = () => {
               <span className="flex items-center">
                 {!isPremium && <Lock className="h-4 w-4 mr-1" />}
                 <Download className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">PDF</span>
+                <span className="hidden sm:inline">{t('detailed.pdf')}</span>
               </span>
             )}
           </Button>
@@ -764,7 +764,7 @@ const DetailedBudget: React.FC = () => {
             <span className="flex items-center">
               {!isPremium && <Lock className="h-4 w-4 mr-1" />}
               <Download className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">CSV</span>
+              <span className="hidden sm:inline">{t('detailed.csv')}</span>
             </span>
           </Button>
         </div>
