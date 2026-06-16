@@ -69,7 +69,7 @@ const SeatingPlan = () => {
       if (!plans || plans.length === 0) {
         const { data: newPlan } = await supabase
           .from('seating_plans')
-          .insert({ user_id: user.id, name: 'Mon Plan de Table' })
+          .insert({ user_id: user.id, name: t('toast.defaultPlanName') })
           .select()
           .single();
         setPlan(newPlan);
@@ -97,8 +97,8 @@ const SeatingPlan = () => {
     } catch (error) {
       console.error('Erreur chargement plan de table:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger le plan de table',
+        title: t('toast.errorTitle'),
+        description: t('toast.loadError'),
         variant: 'destructive'
       });
     } finally {
@@ -125,7 +125,7 @@ const SeatingPlan = () => {
         .eq('id', guestId);
 
       if (error) {
-        toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+        toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
         return;
       }
 
@@ -157,7 +157,7 @@ const SeatingPlan = () => {
       .eq('id', guestId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
@@ -195,13 +195,13 @@ const SeatingPlan = () => {
       .eq('id', tableId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
       setTables(tables.filter(t => t.id !== tableId));
       setGuests(guests.filter(g => g.table_id !== tableId));
-      toast({ title: 'Table supprimée' });
+      toast({ title: t('toast.tableDeleted') });
     });
   };
 
@@ -212,12 +212,12 @@ const SeatingPlan = () => {
       .eq('id', guestId);
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
     setGuests(guests.filter(g => g.id !== guestId));
-    toast({ title: 'Invité supprimé' });
+    toast({ title: t('toast.guestDeleted') });
   };
 
   const handleDeleteAllUnassignedGuests = async () => {
@@ -230,12 +230,12 @@ const SeatingPlan = () => {
       .in('id', unassigned.map(g => g.id));
 
     if (error) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: t('toast.errorTitle'), description: error.message, variant: 'destructive' });
       return;
     }
 
     setGuests(guests.filter(g => g.table_id));
-    toast({ title: `${unassigned.length} invité(s) supprimé(s)` });
+    toast({ title: t('toast.guestsDeleted', { count: unassigned.length }) });
   };
 
   const unassignedGuests = guests.filter(g => !g.table_id);
@@ -255,16 +255,16 @@ const SeatingPlan = () => {
   return (
     <>
       <Helmet>
-        <title>Plan de Table - Mariable</title>
-        <meta name="description" content="Organisez votre plan de table de mariage" />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
 
       <div className="container mx-auto py-8 px-4">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-serif text-foreground">Plan de Table</h1>
+            <h1 className="text-3xl font-serif text-foreground">{t('page.title')}</h1>
             <p className="text-muted-foreground mt-1">
-              Organisez vos invités avec drag & drop <Badge variant="secondary" className="ml-2">BETA</Badge>
+              {t('page.subtitle')} <Badge variant="secondary" className="ml-2">BETA</Badge>
             </p>
           </div>
         </div>
@@ -426,8 +426,8 @@ const SeatingPlan = () => {
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Plan de table"
-        description="Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+        feature={t('premium.feature')}
+        description={t('premium.description')}
       />
     </>
   );
