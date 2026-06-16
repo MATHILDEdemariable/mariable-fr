@@ -774,13 +774,13 @@ const DetailedBudget: React.FC = () => {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-50 border-y">
-                <th className="px-4 py-3 text-left font-medium">Catégorie / Élément</th>
-                <th className="px-4 py-3 text-right font-medium">Budget Estimé (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Coût Réel (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Acompte Versé (€)</th>
-                <th className="px-4 py-3 text-right font-medium">Reste à Payer (€)</th>
-                <th className="px-4 py-3 text-center font-medium">Commentaire</th>
-                <th className="px-4 py-3 text-center font-medium">Actions</th>
+                <th className="px-4 py-3 text-left font-medium">{t('detailed.columns.category')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.estimated')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.actual')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.deposit')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.remaining')}</th>
+                <th className="px-4 py-3 text-center font-medium">{t('detailed.columns.comment')}</th>
+                <th className="px-4 py-3 text-center font-medium">{t('detailed.columns.actions')}</th>
               </tr>
             </thead>
             <tbody>
