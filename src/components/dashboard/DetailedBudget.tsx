@@ -380,16 +380,15 @@ const DetailedBudget: React.FC = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['budgetDashboard'] });
       toast({
-        title: "Budget sauvegardé",
-        description: "Les modifications ont été enregistrées avec succès.",
+        title: t('detailed.toasts.saved.title'),
+        description: t('detailed.toasts.saved.description'),
       });
     },
     onError: (error: any) => {
       console.error("Error saving budget:", error);
-      // Show informative message instead of destructive error
       toast({
-        title: "Sauvegarde automatique active",
-        description: "Vos modifications sont enregistrées automatiquement.",
+        title: t('detailed.toasts.autosave.title'),
+        description: t('detailed.toasts.autosave.description'),
         variant: "default",
       });
     }
