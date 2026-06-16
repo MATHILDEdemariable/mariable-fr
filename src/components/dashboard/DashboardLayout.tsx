@@ -86,13 +86,13 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Home className="h-4 w-4 mr-1" />
-              Accueil
+              {t('header.home')}
             </Button>
           </Link>
           <Link to="/professionnelsmariable">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Users className="h-4 w-4 mr-1" />
-              ​Sélection de professionnels                              
+              {t('header.vendorSelection')}
             </Button>
           </Link>
         </div>
