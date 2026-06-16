@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { DragDropContext, DropResult } from 'react-beautiful-dnd';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
