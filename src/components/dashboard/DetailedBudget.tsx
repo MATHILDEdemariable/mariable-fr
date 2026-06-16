@@ -811,10 +811,10 @@ const DetailedBudget: React.FC = () => {
                       >
                         {!isPremium && category.items.length >= 3 && <Lock className="h-3 w-3 mr-1" />}
                         <Plus className="h-4 w-4 mr-1" />
-                        <span>Ajouter</span>
+                        <span>{t('detailed.add')}</span>
                       </Button>
                       {!isPremium && category.items.length >= 3 && (
-                        <p className="text-xs text-muted-foreground mt-1">Limite atteinte</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('detailed.limitReached')}</p>
                       )}
                     </td>
                   </tr>
