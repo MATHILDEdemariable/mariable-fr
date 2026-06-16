@@ -703,7 +703,7 @@ const DetailedBudget: React.FC = () => {
       />
       <Card className="border shadow-sm max-w-full overflow-hidden">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
-        <CardTitle className="text-lg sm:text-xl font-serif">Budget Détaillé</CardTitle>
+        <CardTitle className="text-lg sm:text-xl font-serif">{t('detailed.title')}</CardTitle>
         <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
           <Button 
             onClick={handleImportFromCart}
@@ -713,7 +713,7 @@ const DetailedBudget: React.FC = () => {
             disabled={cartItems.length === 0}
           >
             <ShoppingCart className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Importer ({cartItems.length})</span>
+            <span className="hidden sm:inline">{t('detailed.import', { count: cartItems.length })}</span>
             <span className="sm:hidden ml-1">({cartItems.length})</span>
           </Button>
           <Button 
@@ -725,12 +725,12 @@ const DetailedBudget: React.FC = () => {
             {updateBudgetMutation.isPending ? (
               <span className="flex items-center">
                 <span className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4 animate-spin rounded-full border-2 border-b-transparent"></span>
-                <span className="hidden sm:inline">Enregistrement...</span>
+                <span className="hidden sm:inline">{t('detailed.saving')}</span>
               </span>
             ) : (
               <span className="flex items-center">
                 <Save className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline">Enregistrer</span>
+                <span className="hidden sm:inline">{t('detailed.save')}</span>
               </span>
             )}
           </Button>
