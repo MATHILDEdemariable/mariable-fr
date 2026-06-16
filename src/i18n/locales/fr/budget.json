@@ -1,0 +1,16 @@
+{
+  "meta": {
+    "title": "Budget | Mariable",
+    "description": "Gérez le budget de votre mariage"
+  },
+  "page": {
+    "title": "Budget de Mariage",
+    "mobileTip": "Meilleure expérience sur ordinateur",
+    "tutorial": "Tuto vidéo",
+    "tutorialShort": "Tuto"
+  },
+  "tabs": {
+    "detailed": "Détail",
+    "calculator": "Calcul"
+  }
+}
