@@ -19,6 +19,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   children
 }) => {
   const isMobile = useIsMobile();
+  const { t } = useTranslation('dashboard');
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
