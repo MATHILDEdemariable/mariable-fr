@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Seating Plan - Mariable",
+    "description": "Organize your wedding seating plan"
+  },
+  "page": {
+    "title": "Seating Plan",
+    "subtitle": "Arrange your guests with drag & drop",
+    "loading": "Loading seating plan..."
+  },
+  "tabs": {
+    "list": "List",
+    "visual": "Visual View"
+  },
+  "actions": {
+    "newTable": "New Table",
+    "importRsvp": "Import from RSVP",
+    "importManual": "Import manual list",
+    "importCsv": "Import CSV",
+    "tutorial": "Video tutorial"
+  },
+  "premium": {
+    "feature": "Seating plan",
+    "description": "Build your seating plan with drag & drop, import from your RSVPs and export to PDF"
+  },
+  "toast": {
+    "loadError": "Unable to load seating plan",
+    "errorTitle": "Error",
+    "tableDeleted": "Table removed",
+    "guestDeleted": "Guest removed",
+    "guestsDeleted": "{{count}} guest(s) removed",
+    "defaultPlanName": "My Seating Plan"
+  }
+}
