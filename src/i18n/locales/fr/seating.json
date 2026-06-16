@@ -1,0 +1,34 @@
+{
+  "meta": {
+    "title": "Plan de Table - Mariable",
+    "description": "Organisez votre plan de table de mariage"
+  },
+  "page": {
+    "title": "Plan de Table",
+    "subtitle": "Organisez vos invités avec drag & drop",
+    "loading": "Chargement du plan de table..."
+  },
+  "tabs": {
+    "list": "Liste",
+    "visual": "Vue Visuelle"
+  },
+  "actions": {
+    "newTable": "Nouvelle Table",
+    "importRsvp": "Importer depuis RSVP",
+    "importManual": "Importer liste manuelle",
+    "importCsv": "Importer CSV",
+    "tutorial": "Tuto vidéo"
+  },
+  "premium": {
+    "feature": "Plan de table",
+    "description": "Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+  },
+  "toast": {
+    "loadError": "Impossible de charger le plan de table",
+    "errorTitle": "Erreur",
+    "tableDeleted": "Table supprimée",
+    "guestDeleted": "Invité supprimé",
+    "guestsDeleted": "{{count}} invité(s) supprimé(s)",
+    "defaultPlanName": "Mon Plan de Table"
+  }
+}
