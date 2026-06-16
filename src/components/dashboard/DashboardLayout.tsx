@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import DashboardSidebar from './DashboardSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
