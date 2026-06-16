@@ -25,6 +25,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 const SeatingPlan = () => {
+  const { t } = useTranslation('seating');
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [guests, setGuests] = useState<SeatingAssignment[]>([]);
@@ -43,8 +44,8 @@ const SeatingPlan = () => {
     showPremiumModal, 
     closePremiumModal 
   } = usePremiumAction({
-    feature: "Plan de table",
-    description: "Organisez votre plan de table avec drag & drop, importez depuis vos RSVP et exportez en PDF"
+    feature: t('premium.feature'),
+    description: t('premium.description')
   });
 
   useEffect(() => {
