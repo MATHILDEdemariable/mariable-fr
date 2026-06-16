@@ -459,8 +459,8 @@ const DetailedBudget: React.FC = () => {
 
     if (!categories.length) {
       toast({
-        title: "Erreur",
-        description: "Aucune donnée de budget à exporter",
+        title: t('detailed.toasts.noData.title'),
+        description: t('detailed.toasts.noData.description'),
         variant: "destructive"
       });
       return;
