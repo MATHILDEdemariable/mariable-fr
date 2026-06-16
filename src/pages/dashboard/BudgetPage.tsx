@@ -49,8 +49,8 @@ const BudgetPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Budget | Mariable</title>
-        <meta name="description" content="Gérez le budget de votre mariage" />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
 
       <div className="space-y-3 sm:space-y-6 w-full max-w-full overflow-hidden">
@@ -59,13 +59,13 @@ const BudgetPage: React.FC = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 sm:p-3 flex items-start gap-2 max-w-full">
             <Monitor className="h-4 w-4 text-blue-600 shrink-0 mt-0.5" />
             <span className="text-xs text-blue-800 break-words leading-relaxed">
-              Meilleure expérience sur ordinateur
+              {t('page.mobileTip')}
             </span>
           </div>
         )}
 
         <div className="flex justify-between items-center">
-          <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive truncate">Budget de Mariage</h1>
+          <h1 className="text-xl sm:text-2xl lg:text-3xl font-serif text-wedding-olive truncate">{t('page.title')}</h1>
           <Button
             variant="outline"
             size="sm"
@@ -73,8 +73,8 @@ const BudgetPage: React.FC = () => {
             className="flex items-center gap-2"
           >
             <Play className="h-4 w-4" />
-            <span className="hidden sm:inline">Tuto vidéo</span>
-            <span className="sm:hidden">Tuto</span>
+            <span className="hidden sm:inline">{t('page.tutorial')}</span>
+            <span className="sm:hidden">{t('page.tutorialShort')}</span>
           </Button>
         </div>
 
@@ -85,14 +85,14 @@ const BudgetPage: React.FC = () => {
               className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
             >
               <BarChart className="h-4 w-4 shrink-0" />
-              <span>Détail</span>
+              <span>{t('tabs.detailed')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="calculator" 
               className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
             >
               <Calculator className="h-4 w-4 shrink-0" />
-              <span>Calcul</span>
+              <span>{t('tabs.calculator')}</span>
             </TabsTrigger>
           </TabsList>
 
