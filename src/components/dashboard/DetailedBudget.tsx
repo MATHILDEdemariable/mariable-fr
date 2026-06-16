@@ -661,7 +661,7 @@ const DetailedBudget: React.FC = () => {
           actual: 0,
           deposit: 0,
           remaining: itemPrice,
-          payment_note: `Importé depuis le panier (${cartItem.category})`
+          payment_note: t('detailed.cartImportNote', { category: cartItem.category })
         };
 
         newCategories[categoryIndex].items.push(newItem);
@@ -674,13 +674,13 @@ const DetailedBudget: React.FC = () => {
       setCategories(updatedCategories);
       
       toast({
-        title: "Import réussi",
-        description: `${importedCount} prestataire(s) importé(s) depuis le panier`
+        title: t('detailed.toasts.importSuccess.title'),
+        description: t('detailed.toasts.importSuccess.description', { count: importedCount })
       });
     } else {
       toast({
-        title: "Aucun import",
-        description: "Tous les prestataires du panier sont déjà dans le budget"
+        title: t('detailed.toasts.importNone.title'),
+        description: t('detailed.toasts.importNone.description')
       });
     }
   };
