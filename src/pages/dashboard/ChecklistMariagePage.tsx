@@ -13,6 +13,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const ChecklistMariagePage: React.FC = () => {
+  const { t } = useTranslation('checklist');
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeTab, setActiveTab] = useState('etapes');
