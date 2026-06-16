@@ -874,7 +874,7 @@ const DetailedBudget: React.FC = () => {
                           value={item.payment_note || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'payment_note', e.target.value)}
                           className="h-8 border-gray-200"
-                          placeholder="Ex: Mariée, Marié, Parents..."
+                          placeholder={t('detailed.placeholders.comment')}
                           disabled={!isPremium}
                         />
                       </td>
