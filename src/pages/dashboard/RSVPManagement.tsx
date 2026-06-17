@@ -242,14 +242,14 @@ const RSVPManagement: React.FC = () => {
 
         setEvents(events.filter(e => e.id !== eventId));
         toast({
-          title: 'Événement supprimé',
-          description: 'L\'événement RSVP a été supprimé avec succès',
+          title: t('rsvp.deleted'),
+          description: t('rsvp.deletedDesc'),
         });
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de supprimer l\'événement',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.deleteEvent'),
           variant: 'destructive',
         });
       }
