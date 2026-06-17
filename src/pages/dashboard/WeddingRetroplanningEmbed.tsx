@@ -649,9 +649,9 @@ const WeddingRetroplanningEmbed = () => {
                           hover:scale-105 cursor-pointer
                         `}
                       >
-                        <span className="text-sm font-semibold whitespace-nowrap">{period.label}</span>
+                        <span className="text-sm font-semibold whitespace-nowrap">{getPeriodLabel(period.key)}</span>
                         <span className={`text-xs mt-1 ${isSelected ? 'text-white/80' : 'opacity-70'}`}>
-                          {taskCount} tâche{taskCount > 1 ? 's' : ''}
+                          {taskCount} {taskCount > 1 ? t('retroplanning.tasksWordPlur') : t('retroplanning.tasksWordSing')}
                         </span>
                         {status === 'current' && !isSelected && (
                           <span className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse" />
