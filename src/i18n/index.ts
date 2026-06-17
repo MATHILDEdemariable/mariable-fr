@@ -15,6 +15,7 @@ import frBudget from './locales/fr/budget.json';
 import frChecklist from './locales/fr/checklist.json';
 import frSeating from './locales/fr/seating.json';
 import frCeremonie from './locales/fr/ceremonie.json';
+import frWeddingDay from './locales/fr/weddingDay.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enHomeV2 from './locales/en/homeV2.json';
