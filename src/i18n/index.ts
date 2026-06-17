@@ -99,7 +99,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie', 'weddingDay'],
     interpolation: {
       escapeValue: false,
     },
