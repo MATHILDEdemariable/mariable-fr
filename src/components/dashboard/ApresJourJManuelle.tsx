@@ -65,6 +65,7 @@ const CATEGORIES = [
 ];
 
 const ApresJourJManuelle: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const [items, setItems] = useState<AfterWeddingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -75,6 +76,7 @@ const ApresJourJManuelle: React.FC = () => {
     due_date: '',
   });
   const { toast } = useToast();
+  const getCategoryLabel = (key: string) => t(`apresJourJ.manuelle.categories.${key}`);
 
   useEffect(() => {
     loadItems();
