@@ -367,14 +367,14 @@ const WeddingRetroplanningEmbed = () => {
       }
 
       toast({
-        title: "✅ Rétroplanning sauvegardé",
-        description: "Vos modifications seront maintenant sauvegardées automatiquement"
+        title: t('retroplanning.saved'),
+        description: t('retroplanning.savedDesc')
       });
     } catch (error: any) {
       console.error('Erreur sauvegarde:', error);
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de sauvegarder",
+        title: t('retroplanning.errorTitle'),
+        description: error.message || t('retroplanning.saveError'),
         variant: "destructive"
       });
     } finally {
