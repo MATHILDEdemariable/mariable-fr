@@ -719,12 +719,12 @@ const WeddingRetroplanningEmbed = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
               <div>
-                <CardTitle>🎯 Étapes clés</CardTitle>
-                <CardDescription>Les moments importants à ne pas manquer</CardDescription>
+                <CardTitle>{t('retroplanning.milestonesTitle')}</CardTitle>
+                <CardDescription>{t('retroplanning.milestonesDesc')}</CardDescription>
               </div>
               <Button variant="outline" onClick={handleDownloadChecklist}>
                 <Download className="mr-2 h-4 w-4" />
-                Télécharger PDF
+                {t('retroplanning.downloadPdf')}
               </Button>
             </CardHeader>
             <CardContent>
