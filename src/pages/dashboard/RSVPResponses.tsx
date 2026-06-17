@@ -225,7 +225,7 @@ const RSVPResponses: React.FC = () => {
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{response.guest_name}</h3>
             <p className="text-sm text-muted-foreground">
-              {new Date(response.submitted_at).toLocaleDateString('fr-FR', {
+              {new Date(response.submitted_at).toLocaleDateString(dateLocale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
