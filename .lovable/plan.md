@@ -1,75 +1,68 @@
-
 ## Objectif
 
-Faire fonctionner le toggle FR/EN sur 4 pages dashboard. Le toggle est déjà installé dans le PremiumHeader, react-i18next est configuré, et des namespaces `budget`/`checklist`/`dashboard`/`seating` existent déjà partiellement. Cette tâche complète les traductions manquantes.
+Étendre le toggle FR/EN aux modules dashboard restants. Suite à la traduction de /dashboard (accueil), /checklist-mariage, /budget et /ceremonie, finaliser les pages encore figées en français.
 
 ## Périmètre
 
-### 1. /dashboard (page d'accueil)
-Composants à traduire (chrome complet) :
-- `src/components/dashboard/ProjectSummary.tsx` — modal "Détail des tarifs", textes système
-- `src/components/dashboard/gaming/HeroStats.tsx` — "Bienvenue", "Félicitations", "Mariage passé", "invités prévus", "Modifiez le nombre", "organisation complétée", badge Premium, date FR
-- `src/components/dashboard/gaming/QuickActions.tsx` — "Guide de démarrage", "Découvrez le concept", "Guide vidéo", "Tutoriel en vidéo", "Suivez-nous sur Instagram", "Suivre"
-- `src/components/dashboard/gaming/QuestCards.tsx` — titres et CTA cartes
-- `src/components/dashboard/gaming/ToolsGrid.tsx` — labels des outils
-- `src/components/dashboard/gaming/AchievementBadges.tsx` — noms et descriptions des badges
+### Pages prioritaires (mentionnées)
+1. **/dashboard/rsvp** — `RSVPManagement.tsx`, `RSVPTabs.tsx`, `RSVPResponses.tsx` : onglets, formulaires de configuration, colonnes des réponses, statuts (confirmé/refusé/en attente), boutons d'export, modales d'envoi, toasts
+2. **/dashboard/documents** — `DocumentsPage.tsx` + `DocumentsSection.tsx` : titres, états vides, boutons upload/download, libellés de catégories
+3. **/dashboard/apres-jour-j** — `ApresJourJPage.tsx` : sections éditoriales (remerciements, photos, démarches admin), checklists, boutons PDF
+4. **/dashboard/mairie-civile** — `MairieCivilPage.tsx` : étapes du dossier civil, documents requis, contenu éditorial, PDF
+5. **/dashboard/retroplanning** — `PlanningPage.tsx` (ou équivalent rétroplanning) + composants enfants : timeline, génération IA, édition d'étapes, toasts
 
-→ Étendre `src/i18n/locales/{fr,en}/dashboard.json`
+### Pages secondaires à inclure pour cohérence
+- **/dashboard/avant-jour-j** (`AvantJourJPage.tsx`) — symétrique à apres-jour-j
+- **/dashboard/coordination** & **/coordinateurs** (`CoordinationPage.tsx`, `CoordinatorsPage.tsx`) — planning Jour-J
+- **/dashboard/accommodations** (`AccommodationsPage.tsx`) — gestion logements
+- **/dashboard/moodboard** (`MoodboardPage.tsx`) — UI outil moodboard
+- **/dashboard/panier**, **/wishlist**, **/messages**, **/vendor-tracking**, **/vendor-selection** — modules prestataires
+- **/dashboard/drinks** (`DrinksCalculatorPage.tsx`) — calculatrice boissons
+- **/dashboard/qr-code** (`QRCodeGenerator.tsx`) — liste de mariage
+- **/dashboard/assistant**, **/guides**, **/help**, **/install-app** — bonus
 
-### 2. /dashboard/checklist-mariage
-- `src/pages/dashboard/ChecklistMariagePage.tsx` — titre page, tabs ("En 10 étapes", "Checklist manuelle", "Suggestions")
-- `src/components/dashboard/Checklist10Steps.tsx` (ou similaire) — "Checklist en 10 étapes essentielles", "Votre progression", "Les 10 étapes clés de l'organisation", "Cochez les étapes au fur et à mesure", **les 10 étapes** (titres + descriptions)
-- Composant "Checklist manuelle" — colonnes, boutons d'ajout, catégories
+## Approche
 
-→ Étendre `src/i18n/locales/{fr,en}/checklist.json`
+**Phasage en 2 vagues** pour limiter la taille du diff :
 
-### 3. /dashboard/budget
-- `src/pages/dashboard/BudgetPage.tsx` — déjà câblé (`useTranslation('budget')`), compléter les clés manquantes
-- `src/components/dashboard/DetailedBudget.tsx` (~915 lignes) — "Wedding Budget"/"Budget de mariage", "Budget Détaillé", boutons "Importer", "Enregistrer", "PDF", "CSV", colonnes ("Catégorie/Élément", "Budget Estimé", "Coût Réel", "Acompte Versé", "Reste à Payer", "Commentaire", "Actions"), catégories par défaut, placeholders, toasts
-- `src/components/dashboard/BudgetCalculator.tsx` (~846 lignes) — labels formulaire (région, saison, invités, style…), résultats, recommandations
-- Onglet "Calculator" / "Details"
+### Vague 1 — Pages explicitement demandées
+RSVP, Documents, Après-jour-J, Mairie-Civile, Retroplanning.
+- Nouveau namespace **`weddingDay`** (regroupe RSVP, retroplanning, après/avant jour-J, mairie, coordination) ou namespaces séparés si volume > 200 clés.
+- Pattern identique aux pages déjà traduites : `useTranslation('<ns>')`, remplacement littéraux par `t()`, listes éditoriales via `t('key', { returnObjects: true })`.
+- Dates : `date-fns` avec locale dynamique.
+- PDF exports : titres et en-têtes traduits selon `i18n.language`.
 
-→ Étendre `src/i18n/locales/{fr,en}/budget.json`
+### Vague 2 — Cohérence dashboard complet
+Coordination, accommodations, moodboard, panier, messages, vendor-tracking/selection, drinks, qr-code, assistant, guides, help, install-app, avant-jour-j.
+- Namespaces : réutiliser `dashboard` pour chrome court, créer `vendors`, `tools` au besoin.
 
-### 4. /dashboard/ceremonie (laïque + catholique)
-- `src/pages/dashboard/CeremoniePage.tsx` (~1224 lignes) — traduction **intégrale du contenu éditorial** :
-  - Onglets Laïque / Catholique
-  - Section Laïque : fondamentaux, déroulement (10 étapes), types d'officiants, rituels symboliques, conseils musique, plan B météo, checklist PDF
-  - Section Catholique : étapes de préparation, déroulement liturgique, lectures, musiques, traditions, checklist PDF
-  - Boutons de téléchargement PDF, modals premium
-  - Génération PDF (titres jsPDF)
+## Détails techniques
 
-→ Créer `src/i18n/locales/{fr,en}/ceremonie.json` (nouveau namespace, contenu volumineux)
+- **Fichiers JSON** : créer/étendre `src/i18n/locales/{fr,en}/<ns>.json`
+- **Enregistrement** : ajouter chaque nouveau namespace dans `src/i18n/index.ts` (imports + `resources` + `ns: [...]`)
+- **DB content** : titres d'étapes personnalisés, commentaires utilisateur, items ajoutés manuellement → restent dans la langue d'origine (règle existante)
+- **PDF templates** : header/footer/labels traduits, contenu DB inchangé
+- **Toasts & validations** : passer par `t()` y compris messages d'erreur
 
-## Approche technique
+## Estimation
 
-**Pattern uniforme par composant** :
-1. Importer `useTranslation` avec le namespace approprié
-2. Remplacer chaque chaîne FR par `t('clé')`
-3. Mettre les chaînes FR existantes dans `fr/<ns>.json`, traduire en anglais idiomatique dans `en/<ns>.json`
-4. Pour les listes (étapes, badges, catégories) : structurer en tableaux d'objets dans le JSON et lire avec `t('clé', { returnObjects: true })`
-5. Enregistrer le namespace `ceremonie` dans `src/i18n/index.ts`
-
-**Date du dashboard** ("mardi 16 juin 2026") : utiliser `date-fns` avec locale dynamique (`fr` ou `enUS`) selon `i18n.language`.
-
-**Ce qui ne change PAS** :
-- Contenus DB (catégories budget personnalisées par user, commentaires, items checklist manuelle, etc.) — restent dans leur langue d'origine, conformément à la règle existante
-- Logique métier, requêtes, RLS, calculs
-
-## Estimation volume
-
-- ~300-400 clés de traduction au total
-- ~150 clés rien que pour CeremoniePage (volume éditorial)
-- ~60-80 clés pour DetailedBudget + BudgetCalculator
-- ~40 clés pour la checklist 10 étapes
-- ~30 clés pour le dashboard d'accueil
-
-Travail conséquent mais sans risque sur la logique : remplacement de littéraux par `t()` uniquement.
+- Vague 1 : ~200-300 clés (RSVP ~80, retroplanning ~60, documents ~30, mairie ~70, après-jour-J ~60)
+- Vague 2 : ~250-350 clés
+- **Total : ~500-650 clés**, sans modification de logique métier
 
 ## Validation
 
 1. Build sans erreur
-2. Toggle EN sur /dashboard → tous les textes chrome passent en anglais, date affichée en EN
-3. Idem sur /dashboard/checklist-mariage, /dashboard/budget, /dashboard/ceremonie (onglet Laïque ET Catholique)
+2. Toggle EN sur chaque page listée → tous les libellés chrome en anglais (titres, boutons, colonnes, toasts, modales)
+3. Dates localisées (`mardi 16 juin` → `Tuesday, June 16`)
 4. Toggle FR remet tout en français
-5. Le contenu DB (catégories budget user, items ajoutés) reste inchangé dans les deux langues
+5. Contenu DB inchangé dans les deux langues
+6. PDF exports : en-têtes traduits selon langue active
+
+## Question
+
+Confirmes-tu :
+- (a) **Vague 1 seulement** (5 pages demandées) — livraison rapide, focus
+- (b) **Vague 1 + Vague 2** (dashboard 100% bilingue) — couverture complète, diff plus large
+
+Par défaut je pars sur **(b)** pour éliminer tout résidu français lors du toggle EN.
