@@ -238,18 +238,18 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
       <Dialog open={showQRCode} onOpenChange={setShowQRCode}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>QR Code - {event.event_name}</DialogTitle>
+            <DialogTitle>{t('rsvp.card.qrTitle', { name: event.event_name })}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-4">
             {qrCodeDataUrl && (
               <img src={qrCodeDataUrl} alt="QR Code RSVP" className="w-64 h-64" />
             )}
             <p className="text-sm text-center text-muted-foreground">
-              Scannez ce QR code pour accéder au formulaire RSVP
+              {t('rsvp.card.qrHint')}
             </p>
             <Button onClick={copyToClipboard} variant="outline" className="w-full">
               <Copy className="h-4 w-4 mr-2" />
-              Copier le lien
+              {t('rsvp.card.qrCopy')}
             </Button>
           </div>
         </DialogContent>
