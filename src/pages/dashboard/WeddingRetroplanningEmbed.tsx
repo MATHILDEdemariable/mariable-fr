@@ -616,7 +616,7 @@ const WeddingRetroplanningEmbed = () => {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex-1 text-center">
-                  <span className="font-semibold">{TIMELINE_PERIODS[selectedPeriodIndex].label}</span>
+                  <span className="font-semibold">{getPeriodLabel(TIMELINE_PERIODS[selectedPeriodIndex].key)}</span>
                 </div>
                 <Button 
                   variant="outline" 
