@@ -360,7 +360,7 @@ const RSVPResponses: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un invité..."
+            placeholder={t('rsvp.responses.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -368,7 +368,7 @@ const RSVPResponses: React.FC = () => {
         </div>
         <Button onClick={exportToCSV} variant="outline">
           <Download className="h-4 w-4 mr-2" />
-          Export Tableur
+          {t('rsvp.responses.exportCsv')}
         </Button>
       </div>
 
