@@ -257,68 +257,68 @@ const ApresJourJManuelle: React.FC = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Progression globale</h3>
+            <h3 className="text-lg font-semibold">{t('apresJourJ.manuelle.overallProgress')}</h3>
             <span className="text-sm text-muted-foreground">
-              {items.filter(item => item.completed).length} / {items.length} tâches
+              {t('apresJourJ.manuelle.tasksCount', { done: items.filter(item => item.completed).length, total: items.length })}
             </span>
           </div>
           <Progress value={getOverallProgress()} className="h-3" />
           <div className="text-center mt-2 text-sm text-muted-foreground">
-            {getOverallProgress()}% complété
+            {t('apresJourJ.manuelle.completedPercent', { percent: getOverallProgress() })}
           </div>
         </CardContent>
       </Card>
 
       {/* Bouton d'ajout */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Check-list après le jour-J</h2>
+        <h2 className="text-xl font-semibold">{t('apresJourJ.manuelle.heading')}</h2>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Ajouter une tâche
+              {t('apresJourJ.manuelle.addTask')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle tâche</DialogTitle>
+              <DialogTitle>{t('apresJourJ.manuelle.addDialogTitle')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">Titre *</Label>
+                <Label htmlFor="title">{t('apresJourJ.manuelle.titleLabel')}</Label>
                 <Input
                   id="title"
                   value={newItem.title}
                   onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                  placeholder="Titre de la tâche"
+                  placeholder={t('apresJourJ.manuelle.titlePlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="category">Catégorie *</Label>
+                <Label htmlFor="category">{t('apresJourJ.manuelle.categoryLabel')}</Label>
                 <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                    <SelectValue placeholder={t('apresJourJ.manuelle.categoryPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CATEGORIES.map((category) => (
                       <SelectItem key={category.key} value={category.key}>
-                        {category.label}
+                        {getCategoryLabel(category.key)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('apresJourJ.manuelle.descLabel')}</Label>
                 <Textarea
                   id="description"
                   value={newItem.description}
                   onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                  placeholder="Description de la tâche"
+                  placeholder={t('apresJourJ.manuelle.descPlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="due_date">Date d'échéance</Label>
+                <Label htmlFor="due_date">{t('apresJourJ.manuelle.dueLabel')}</Label>
                 <Input
                   id="due_date"
                   type="date"
@@ -328,16 +328,17 @@ const ApresJourJManuelle: React.FC = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                  Annuler
+                  {t('apresJourJ.manuelle.cancel')}
                 </Button>
                 <Button onClick={addItem}>
-                  Ajouter
+                  {t('apresJourJ.manuelle.addBtn')}
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
       </div>
+
 
       {/* Liste par catégorie */}
       {CATEGORIES.map((category) => {
