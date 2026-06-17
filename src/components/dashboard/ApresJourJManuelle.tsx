@@ -105,8 +105,8 @@ const ApresJourJManuelle: React.FC = () => {
     } catch (error) {
       console.error('Error loading after wedding items:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger la checklist",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.load'),
         variant: "destructive",
       });
     } finally {
