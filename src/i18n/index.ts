@@ -65,6 +65,7 @@ const resources = {
     checklist: enChecklist,
     seating: enSeating,
     ceremonie: enCeremonie,
+    weddingDay: enWeddingDay,
   },
 };
 
