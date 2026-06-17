@@ -157,7 +157,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">{stats.confirmed}</div>
-              <div className="text-xs text-muted-foreground">Confirmés</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.confirmed')}</div>
               {stats.confirmed > 0 && (
                 <div className="text-xs text-muted-foreground mt-1">
                   👤 {stats.confirmedAdults} • 👶 {stats.confirmedChildren}
@@ -166,17 +166,17 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             </div>
             <div className="text-center p-3 bg-red-50 rounded-lg">
               <div className="text-2xl font-bold text-red-600">{stats.declined}</div>
-              <div className="text-xs text-muted-foreground">Absents</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.declined')}</div>
             </div>
             <div className="text-center p-3 bg-orange-50 rounded-lg">
               <div className="text-2xl font-bold text-orange-600">{stats.maybe}</div>
-              <div className="text-xs text-muted-foreground">Peut-être</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.maybe')}</div>
             </div>
           </div>
 
           <div className="pt-2">
             <Badge variant="outline" className="w-full justify-center">
-              {stats.total} personne{stats.total > 1 ? 's' : ''} au total
+              {stats.total > 1 ? t('rsvp.card.totalPlur', { count: stats.total }) : t('rsvp.card.totalSing', { count: stats.total })}
             </Badge>
           </div>
         </CardContent>
