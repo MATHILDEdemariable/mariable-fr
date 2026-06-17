@@ -349,7 +349,7 @@ const ApresJourJManuelle: React.FC = () => {
           <Card key={category.key}>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
-                <span>{category.label}</span>
+                <span>{getCategoryLabel(category.key)}</span>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">
                     {categoryItems.filter(item => item.completed).length} / {categoryItems.length}
