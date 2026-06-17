@@ -157,7 +157,7 @@ const RSVPResponses: React.FC = () => {
         (r.number_of_adults || r.number_of_guests || 1) + (r.number_of_children || 0),
         r.dietary_restrictions || '',
         r.message || '',
-        new Date(r.submitted_at).toLocaleString('fr-FR'),
+        new Date(r.submitted_at).toLocaleString(dateLocale),
       ];
 
       // Ajouter les données des sous-événements
