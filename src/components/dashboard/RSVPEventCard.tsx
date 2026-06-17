@@ -189,7 +189,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             className="flex-1"
           >
             <Eye className="h-4 w-4 mr-1" />
-            Voir les détails
+            {t('rsvp.card.viewDetails')}
           </Button>
 
           <Button
@@ -219,15 +219,15 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Supprimer l'événement ?</AlertDialogTitle>
+                <AlertDialogTitle>{t('rsvp.card.deleteTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Cette action est irréversible. Toutes les réponses associées seront également supprimées.
+                  {t('rsvp.card.deleteDesc')}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogCancel>{t('rsvp.card.deleteCancel')}</AlertDialogCancel>
                 <AlertDialogAction onClick={() => onDelete(event.id)}>
-                  Supprimer
+                  {t('rsvp.card.deleteConfirm')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
