@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,19 +37,20 @@ interface RSVPEvent {
 }
 
 const RSVPManagement: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+
 
   // Form state
-  const [eventName, setEventName] = useState('Notre Mariage');
+  const [eventName, setEventName] = useState(t('rsvp.defaultEventName'));
   const [eventDate, setEventDate] = useState('');
   const [eventLocation, setEventLocation] = useState('');
-  const [welcomeMessage, setWelcomeMessage] = useState('Nous serions ravis de vous compter parmi nous pour célébrer notre union !');
+  const [welcomeMessage, setWelcomeMessage] = useState(t('rsvp.defaultWelcomeMessage'));
   const [requirePhone, setRequirePhone] = useState(false);
   const [requireDietary, setRequireDietary] = useState(true);
   const [maxGuests, setMaxGuests] = useState(2);
@@ -92,8 +94,8 @@ const RSVPManagement: React.FC = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des événements:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les événements RSVP',
+        title: t('rsvp.errors.title'),
+        description: t('rsvp.errors.loadEvents'),
         variant: 'destructive',
       });
     } finally {
@@ -143,8 +145,8 @@ const RSVPManagement: React.FC = () => {
     {
       if (!eventName.trim()) {
         toast({
-          title: 'Erreur',
-          description: 'Veuillez saisir un nom pour l\'événement',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.nameRequired'),
           variant: 'destructive',
         });
         return;
@@ -196,8 +198,8 @@ const RSVPManagement: React.FC = () => {
         }
 
         toast({
-          title: 'Événement créé !',
-          description: `Le lien RSVP a été généré : /rsvp/${uniqueSlug}`,
+          title: t('rsvp.created'),
+          description: t('rsvp.createdDesc', { slug: uniqueSlug }),
         });
 
         setEvents([{ ...data, sub_events: subEvents }, ...events]);
@@ -206,8 +208,8 @@ const RSVPManagement: React.FC = () => {
       } catch (error) {
         console.error('Erreur lors de la création:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de créer l\'événement RSVP',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.createEvent'),
           variant: 'destructive',
         });
       } finally {
@@ -217,10 +219,10 @@ const RSVPManagement: React.FC = () => {
   };
 
   const resetForm = () => {
-    setEventName('Notre Mariage');
+    setEventName(t('rsvp.defaultEventName'));
     setEventDate('');
     setEventLocation('');
-    setWelcomeMessage('Nous serions ravis de vous compter parmi nous pour célébrer notre union !');
+    setWelcomeMessage(t('rsvp.defaultWelcomeMessage'));
     setRequirePhone(false);
     setRequireDietary(true);
     setMaxGuests(2);
@@ -240,14 +242,14 @@ const RSVPManagement: React.FC = () => {
 
         setEvents(events.filter(e => e.id !== eventId));
         toast({
-          title: 'Événement supprimé',
-          description: 'L\'événement RSVP a été supprimé avec succès',
+          title: t('rsvp.deleted'),
+          description: t('rsvp.deletedDesc'),
         });
       } catch (error) {
         console.error('Erreur lors de la suppression:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de supprimer l\'événement',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.deleteEvent'),
           variant: 'destructive',
         });
       }
@@ -267,9 +269,9 @@ const RSVPManagement: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">RSVP Invités</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('rsvp.title')}</h1>
             <p className="text-muted-foreground mt-2">
-              Gérez vos confirmations de présence en ligne
+              {t('rsvp.subtitle')}
             </p>
           </div>
 
@@ -278,88 +280,58 @@ const RSVPManagement: React.FC = () => {
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <Info className="h-4 w-4 mr-2" />
-                  Tuto
+                  {t('rsvp.tutoBtn')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Comment utiliser le RSVP ?</DialogTitle>
+                  <DialogTitle>{t('rsvp.tutoTitle')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">1</span>
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="flex items-start gap-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <span className="font-bold text-primary">{n}</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">{t(`rsvp.tutoStep${n}Title`)}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {t(`rsvp.tutoStep${n}Desc`)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold">Créer l'événement</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Créez un formulaire RSVP avec vos informations (date, lieu, message personnalisé)
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">2</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Ajouter des sous-événements</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Optionnellement, ajoutez un brunch lendemain ou autre événement secondaire
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">3</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Partager le lien ou QR code</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Partagez le lien unique ou le QR code avec vos invités
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">4</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Gérer les réponses</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Suivez en temps réel les confirmations pour chaque événement
-                      </p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </DialogContent>
             </Dialog>
-            
+
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90">
                   <Plus className="h-4 w-4 mr-2" />
-                  Créer un formulaire RSVP
+                  {t('rsvp.createBtn')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Créer un nouvel événement RSVP</DialogTitle>
+                  <DialogTitle>{t('rsvp.createDialogTitle')}</DialogTitle>
                 </DialogHeader>
+
 
                 <div className="space-y-6 py-4">
                   <div className="space-y-2">
-                    <Label htmlFor="event_name">Nom de l'événement principal *</Label>
+                    <Label htmlFor="event_name">{t('rsvp.eventNameLabel')}</Label>
                     <Input
                       id="event_name"
                       value={eventName}
                       onChange={(e) => setEventName(e.target.value)}
-                      placeholder="Notre Mariage"
+                      placeholder={t('rsvp.eventNamePlaceholder')}
                     />
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="event_date">Date de l'événement</Label>
+                      <Label htmlFor="event_date">{t('rsvp.eventDateLabel')}</Label>
                       <Input
                         id="event_date"
                         type="date"
@@ -369,52 +341,51 @@ const RSVPManagement: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="event_location">Lieu</Label>
+                      <Label htmlFor="event_location">{t('rsvp.eventLocationLabel')}</Label>
                       <Input
                         id="event_location"
                         value={eventLocation}
                         onChange={(e) => setEventLocation(e.target.value)}
-                        placeholder="Château de Versailles"
+                        placeholder={t('rsvp.eventLocationPlaceholder')}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="custom_slug">Lien personnalisé (optionnel)</Label>
+                    <Label htmlFor="custom_slug">{t('rsvp.customSlugLabel')}</Label>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">/rsvp/</span>
                       <Input
                         id="custom_slug"
                         value={customSlug}
                         onChange={(e) => setCustomSlug(slugify(e.target.value))}
-                        placeholder="marie-et-pierre-2025"
+                        placeholder={t('rsvp.customSlugPlaceholder')}
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="welcome_message">Message de bienvenue</Label>
+                    <Label htmlFor="welcome_message">{t('rsvp.welcomeLabel')}</Label>
                     <Textarea
                       id="welcome_message"
                       value={welcomeMessage}
                       onChange={(e) => setWelcomeMessage(e.target.value)}
                       rows={4}
-                      placeholder="Message personnalisé pour vos invités..."
+                      placeholder={t('rsvp.welcomePlaceholder')}
                     />
                   </div>
 
-                  {/* Section sous-événements */}
                   <div className="border-t pt-6 space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
-                        <Label className="text-base font-semibold">Événements secondaires</Label>
+                        <Label className="text-base font-semibold">{t('rsvp.subEventsLabel')}</Label>
                         <p className="text-sm text-muted-foreground">
-                          Ajoutez un brunch lendemain, une soirée la veille, etc.
+                          {t('rsvp.subEventsHint')}
                         </p>
                       </div>
                       <Button type="button" variant="outline" size="sm" onClick={addSubEvent}>
                         <Plus className="h-4 w-4 mr-1" />
-                        Ajouter
+                        {t('rsvp.addSub')}
                       </Button>
                     </div>
 
@@ -422,7 +393,7 @@ const RSVPManagement: React.FC = () => {
                       <Card key={index} className="border-dashed">
                         <CardContent className="pt-4 space-y-4">
                           <div className="flex items-center justify-between">
-                            <Label className="font-medium">Événement {index + 2}</Label>
+                            <Label className="font-medium">{t('rsvp.subEventNum', { num: index + 2 })}</Label>
                             <Button
                               type="button"
                               variant="ghost"
@@ -433,19 +404,19 @@ const RSVPManagement: React.FC = () => {
                               <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
-                          
+
                           <div className="space-y-2">
-                            <Label>Nom de l'événement *</Label>
+                            <Label>{t('rsvp.subEventNameLabel')}</Label>
                             <Input
                               value={subEvent.sub_event_name}
                               onChange={(e) => updateSubEvent(index, 'sub_event_name', e.target.value)}
-                              placeholder="Brunch du lendemain"
+                              placeholder={t('rsvp.subEventNamePlaceholder')}
                             />
                           </div>
-                          
+
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                              <Label>Date</Label>
+                              <Label>{t('rsvp.dateLabel')}</Label>
                               <Input
                                 type="date"
                                 value={subEvent.sub_event_date}
@@ -453,21 +424,21 @@ const RSVPManagement: React.FC = () => {
                               />
                             </div>
                             <div className="space-y-2">
-                              <Label>Horaire</Label>
+                              <Label>{t('rsvp.timeLabel')}</Label>
                               <Input
                                 value={subEvent.sub_event_time}
                                 onChange={(e) => updateSubEvent(index, 'sub_event_time', e.target.value)}
-                                placeholder="11h00"
+                                placeholder={t('rsvp.timePlaceholder')}
                               />
                             </div>
                           </div>
-                          
+
                           <div className="space-y-2">
-                            <Label>Lieu (optionnel)</Label>
+                            <Label>{t('rsvp.subEventLocationLabel')}</Label>
                             <Input
                               value={subEvent.sub_event_location}
                               onChange={(e) => updateSubEvent(index, 'sub_event_location', e.target.value)}
-                              placeholder="Même lieu que le mariage"
+                              placeholder={t('rsvp.subEventLocationPlaceholder')}
                             />
                           </div>
                         </CardContent>
@@ -476,11 +447,11 @@ const RSVPManagement: React.FC = () => {
                   </div>
 
                   <div className="space-y-4 border-t pt-6">
-                    <Label>Options du formulaire</Label>
-                    
+                    <Label>{t('rsvp.formOptions')}</Label>
+
                     <div className="flex items-center justify-between">
                       <Label htmlFor="require_phone" className="font-normal cursor-pointer">
-                        Téléphone obligatoire
+                        {t('rsvp.requirePhone')}
                       </Label>
                       <Switch
                         id="require_phone"
@@ -491,7 +462,7 @@ const RSVPManagement: React.FC = () => {
 
                     <div className="flex items-center justify-between">
                       <Label htmlFor="require_dietary" className="font-normal cursor-pointer">
-                        Demander les restrictions alimentaires
+                        {t('rsvp.requireDietary')}
                       </Label>
                       <Switch
                         id="require_dietary"
@@ -501,7 +472,7 @@ const RSVPManagement: React.FC = () => {
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="max_guests">Nombre maximum d'invités par formulaire</Label>
+                      <Label htmlFor="max_guests">{t('rsvp.maxGuestsLabel')}</Label>
                       <Input
                         id="max_guests"
                         type="number"
@@ -519,7 +490,7 @@ const RSVPManagement: React.FC = () => {
                     variant="outline"
                     onClick={() => setIsDialogOpen(false)}
                   >
-                    Annuler
+                    {t('rsvp.cancel')}
                   </Button>
                   <Button
                     onClick={handleCreateEvent}
@@ -528,13 +499,14 @@ const RSVPManagement: React.FC = () => {
                     {creating ? (
                       <>
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Création...
+                        {t('rsvp.creating')}
                       </>
                     ) : (
-                      'Créer l\'événement'
+                      t('rsvp.createCta')
                     )}
                   </Button>
                 </div>
+
               </DialogContent>
             </Dialog>
           </div>
@@ -543,13 +515,13 @@ const RSVPManagement: React.FC = () => {
         {events.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <h3 className="text-lg font-semibold mb-2">Aucun événement RSVP</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('rsvp.emptyTitle')}</h3>
               <p className="text-muted-foreground mb-6">
-                Créez votre premier formulaire de confirmation de présence
+                {t('rsvp.emptyDesc')}
               </p>
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Créer un formulaire RSVP
+                {t('rsvp.createBtn')}
               </Button>
             </CardContent>
           </Card>

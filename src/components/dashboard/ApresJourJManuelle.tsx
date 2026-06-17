@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, Calendar, CheckCircle2, Circle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -64,6 +65,7 @@ const CATEGORIES = [
 ];
 
 const ApresJourJManuelle: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const [items, setItems] = useState<AfterWeddingItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddDialog, setShowAddDialog] = useState(false);
@@ -74,6 +76,7 @@ const ApresJourJManuelle: React.FC = () => {
     due_date: '',
   });
   const { toast } = useToast();
+  const getCategoryLabel = (key: string) => t(`apresJourJ.manuelle.categories.${key}`);
 
   useEffect(() => {
     loadItems();
@@ -102,8 +105,8 @@ const ApresJourJManuelle: React.FC = () => {
     } catch (error) {
       console.error('Error loading after wedding items:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger la checklist",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.load'),
         variant: "destructive",
       });
     } finally {
@@ -144,8 +147,8 @@ const ApresJourJManuelle: React.FC = () => {
   const addItem = async () => {
     if (!newItem.title || !newItem.category) {
       toast({
-        title: "Erreur",
-        description: "Le titre et la catégorie sont requis",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.required'),
         variant: "destructive",
       });
       return;
@@ -175,14 +178,14 @@ const ApresJourJManuelle: React.FC = () => {
       loadItems();
       
       toast({
-        title: "Succès",
-        description: "Tâche ajoutée avec succès",
+        title: t('apresJourJ.manuelle.success.title'),
+        description: t('apresJourJ.manuelle.success.added'),
       });
     } catch (error) {
       console.error('Error adding item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.add'),
         variant: "destructive",
       });
     }
@@ -200,8 +203,8 @@ const ApresJourJManuelle: React.FC = () => {
     } catch (error) {
       console.error('Error toggling item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.toggle'),
         variant: "destructive",
       });
     }
@@ -218,14 +221,14 @@ const ApresJourJManuelle: React.FC = () => {
       loadItems();
       
       toast({
-        title: "Succès",
-        description: "Tâche supprimée",
+        title: t('apresJourJ.manuelle.success.title'),
+        description: t('apresJourJ.manuelle.success.deleted'),
       });
     } catch (error) {
       console.error('Error deleting item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.delete'),
         variant: "destructive",
       });
     }
@@ -245,7 +248,7 @@ const ApresJourJManuelle: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Chargement...</div>;
+    return <div className="text-center py-8">{t('apresJourJ.manuelle.loading')}</div>;
   }
 
   return (
@@ -254,68 +257,68 @@ const ApresJourJManuelle: React.FC = () => {
       <Card>
         <CardContent className="pt-6">
           <div className="flex justify-between items-center mb-2">
-            <h3 className="text-lg font-semibold">Progression globale</h3>
+            <h3 className="text-lg font-semibold">{t('apresJourJ.manuelle.overallProgress')}</h3>
             <span className="text-sm text-muted-foreground">
-              {items.filter(item => item.completed).length} / {items.length} tâches
+              {t('apresJourJ.manuelle.tasksCount', { done: items.filter(item => item.completed).length, total: items.length })}
             </span>
           </div>
           <Progress value={getOverallProgress()} className="h-3" />
           <div className="text-center mt-2 text-sm text-muted-foreground">
-            {getOverallProgress()}% complété
+            {t('apresJourJ.manuelle.completedPercent', { percent: getOverallProgress() })}
           </div>
         </CardContent>
       </Card>
 
       {/* Bouton d'ajout */}
       <div className="flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Check-list après le jour-J</h2>
+        <h2 className="text-xl font-semibold">{t('apresJourJ.manuelle.heading')}</h2>
         <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
           <DialogTrigger asChild>
             <Button>
               <Plus className="w-4 h-4 mr-2" />
-              Ajouter une tâche
+              {t('apresJourJ.manuelle.addTask')}
             </Button>
           </DialogTrigger>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle tâche</DialogTitle>
+              <DialogTitle>{t('apresJourJ.manuelle.addDialogTitle')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="title">Titre *</Label>
+                <Label htmlFor="title">{t('apresJourJ.manuelle.titleLabel')}</Label>
                 <Input
                   id="title"
                   value={newItem.title}
                   onChange={(e) => setNewItem({ ...newItem, title: e.target.value })}
-                  placeholder="Titre de la tâche"
+                  placeholder={t('apresJourJ.manuelle.titlePlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="category">Catégorie *</Label>
+                <Label htmlFor="category">{t('apresJourJ.manuelle.categoryLabel')}</Label>
                 <Select value={newItem.category} onValueChange={(value) => setNewItem({ ...newItem, category: value })}>
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner une catégorie" />
+                    <SelectValue placeholder={t('apresJourJ.manuelle.categoryPlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {CATEGORIES.map((category) => (
                       <SelectItem key={category.key} value={category.key}>
-                        {category.label}
+                        {getCategoryLabel(category.key)}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div>
-                <Label htmlFor="description">Description</Label>
+                <Label htmlFor="description">{t('apresJourJ.manuelle.descLabel')}</Label>
                 <Textarea
                   id="description"
                   value={newItem.description}
                   onChange={(e) => setNewItem({ ...newItem, description: e.target.value })}
-                  placeholder="Description de la tâche"
+                  placeholder={t('apresJourJ.manuelle.descPlaceholder')}
                 />
               </div>
               <div>
-                <Label htmlFor="due_date">Date d'échéance</Label>
+                <Label htmlFor="due_date">{t('apresJourJ.manuelle.dueLabel')}</Label>
                 <Input
                   id="due_date"
                   type="date"
@@ -325,16 +328,17 @@ const ApresJourJManuelle: React.FC = () => {
               </div>
               <div className="flex justify-end gap-2">
                 <Button variant="outline" onClick={() => setShowAddDialog(false)}>
-                  Annuler
+                  {t('apresJourJ.manuelle.cancel')}
                 </Button>
                 <Button onClick={addItem}>
-                  Ajouter
+                  {t('apresJourJ.manuelle.addBtn')}
                 </Button>
               </div>
             </div>
           </DialogContent>
         </Dialog>
       </div>
+
 
       {/* Liste par catégorie */}
       {CATEGORIES.map((category) => {
@@ -345,7 +349,7 @@ const ApresJourJManuelle: React.FC = () => {
           <Card key={category.key}>
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
-                <span>{category.label}</span>
+                <span>{getCategoryLabel(category.key)}</span>
                 <div className="flex items-center gap-2">
                   <Badge variant="outline">
                     {categoryItems.filter(item => item.completed).length} / {categoryItems.length}
@@ -381,7 +385,7 @@ const ApresJourJManuelle: React.FC = () => {
                         {item.due_date && (
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                             <Calendar className="w-3 h-3" />
-                            {new Date(item.due_date).toLocaleDateString('fr-FR')}
+                            {new Date(item.due_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR')}
                           </div>
                         )}
                       </div>
@@ -406,7 +410,7 @@ const ApresJourJManuelle: React.FC = () => {
         <Card>
           <CardContent className="text-center py-8">
             <p className="text-muted-foreground mb-4">
-              Votre checklist après le mariage sera créée automatiquement.
+              {t('apresJourJ.manuelle.empty')}
             </p>
           </CardContent>
         </Card>

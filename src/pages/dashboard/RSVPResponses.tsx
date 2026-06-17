@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -50,9 +51,11 @@ interface RSVPResponse {
 }
 
 const RSVPResponses: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const dateLocale = i18n.language.startsWith('en') ? 'en-US' : 'fr-FR';
 
   const [responses, setResponses] = useState<RSVPResponse[]>([]);
   const [subEvents, setSubEvents] = useState<SubEvent[]>([]);
@@ -122,8 +125,8 @@ const RSVPResponses: React.FC = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des réponses:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les réponses RSVP',
+        title: t('rsvp.errors.title'),
+        description: t('rsvp.responses.loadError'),
         variant: 'destructive',
       });
     } finally {
@@ -154,7 +157,7 @@ const RSVPResponses: React.FC = () => {
         (r.number_of_adults || r.number_of_guests || 1) + (r.number_of_children || 0),
         r.dietary_restrictions || '',
         r.message || '',
-        new Date(r.submitted_at).toLocaleString('fr-FR'),
+        new Date(r.submitted_at).toLocaleString(dateLocale),
       ];
 
       // Ajouter les données des sous-événements
@@ -182,8 +185,8 @@ const RSVPResponses: React.FC = () => {
     link.click();
 
     toast({
-      title: 'Export réussi',
-      description: 'Le fichier CSV a été téléchargé',
+      title: t('rsvp.responses.exportSuccess'),
+      description: t('rsvp.responses.exportSuccessDesc'),
     });
   };
 
@@ -222,7 +225,7 @@ const RSVPResponses: React.FC = () => {
           <div className="flex-1">
             <h3 className="font-semibold text-lg">{response.guest_name}</h3>
             <p className="text-sm text-muted-foreground">
-              {new Date(response.submitted_at).toLocaleDateString('fr-FR', {
+              {new Date(response.submitted_at).toLocaleDateString(dateLocale, {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
@@ -267,7 +270,7 @@ const RSVPResponses: React.FC = () => {
               return (
                 <div key={sr.id} className="flex items-center gap-2 text-sm text-wedding-olive">
                   <Calendar className="h-3 w-3" />
-                  <span>{subEvent?.sub_event_name}: {sr.number_of_adults} ad. + {sr.number_of_children} enf.</span>
+                  <span>{t('rsvp.responses.subEventLine', { name: subEvent?.sub_event_name, a: sr.number_of_adults, c: sr.number_of_children })}</span>
                 </div>
               );
             })}
@@ -326,10 +329,7 @@ const RSVPResponses: React.FC = () => {
         <div className="flex-1">
           <h1 className="text-3xl font-bold">{eventName}</h1>
           <p className="text-muted-foreground">
-            {responses.length} réponse{responses.length > 1 ? 's' : ''} • 
-            {totalConfirmedAdults} adulte{totalConfirmedAdults > 1 ? 's' : ''} + 
-            {totalConfirmedChildren} enfant{totalConfirmedChildren > 1 ? 's' : ''} confirmé{totalConfirmedGuests > 1 ? 's' : ''} 
-            (Total: {totalConfirmedGuests})
+            {t('rsvp.responses.header', { r: responses.length, a: totalConfirmedAdults, c: totalConfirmedChildren, t: totalConfirmedGuests })}
           </p>
         </div>
       </div>
@@ -348,7 +348,7 @@ const RSVPResponses: React.FC = () => {
               <CardContent>
                 <p className="text-2xl font-bold text-wedding-olive">{se.total}</p>
                 <p className="text-sm text-muted-foreground">
-                  {se.adults} adulte{se.adults > 1 ? 's' : ''} + {se.children} enfant{se.children > 1 ? 's' : ''}
+                  {se.adults} {t('rsvp.responses.adults')} + {se.children} {t('rsvp.responses.children')}
                 </p>
               </CardContent>
             </Card>
@@ -360,7 +360,7 @@ const RSVPResponses: React.FC = () => {
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Rechercher un invité..."
+            placeholder={t('rsvp.responses.searchPlaceholder')}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -368,7 +368,7 @@ const RSVPResponses: React.FC = () => {
         </div>
         <Button onClick={exportToCSV} variant="outline">
           <Download className="h-4 w-4 mr-2" />
-          Export Tableur
+          {t('rsvp.responses.exportCsv')}
         </Button>
       </div>
 
@@ -376,7 +376,7 @@ const RSVPResponses: React.FC = () => {
         {/* Colonne Confirmés */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Confirmés</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.confirmed')}</h2>
             <Badge className="bg-green-100 text-green-700 border-green-200">
               {confirmedResponses.length}
             </Badge>
@@ -384,7 +384,7 @@ const RSVPResponses: React.FC = () => {
           {confirmedResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucune confirmation
+                {t('rsvp.responses.noConfirmed')}
               </CardContent>
             </Card>
           ) : (
@@ -398,10 +398,9 @@ const RSVPResponses: React.FC = () => {
           )}
         </div>
 
-        {/* Colonne Absents */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Absents</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.declined')}</h2>
             <Badge className="bg-red-100 text-red-700 border-red-200">
               {declinedResponses.length}
             </Badge>
@@ -409,7 +408,7 @@ const RSVPResponses: React.FC = () => {
           {declinedResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucun refus
+                {t('rsvp.responses.noDeclined')}
               </CardContent>
             </Card>
           ) : (
@@ -423,10 +422,9 @@ const RSVPResponses: React.FC = () => {
           )}
         </div>
 
-        {/* Colonne Peut-être */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Peut-être</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.maybe')}</h2>
             <Badge className="bg-orange-100 text-orange-700 border-orange-200">
               {maybeResponses.length}
             </Badge>
@@ -434,7 +432,7 @@ const RSVPResponses: React.FC = () => {
           {maybeResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucune réponse incertaine
+                {t('rsvp.responses.noMaybe')}
               </CardContent>
             </Card>
           ) : (

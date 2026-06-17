@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMonths, differenceInWeeks, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
@@ -46,18 +47,21 @@ interface RetroPlanningData {
 
 // Périodes fixes pour la frise chronologique
 const TIMELINE_PERIODS = [
-  { label: '12-9 mois', monthsBeforeMin: 9, monthsBeforeMax: 12 },
-  { label: '8-6 mois', monthsBeforeMin: 6, monthsBeforeMax: 8 },
-  { label: '5-4 mois', monthsBeforeMin: 4, monthsBeforeMax: 5 },
-  { label: '3 mois', monthsBeforeMin: 3, monthsBeforeMax: 3 },
-  { label: '2 mois', monthsBeforeMin: 2, monthsBeforeMax: 2 },
-  { label: '1 mois', monthsBeforeMin: 1, monthsBeforeMax: 1 },
-  { label: '2 semaines', monthsBeforeMin: 0.5, monthsBeforeMax: 0.5 },
-  { label: 'Semaine J', monthsBeforeMin: 0.25, monthsBeforeMax: 0.25 },
-  { label: 'Jour J', monthsBeforeMin: 0, monthsBeforeMax: 0 },
+  { key: '12-9', monthsBeforeMin: 9, monthsBeforeMax: 12 },
+  { key: '8-6', monthsBeforeMin: 6, monthsBeforeMax: 8 },
+  { key: '5-4', monthsBeforeMin: 4, monthsBeforeMax: 5 },
+  { key: '3', monthsBeforeMin: 3, monthsBeforeMax: 3 },
+  { key: '2', monthsBeforeMin: 2, monthsBeforeMax: 2 },
+  { key: '1', monthsBeforeMin: 1, monthsBeforeMax: 1 },
+  { key: '2w', monthsBeforeMin: 0.5, monthsBeforeMax: 0.5 },
+  { key: 'wj', monthsBeforeMin: 0.25, monthsBeforeMax: 0.25 },
+  { key: 'j', monthsBeforeMin: 0, monthsBeforeMax: 0 },
 ];
 
 const WeddingRetroplanningEmbed = () => {
+  const { t, i18n } = useTranslation('weddingDay');
+  const dateLocale = i18n.language.startsWith('en') ? enUS : fr;
+  const getPeriodLabel = (key: string) => t(`retroplanning.periods.${key}`);
   const [weddingDate, setWeddingDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -70,8 +74,8 @@ const WeddingRetroplanningEmbed = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { executeAction, showPremiumModal, closePremiumModal, isPremium } = usePremiumAction({
-    feature: "Rétroplanning Personnalisé",
-    description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
+    feature: t('retroplanning.premiumFeature'),
+    description: t('retroplanning.premiumDesc')
   });
   const { canUseFeature, recordUsage } = useAiUsageLimit();
 
@@ -237,15 +241,15 @@ const WeddingRetroplanningEmbed = () => {
           }
 
           toast({
-            title: "Rétroplanning chargé",
-            description: "Votre rétroplanning a été chargé avec succès.",
+            title: t('retroplanning.loaded'),
+            description: t('retroplanning.loadedDesc'),
           });
         }
       } catch (error: any) {
         console.error('❌ Erreur lors du chargement du rétroplanning:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger le rétroplanning.",
+          title: t('retroplanning.errorTitle'),
+          description: t('retroplanning.loadError'),
           variant: "destructive",
         });
       }
@@ -257,8 +261,8 @@ const WeddingRetroplanningEmbed = () => {
   const handleGenerate = async () => {
     if (!weddingDate) {
       toast({
-        title: "Date requise",
-        description: "Veuillez sélectionner la date de votre mariage",
+        title: t('retroplanning.dateRequiredTitle'),
+        description: t('retroplanning.dateRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -290,14 +294,14 @@ const WeddingRetroplanningEmbed = () => {
       }
       
       toast({
-        title: "✨ Rétroplanning généré",
-        description: "Votre rétroplanning personnalisé est prêt"
+        title: t('retroplanning.generated'),
+        description: t('retroplanning.generatedDesc')
       });
     } catch (error: any) {
       console.error('Erreur génération:', error);
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de générer le rétroplanning",
+        title: t('retroplanning.errorTitle'),
+        description: error.message || t('retroplanning.genError'),
         variant: "destructive"
       });
     } finally {
@@ -342,7 +346,7 @@ const WeddingRetroplanningEmbed = () => {
           .from('wedding_retroplanning')
           .insert([{
             user_id: user.id,
-            title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
+            title: `${i18n.language.startsWith('en') ? 'Wedding on' : 'Mariage du'} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
             timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
@@ -363,14 +367,14 @@ const WeddingRetroplanningEmbed = () => {
       }
 
       toast({
-        title: "✅ Rétroplanning sauvegardé",
-        description: "Vos modifications seront maintenant sauvegardées automatiquement"
+        title: t('retroplanning.saved'),
+        description: t('retroplanning.savedDesc')
       });
     } catch (error: any) {
       console.error('Erreur sauvegarde:', error);
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de sauvegarder",
+        title: t('retroplanning.errorTitle'),
+        description: error.message || t('retroplanning.saveError'),
         variant: "destructive"
       });
     } finally {
@@ -421,11 +425,11 @@ const WeddingRetroplanningEmbed = () => {
     // En-tête
     doc.setFontSize(20);
     doc.setTextColor(107, 114, 99); // wedding-olive
-    doc.text('Checklist Étapes Clés - Mariage', 20, 25);
-    
+    doc.text(t('retroplanning.pdf.title'), 20, 25);
+
     doc.setFontSize(12);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Date du mariage : ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`, 20, 35);
+    doc.text(`${t('retroplanning.pdf.weddingDate')} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`, 20, 35);
     
     doc.setLineWidth(0.5);
     doc.setDrawColor(107, 114, 99);
@@ -454,7 +458,7 @@ const WeddingRetroplanningEmbed = () => {
       // Timing
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
-      doc.text(`${milestone.monthsBefore} mois avant le mariage`, 30, yPos + 5);
+      doc.text(t('retroplanning.pdf.monthsBefore', { n: milestone.monthsBefore }), 30, yPos + 5);
       
       // Description
       doc.setFontSize(9);
@@ -468,13 +472,13 @@ const WeddingRetroplanningEmbed = () => {
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text('Généré par Mariable.fr', 20, 285);
-    
+    doc.text(t('retroplanning.pdf.generatedBy'), 20, 285);
+
     doc.save(`checklist-mariage-${format(weddingDate, 'yyyy-MM-dd')}.pdf`);
-    
+
     toast({
-      title: "✅ Checklist téléchargée",
-      description: "Votre checklist PDF a été générée"
+      title: t('retroplanning.checklistDownloaded'),
+      description: t('retroplanning.checklistDownloadedDesc')
     });
   };
 
@@ -488,23 +492,23 @@ const WeddingRetroplanningEmbed = () => {
   };
 
   const currentPeriodTasks = getTasksForPeriod(selectedPeriodIndex);
-  const completedTasksInPeriod = currentPeriodTasks.filter(t => checkedTasks.has(t.taskId)).length;
+  const completedTasksInPeriod = currentPeriodTasks.filter(task => checkedTasks.has(task.taskId)).length;
 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Rétroplanning de Mariage</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('retroplanning.title')}</h1>
         <p className="text-muted-foreground">
-          Générez votre planning personnalisé et dynamique avec l'IA
+          {t('retroplanning.subtitle')}
         </p>
       </div>
 
       {/* Date Selection */}
       <Card>
         <CardHeader>
-          <CardTitle>📅 Date de votre mariage</CardTitle>
+          <CardTitle>{t('retroplanning.dateCardTitle')}</CardTitle>
           <CardDescription>
-            Sélectionnez la date de votre mariage pour générer un rétroplanning adapté
+            {t('retroplanning.dateCardDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row gap-4">
@@ -512,7 +516,7 @@ const WeddingRetroplanningEmbed = () => {
             <PopoverTrigger asChild>
               <Button variant="outline" className="flex-1 justify-start text-left">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {weddingDate ? format(weddingDate, 'PPP', { locale: fr }) : 'Sélectionner une date'}
+                {weddingDate ? format(weddingDate, 'PPP', { locale: dateLocale }) : t('retroplanning.selectDate')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -520,7 +524,7 @@ const WeddingRetroplanningEmbed = () => {
                 mode="single"
                 selected={weddingDate}
                 onSelect={setWeddingDate}
-                locale={fr}
+                locale={dateLocale}
               />
             </PopoverContent>
           </Popover>
@@ -533,14 +537,14 @@ const WeddingRetroplanningEmbed = () => {
             {isGenerating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Génération...
+                {t('retroplanning.generating')}
               </>
             ) : (
               <>
                 {!canUseFeature('retroplanning') && <Lock className="mr-2 h-4 w-4" />}
                 <Sparkles className="mr-2 h-4 w-4" />
-                Générer le rétroplanning
-                {!canUseFeature('retroplanning') && <span className="ml-1 text-xs">(Premium)</span>}
+                {t('retroplanning.generate')}
+                {!canUseFeature('retroplanning') && <span className="ml-1 text-xs">{t('retroplanning.premiumSuffix')}</span>}
               </>
             )}
           </Button>
@@ -554,7 +558,7 @@ const WeddingRetroplanningEmbed = () => {
             <div className="flex flex-col items-center justify-center space-y-4">
               <Loader2 className="h-12 w-12 animate-spin text-wedding-olive" />
               <p className="text-lg font-medium text-center">
-                ⏳ Cela peut prendre une minute, notre intelligence artificielle réfléchit...
+                {t('retroplanning.aiThinking')}
               </p>
               <Progress className="w-full h-2" />
             </div>
@@ -569,7 +573,7 @@ const WeddingRetroplanningEmbed = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Progression globale</span>
+                <span>{t('retroplanning.globalProgress')}</span>
                 <span className="text-2xl font-bold text-wedding-olive">{getProgress()}%</span>
               </CardTitle>
             </CardHeader>
@@ -577,17 +581,17 @@ const WeddingRetroplanningEmbed = () => {
               <Progress value={getProgress()} className="h-3" />
               <div className="flex items-center justify-between mt-2">
                 <p className="text-sm text-muted-foreground">
-                  {checkedTasks.size} / {getTotalTasksCount()} tâches complétées
+                  {t('retroplanning.tasksDone', { done: checkedTasks.size, total: getTotalTasksCount() })}
                 </p>
                 {autoSaveStatus === 'saving' && (
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    Sauvegarde...
+                    {t('retroplanning.saving')}
                   </span>
                 )}
                 {autoSaveStatus === 'saved' && (
                   <span className="text-xs text-green-600 flex items-center gap-1">
-                    ✓ Sauvegardé
+                    {t('retroplanning.savedShort')}
                   </span>
                 )}
               </div>
@@ -597,8 +601,8 @@ const WeddingRetroplanningEmbed = () => {
           {/* Frise chronologique horizontale */}
           <Card>
             <CardHeader>
-              <CardTitle>📋 Timeline du projet</CardTitle>
-              <CardDescription>Cliquez sur une période pour voir les tâches associées</CardDescription>
+              <CardTitle>{t('retroplanning.timelineTitle')}</CardTitle>
+              <CardDescription>{t('retroplanning.timelineDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Navigation mobile */}
@@ -612,7 +616,7 @@ const WeddingRetroplanningEmbed = () => {
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
                 <div className="flex-1 text-center">
-                  <span className="font-semibold">{TIMELINE_PERIODS[selectedPeriodIndex].label}</span>
+                  <span className="font-semibold">{getPeriodLabel(TIMELINE_PERIODS[selectedPeriodIndex].key)}</span>
                 </div>
                 <Button 
                   variant="outline" 
@@ -645,9 +649,9 @@ const WeddingRetroplanningEmbed = () => {
                           hover:scale-105 cursor-pointer
                         `}
                       >
-                        <span className="text-sm font-semibold whitespace-nowrap">{period.label}</span>
+                        <span className="text-sm font-semibold whitespace-nowrap">{getPeriodLabel(period.key)}</span>
                         <span className={`text-xs mt-1 ${isSelected ? 'text-white/80' : 'opacity-70'}`}>
-                          {taskCount} tâche{taskCount > 1 ? 's' : ''}
+                          {taskCount} {taskCount > 1 ? t('retroplanning.tasksWordPlur') : t('retroplanning.tasksWordSing')}
                         </span>
                         {status === 'current' && !isSelected && (
                           <span className="absolute -top-1 -right-1 w-3 h-3 bg-orange-500 rounded-full animate-pulse" />
@@ -663,32 +667,31 @@ const WeddingRetroplanningEmbed = () => {
               <div className="flex flex-wrap gap-4 mt-4 text-xs">
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-red-400" />
-                  <span>Passé/Urgent</span>
+                  <span>{t('retroplanning.legendPast')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-orange-400" />
-                  <span>En cours</span>
+                  <span>{t('retroplanning.legendCurrent')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-green-400" />
-                  <span>À venir</span>
+                  <span>{t('retroplanning.legendFuture')}</span>
                 </div>
               </div>
 
-              {/* Tâches de la période sélectionnée */}
               <div className="mt-6 border-t pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-lg">
-                    {TIMELINE_PERIODS[selectedPeriodIndex].label}
+                    {getPeriodLabel(TIMELINE_PERIODS[selectedPeriodIndex].key)}
                   </h3>
                   <span className="text-sm text-muted-foreground">
-                    {completedTasksInPeriod}/{currentPeriodTasks.length} complétées
+                    {t('retroplanning.completedInPeriod', { done: completedTasksInPeriod, total: currentPeriodTasks.length })}
                   </span>
                 </div>
-                
+
                 {currentPeriodTasks.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">
-                    Aucune tâche pour cette période
+                    {t('retroplanning.noTasksInPeriod')}
                   </p>
                 ) : (
                   <div className="space-y-2">
@@ -716,12 +719,12 @@ const WeddingRetroplanningEmbed = () => {
           <Card>
             <CardHeader className="flex flex-row items-center justify-between flex-wrap gap-4">
               <div>
-                <CardTitle>🎯 Étapes clés</CardTitle>
-                <CardDescription>Les moments importants à ne pas manquer</CardDescription>
+                <CardTitle>{t('retroplanning.milestonesTitle')}</CardTitle>
+                <CardDescription>{t('retroplanning.milestonesDesc')}</CardDescription>
               </div>
               <Button variant="outline" onClick={handleDownloadChecklist}>
                 <Download className="mr-2 h-4 w-4" />
-                Télécharger PDF
+                {t('retroplanning.downloadPdf')}
               </Button>
             </CardHeader>
             <CardContent>
@@ -748,7 +751,7 @@ const WeddingRetroplanningEmbed = () => {
                         </h4>
                         <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
                         <p className="text-xs text-muted-foreground mt-2">
-                          📅 {milestone.monthsBefore} mois avant le mariage
+                          {t('retroplanning.monthsBefore', { n: milestone.monthsBefore })}
                         </p>
                       </div>
                     </div>
@@ -769,12 +772,12 @@ const WeddingRetroplanningEmbed = () => {
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Sauvegarde...
+                  {t('retroplanning.saving')}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-5 w-5" />
-                  Sauvegarder dans mon dashboard
+                  {t('retroplanning.saveBtn')}
                 </>
               )}
             </Button>
@@ -785,8 +788,8 @@ const WeddingRetroplanningEmbed = () => {
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Rétroplanning Personnalisé"
-        description="Créez votre rétroplanning de mariage intelligent avec l'IA"
+        feature={t('retroplanning.premiumFeature')}
+        description={t('retroplanning.premiumDesc')}
       />
     </div>
   );

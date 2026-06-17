@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -43,13 +44,14 @@ interface RSVPStats {
 }
 
 const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewResponses }) => {
-  const [stats, setStats] = useState<RSVPStats>({ 
-    confirmed: 0, 
-    confirmedAdults: 0, 
-    confirmedChildren: 0, 
-    declined: 0, 
-    maybe: 0, 
-    total: 0 
+  const { t, i18n } = useTranslation('weddingDay');
+  const [stats, setStats] = useState<RSVPStats>({
+    confirmed: 0,
+    confirmedAdults: 0,
+    confirmedChildren: 0,
+    declined: 0,
+    maybe: 0,
+    total: 0
   });
   const [loading, setLoading] = useState(true);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -122,8 +124,8 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
   const copyToClipboard = () => {
     navigator.clipboard.writeText(publicUrl);
     toast({
-      title: 'Lien copié !',
-      description: 'Le lien RSVP a été copié dans le presse-papier',
+      title: t('rsvp.card.linkCopied'),
+      description: t('rsvp.card.linkCopiedDesc'),
     });
   };
 
@@ -134,7 +136,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
           <CardTitle className="text-xl">{event.event_name}</CardTitle>
           {event.event_date && (
             <p className="text-sm text-muted-foreground">
-              {new Date(event.event_date).toLocaleDateString('fr-FR', {
+              {new Date(event.event_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
@@ -155,7 +157,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
           <div className="grid grid-cols-3 gap-2">
             <div className="text-center p-3 bg-green-50 rounded-lg">
               <div className="text-2xl font-bold text-green-600">{stats.confirmed}</div>
-              <div className="text-xs text-muted-foreground">Confirmés</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.confirmed')}</div>
               {stats.confirmed > 0 && (
                 <div className="text-xs text-muted-foreground mt-1">
                   👤 {stats.confirmedAdults} • 👶 {stats.confirmedChildren}
@@ -164,17 +166,17 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             </div>
             <div className="text-center p-3 bg-red-50 rounded-lg">
               <div className="text-2xl font-bold text-red-600">{stats.declined}</div>
-              <div className="text-xs text-muted-foreground">Absents</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.declined')}</div>
             </div>
             <div className="text-center p-3 bg-orange-50 rounded-lg">
               <div className="text-2xl font-bold text-orange-600">{stats.maybe}</div>
-              <div className="text-xs text-muted-foreground">Peut-être</div>
+              <div className="text-xs text-muted-foreground">{t('rsvp.card.maybe')}</div>
             </div>
           </div>
 
           <div className="pt-2">
             <Badge variant="outline" className="w-full justify-center">
-              {stats.total} personne{stats.total > 1 ? 's' : ''} au total
+              {stats.total > 1 ? t('rsvp.card.totalPlur', { count: stats.total }) : t('rsvp.card.totalSing', { count: stats.total })}
             </Badge>
           </div>
         </CardContent>
@@ -187,7 +189,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             className="flex-1"
           >
             <Eye className="h-4 w-4 mr-1" />
-            Voir les détails
+            {t('rsvp.card.viewDetails')}
           </Button>
 
           <Button
@@ -217,15 +219,15 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Supprimer l'événement ?</AlertDialogTitle>
+                <AlertDialogTitle>{t('rsvp.card.deleteTitle')}</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Cette action est irréversible. Toutes les réponses associées seront également supprimées.
+                  {t('rsvp.card.deleteDesc')}
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
-                <AlertDialogCancel>Annuler</AlertDialogCancel>
+                <AlertDialogCancel>{t('rsvp.card.deleteCancel')}</AlertDialogCancel>
                 <AlertDialogAction onClick={() => onDelete(event.id)}>
-                  Supprimer
+                  {t('rsvp.card.deleteConfirm')}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
@@ -236,18 +238,18 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
       <Dialog open={showQRCode} onOpenChange={setShowQRCode}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>QR Code - {event.event_name}</DialogTitle>
+            <DialogTitle>{t('rsvp.card.qrTitle', { name: event.event_name })}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 py-4">
             {qrCodeDataUrl && (
               <img src={qrCodeDataUrl} alt="QR Code RSVP" className="w-64 h-64" />
             )}
             <p className="text-sm text-center text-muted-foreground">
-              Scannez ce QR code pour accéder au formulaire RSVP
+              {t('rsvp.card.qrHint')}
             </p>
             <Button onClick={copyToClipboard} variant="outline" className="w-full">
               <Copy className="h-4 w-4 mr-2" />
-              Copier le lien
+              {t('rsvp.card.qrCopy')}
             </Button>
           </div>
         </DialogContent>
