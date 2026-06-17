@@ -124,8 +124,8 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
   const copyToClipboard = () => {
     navigator.clipboard.writeText(publicUrl);
     toast({
-      title: 'Lien copié !',
-      description: 'Le lien RSVP a été copié dans le presse-papier',
+      title: t('rsvp.card.linkCopied'),
+      description: t('rsvp.card.linkCopiedDesc'),
     });
   };
 
