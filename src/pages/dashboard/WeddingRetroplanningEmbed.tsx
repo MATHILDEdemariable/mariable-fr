@@ -506,9 +506,9 @@ const WeddingRetroplanningEmbed = () => {
       {/* Date Selection */}
       <Card>
         <CardHeader>
-          <CardTitle>📅 Date de votre mariage</CardTitle>
+          <CardTitle>{t('retroplanning.dateCardTitle')}</CardTitle>
           <CardDescription>
-            Sélectionnez la date de votre mariage pour générer un rétroplanning adapté
+            {t('retroplanning.dateCardDesc')}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col sm:flex-row gap-4">
@@ -516,7 +516,7 @@ const WeddingRetroplanningEmbed = () => {
             <PopoverTrigger asChild>
               <Button variant="outline" className="flex-1 justify-start text-left">
                 <CalendarIcon className="mr-2 h-4 w-4" />
-                {weddingDate ? format(weddingDate, 'PPP', { locale: fr }) : 'Sélectionner une date'}
+                {weddingDate ? format(weddingDate, 'PPP', { locale: dateLocale }) : t('retroplanning.selectDate')}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -524,7 +524,7 @@ const WeddingRetroplanningEmbed = () => {
                 mode="single"
                 selected={weddingDate}
                 onSelect={setWeddingDate}
-                locale={fr}
+                locale={dateLocale}
               />
             </PopoverContent>
           </Popover>
@@ -537,14 +537,14 @@ const WeddingRetroplanningEmbed = () => {
             {isGenerating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Génération...
+                {t('retroplanning.generating')}
               </>
             ) : (
               <>
                 {!canUseFeature('retroplanning') && <Lock className="mr-2 h-4 w-4" />}
                 <Sparkles className="mr-2 h-4 w-4" />
-                Générer le rétroplanning
-                {!canUseFeature('retroplanning') && <span className="ml-1 text-xs">(Premium)</span>}
+                {t('retroplanning.generate')}
+                {!canUseFeature('retroplanning') && <span className="ml-1 text-xs">{t('retroplanning.premiumSuffix')}</span>}
               </>
             )}
           </Button>
