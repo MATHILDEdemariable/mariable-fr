@@ -410,7 +410,7 @@ const ApresJourJManuelle: React.FC = () => {
         <Card>
           <CardContent className="text-center py-8">
             <p className="text-muted-foreground mb-4">
-              Votre checklist après le mariage sera créée automatiquement.
+              {t('apresJourJ.manuelle.empty')}
             </p>
           </CardContent>
         </Card>
