@@ -178,14 +178,14 @@ const ApresJourJManuelle: React.FC = () => {
       loadItems();
       
       toast({
-        title: "Succès",
-        description: "Tâche ajoutée avec succès",
+        title: t('apresJourJ.manuelle.success.title'),
+        description: t('apresJourJ.manuelle.success.added'),
       });
     } catch (error) {
       console.error('Error adding item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.add'),
         variant: "destructive",
       });
     }
