@@ -751,7 +751,7 @@ const WeddingRetroplanningEmbed = () => {
                         </h4>
                         <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
                         <p className="text-xs text-muted-foreground mt-2">
-                          📅 {milestone.monthsBefore} mois avant le mariage
+                          {t('retroplanning.monthsBefore', { n: milestone.monthsBefore })}
                         </p>
                       </div>
                     </div>
