@@ -269,9 +269,9 @@ const RSVPManagement: React.FC = () => {
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">RSVP Invités</h1>
+            <h1 className="text-3xl font-bold text-foreground">{t('rsvp.title')}</h1>
             <p className="text-muted-foreground mt-2">
-              Gérez vos confirmations de présence en ligne
+              {t('rsvp.subtitle')}
             </p>
           </div>
 
@@ -280,73 +280,43 @@ const RSVPManagement: React.FC = () => {
               <DialogTrigger asChild>
                 <Button variant="outline">
                   <Info className="h-4 w-4 mr-2" />
-                  Tuto
+                  {t('rsvp.tutoBtn')}
                 </Button>
               </DialogTrigger>
               <DialogContent>
                 <DialogHeader>
-                  <DialogTitle>Comment utiliser le RSVP ?</DialogTitle>
+                  <DialogTitle>{t('rsvp.tutoTitle')}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">1</span>
+                  {[1, 2, 3, 4].map((n) => (
+                    <div key={n} className="flex items-start gap-3">
+                      <div className="rounded-full bg-primary/10 p-2">
+                        <span className="font-bold text-primary">{n}</span>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold">{t(`rsvp.tutoStep${n}Title`)}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {t(`rsvp.tutoStep${n}Desc`)}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h4 className="font-semibold">Créer l'événement</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Créez un formulaire RSVP avec vos informations (date, lieu, message personnalisé)
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">2</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Ajouter des sous-événements</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Optionnellement, ajoutez un brunch lendemain ou autre événement secondaire
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">3</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Partager le lien ou QR code</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Partagez le lien unique ou le QR code avec vos invités
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-3">
-                    <div className="rounded-full bg-primary/10 p-2">
-                      <span className="font-bold text-primary">4</span>
-                    </div>
-                    <div>
-                      <h4 className="font-semibold">Gérer les réponses</h4>
-                      <p className="text-sm text-muted-foreground">
-                        Suivez en temps réel les confirmations pour chaque événement
-                      </p>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </DialogContent>
             </Dialog>
-            
+
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90">
                   <Plus className="h-4 w-4 mr-2" />
-                  Créer un formulaire RSVP
+                  {t('rsvp.createBtn')}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>Créer un nouvel événement RSVP</DialogTitle>
+                  <DialogTitle>{t('rsvp.createDialogTitle')}</DialogTitle>
                 </DialogHeader>
+
 
                 <div className="space-y-6 py-4">
                   <div className="space-y-2">
