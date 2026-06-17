@@ -515,13 +515,13 @@ const RSVPManagement: React.FC = () => {
         {events.length === 0 ? (
           <Card>
             <CardContent className="py-12 text-center">
-              <h3 className="text-lg font-semibold mb-2">Aucun événement RSVP</h3>
+              <h3 className="text-lg font-semibold mb-2">{t('rsvp.emptyTitle')}</h3>
               <p className="text-muted-foreground mb-6">
-                Créez votre premier formulaire de confirmation de présence
+                {t('rsvp.emptyDesc')}
               </p>
               <Button onClick={() => setIsDialogOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Créer un formulaire RSVP
+                {t('rsvp.createBtn')}
               </Button>
             </CardContent>
           </Card>
