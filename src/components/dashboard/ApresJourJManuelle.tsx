@@ -203,8 +203,8 @@ const ApresJourJManuelle: React.FC = () => {
     } catch (error) {
       console.error('Error toggling item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.toggle'),
         variant: "destructive",
       });
     }
