@@ -59,6 +59,9 @@ const TIMELINE_PERIODS = [
 ];
 
 const WeddingRetroplanningEmbed = () => {
+  const { t, i18n } = useTranslation('weddingDay');
+  const dateLocale = i18n.language.startsWith('en') ? enUS : fr;
+  const getPeriodLabel = (key: string) => t(`retroplanning.periods.${key}`);
   const [weddingDate, setWeddingDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -71,8 +74,8 @@ const WeddingRetroplanningEmbed = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const { executeAction, showPremiumModal, closePremiumModal, isPremium } = usePremiumAction({
-    feature: "Rétroplanning Personnalisé",
-    description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
+    feature: t('retroplanning.premiumFeature'),
+    description: t('retroplanning.premiumDesc')
   });
   const { canUseFeature, recordUsage } = useAiUsageLimit();
 
