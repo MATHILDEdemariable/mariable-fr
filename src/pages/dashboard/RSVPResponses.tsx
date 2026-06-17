@@ -125,8 +125,8 @@ const RSVPResponses: React.FC = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des réponses:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les réponses RSVP',
+        title: t('rsvp.errors.title'),
+        description: t('rsvp.responses.loadError'),
         variant: 'destructive',
       });
     } finally {
