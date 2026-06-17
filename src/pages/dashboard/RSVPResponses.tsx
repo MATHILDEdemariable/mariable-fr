@@ -51,9 +51,11 @@ interface RSVPResponse {
 }
 
 const RSVPResponses: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const dateLocale = i18n.language.startsWith('en') ? 'en-US' : 'fr-FR';
 
   const [responses, setResponses] = useState<RSVPResponse[]>([]);
   const [subEvents, setSubEvents] = useState<SubEvent[]>([]);
