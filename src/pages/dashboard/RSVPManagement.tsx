@@ -94,8 +94,8 @@ const RSVPManagement: React.FC = () => {
     } catch (error) {
       console.error('Erreur lors du chargement des événements:', error);
       toast({
-        title: 'Erreur',
-        description: 'Impossible de charger les événements RSVP',
+        title: t('rsvp.errors.title'),
+        description: t('rsvp.errors.loadEvents'),
         variant: 'destructive',
       });
     } finally {
