@@ -241,15 +241,15 @@ const WeddingRetroplanningEmbed = () => {
           }
 
           toast({
-            title: "Rétroplanning chargé",
-            description: "Votre rétroplanning a été chargé avec succès.",
+            title: t('retroplanning.loaded'),
+            description: t('retroplanning.loadedDesc'),
           });
         }
       } catch (error: any) {
         console.error('❌ Erreur lors du chargement du rétroplanning:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de charger le rétroplanning.",
+          title: t('retroplanning.errorTitle'),
+          description: t('retroplanning.loadError'),
           variant: "destructive",
         });
       }
