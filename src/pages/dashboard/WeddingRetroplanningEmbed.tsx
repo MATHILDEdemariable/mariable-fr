@@ -472,13 +472,13 @@ const WeddingRetroplanningEmbed = () => {
     // Footer
     doc.setFontSize(8);
     doc.setTextColor(150, 150, 150);
-    doc.text('Généré par Mariable.fr', 20, 285);
-    
+    doc.text(t('retroplanning.pdf.generatedBy'), 20, 285);
+
     doc.save(`checklist-mariage-${format(weddingDate, 'yyyy-MM-dd')}.pdf`);
-    
+
     toast({
-      title: "✅ Checklist téléchargée",
-      description: "Votre checklist PDF a été générée"
+      title: t('retroplanning.checklistDownloaded'),
+      description: t('retroplanning.checklistDownloadedDesc')
     });
   };
 
