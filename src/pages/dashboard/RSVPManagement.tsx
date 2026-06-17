@@ -145,8 +145,8 @@ const RSVPManagement: React.FC = () => {
     {
       if (!eventName.trim()) {
         toast({
-          title: 'Erreur',
-          description: 'Veuillez saisir un nom pour l\'événement',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.nameRequired'),
           variant: 'destructive',
         });
         return;
