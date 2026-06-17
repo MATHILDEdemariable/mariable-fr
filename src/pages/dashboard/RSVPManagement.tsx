@@ -198,8 +198,8 @@ const RSVPManagement: React.FC = () => {
         }
 
         toast({
-          title: 'Événement créé !',
-          description: `Le lien RSVP a été généré : /rsvp/${uniqueSlug}`,
+          title: t('rsvp.created'),
+          description: t('rsvp.createdDesc', { slug: uniqueSlug }),
         });
 
         setEvents([{ ...data, sub_events: subEvents }, ...events]);
@@ -208,8 +208,8 @@ const RSVPManagement: React.FC = () => {
       } catch (error) {
         console.error('Erreur lors de la création:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de créer l\'événement RSVP',
+          title: t('rsvp.errors.title'),
+          description: t('rsvp.errors.createEvent'),
           variant: 'destructive',
         });
       } finally {
