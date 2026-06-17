@@ -37,19 +37,20 @@ interface RSVPEvent {
 }
 
 const RSVPManagement: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
-  
+
 
   // Form state
-  const [eventName, setEventName] = useState('Notre Mariage');
+  const [eventName, setEventName] = useState(t('rsvp.defaultEventName'));
   const [eventDate, setEventDate] = useState('');
   const [eventLocation, setEventLocation] = useState('');
-  const [welcomeMessage, setWelcomeMessage] = useState('Nous serions ravis de vous compter parmi nous pour célébrer notre union !');
+  const [welcomeMessage, setWelcomeMessage] = useState(t('rsvp.defaultWelcomeMessage'));
   const [requirePhone, setRequirePhone] = useState(false);
   const [requireDietary, setRequireDietary] = useState(true);
   const [maxGuests, setMaxGuests] = useState(2);
