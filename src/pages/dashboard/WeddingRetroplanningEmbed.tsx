@@ -346,7 +346,7 @@ const WeddingRetroplanningEmbed = () => {
           .from('wedding_retroplanning')
           .insert([{
             user_id: user.id,
-            title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
+            title: `${i18n.language.startsWith('en') ? 'Wedding on' : 'Mariage du'} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
             timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
