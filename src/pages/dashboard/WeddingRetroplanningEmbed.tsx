@@ -573,7 +573,7 @@ const WeddingRetroplanningEmbed = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                <span>Progression globale</span>
+                <span>{t('retroplanning.globalProgress')}</span>
                 <span className="text-2xl font-bold text-wedding-olive">{getProgress()}%</span>
               </CardTitle>
             </CardHeader>
@@ -581,17 +581,17 @@ const WeddingRetroplanningEmbed = () => {
               <Progress value={getProgress()} className="h-3" />
               <div className="flex items-center justify-between mt-2">
                 <p className="text-sm text-muted-foreground">
-                  {checkedTasks.size} / {getTotalTasksCount()} tâches complétées
+                  {t('retroplanning.tasksDone', { done: checkedTasks.size, total: getTotalTasksCount() })}
                 </p>
                 {autoSaveStatus === 'saving' && (
                   <span className="text-xs text-muted-foreground flex items-center gap-1">
                     <Loader2 className="h-3 w-3 animate-spin" />
-                    Sauvegarde...
+                    {t('retroplanning.saving')}
                   </span>
                 )}
                 {autoSaveStatus === 'saved' && (
                   <span className="text-xs text-green-600 flex items-center gap-1">
-                    ✓ Sauvegardé
+                    {t('retroplanning.savedShort')}
                   </span>
                 )}
               </div>
