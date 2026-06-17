@@ -329,10 +329,7 @@ const RSVPResponses: React.FC = () => {
         <div className="flex-1">
           <h1 className="text-3xl font-bold">{eventName}</h1>
           <p className="text-muted-foreground">
-            {responses.length} réponse{responses.length > 1 ? 's' : ''} • 
-            {totalConfirmedAdults} adulte{totalConfirmedAdults > 1 ? 's' : ''} + 
-            {totalConfirmedChildren} enfant{totalConfirmedChildren > 1 ? 's' : ''} confirmé{totalConfirmedGuests > 1 ? 's' : ''} 
-            (Total: {totalConfirmedGuests})
+            {t('rsvp.responses.header', { r: responses.length, a: totalConfirmedAdults, c: totalConfirmedChildren, t: totalConfirmedGuests })}
           </p>
         </div>
       </div>
