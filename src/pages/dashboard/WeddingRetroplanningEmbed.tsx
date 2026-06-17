@@ -772,12 +772,12 @@ const WeddingRetroplanningEmbed = () => {
               {isSaving ? (
                 <>
                   <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Sauvegarde...
+                  {t('retroplanning.saving')}
                 </>
               ) : (
                 <>
                   <Save className="mr-2 h-5 w-5" />
-                  Sauvegarder dans mon dashboard
+                  {t('retroplanning.saveBtn')}
                 </>
               )}
             </Button>
@@ -788,8 +788,8 @@ const WeddingRetroplanningEmbed = () => {
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Rétroplanning Personnalisé"
-        description="Créez votre rétroplanning de mariage intelligent avec l'IA"
+        feature={t('retroplanning.premiumFeature')}
+        description={t('retroplanning.premiumDesc')}
       />
     </div>
   );
