@@ -667,32 +667,31 @@ const WeddingRetroplanningEmbed = () => {
               <div className="flex flex-wrap gap-4 mt-4 text-xs">
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-red-400" />
-                  <span>Passé/Urgent</span>
+                  <span>{t('retroplanning.legendPast')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-orange-400" />
-                  <span>En cours</span>
+                  <span>{t('retroplanning.legendCurrent')}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <span className="w-3 h-3 rounded-full bg-green-400" />
-                  <span>À venir</span>
+                  <span>{t('retroplanning.legendFuture')}</span>
                 </div>
               </div>
 
-              {/* Tâches de la période sélectionnée */}
               <div className="mt-6 border-t pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-lg">
                     {getPeriodLabel(TIMELINE_PERIODS[selectedPeriodIndex].key)}
                   </h3>
                   <span className="text-sm text-muted-foreground">
-                    {completedTasksInPeriod}/{currentPeriodTasks.length} complétées
+                    {t('retroplanning.completedInPeriod', { done: completedTasksInPeriod, total: currentPeriodTasks.length })}
                   </span>
                 </div>
-                
+
                 {currentPeriodTasks.length === 0 ? (
                   <p className="text-muted-foreground text-center py-8">
-                    Aucune tâche pour cette période
+                    {t('retroplanning.noTasksInPeriod')}
                   </p>
                 ) : (
                   <div className="space-y-2">
