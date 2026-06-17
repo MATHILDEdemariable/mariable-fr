@@ -425,11 +425,11 @@ const WeddingRetroplanningEmbed = () => {
     // En-tête
     doc.setFontSize(20);
     doc.setTextColor(107, 114, 99); // wedding-olive
-    doc.text('Checklist Étapes Clés - Mariage', 20, 25);
-    
+    doc.text(t('retroplanning.pdf.title'), 20, 25);
+
     doc.setFontSize(12);
     doc.setTextColor(100, 100, 100);
-    doc.text(`Date du mariage : ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`, 20, 35);
+    doc.text(`${t('retroplanning.pdf.weddingDate')} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`, 20, 35);
     
     doc.setLineWidth(0.5);
     doc.setDrawColor(107, 114, 99);
