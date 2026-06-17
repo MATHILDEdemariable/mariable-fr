@@ -683,7 +683,7 @@ const WeddingRetroplanningEmbed = () => {
               <div className="mt-6 border-t pt-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="font-semibold text-lg">
-                    {TIMELINE_PERIODS[selectedPeriodIndex].label}
+                    {getPeriodLabel(TIMELINE_PERIODS[selectedPeriodIndex].key)}
                   </h3>
                   <span className="text-sm text-muted-foreground">
                     {completedTasksInPeriod}/{currentPeriodTasks.length} complétées
