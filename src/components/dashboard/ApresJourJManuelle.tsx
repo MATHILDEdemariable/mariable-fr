@@ -147,8 +147,8 @@ const ApresJourJManuelle: React.FC = () => {
   const addItem = async () => {
     if (!newItem.title || !newItem.category) {
       toast({
-        title: "Erreur",
-        description: "Le titre et la catégorie sont requis",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.required'),
         variant: "destructive",
       });
       return;
