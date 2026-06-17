@@ -376,7 +376,7 @@ const RSVPResponses: React.FC = () => {
         {/* Colonne Confirmés */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Confirmés</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.confirmed')}</h2>
             <Badge className="bg-green-100 text-green-700 border-green-200">
               {confirmedResponses.length}
             </Badge>
@@ -384,7 +384,7 @@ const RSVPResponses: React.FC = () => {
           {confirmedResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucune confirmation
+                {t('rsvp.responses.noConfirmed')}
               </CardContent>
             </Card>
           ) : (
@@ -398,10 +398,9 @@ const RSVPResponses: React.FC = () => {
           )}
         </div>
 
-        {/* Colonne Absents */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Absents</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.declined')}</h2>
             <Badge className="bg-red-100 text-red-700 border-red-200">
               {declinedResponses.length}
             </Badge>
@@ -409,7 +408,7 @@ const RSVPResponses: React.FC = () => {
           {declinedResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucun refus
+                {t('rsvp.responses.noDeclined')}
               </CardContent>
             </Card>
           ) : (
@@ -423,10 +422,9 @@ const RSVPResponses: React.FC = () => {
           )}
         </div>
 
-        {/* Colonne Peut-être */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-semibold">Peut-être</h2>
+            <h2 className="text-xl font-semibold">{t('rsvp.responses.maybe')}</h2>
             <Badge className="bg-orange-100 text-orange-700 border-orange-200">
               {maybeResponses.length}
             </Badge>
@@ -434,7 +432,7 @@ const RSVPResponses: React.FC = () => {
           {maybeResponses.length === 0 ? (
             <Card>
               <CardContent className="py-8 text-center text-muted-foreground">
-                Aucune réponse incertaine
+                {t('rsvp.responses.noMaybe')}
               </CardContent>
             </Card>
           ) : (
