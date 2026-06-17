@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -14,18 +15,19 @@ import PremiumModal from '@/components/premium/PremiumModal';
 
 const DocumentsPage = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('weddingDay');
   const [selectedDocument, setSelectedDocument] = useState<any>(null);
   const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewedDocument, setViewedDocument] = useState<any>(null);
-  
-  const { 
-    executeAction, 
-    showPremiumModal, 
-    closePremiumModal 
+
+  const {
+    executeAction,
+    showPremiumModal,
+    closePremiumModal
   } = usePremiumAction({
-    feature: "Stockage de documents",
-    description: "Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
+    feature: t('documents.premiumFeature'),
+    description: t('documents.premiumDescription')
   });
 
   const { data: documents, isLoading, refetch } = useQuery({
@@ -48,24 +50,24 @@ const DocumentsPage = () => {
   const handleDelete = (id: string) => {
     executeAction(async () => {
       try {
-      const { error } = await supabase
-        .from('wedding_documents')
-        .delete()
-        .eq('id', id);
+        const { error } = await supabase
+          .from('wedding_documents')
+          .delete()
+          .eq('id', id);
 
-      if (error) throw error;
+        if (error) throw error;
 
-      toast({
-        title: "Document supprimé",
-        description: "Le document a été supprimé avec succès"
-      });
-
-      refetch();
-    } catch (error) {
-      console.error("Erreur suppression:", error);
         toast({
-          title: "Erreur",
-          description: "Impossible de supprimer le document",
+          title: t('documents.deletedTitle'),
+          description: t('documents.deletedDesc')
+        });
+
+        refetch();
+      } catch (error) {
+        console.error("Erreur suppression:", error);
+        toast({
+          title: t('documents.errorTitle'),
+          description: t('documents.deleteError'),
           variant: "destructive"
         });
       }
@@ -89,14 +91,14 @@ const DocumentsPage = () => {
   return (
     <>
       <Helmet>
-        <title>Mes Documents | Dashboard Mariable</title>
+        <title>{t('documents.pageTitle')}</title>
       </Helmet>
 
       <div className="space-y-6">
         <div>
-          <h1 className="text-3xl font-bold text-wedding-olive">Mes Documents</h1>
+          <h1 className="text-3xl font-bold text-wedding-olive">{t('documents.title')}</h1>
           <p className="text-muted-foreground mt-2">
-            Centralisez tous vos documents de mariage et bénéficiez de l'analyse IA (Premium)
+            {t('documents.subtitle')}
           </p>
         </div>
 
@@ -104,11 +106,11 @@ const DocumentsPage = () => {
 
         <Tabs defaultValue="tous" className="w-full">
           <TabsList className="grid grid-cols-5 w-full max-w-2xl">
-            <TabsTrigger value="tous">Tous</TabsTrigger>
-            <TabsTrigger value="devis">Devis</TabsTrigger>
-            <TabsTrigger value="contrat">Contrats</TabsTrigger>
-            <TabsTrigger value="facture">Factures</TabsTrigger>
-            <TabsTrigger value="autre">Autres</TabsTrigger>
+            <TabsTrigger value="tous">{t('documents.tabs.all')}</TabsTrigger>
+            <TabsTrigger value="devis">{t('documents.tabs.devis')}</TabsTrigger>
+            <TabsTrigger value="contrat">{t('documents.tabs.contrat')}</TabsTrigger>
+            <TabsTrigger value="facture">{t('documents.tabs.facture')}</TabsTrigger>
+            <TabsTrigger value="autre">{t('documents.tabs.autre')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="tous" className="space-y-4 mt-6">
@@ -118,7 +120,7 @@ const DocumentsPage = () => {
               </div>
             ) : documents && documents.length > 0 ? (
               documents.map(doc => (
-                <DocumentCard 
+                <DocumentCard
                   key={doc.id}
                   document={doc}
                   onDelete={handleDelete}
@@ -130,7 +132,7 @@ const DocumentsPage = () => {
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 mx-auto text-gray-300 mb-4" />
                 <p className="text-muted-foreground">
-                  Aucun document uploadé pour le moment
+                  {t('documents.empty')}
                 </p>
               </div>
             )}
@@ -144,7 +146,7 @@ const DocumentsPage = () => {
                 </div>
               ) : filterByType(type).length > 0 ? (
                 filterByType(type).map(doc => (
-                  <DocumentCard 
+                  <DocumentCard
                     key={doc.id}
                     document={doc}
                     onDelete={handleDelete}
@@ -155,7 +157,7 @@ const DocumentsPage = () => {
               ) : (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground">
-                    Aucun document de ce type
+                    {t('documents.emptyType')}
                   </p>
                 </div>
               )}
@@ -168,14 +170,14 @@ const DocumentsPage = () => {
             <DialogHeader>
               <DialogTitle className="flex items-center gap-2">
                 <FileText className="h-5 w-5" />
-                Résumé IA - {selectedDocument?.file_name}
+                {t('documents.summaryTitle')} - {selectedDocument?.file_name}
               </DialogTitle>
             </DialogHeader>
-            
+
             {selectedDocument && (
               <div className="space-y-4">
                 <div>
-                  <h3 className="font-semibold mb-2">Résumé:</h3>
+                  <h3 className="font-semibold mb-2">{t('documents.summaryLabel')}</h3>
                   <p className="text-sm whitespace-pre-wrap">
                     {selectedDocument.ai_summary}
                   </p>
@@ -183,7 +185,7 @@ const DocumentsPage = () => {
 
                 {selectedDocument.ai_key_points && (
                   <div>
-                    <h3 className="font-semibold mb-2">Points clés:</h3>
+                    <h3 className="font-semibold mb-2">{t('documents.keyPointsLabel')}</h3>
                     <ul className="list-disc list-inside space-y-1">
                       {Object.entries(selectedDocument.ai_key_points).map(([key, value]: [string, any]) => (
                         <li key={key} className="text-sm">
@@ -204,12 +206,12 @@ const DocumentsPage = () => {
           document={viewedDocument}
         />
       </div>
-      
+
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Stockage de documents"
-        description="Centralisez tous vos documents de mariage (devis, contrats, factures) et bénéficiez de l'analyse IA"
+        feature={t('documents.premiumFeature')}
+        description={t('documents.premiumDescription')}
       />
     </>
   );
