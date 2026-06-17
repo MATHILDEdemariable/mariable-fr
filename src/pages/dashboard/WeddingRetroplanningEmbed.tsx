@@ -261,8 +261,8 @@ const WeddingRetroplanningEmbed = () => {
   const handleGenerate = async () => {
     if (!weddingDate) {
       toast({
-        title: "Date requise",
-        description: "Veuillez sélectionner la date de votre mariage",
+        title: t('retroplanning.dateRequiredTitle'),
+        description: t('retroplanning.dateRequiredDesc'),
         variant: "destructive"
       });
       return;
