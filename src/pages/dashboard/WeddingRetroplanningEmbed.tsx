@@ -601,8 +601,8 @@ const WeddingRetroplanningEmbed = () => {
           {/* Frise chronologique horizontale */}
           <Card>
             <CardHeader>
-              <CardTitle>📋 Timeline du projet</CardTitle>
-              <CardDescription>Cliquez sur une période pour voir les tâches associées</CardDescription>
+              <CardTitle>{t('retroplanning.timelineTitle')}</CardTitle>
+              <CardDescription>{t('retroplanning.timelineDesc')}</CardDescription>
             </CardHeader>
             <CardContent>
               {/* Navigation mobile */}
