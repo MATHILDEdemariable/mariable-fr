@@ -458,7 +458,7 @@ const WeddingRetroplanningEmbed = () => {
       // Timing
       doc.setFontSize(10);
       doc.setTextColor(100, 100, 100);
-      doc.text(`${milestone.monthsBefore} mois avant le mariage`, 30, yPos + 5);
+      doc.text(t('retroplanning.pdf.monthsBefore', { n: milestone.monthsBefore }), 30, yPos + 5);
       
       // Description
       doc.setFontSize(9);
