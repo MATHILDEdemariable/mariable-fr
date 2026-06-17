@@ -294,14 +294,14 @@ const WeddingRetroplanningEmbed = () => {
       }
       
       toast({
-        title: "✨ Rétroplanning généré",
-        description: "Votre rétroplanning personnalisé est prêt"
+        title: t('retroplanning.generated'),
+        description: t('retroplanning.generatedDesc')
       });
     } catch (error: any) {
       console.error('Erreur génération:', error);
       toast({
-        title: "Erreur",
-        description: error.message || "Impossible de générer le rétroplanning",
+        title: t('retroplanning.errorTitle'),
+        description: error.message || t('retroplanning.genError'),
         variant: "destructive"
       });
     } finally {
