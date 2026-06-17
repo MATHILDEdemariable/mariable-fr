@@ -385,7 +385,7 @@ const ApresJourJManuelle: React.FC = () => {
                         {item.due_date && (
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                             <Calendar className="w-3 h-3" />
-                            {new Date(item.due_date).toLocaleDateString('fr-FR')}
+                            {new Date(item.due_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR')}
                           </div>
                         )}
                       </div>
