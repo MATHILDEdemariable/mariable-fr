@@ -185,8 +185,8 @@ const RSVPResponses: React.FC = () => {
     link.click();
 
     toast({
-      title: 'Export réussi',
-      description: 'Le fichier CSV a été téléchargé',
+      title: t('rsvp.responses.exportSuccess'),
+      description: t('rsvp.responses.exportSuccessDesc'),
     });
   };
 
