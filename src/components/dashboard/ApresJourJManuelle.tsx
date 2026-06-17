@@ -248,7 +248,7 @@ const ApresJourJManuelle: React.FC = () => {
   };
 
   if (isLoading) {
-    return <div className="text-center py-8">Chargement...</div>;
+    return <div className="text-center py-8">{t('apresJourJ.manuelle.loading')}</div>;
   }
 
   return (
