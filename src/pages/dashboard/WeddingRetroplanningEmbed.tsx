@@ -497,9 +497,9 @@ const WeddingRetroplanningEmbed = () => {
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h1 className="text-3xl font-bold mb-2">Rétroplanning de Mariage</h1>
+        <h1 className="text-3xl font-bold mb-2">{t('retroplanning.title')}</h1>
         <p className="text-muted-foreground">
-          Générez votre planning personnalisé et dynamique avec l'IA
+          {t('retroplanning.subtitle')}
         </p>
       </div>
 
