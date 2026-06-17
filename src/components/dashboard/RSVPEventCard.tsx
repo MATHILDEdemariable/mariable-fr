@@ -44,13 +44,14 @@ interface RSVPStats {
 }
 
 const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewResponses }) => {
-  const [stats, setStats] = useState<RSVPStats>({ 
-    confirmed: 0, 
-    confirmedAdults: 0, 
-    confirmedChildren: 0, 
-    declined: 0, 
-    maybe: 0, 
-    total: 0 
+  const { t, i18n } = useTranslation('weddingDay');
+  const [stats, setStats] = useState<RSVPStats>({
+    confirmed: 0,
+    confirmedAdults: 0,
+    confirmedChildren: 0,
+    declined: 0,
+    maybe: 0,
+    total: 0
   });
   const [loading, setLoading] = useState(true);
   const [showQRCode, setShowQRCode] = useState(false);
