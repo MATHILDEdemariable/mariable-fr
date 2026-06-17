@@ -47,15 +47,15 @@ interface RetroPlanningData {
 
 // Périodes fixes pour la frise chronologique
 const TIMELINE_PERIODS = [
-  { label: '12-9 mois', monthsBeforeMin: 9, monthsBeforeMax: 12 },
-  { label: '8-6 mois', monthsBeforeMin: 6, monthsBeforeMax: 8 },
-  { label: '5-4 mois', monthsBeforeMin: 4, monthsBeforeMax: 5 },
-  { label: '3 mois', monthsBeforeMin: 3, monthsBeforeMax: 3 },
-  { label: '2 mois', monthsBeforeMin: 2, monthsBeforeMax: 2 },
-  { label: '1 mois', monthsBeforeMin: 1, monthsBeforeMax: 1 },
-  { label: '2 semaines', monthsBeforeMin: 0.5, monthsBeforeMax: 0.5 },
-  { label: 'Semaine J', monthsBeforeMin: 0.25, monthsBeforeMax: 0.25 },
-  { label: 'Jour J', monthsBeforeMin: 0, monthsBeforeMax: 0 },
+  { key: '12-9', monthsBeforeMin: 9, monthsBeforeMax: 12 },
+  { key: '8-6', monthsBeforeMin: 6, monthsBeforeMax: 8 },
+  { key: '5-4', monthsBeforeMin: 4, monthsBeforeMax: 5 },
+  { key: '3', monthsBeforeMin: 3, monthsBeforeMax: 3 },
+  { key: '2', monthsBeforeMin: 2, monthsBeforeMax: 2 },
+  { key: '1', monthsBeforeMin: 1, monthsBeforeMax: 1 },
+  { key: '2w', monthsBeforeMin: 0.5, monthsBeforeMax: 0.5 },
+  { key: 'wj', monthsBeforeMin: 0.25, monthsBeforeMax: 0.25 },
+  { key: 'j', monthsBeforeMin: 0, monthsBeforeMax: 0 },
 ];
 
 const WeddingRetroplanningEmbed = () => {
