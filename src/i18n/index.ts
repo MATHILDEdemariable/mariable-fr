@@ -49,6 +49,7 @@ const resources = {
     checklist: frChecklist,
     seating: frSeating,
     ceremonie: frCeremonie,
+    weddingDay: frWeddingDay,
   },
   en: {
     common: enCommon,
