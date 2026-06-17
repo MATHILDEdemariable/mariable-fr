@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -9,7 +10,7 @@ import { Progress } from '@/components/ui/progress';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { format, differenceInMonths, differenceInWeeks, differenceInDays } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
