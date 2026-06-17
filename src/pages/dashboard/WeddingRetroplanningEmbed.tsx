@@ -492,7 +492,7 @@ const WeddingRetroplanningEmbed = () => {
   };
 
   const currentPeriodTasks = getTasksForPeriod(selectedPeriodIndex);
-  const completedTasksInPeriod = currentPeriodTasks.filter(t => checkedTasks.has(t.taskId)).length;
+  const completedTasksInPeriod = currentPeriodTasks.filter(task => checkedTasks.has(task.taskId)).length;
 
   return (
     <div className="space-y-6">
