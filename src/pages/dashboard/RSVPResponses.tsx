@@ -348,7 +348,7 @@ const RSVPResponses: React.FC = () => {
               <CardContent>
                 <p className="text-2xl font-bold text-wedding-olive">{se.total}</p>
                 <p className="text-sm text-muted-foreground">
-                  {se.adults} adulte{se.adults > 1 ? 's' : ''} + {se.children} enfant{se.children > 1 ? 's' : ''}
+                  {se.adults} {t('rsvp.responses.adults')} + {se.children} {t('rsvp.responses.children')}
                 </p>
               </CardContent>
             </Card>
