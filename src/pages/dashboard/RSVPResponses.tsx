@@ -270,7 +270,7 @@ const RSVPResponses: React.FC = () => {
               return (
                 <div key={sr.id} className="flex items-center gap-2 text-sm text-wedding-olive">
                   <Calendar className="h-3 w-3" />
-                  <span>{subEvent?.sub_event_name}: {sr.number_of_adults} ad. + {sr.number_of_children} enf.</span>
+                  <span>{t('rsvp.responses.subEventLine', { name: subEvent?.sub_event_name, a: sr.number_of_adults, c: sr.number_of_children })}</span>
                 </div>
               );
             })}
