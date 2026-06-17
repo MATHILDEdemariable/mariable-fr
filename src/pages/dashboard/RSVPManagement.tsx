@@ -219,10 +219,10 @@ const RSVPManagement: React.FC = () => {
   };
 
   const resetForm = () => {
-    setEventName('Notre Mariage');
+    setEventName(t('rsvp.defaultEventName'));
     setEventDate('');
     setEventLocation('');
-    setWelcomeMessage('Nous serions ravis de vous compter parmi nous pour célébrer notre union !');
+    setWelcomeMessage(t('rsvp.defaultWelcomeMessage'));
     setRequirePhone(false);
     setRequireDietary(true);
     setMaxGuests(2);
