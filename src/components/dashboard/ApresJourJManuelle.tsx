@@ -221,14 +221,14 @@ const ApresJourJManuelle: React.FC = () => {
       loadItems();
       
       toast({
-        title: "Succès",
-        description: "Tâche supprimée",
+        title: t('apresJourJ.manuelle.success.title'),
+        description: t('apresJourJ.manuelle.success.deleted'),
       });
     } catch (error) {
       console.error('Error deleting item:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer la tâche",
+        title: t('apresJourJ.manuelle.errors.title'),
+        description: t('apresJourJ.manuelle.errors.delete'),
         variant: "destructive",
       });
     }
