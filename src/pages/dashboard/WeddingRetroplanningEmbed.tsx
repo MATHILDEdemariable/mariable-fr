@@ -558,7 +558,7 @@ const WeddingRetroplanningEmbed = () => {
             <div className="flex flex-col items-center justify-center space-y-4">
               <Loader2 className="h-12 w-12 animate-spin text-wedding-olive" />
               <p className="text-lg font-medium text-center">
-                ⏳ Cela peut prendre une minute, notre intelligence artificielle réfléchit...
+                {t('retroplanning.aiThinking')}
               </p>
               <Progress className="w-full h-2" />
             </div>
