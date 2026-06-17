@@ -136,7 +136,7 @@ const RSVPEventCard: React.FC<RSVPEventCardProps> = ({ event, onDelete, onViewRe
           <CardTitle className="text-xl">{event.event_name}</CardTitle>
           {event.event_date && (
             <p className="text-sm text-muted-foreground">
-              {new Date(event.event_date).toLocaleDateString('fr-FR', {
+              {new Date(event.event_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR', {
                 day: 'numeric',
                 month: 'long',
                 year: 'numeric',
