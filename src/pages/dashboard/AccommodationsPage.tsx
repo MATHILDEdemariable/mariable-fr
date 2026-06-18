@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Plus, Search, Trash2, Pencil, FileDown } from 'lucide-react';
@@ -37,21 +38,16 @@ import {
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 
-const statusMap = {
-  non_reserve: { label: 'Non réservé', variant: 'secondary' as const },
-  reserve: { label: 'Réservé', variant: 'default' as const },
-  paye: { label: 'Payé', variant: 'default' as const },
-};
-
-const typeMap: Record<string, string> = {
-  hotel: 'Hôtel',
-  chambre_hote: "Chambre d'hôte",
-  airbnb: 'Airbnb',
-  famille: 'Famille',
-  autre: 'Autre',
-};
-
 export default function AccommodationsPage() {
+  const { t, i18n } = useTranslation('weddingDay');
+  const dateLocale = i18n.language.startsWith('en') ? 'en-US' : 'fr-FR';
+
+  const statusVariant: Record<string, 'secondary' | 'default'> = {
+    non_reserve: 'secondary',
+    reserve: 'default',
+    paye: 'default',
+  };
+
   const [searchTerm, setSearchTerm] = useState('');
   const [formOpen, setFormOpen] = useState(false);
   const [editingAccommodation, setEditingAccommodation] = useState<Accommodation | undefined>();
@@ -63,14 +59,14 @@ export default function AccommodationsPage() {
   const createMutation = useCreateAccommodation();
   const updateMutation = useUpdateAccommodation();
   const deleteMutation = useDeleteAccommodation();
-  
-  const { 
-    executeAction, 
-    showPremiumModal, 
-    closePremiumModal 
+
+  const {
+    executeAction,
+    showPremiumModal,
+    closePremiumModal
   } = usePremiumAction({
-    feature: "Gestion des logements",
-    description: "Gérez les hébergements de vos invités : hôtels, chambres d'hôte, Airbnb, et organisez les réservations"
+    feature: t('accommodations.premiumFeature'),
+    description: t('accommodations.premiumDescription')
   });
 
   const filteredAccommodations = accommodations.filter(
@@ -117,31 +113,29 @@ export default function AccommodationsPage() {
   };
 
   const handleExportPDF = () => {
-    toast.info('Fonctionnalité d\'export PDF en cours de développement');
+    toast.info(t('accommodations.exportTodo'));
   };
 
   return (
     <>
       <Helmet>
-        <title>Gestion des Logements - Mariable</title>
+        <title>{t('accommodations.pageTitle')}</title>
       </Helmet>
 
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-wedding-olive">Gestion des Logements</h1>
-            <p className="text-muted-foreground mt-1">
-              Gérez les hébergements pour vos invités
-            </p>
+            <h1 className="text-3xl font-bold text-wedding-olive">{t('accommodations.title')}</h1>
+            <p className="text-muted-foreground mt-1">{t('accommodations.subtitle')}</p>
           </div>
           <div className="flex gap-2">
             <Button onClick={handleExportPDF} variant="outline">
               <FileDown className="w-4 h-4 mr-2" />
-              Export PDF
+              {t('accommodations.exportPdf')}
             </Button>
             <Button onClick={handleCreate} className="bg-wedding-olive hover:bg-wedding-olive/90">
               <Plus className="w-4 h-4 mr-2" />
-              Ajouter un logement
+              {t('accommodations.add')}
             </Button>
           </div>
         </div>
@@ -154,7 +148,7 @@ export default function AccommodationsPage() {
           <div className="flex items-center gap-2 mb-4">
             <Search className="w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher par nom, adresse ou invité..."
+              placeholder={t('accommodations.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="max-w-md"
@@ -162,36 +156,36 @@ export default function AccommodationsPage() {
           </div>
 
           {isLoading ? (
-            <p className="text-center py-8 text-muted-foreground">Chargement...</p>
+            <p className="text-center py-8 text-muted-foreground">{t('accommodations.loading')}</p>
           ) : filteredAccommodations.length === 0 ? (
             <p className="text-center py-8 text-muted-foreground">
-              {searchTerm ? 'Aucun résultat trouvé' : 'Aucun logement créé'}
+              {searchTerm ? t('accommodations.noResults') : t('accommodations.empty')}
             </p>
           ) : (
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Nom</TableHead>
-                    <TableHead>Type</TableHead>
-                    <TableHead className="text-center">Chambres</TableHead>
-                    <TableHead className="text-center">Capacité</TableHead>
-                    <TableHead>Invités</TableHead>
-                    <TableHead>Statut</TableHead>
-                    <TableHead>Prix/nuit</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>{t('accommodations.colName')}</TableHead>
+                    <TableHead>{t('accommodations.colType')}</TableHead>
+                    <TableHead className="text-center">{t('accommodations.colRooms')}</TableHead>
+                    <TableHead className="text-center">{t('accommodations.colCapacity')}</TableHead>
+                    <TableHead>{t('accommodations.colGuests')}</TableHead>
+                    <TableHead>{t('accommodations.colStatus')}</TableHead>
+                    <TableHead>{t('accommodations.colPricePerNight')}</TableHead>
+                    <TableHead>{t('accommodations.colDates')}</TableHead>
+                    <TableHead className="text-right">{t('accommodations.colActions')}</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredAccommodations.map((accommodation) => (
-                    <TableRow 
+                    <TableRow
                       key={accommodation.id}
                       className="cursor-pointer hover:bg-muted/50"
                       onClick={() => handleRowClick(accommodation)}
                     >
                       <TableCell className="font-medium">{accommodation.nom_logement}</TableCell>
-                      <TableCell>{typeMap[accommodation.type_logement]}</TableCell>
+                      <TableCell>{t(`accommodations.type.${accommodation.type_logement}`)}</TableCell>
                       <TableCell className="text-center">{accommodation.nombre_chambres}</TableCell>
                       <TableCell className="text-center">
                         {accommodation.guests?.length || 0} / {accommodation.capacite_totale}
@@ -211,12 +205,12 @@ export default function AccommodationsPage() {
                             )}
                           </div>
                         ) : (
-                          <span className="text-muted-foreground text-sm">Aucun</span>
+                          <span className="text-muted-foreground text-sm">{t('accommodations.none')}</span>
                         )}
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={statusMap[accommodation.statut as keyof typeof statusMap].variant}
+                          variant={statusVariant[accommodation.statut] || 'secondary'}
                           className={
                             accommodation.statut === 'paye'
                               ? 'bg-green-600'
@@ -225,7 +219,7 @@ export default function AccommodationsPage() {
                               : ''
                           }
                         >
-                          {statusMap[accommodation.statut as keyof typeof statusMap].label}
+                          {t(`accommodations.status.${accommodation.statut}`)}
                         </Badge>
                       </TableCell>
                       <TableCell>
@@ -233,7 +227,7 @@ export default function AccommodationsPage() {
                       </TableCell>
                       <TableCell className="text-sm">
                         {accommodation.date_arrivee && accommodation.date_depart
-                          ? `${new Date(accommodation.date_arrivee).toLocaleDateString('fr-FR')} - ${new Date(accommodation.date_depart).toLocaleDateString('fr-FR')}`
+                          ? `${new Date(accommodation.date_arrivee).toLocaleDateString(dateLocale)} - ${new Date(accommodation.date_depart).toLocaleDateString(dateLocale)}`
                           : '-'}
                       </TableCell>
                       <TableCell className="text-right">
@@ -285,25 +279,23 @@ export default function AccommodationsPage() {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
-            <AlertDialogDescription>
-              Êtes-vous sûr de vouloir supprimer ce logement ? Cette action est irréversible.
-            </AlertDialogDescription>
+            <AlertDialogTitle>{t('accommodations.confirmDeleteTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>{t('accommodations.confirmDeleteDesc')}</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{t('accommodations.cancel')}</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete} className="bg-red-600 hover:bg-red-700">
-              Supprimer
+              {t('accommodations.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      
+
       <PremiumModal
         isOpen={showPremiumModal}
         onClose={closePremiumModal}
-        feature="Gestion des logements"
-        description="Gérez les hébergements de vos invités : hôtels, chambres d'hôte, Airbnb, et organisez les réservations"
+        feature={t('accommodations.premiumFeature')}
+        description={t('accommodations.premiumDescription')}
       />
     </>
   );

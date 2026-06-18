@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, MessageSquare, Store, Calendar, Trash2 } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { format } from 'date-fns';
-import { fr } from 'date-fns/locale';
+import { fr, enUS } from 'date-fns/locale';
 import { useToast } from '@/components/ui/use-toast';
 import { Link } from 'react-router-dom';
 
@@ -17,9 +18,11 @@ interface VendorMessage {
 }
 
 const MessagesPage: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const [messages, setMessages] = useState<VendorMessage[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
+  const dateLocale = i18n.language.startsWith('en') ? enUS : fr;
 
   useEffect(() => {
     loadMessages();
@@ -56,14 +59,14 @@ const MessagesPage: React.FC = () => {
 
       setMessages(prev => prev.filter(m => m.id !== messageId));
       toast({
-        title: "Message supprimé",
-        description: "Le message a été supprimé avec succès"
+        title: t('messages.deleted'),
+        description: t('messages.deletedDesc')
       });
     } catch (error) {
       console.error('Error deleting message:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le message",
+        title: t('messages.errorTitle'),
+        description: t('messages.deleteError'),
         variant: "destructive"
       });
     }
@@ -80,10 +83,8 @@ const MessagesPage: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-serif text-wedding-olive">Mes messages</h1>
-        <p className="text-muted-foreground mt-1">
-          Retrouvez tous les messages envoyés aux prestataires
-        </p>
+        <h1 className="text-2xl font-serif text-wedding-olive">{t('messages.title')}</h1>
+        <p className="text-muted-foreground mt-1">{t('messages.subtitle')}</p>
       </div>
 
       {messages.length === 0 ? (
@@ -92,14 +93,12 @@ const MessagesPage: React.FC = () => {
             <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <MessageSquare className="w-8 h-8 text-muted-foreground" />
             </div>
-            <h3 className="font-medium text-lg mb-2">Aucun message envoyé</h3>
-            <p className="text-muted-foreground mb-4">
-              Contactez des prestataires pour leur poser vos questions
-            </p>
+            <h3 className="font-medium text-lg mb-2">{t('messages.emptyTitle')}</h3>
+            <p className="text-muted-foreground mb-4">{t('messages.emptyDesc')}</p>
             <Button asChild>
               <Link to="/professionnelsmariable">
                 <Store className="w-4 h-4 mr-2" />
-                Voir les prestataires
+                {t('messages.browseVendors')}
               </Link>
             </Button>
           </CardContent>
@@ -116,7 +115,7 @@ const MessagesPage: React.FC = () => {
                     </CardTitle>
                     <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                       <Calendar className="w-4 h-4" />
-                      {format(new Date(message.created_at), "d MMMM yyyy 'à' HH:mm", { locale: fr })}
+                      {format(new Date(message.created_at), t('messages.dateFormat'), { locale: dateLocale })}
                     </div>
                   </div>
                   <Button

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Palette, Download, RotateCcw, Sparkles, Loader2, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -15,17 +16,18 @@ import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 const MoodboardPage: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   const { toast } = useToast();
   const [coupleName, setCoupleName] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
   const [isExporting, setIsExporting] = useState(false);
 
   const { executeAction, showPremiumModal, closePremiumModal, isPremium, feature, description } = usePremiumAction({
-    feature: 'Export PDF Moodboard',
-    description: 'Téléchargez votre moodboard en PDF haute qualité.'
+    feature: t('moodboard.premiumFeature'),
+    description: t('moodboard.premiumDescription')
   });
 
-  const { canUseFeature, hasUsedFeature, recordUsage } = useAiUsageLimit();
+  const { canUseFeature, recordUsage } = useAiUsageLimit();
 
   const {
     images,
@@ -39,7 +41,6 @@ const MoodboardPage: React.FC = () => {
     reset,
   } = useMoodboard();
 
-  // Load user profile data
   useEffect(() => {
     const loadProfile = async () => {
       const { data: { user } } = await supabase.auth.getUser();
@@ -61,26 +62,21 @@ const MoodboardPage: React.FC = () => {
         }
       }
     };
-
     loadProfile();
   }, []);
 
   const [showPremiumLimitModal, setShowPremiumLimitModal] = useState(false);
 
   const handleGenerate = async () => {
-    // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
     if (!canUseFeature('moodboard')) {
       setShowPremiumLimitModal(true);
       return;
     }
-
     const success = await analyzeColors();
     if (success) {
-      // Enregistrer l'utilisation pour les utilisateurs non-premium
       if (!isPremium) {
         await recordUsage('moodboard');
       }
-      // Scroll to canvas
       setTimeout(() => {
         document.getElementById('moodboard-result')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
@@ -99,14 +95,14 @@ const MoodboardPage: React.FC = () => {
           ambiance,
         });
         toast({
-          title: "PDF téléchargé !",
-          description: "Votre moodboard a été exporté avec succès.",
+          title: t('moodboard.pdfSuccess'),
+          description: t('moodboard.pdfSuccessDesc'),
         });
       } catch (error) {
         console.error('PDF export error:', error);
         toast({
-          title: "Erreur d'export",
-          description: "Impossible de générer le PDF.",
+          title: t('moodboard.pdfError'),
+          description: t('moodboard.pdfErrorDesc'),
           variant: "destructive",
         });
       } finally {
@@ -124,43 +120,39 @@ const MoodboardPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Moodboard | Mariable</title>
-        <meta name="description" content="Créez votre moodboard de mariage avec extraction automatique de palette de couleurs" />
+        <title>{t('moodboard.pageTitle')}</title>
+        <meta name="description" content={t('moodboard.pageDescription')} />
       </Helmet>
 
       <div className="max-w-4xl mx-auto px-4 py-6 md:py-8">
-        {/* Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-10 h-10 rounded-full bg-wedding-olive/10 flex items-center justify-center">
               <Palette className="w-5 h-5 text-wedding-olive" />
             </div>
-            <h1 className="font-serif text-2xl md:text-3xl">Moodboard</h1>
+            <h1 className="font-serif text-2xl md:text-3xl">{t('moodboard.title')}</h1>
           </div>
-          <p className="text-gray-600 text-sm md:text-base">
-            Créez votre planche d'inspiration avec extraction automatique de palette de couleurs par IA
-          </p>
+          <p className="text-gray-600 text-sm md:text-base">{t('moodboard.subtitle')}</p>
         </div>
 
-        {/* Step 1: Couple info */}
         <div className="bg-white border border-gray-200 rounded-none p-6 mb-6">
           <h2 className="font-medium text-lg mb-4 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-wedding-olive text-white text-sm flex items-center justify-center">1</span>
-            Informations du mariage
+            {t('moodboard.step1')}
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="couple-name">Nom des mariés</Label>
+              <Label htmlFor="couple-name">{t('moodboard.coupleName')}</Label>
               <Input
                 id="couple-name"
-                placeholder="Ex: Marie & Pierre"
+                placeholder={t('moodboard.coupleNamePlaceholder')}
                 value={coupleName}
                 onChange={(e) => setCoupleName(e.target.value)}
                 className="rounded-none"
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="wedding-date">Date du mariage</Label>
+              <Label htmlFor="wedding-date">{t('moodboard.weddingDate')}</Label>
               <Input
                 id="wedding-date"
                 type="date"
@@ -172,11 +164,10 @@ const MoodboardPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Step 2: Upload photos */}
         <div className="bg-white border border-gray-200 rounded-none p-6 mb-6">
           <h2 className="font-medium text-lg mb-4 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-wedding-olive text-white text-sm flex items-center justify-center">2</span>
-            Photos d'inspiration
+            {t('moodboard.step2')}
           </h2>
           <MoodboardUploader
             images={images}
@@ -186,13 +177,12 @@ const MoodboardPage: React.FC = () => {
           />
         </div>
 
-        {/* Step 3: Generate */}
         <div className="bg-white border border-gray-200 rounded-none p-6 mb-6">
           <h2 className="font-medium text-lg mb-4 flex items-center gap-2">
             <span className="w-6 h-6 rounded-full bg-wedding-olive text-white text-sm flex items-center justify-center">3</span>
-            Générer le moodboard
+            {t('moodboard.step3')}
           </h2>
-          
+
           <div className="flex flex-col sm:flex-row gap-3">
             <Button
               onClick={handleGenerate}
@@ -202,14 +192,14 @@ const MoodboardPage: React.FC = () => {
               {isAnalyzing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Analyse en cours...
+                  {t('moodboard.analyzing')}
                 </>
               ) : (
                 <>
                   {!canUseFeature('moodboard') && <Lock className="w-4 h-4 mr-2" />}
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Générer mon moodboard
-                  {!canUseFeature('moodboard') && <span className="ml-1 text-xs">(Premium)</span>}
+                  {t('moodboard.generate')}
+                  {!canUseFeature('moodboard') && <span className="ml-1 text-xs">{t('moodboard.premiumSuffix')}</span>}
                 </>
               )}
             </Button>
@@ -221,24 +211,23 @@ const MoodboardPage: React.FC = () => {
                 className="rounded-none"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
-                Recommencer
+                {t('moodboard.reset')}
               </Button>
             )}
           </div>
 
           {images.length < 5 && images.length > 0 && (
             <p className="text-sm text-amber-600 mt-3">
-              Ajoutez encore {5 - images.length} photo{5 - images.length > 1 ? 's' : ''} pour pouvoir générer le moodboard.
+              {t('moodboard.addMore', { count: 5 - images.length })}
             </p>
           )}
         </div>
 
-        {/* Result */}
         {isGenerated && (
           <div id="moodboard-result" className="space-y-6">
             <div className="bg-white border border-gray-200 rounded-none p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="font-medium text-lg">Votre Moodboard</h2>
+                <h2 className="font-medium text-lg">{t('moodboard.resultTitle')}</h2>
                 <Button
                   onClick={handleExportPdf}
                   disabled={isExporting}
@@ -247,13 +236,13 @@ const MoodboardPage: React.FC = () => {
                   {isExporting ? (
                     <>
                       <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                      Export...
+                      {t('moodboard.exporting')}
                     </>
                   ) : (
                     <>
                       {!isPremium && <Lock className="w-4 h-4 mr-2" />}
                       <Download className="w-4 h-4 mr-2" />
-                      Télécharger PDF
+                      {t('moodboard.downloadPdf')}
                     </>
                   )}
                 </Button>
@@ -281,8 +270,8 @@ const MoodboardPage: React.FC = () => {
       <PremiumModal
         isOpen={showPremiumLimitModal}
         onClose={() => setShowPremiumLimitModal(false)}
-        feature="Génération Moodboard IA"
-        description="Vous avez déjà utilisé votre génération gratuite. Passez au Premium pour des générations illimitées."
+        feature={t('moodboard.limitFeature')}
+        description={t('moodboard.limitDescription')}
       />
     </>
   );
