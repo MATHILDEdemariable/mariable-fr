@@ -138,8 +138,14 @@
     ],
     "lieuxTitle": "Where can you get married?",
     "lieux": [
-      { "titre": "Town of residence", "description": "No minimum length of residence required" },
-      { "titre": "Town of parents", "description": "Town of residence of either spouse's father or mother" }
+      {
+        "titre": "Town of residence",
+        "description": "No minimum length of residence required"
+      },
+      {
+        "titre": "Town of parents",
+        "description": "Town of residence of either spouse's father or mother"
+      }
     ],
     "parisLabel": "In Paris:",
     "parisText": "The wedding is held in the arrondissement matching the home or residence address.",
@@ -149,40 +155,130 @@
     "datesText": "Set by the Mayor based on the availability of staff, deputies authorised to celebrate weddings, and venues.",
     "documentsTitle": "Required documents",
     "documents": [
-      { "title": "ID document", "description": "National ID card, passport OR driving licence", "detail": "For each spouse" },
-      { "title": "Recent proof of address", "description": "Rent receipt, electricity, water or phone bill...", "detail": "For each spouse" },
-      { "title": "Birth certificate (full copy)", "description": "Less than 3 months old if born in France / less than 6 months if issued by a consulate", "detail": "For each spouse" },
-      { "title": "List of witnesses", "description": "1 or 2 witnesses per spouse (max 2 per partner)", "detail": "Names, dates/places of birth, occupation, address" },
-      { "title": "Witness ID documents", "description": "Photocopy for each witness", "detail": "Adult witnesses (18+) or emancipated minors" },
-      { "title": "Notary certificate", "description": "Only if a marriage contract has been signed", "detail": "Request from your notary" }
+      {
+        "title": "ID document",
+        "description": "National ID card, passport OR driving licence",
+        "detail": "For each spouse"
+      },
+      {
+        "title": "Recent proof of address",
+        "description": "Rent receipt, electricity, water or phone bill...",
+        "detail": "For each spouse"
+      },
+      {
+        "title": "Birth certificate (full copy)",
+        "description": "Less than 3 months old if born in France / less than 6 months if issued by a consulate",
+        "detail": "For each spouse"
+      },
+      {
+        "title": "List of witnesses",
+        "description": "1 or 2 witnesses per spouse (max 2 per partner)",
+        "detail": "Names, dates/places of birth, occupation, address"
+      },
+      {
+        "title": "Witness ID documents",
+        "description": "Photocopy for each witness",
+        "detail": "Adult witnesses (18+) or emancipated minors"
+      },
+      {
+        "title": "Notary certificate",
+        "description": "Only if a marriage contract has been signed",
+        "detail": "Request from your notary"
+      }
     ],
     "bansTitle": "Banns publication deadlines",
     "bansWeeks": "weeks minimum",
     "bans": [
-      { "semaines": "4", "condition": "Both spouses live in the same town" },
-      { "semaines": "6", "condition": "One spouse lives in a different town" },
-      { "semaines": "8", "condition": "One spouse lives abroad" }
+      {
+        "semaines": "4",
+        "condition": "Both spouses live in the same town"
+      },
+      {
+        "semaines": "6",
+        "condition": "One spouse lives in a different town"
+      },
+      {
+        "semaines": "8",
+        "condition": "One spouse lives abroad"
+      }
     ],
     "situationsTitle": "Special situations",
     "situations": [
-      { "titre": "Widowhood", "documents": ["Death certificate of the previous spouse"] },
-      { "titre": "Divorce", "documents": ["Birth certificate with marginal note of divorce"] },
-      { "titre": "Guardianship or curatorship", "documents": ["Written consent of the guardian or curator", "Photocopy of guardian/curator's ID", "For persons under guardianship: doctor's certificate confirming a favourable opinion"] },
-      { "titre": "Foreign-national spouse", "documents": ["If non-French speaking: sworn translator required on the wedding day", "Translator's details must be provided at least 6 days before the wedding", "All foreign documents must be translated into French by a sworn translator", "Documents legalised or certified with an apostille depending on the country", "Specific documents may be required depending on nationality (check with city hall or consulate)"] }
+      {
+        "titre": "Widowhood",
+        "documents": [
+          "Death certificate of the previous spouse"
+        ]
+      },
+      {
+        "titre": "Divorce",
+        "documents": [
+          "Birth certificate with marginal note of divorce"
+        ]
+      },
+      {
+        "titre": "Guardianship or curatorship",
+        "documents": [
+          "Written consent of the guardian or curator",
+          "Photocopy of guardian/curator's ID",
+          "For persons under guardianship: doctor's certificate confirming a favourable opinion"
+        ]
+      },
+      {
+        "titre": "Foreign-national spouse",
+        "documents": [
+          "If non-French speaking: sworn translator required on the wedding day",
+          "Translator's details must be provided at least 6 days before the wedding",
+          "All foreign documents must be translated into French by a sworn translator",
+          "Documents legalised or certified with an apostille depending on the country",
+          "Specific documents may be required depending on nationality (check with city hall or consulate)"
+        ]
+      }
     ],
     "howTitle": "How does it work?",
     "etapes": [
-      { "numero": 1, "title": "Prepare the file", "description": "Gather all required documents. Check on your city hall's official website as requirements may vary.", "delai": "In advance" },
-      { "numero": 2, "title": "Book an appointment", "description": "Contact the city hall 2-3 months before the desired date to schedule a filing appointment.", "delai": "2-3 months before" },
-      { "numero": 3, "title": "File submission meeting", "description": "Attend with your complete file. The civil registrar may request a joint hearing of the future spouses.", "delai": "1-2 months before" },
-      { "numero": 4, "title": "Banns publication", "description": "Mandatory display for 10 days at the city hall. Deadlines vary depending on your situation (4 to 8 weeks).", "delai": "10 days minimum" },
-      { "numero": 5, "title": "Civil ceremony", "description": "Official celebration by the civil registrar in the presence of your witnesses. Duration: about 20-30 minutes.", "delai": "The big day" }
+      {
+        "numero": 1,
+        "title": "Prepare the file",
+        "description": "Gather all required documents. Check on your city hall's official website as requirements may vary.",
+        "delai": "In advance"
+      },
+      {
+        "numero": 2,
+        "title": "Book an appointment",
+        "description": "Contact the city hall 2-3 months before the desired date to schedule a filing appointment.",
+        "delai": "2-3 months before"
+      },
+      {
+        "numero": 3,
+        "title": "File submission meeting",
+        "description": "Attend with your complete file. The civil registrar may request a joint hearing of the future spouses.",
+        "delai": "1-2 months before"
+      },
+      {
+        "numero": 4,
+        "title": "Banns publication",
+        "description": "Mandatory display for 10 days at the city hall. Deadlines vary depending on your situation (4 to 8 weeks).",
+        "delai": "10 days minimum"
+      },
+      {
+        "numero": 5,
+        "title": "Civil ceremony",
+        "description": "Official celebration by the civil registrar in the presence of your witnesses. Duration: about 20-30 minutes.",
+        "delai": "The big day"
+      }
     ],
     "liensTitle": "Useful links",
     "liens": [
-      { "titre": "Request a birth certificate" },
-      { "titre": "Request a marriage certificate (after)" },
-      { "titre": "Marriage contract (notary)" }
+      {
+        "titre": "Request a birth certificate"
+      },
+      {
+        "titre": "Request a marriage certificate (after)"
+      },
+      {
+        "titre": "Marriage contract (notary)"
+      }
     ],
     "liensNote": "These links lead to the official site service-public.gouv.fr",
     "knowTitle": "Good to know",
@@ -336,5 +432,425 @@
       "wj": "Wedding week",
       "j": "The big day"
     }
+  },
+  "avantJourJ": {
+    "pageTitle": "Before the wedding day - AI checklist | Mariable",
+    "pageDescription": "Generate your custom checklist to prepare your wedding using artificial intelligence.",
+    "title": "Before the wedding day",
+    "subtitle": "Generate your custom checklist with AI so you don't forget anything before your wedding",
+    "premiumFeature": "Pre-wedding checklist generation",
+    "premiumDescription": "Generate your custom pre-wedding checklist with AI",
+    "generateCard": "Generate my checklist with AI",
+    "describeLabel": "Describe your wedding and your concerns",
+    "describePlaceholder": "E.g. My wedding is in June at a château with 120 guests. I'm worried about forgetting important details like rings, flowers, music. I also want to think about the weather and the day-before prep…",
+    "generating": "Generating...",
+    "generate": "Generate my checklist",
+    "emptyTextError": "Please enter text to generate your checklist",
+    "generatedSuccess": "Checklist generated successfully!",
+    "generateError": "Error generating the checklist",
+    "saveError": "Error saving",
+    "taskAdded": "Task added successfully!",
+    "taskAddError": "Error adding the task",
+    "listTitle": "Custom to-do list",
+    "progressDone": "{{percent}}% completed",
+    "regenerate": "Generate a new list",
+    "confirmTitle": "Are you sure?",
+    "confirmDesc": "Warning, this will delete your current list. This action is irreversible.",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "exporting": "Exporting...",
+    "exportPdf": "Export PDF",
+    "pdfSuccess": "PDF downloaded successfully",
+    "pdfError": "Unable to export the PDF",
+    "deleteSuccess": "Checklist deleted successfully",
+    "deleteError": "Unable to delete the checklist",
+    "newTaskPlaceholder": "New task...",
+    "addTaskManual": "Add a task manually"
+  },
+  "coordinators": {
+    "pageTitle": "Wedding Coordinators | Dashboard Mariable",
+    "pageDescription": "Find the ideal wedding coordinator for your big day from your dashboard.",
+    "back": "Back to dashboard",
+    "title": "Wedding Coordinators",
+    "subtitle": "Find the ideal coordinator to organize your big day with peace of mind",
+    "register": "Get listed",
+    "loadError": "Unable to load coordinators. Please try again.",
+    "errorTitle": "Error",
+    "noResults": "No coordinator found",
+    "noResultsDesc": "Try changing your search criteria for more results."
+  },
+  "accommodations": {
+    "pageTitle": "Accommodation Management - Mariable",
+    "title": "Accommodation Management",
+    "subtitle": "Manage accommodations for your guests",
+    "exportPdf": "Export PDF",
+    "exportTodo": "PDF export feature in development",
+    "add": "Add accommodation",
+    "searchPlaceholder": "Search by name, address or guest…",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "empty": "No accommodation created",
+    "colName": "Name",
+    "colType": "Type",
+    "colRooms": "Rooms",
+    "colCapacity": "Capacity",
+    "colGuests": "Guests",
+    "colStatus": "Status",
+    "colPricePerNight": "Price/night",
+    "colDates": "Dates",
+    "colActions": "Actions",
+    "none": "None",
+    "confirmDeleteTitle": "Confirm deletion",
+    "confirmDeleteDesc": "Are you sure you want to delete this accommodation? This action is irreversible.",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "premiumFeature": "Accommodation Management",
+    "premiumDescription": "Manage your guests' accommodations: hotels, B&Bs, Airbnb, and organize bookings",
+    "status": {
+      "non_reserve": "Not booked",
+      "reserve": "Booked",
+      "paye": "Paid"
+    },
+    "type": {
+      "hotel": "Hotel",
+      "chambre_hote": "B&B",
+      "airbnb": "Airbnb",
+      "famille": "Family",
+      "autre": "Other"
+    }
+  },
+  "panier": {
+    "title": "My Cart",
+    "vendorsCardTitle": "Selected vendors",
+    "empty": "No vendors in your cart. Add vendors from the home page or directory.",
+    "guests": "{{count}} guests",
+    "totalEstimated": "Total estimated budget",
+    "comparativeTitle": "Budget comparison",
+    "budgetCalculated": "Calculated budget (calculator)",
+    "cartTotal": "Cart total",
+    "difference": "Difference",
+    "overBudget": "Your cart exceeds the estimated budget by {{amount}}€",
+    "disclaimer": "* Indicative estimate based on standard French market rates"
+  },
+  "messages": {
+    "title": "My messages",
+    "subtitle": "Find all the messages sent to vendors",
+    "emptyTitle": "No messages sent",
+    "emptyDesc": "Contact vendors to ask them your questions",
+    "browseVendors": "Browse vendors",
+    "dateFormat": "MMMM d, yyyy 'at' h:mm a",
+    "deleted": "Message deleted",
+    "deletedDesc": "The message has been deleted successfully",
+    "errorTitle": "Error",
+    "deleteError": "Unable to delete the message"
+  },
+  "vendorTracking": {
+    "pageTitle": "Vendor Tracking | Mariable",
+    "pageDescription": "Tracking contacts with vendors",
+    "title": "Vendor Tracking",
+    "exportPdf": "Export PDF",
+    "loading": "Loading data...",
+    "empty": "No vendor tracking available.",
+    "noVendorsToExport": "No vendors to export",
+    "errorTitle": "Error",
+    "exportError": "Unable to export the PDF",
+    "exportSuccess": "Export successful",
+    "exportSuccessDesc": "Vendor tracking has been exported to PDF",
+    "premiumFeature": "Vendor Tracking PDF Export",
+    "premiumDescription": "Export your full vendor tracking to PDF",
+    "contactedOn": "Contacted on: {{date}}",
+    "respondedOn": "Replied on: {{date}}",
+    "pdf": {
+      "title": "Vendor Tracking",
+      "total": "Total: {{count}} vendors",
+      "toContact": "To contact: {{count}}",
+      "contacted": "Contacted: {{count}}",
+      "responses": "Responses: {{count}}",
+      "contactedOn": "Contacted on: {{date}}",
+      "notes": "Notes: {{notes}}",
+      "footer": "Generated by Mariable.fr - Page {{page}}/{{total}}"
+    }
+  },
+  "vendorSelection": {
+    "pageTitleFrance": "Wedding Vendor Selection France | Dashboard Mariable",
+    "pageTitleRegion": "Wedding Vendor Selection {{region}} | Dashboard Mariable",
+    "pageTitleDefault": "Vendor Selection | Dashboard Mariable",
+    "metaFrance": "Select the best wedding vendors in France for your big day.",
+    "metaRegion": "Discover and select the best wedding vendors in {{region}}.",
+    "metaDefault": "Select your region to discover the best wedding vendors.",
+    "back": "Back to dashboard",
+    "dashboard": "Dashboard",
+    "changeRegion": "Change region",
+    "franceEntire": "All of France",
+    "selectorTitle": "Vendor Selection",
+    "selectorSubtitle": "Choose your region to discover the best vendors",
+    "titleFrance": "Wedding vendors in France",
+    "titleRegion": "Wedding vendors in {{region}}",
+    "subtitle": "Discover our selection of quality vendors for your wedding",
+    "register": "Get listed",
+    "searching": "Searching...",
+    "searchingDesc": "We are looking for the best wedding vendors in {{region}}",
+    "filterHint": "Filtering by region and quality criteria",
+    "loadMore": "Load more vendors",
+    "loading": "Loading...",
+    "noResults": "No vendor found",
+    "noResultsDesc": "Try changing your search criteria for more results.",
+    "errorTitle": "Error",
+    "loadError": "Unable to load vendors. Please try again."
+  },
+  "qrcode": {
+    "pageTitle": "QR Code Generator | Mariable",
+    "pageDescription": "Create QR codes for your wedding registry and other important links",
+    "title": "QR Code Generator",
+    "howItWorks": "How does it work?",
+    "howItWorksDesc": "Create custom QR codes for your wedding. Perfect to share your online registry, your website, or any other important link. Your guests can scan the code with their smartphone to access the link directly.",
+    "createTitle": "Create a new QR Code",
+    "createDesc": "Enter your registry link or any other URL you'd like to share",
+    "listTitle": "My QR Codes",
+    "listDesc": "Manage your saved QR codes and download them as PDF",
+    "premiumFeature": "QR Code Generator",
+    "premiumDescription": "Create and manage unlimited QR codes for your registry, website and important links"
+  },
+  "guides": {
+    "pageTitle": "PDF Guides - My Wedding",
+    "pageDescription": "Download our practical wedding guides: Big Day, Organization, Vendors and Checklists.",
+    "title": "Our PDF Guides",
+    "subtitle": "Download our practical guides to help you organize your wedding",
+    "premiumBadge": "Premium Feature - Subscribe to download",
+    "download": "Download",
+    "comingSoon": "Coming soon",
+    "comingSoonTitle": "Coming soon",
+    "comingSoonDesc": "This PDF guide will soon be available for download.",
+    "note": "Note:",
+    "noteDesc": "Guides will open in a new tab for viewing and downloading.",
+    "premiumFeature": "Premium PDF Guides",
+    "premiumDescription": "Download our exclusive guides to organize your perfect wedding.",
+    "items": {
+      "jourJ": {
+        "title": "Big Day Guide",
+        "description": "All the tips to manage your wedding day"
+      },
+      "debut": {
+        "title": "Beginner Organization Guide",
+        "description": "The first steps to start your organization well"
+      },
+      "prestataires": {
+        "title": "Vendor Guide",
+        "description": "How to choose and manage your vendors"
+      },
+      "mariee": {
+        "title": "Bride Checklist",
+        "description": "The complete list of preparations for the bride"
+      },
+      "proche": {
+        "title": "Loved Ones Checklist",
+        "description": "Guide for witnesses and close helpers"
+      }
+    }
+  },
+  "help": {
+    "pageTitle": "User guide | Mariable",
+    "pageDescription": "User guide for your personal wedding space",
+    "title": "User guide",
+    "subtitle": "Discover all the features of your wedding space",
+    "tourTitle": "Interactive guided tour",
+    "tourCardTitle": "Guided tour of the dashboard",
+    "tourCompleted": "You've completed the guided tour! You can redo it at any time.",
+    "tourPending": "Discover all features in 6 simple steps",
+    "tourStartAgain": "Redo the tour",
+    "tourStart": "Start the tour",
+    "tourDone": "Guided tour completed",
+    "featuresTitle": "Main features",
+    "faqTitle": "Frequently asked questions",
+    "contactTitle": "Need more help?",
+    "contactDesc": "Can't find the answer to your question? Don't hesitate to contact us!",
+    "contactBtn": "Contact us",
+    "sections": {
+      "preparation": "Wedding preparation",
+      "before": "Before your wedding",
+      "during": "During preparation",
+      "jourM": "Wedding Day",
+      "after": "After the big day",
+      "collab": "Collaboration"
+    },
+    "features": [
+      {
+        "title": "Custom checklist",
+        "description": "Create your custom checklist adapted to your needs and preferences",
+        "section": "preparation"
+      },
+      {
+        "title": "Quiz & Checklist",
+        "description": "Discover your style and follow your basic checklist",
+        "section": "preparation"
+      },
+      {
+        "title": "Budget",
+        "description": "Calculate and manage your wedding budget according to your criteria",
+        "section": "before"
+      },
+      {
+        "title": "Wedding Mission",
+        "description": "Manage your tasks and coordinate your preparation",
+        "section": "during"
+      },
+      {
+        "title": "Vendor Tracking",
+        "description": "Centralize contacts and track your vendors",
+        "section": "during"
+      },
+      {
+        "title": "Wedding Day Planning",
+        "description": "Organize your wedding day down to the smallest detail",
+        "section": "jourM"
+      },
+      {
+        "title": "Post-wedding tips",
+        "description": "Tips to manage the post-wedding well: brunch, cleanup, returns",
+        "section": "after"
+      },
+      {
+        "title": "Documents",
+        "description": "Centralize all your important documents",
+        "section": "jourM"
+      },
+      {
+        "title": "Sharing",
+        "description": "Share your planning with family and vendors",
+        "section": "collab"
+      }
+    ],
+    "faq": [
+      {
+        "q": "How do I use the custom checklist?",
+        "a": "Go to 'Custom checklist' and describe your situation to generate a task list tailored to your wedding."
+      },
+      {
+        "q": "What's the difference between the basic and custom checklist?",
+        "a": "The basic checklist contains essential universal tasks, while the custom one adapts to your specifics (venue, number of guests, style, etc.)."
+      },
+      {
+        "q": "How do I start organizing my wedding?",
+        "a": "Start with the style quiz to define your preferences, then use the budget calculator to estimate your costs."
+      },
+      {
+        "q": "Can I share my planning with my vendors?",
+        "a": "Yes! Use the 'Share' button to create a read-only link you can send to your vendors and family."
+      },
+      {
+        "q": "How do I use Wedding Mission?",
+        "a": "Wedding Mission lets you create tasks, assign them to your team and track the progress of your preparation."
+      },
+      {
+        "q": "What should I do after my wedding?",
+        "a": "Check the 'After the big day' section for tips on the next-day brunch, cleanup, equipment returns and thank-yous."
+      },
+      {
+        "q": "Is my data saved?",
+        "a": "Yes, all your data is automatically saved in your secure personal space."
+      }
+    ]
+  },
+  "installApp": {
+    "pageTitle": "Install the app | Mariable",
+    "pageDescription": "Install Mariable on your phone for quick access to your wedding planning tools.",
+    "title": "Install Mariable on your mobile",
+    "subtitle": "Quickly access all your wedding planning tools from your home screen.",
+    "shareLabel": "Share this tutorial with your loved ones:",
+    "copied": "Link copied!",
+    "copiedDesc": "Share it with your loved ones",
+    "whyTitle": "Why install the app?",
+    "why1": "<strong>Instant access</strong> - One tap and you're connected to your tools",
+    "why2": "<strong>Full-screen mode</strong> - Nicer interface without the browser bar",
+    "why3": "<strong>Always at hand</strong> - The icon on your home screen",
+    "why4": "<strong>100% free</strong> - No download from the App Store",
+    "iosDetected": "We detected that you're using an iPhone/iPad. Follow the instructions below for Safari.",
+    "androidDetected": "We detected that you're using Android. Follow the instructions below for Chrome.",
+    "iosTitle": "Installation on iPhone / iPad (Safari)",
+    "iosStep1Title": "Open Mariable in Safari",
+    "iosStep1Desc": "Make sure to use the Safari browser (not Chrome or other)",
+    "iosStep2Title": "Tap the 'Share' button",
+    "iosStep2Desc": "It's the icon at the bottom of the screen (square with an up arrow)",
+    "iosStep3Title": "Scroll and tap 'Add to Home Screen'",
+    "iosStep3Desc": "You may need to scroll the menu down to find this option",
+    "iosStep4Title": "Confirm by tapping 'Add'",
+    "iosStep4Desc": "The Mariable icon will appear on your home screen!",
+    "androidTitle": "Installation on Android (Chrome)",
+    "androidStep1Title": "Open Mariable in Chrome",
+    "androidStep1Desc": "Use the Google Chrome browser for the best results",
+    "androidStep2Title": "Tap the menu (3 dots)",
+    "androidStep2Desc": "The 3 vertical dots are at the top right of the screen",
+    "androidStep3Title": "Tap 'Add to Home Screen'",
+    "androidStep3Desc": "Or 'Install the app' if this option appears",
+    "androidStep4Title": "Confirm the installation",
+    "androidStep4Desc": "The Mariable icon will be added to your home screen!",
+    "desktopTitle": "Access from your mobile",
+    "desktopDesc": "To install Mariable as an app, open this page from your smartphone or tablet, then follow the instructions that appear automatically.",
+    "desktopCouple": "👩‍❤️‍👨 Couples-to-be:",
+    "desktopCoupleDesc": "Open on mobile:",
+    "desktopGuests": "👥 Guests, witnesses & vendors:",
+    "desktopGuestsDesc": "It's the unique link to the Wedding Day app that the couple shared with you that you need to open on mobile."
+  },
+  "wishlist": {
+    "title": "My vendor wishlist",
+    "errorTitle": "Error",
+    "loadError": "Unable to load your wishlist.",
+    "removed": "Removed from your wishlist",
+    "removedDesc": "{{name}} has been removed from your wishlist",
+    "removeError": "Unable to remove this item from your wishlist.",
+    "priceFromPerPerson": "About {{price}}€/pers.",
+    "priceFrom": "From {{price}} €",
+    "priceOnRequest": "Price on request",
+    "contact": "Contact",
+    "remove": "Remove",
+    "details": "See details",
+    "emptyTitle": "Your wishlist is empty",
+    "emptyDesc": "Add vendors to your wishlist by clicking the ❤️ when browsing our vendors",
+    "discover": "Discover our vendors"
+  },
+  "moodboard": {
+    "pageTitle": "Moodboard | Mariable",
+    "pageDescription": "Create your wedding moodboard with automatic color palette extraction",
+    "title": "Moodboard",
+    "subtitle": "Create your inspiration board with automatic AI color palette extraction",
+    "step1": "Wedding information",
+    "coupleName": "Couple's names",
+    "coupleNamePlaceholder": "E.g. Marie & Pierre",
+    "weddingDate": "Wedding date",
+    "step2": "Inspiration photos",
+    "step3": "Generate the moodboard",
+    "analyzing": "Analyzing...",
+    "generate": "Generate my moodboard",
+    "premiumSuffix": "(Premium)",
+    "reset": "Start over",
+    "addMore": "Add {{count}} more photo to generate the moodboard.",
+    "addMore_plural": "Add {{count}} more photos to generate the moodboard.",
+    "resultTitle": "Your Moodboard",
+    "exporting": "Exporting...",
+    "downloadPdf": "Download PDF",
+    "pdfSuccess": "PDF downloaded!",
+    "pdfSuccessDesc": "Your moodboard has been exported successfully.",
+    "pdfError": "Export error",
+    "pdfErrorDesc": "Unable to generate the PDF.",
+    "premiumFeature": "Moodboard PDF Export",
+    "premiumDescription": "Download your moodboard as a high-quality PDF.",
+    "limitFeature": "AI Moodboard Generation",
+    "limitDescription": "You've already used your free generation. Upgrade to Premium for unlimited generations."
+  },
+  "assistant": {
+    "title": "Questions?",
+    "subtitle": "Our virtual assistant is here to help you organize your wedding",
+    "cardTitle": "Virtual Assistant"
+  },
+  "coordination": {
+    "pageTitle": "Wedding Day Tips | Mariable",
+    "pageDescription": "Tips and coordination for your big day",
+    "title": "Wedding Day Tips",
+    "subtitle": "All our practical tips and coordination tools for your big day",
+    "loginTitle": "Sign in to access personalized tips",
+    "loginDesc": "To enjoy all our tips and coordination tools, please sign in.",
+    "cardTitle": "Tips for your Big Day",
+    "errorTitle": "Error",
+    "loadError": "Unable to load user information"
   }
 }

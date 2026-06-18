@@ -138,8 +138,14 @@
     ],
     "lieuxTitle": "Où peut-on se marier ?",
     "lieux": [
-      { "titre": "Commune du domicile", "description": "Aucune condition de durée d'habitation n'est exigée" },
-      { "titre": "Commune des parents", "description": "Commune de domicile du père ou de la mère de l'un des futurs époux" }
+      {
+        "titre": "Commune du domicile",
+        "description": "Aucune condition de durée d'habitation n'est exigée"
+      },
+      {
+        "titre": "Commune des parents",
+        "description": "Commune de domicile du père ou de la mère de l'un des futurs époux"
+      }
     ],
     "parisLabel": "À Paris :",
     "parisText": "Le mariage est célébré dans l'arrondissement correspondant au domicile ou à la résidence.",
@@ -149,40 +155,130 @@
     "datesText": "Décidés par le Maire selon la disponibilité du personnel, des adjoints habilités à célébrer les mariages et des locaux.",
     "documentsTitle": "Documents indispensables",
     "documents": [
-      { "title": "Pièce d'identité", "description": "CNI, passeport OU permis de conduire", "detail": "Pour chaque époux" },
-      { "title": "Justificatif de domicile récent", "description": "Quittance de loyer, facture EDF, eau, téléphone...", "detail": "Pour chaque époux" },
-      { "title": "Acte de naissance (copie intégrale)", "description": "Moins de 3 mois si naissance en France / Moins de 6 mois si délivré par un consulat", "detail": "Pour chaque époux" },
-      { "title": "Liste des témoins", "description": "1 ou 2 témoins par époux (max 2 par marié)", "detail": "Noms, prénoms, date/lieu de naissance, profession, domicile" },
-      { "title": "Pièces d'identité des témoins", "description": "Photocopie pour chaque témoin", "detail": "Témoins majeurs (18 ans) ou mineurs émancipés" },
-      { "title": "Certificat du notaire", "description": "Uniquement si contrat de mariage signé", "detail": "À demander à votre notaire" }
+      {
+        "title": "Pièce d'identité",
+        "description": "CNI, passeport OU permis de conduire",
+        "detail": "Pour chaque époux"
+      },
+      {
+        "title": "Justificatif de domicile récent",
+        "description": "Quittance de loyer, facture EDF, eau, téléphone...",
+        "detail": "Pour chaque époux"
+      },
+      {
+        "title": "Acte de naissance (copie intégrale)",
+        "description": "Moins de 3 mois si naissance en France / Moins de 6 mois si délivré par un consulat",
+        "detail": "Pour chaque époux"
+      },
+      {
+        "title": "Liste des témoins",
+        "description": "1 ou 2 témoins par époux (max 2 par marié)",
+        "detail": "Noms, prénoms, date/lieu de naissance, profession, domicile"
+      },
+      {
+        "title": "Pièces d'identité des témoins",
+        "description": "Photocopie pour chaque témoin",
+        "detail": "Témoins majeurs (18 ans) ou mineurs émancipés"
+      },
+      {
+        "title": "Certificat du notaire",
+        "description": "Uniquement si contrat de mariage signé",
+        "detail": "À demander à votre notaire"
+      }
     ],
     "bansTitle": "Délais de publication des bans",
     "bansWeeks": "semaines minimum",
     "bans": [
-      { "semaines": "4", "condition": "Les deux futurs époux habitent la même commune" },
-      { "semaines": "6", "condition": "L'un des futurs époux habite une autre commune" },
-      { "semaines": "8", "condition": "L'un des futurs époux est domicilié à l'étranger" }
+      {
+        "semaines": "4",
+        "condition": "Les deux futurs époux habitent la même commune"
+      },
+      {
+        "semaines": "6",
+        "condition": "L'un des futurs époux habite une autre commune"
+      },
+      {
+        "semaines": "8",
+        "condition": "L'un des futurs époux est domicilié à l'étranger"
+      }
     ],
     "situationsTitle": "Situations particulières",
     "situations": [
-      { "titre": "Veuvage", "documents": ["Acte de décès du précédent conjoint"] },
-      { "titre": "Divorce", "documents": ["Acte de naissance avec mention marginale du divorce"] },
-      { "titre": "Tutelle ou curatelle", "documents": ["Consentement écrit du tuteur ou curateur", "Photocopie de la pièce d'identité du tuteur/curateur", "Pour les personnes sous tutelle : certificat du médecin traitant attestant un avis favorable"] },
-      { "titre": "Époux de nationalité étrangère", "documents": ["Si non francophone : traducteur assermenté obligatoire le jour du mariage", "Coordonnées du traducteur à remettre 6 jours avant le mariage minimum", "Tous les documents étrangers doivent être traduits en français par un traducteur assermenté", "Documents légalisés ou certifiés par une apostille selon les pays", "Des pièces spécifiques peuvent être demandées selon la nationalité (se renseigner à la mairie ou au consulat)"] }
+      {
+        "titre": "Veuvage",
+        "documents": [
+          "Acte de décès du précédent conjoint"
+        ]
+      },
+      {
+        "titre": "Divorce",
+        "documents": [
+          "Acte de naissance avec mention marginale du divorce"
+        ]
+      },
+      {
+        "titre": "Tutelle ou curatelle",
+        "documents": [
+          "Consentement écrit du tuteur ou curateur",
+          "Photocopie de la pièce d'identité du tuteur/curateur",
+          "Pour les personnes sous tutelle : certificat du médecin traitant attestant un avis favorable"
+        ]
+      },
+      {
+        "titre": "Époux de nationalité étrangère",
+        "documents": [
+          "Si non francophone : traducteur assermenté obligatoire le jour du mariage",
+          "Coordonnées du traducteur à remettre 6 jours avant le mariage minimum",
+          "Tous les documents étrangers doivent être traduits en français par un traducteur assermenté",
+          "Documents légalisés ou certifiés par une apostille selon les pays",
+          "Des pièces spécifiques peuvent être demandées selon la nationalité (se renseigner à la mairie ou au consulat)"
+        ]
+      }
     ],
     "howTitle": "Comment ça marche ?",
     "etapes": [
-      { "numero": 1, "title": "Constituer le dossier", "description": "Rassemblez toutes les pièces requises. Vérifiez sur le site officiel de votre mairie car les documents peuvent varier.", "delai": "En amont" },
-      { "numero": 2, "title": "Prendre rendez-vous", "description": "Contactez la mairie 2-3 mois avant la date souhaitée pour fixer un rendez-vous de dépôt.", "delai": "2-3 mois avant" },
-      { "numero": 3, "title": "Rendez-vous dépôt de dossier", "description": "Présentez-vous avec votre dossier complet. L'officier d'état civil peut demander une audition commune des futurs époux.", "delai": "1-2 mois avant" },
-      { "numero": 4, "title": "Publication des bans", "description": "Affichage obligatoire pendant 10 jours à la mairie. Les délais varient selon votre situation (4 à 8 semaines).", "delai": "10 jours minimum" },
-      { "numero": 5, "title": "Cérémonie civile", "description": "Célébration officielle par l'officier d'état civil en présence de vos témoins. Durée : environ 20-30 minutes.", "delai": "Jour J" }
+      {
+        "numero": 1,
+        "title": "Constituer le dossier",
+        "description": "Rassemblez toutes les pièces requises. Vérifiez sur le site officiel de votre mairie car les documents peuvent varier.",
+        "delai": "En amont"
+      },
+      {
+        "numero": 2,
+        "title": "Prendre rendez-vous",
+        "description": "Contactez la mairie 2-3 mois avant la date souhaitée pour fixer un rendez-vous de dépôt.",
+        "delai": "2-3 mois avant"
+      },
+      {
+        "numero": 3,
+        "title": "Rendez-vous dépôt de dossier",
+        "description": "Présentez-vous avec votre dossier complet. L'officier d'état civil peut demander une audition commune des futurs époux.",
+        "delai": "1-2 mois avant"
+      },
+      {
+        "numero": 4,
+        "title": "Publication des bans",
+        "description": "Affichage obligatoire pendant 10 jours à la mairie. Les délais varient selon votre situation (4 à 8 semaines).",
+        "delai": "10 jours minimum"
+      },
+      {
+        "numero": 5,
+        "title": "Cérémonie civile",
+        "description": "Célébration officielle par l'officier d'état civil en présence de vos témoins. Durée : environ 20-30 minutes.",
+        "delai": "Jour J"
+      }
     ],
     "liensTitle": "Liens utiles",
     "liens": [
-      { "titre": "Demander un acte de naissance" },
-      { "titre": "Demander un acte de mariage (après)" },
-      { "titre": "Contrat de mariage (notaire)" }
+      {
+        "titre": "Demander un acte de naissance"
+      },
+      {
+        "titre": "Demander un acte de mariage (après)"
+      },
+      {
+        "titre": "Contrat de mariage (notaire)"
+      }
     ],
     "liensNote": "Ces liens renvoient vers le site officiel service-public.gouv.fr",
     "knowTitle": "Bon à savoir",
@@ -336,5 +432,425 @@
       "wj": "Semaine J",
       "j": "Jour J"
     }
+  },
+  "avantJourJ": {
+    "pageTitle": "Avant le jour-J - Checklist IA | Mariable",
+    "pageDescription": "Générez votre checklist personnalisée pour préparer votre mariage grâce à l'intelligence artificielle.",
+    "title": "Avant le jour-J",
+    "subtitle": "Générez votre checklist personnalisée grâce à l'IA pour ne rien oublier avant votre mariage",
+    "premiumFeature": "génération de checklist avant le jour-J",
+    "premiumDescription": "Générez votre checklist personnalisée avant le jour-J avec l'IA",
+    "generateCard": "Générer ma checklist avec l'IA",
+    "describeLabel": "Décrivez votre mariage et vos préoccupations",
+    "describePlaceholder": "Ex : Mon mariage aura lieu en juin dans un château avec 120 invités. J'ai peur d'oublier des détails importants comme les alliances, les fleurs, la musique. Je veux aussi penser à la météo et aux préparatifs de la veille…",
+    "generating": "Génération en cours...",
+    "generate": "Générer ma checklist",
+    "emptyTextError": "Veuillez saisir du texte pour générer votre checklist",
+    "generatedSuccess": "Checklist générée avec succès !",
+    "generateError": "Erreur lors de la génération de la checklist",
+    "saveError": "Erreur lors de la sauvegarde",
+    "taskAdded": "Tâche ajoutée avec succès !",
+    "taskAddError": "Erreur lors de l'ajout de la tâche",
+    "listTitle": "To do list personnalisée",
+    "progressDone": "{{percent}}% complété",
+    "regenerate": "Générer une nouvelle liste",
+    "confirmTitle": "Êtes-vous sûr ?",
+    "confirmDesc": "Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.",
+    "cancel": "Annuler",
+    "confirm": "Confirmer",
+    "exporting": "Export...",
+    "exportPdf": "Exporter PDF",
+    "pdfSuccess": "PDF téléchargé avec succès",
+    "pdfError": "Impossible d'exporter le PDF",
+    "deleteSuccess": "Checklist supprimée avec succès",
+    "deleteError": "Impossible de supprimer la checklist",
+    "newTaskPlaceholder": "Nouvelle tâche...",
+    "addTaskManual": "Ajouter une tâche manuellement"
+  },
+  "coordinators": {
+    "pageTitle": "Coordinateurs de Mariage | Dashboard Mariable",
+    "pageDescription": "Trouvez le coordinateur de mariage idéal pour votre jour J depuis votre dashboard.",
+    "back": "Retour au dashboard",
+    "title": "Coordinateurs de Mariage",
+    "subtitle": "Trouvez le coordinateur idéal pour organiser votre jour J en toute sérénité",
+    "register": "Être référencé",
+    "loadError": "Impossible de charger les coordinateurs. Veuillez réessayer.",
+    "errorTitle": "Erreur",
+    "noResults": "Aucun coordinateur trouvé",
+    "noResultsDesc": "Essayez de modifier vos critères de recherche pour obtenir plus de résultats."
+  },
+  "accommodations": {
+    "pageTitle": "Gestion des Logements - Mariable",
+    "title": "Gestion des Logements",
+    "subtitle": "Gérez les hébergements pour vos invités",
+    "exportPdf": "Export PDF",
+    "exportTodo": "Fonctionnalité d'export PDF en cours de développement",
+    "add": "Ajouter un logement",
+    "searchPlaceholder": "Rechercher par nom, adresse ou invité…",
+    "loading": "Chargement...",
+    "noResults": "Aucun résultat trouvé",
+    "empty": "Aucun logement créé",
+    "colName": "Nom",
+    "colType": "Type",
+    "colRooms": "Chambres",
+    "colCapacity": "Capacité",
+    "colGuests": "Invités",
+    "colStatus": "Statut",
+    "colPricePerNight": "Prix/nuit",
+    "colDates": "Dates",
+    "colActions": "Actions",
+    "none": "Aucun",
+    "confirmDeleteTitle": "Confirmer la suppression",
+    "confirmDeleteDesc": "Êtes-vous sûr de vouloir supprimer ce logement ? Cette action est irréversible.",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "premiumFeature": "Gestion des logements",
+    "premiumDescription": "Gérez les hébergements de vos invités : hôtels, chambres d'hôte, Airbnb, et organisez les réservations",
+    "status": {
+      "non_reserve": "Non réservé",
+      "reserve": "Réservé",
+      "paye": "Payé"
+    },
+    "type": {
+      "hotel": "Hôtel",
+      "chambre_hote": "Chambre d'hôte",
+      "airbnb": "Airbnb",
+      "famille": "Famille",
+      "autre": "Autre"
+    }
+  },
+  "panier": {
+    "title": "Mon Panier",
+    "vendorsCardTitle": "Prestataires sélectionnés",
+    "empty": "Aucun prestataire dans votre panier. Ajoutez des prestataires depuis la page d'accueil ou l'annuaire.",
+    "guests": "{{count}} invités",
+    "totalEstimated": "Budget total estimé",
+    "comparativeTitle": "Comparatif Budget",
+    "budgetCalculated": "Budget calculé (calculatrice)",
+    "cartTotal": "Total panier",
+    "difference": "Différence",
+    "overBudget": "Votre panier dépasse le budget estimé de {{amount}}€",
+    "disclaimer": "* Estimation indicative basée sur les tarifs standards du marché français"
+  },
+  "messages": {
+    "title": "Mes messages",
+    "subtitle": "Retrouvez tous les messages envoyés aux prestataires",
+    "emptyTitle": "Aucun message envoyé",
+    "emptyDesc": "Contactez des prestataires pour leur poser vos questions",
+    "browseVendors": "Voir les prestataires",
+    "dateFormat": "d MMMM yyyy 'à' HH:mm",
+    "deleted": "Message supprimé",
+    "deletedDesc": "Le message a été supprimé avec succès",
+    "errorTitle": "Erreur",
+    "deleteError": "Impossible de supprimer le message"
+  },
+  "vendorTracking": {
+    "pageTitle": "Suivi des Prestataires | Mariable",
+    "pageDescription": "Suivi des contacts avec les prestataires",
+    "title": "Suivi des Prestataires",
+    "exportPdf": "Export PDF",
+    "loading": "Chargement des données...",
+    "empty": "Aucun suivi de prestataire disponible.",
+    "noVendorsToExport": "Aucun prestataire à exporter",
+    "errorTitle": "Erreur",
+    "exportError": "Impossible d'exporter le PDF",
+    "exportSuccess": "Export réussi",
+    "exportSuccessDesc": "Le suivi des prestataires a été exporté en PDF",
+    "premiumFeature": "Export PDF Suivi Prestataires",
+    "premiumDescription": "Exportez votre suivi complet des prestataires en PDF",
+    "contactedOn": "Contacté le : {{date}}",
+    "respondedOn": "Réponse le : {{date}}",
+    "pdf": {
+      "title": "Suivi des Prestataires",
+      "total": "Total : {{count}} prestataires",
+      "toContact": "À contacter : {{count}}",
+      "contacted": "Contactés : {{count}}",
+      "responses": "Réponses : {{count}}",
+      "contactedOn": "Contacté le : {{date}}",
+      "notes": "Notes : {{notes}}",
+      "footer": "Généré par Mariable.fr - Page {{page}}/{{total}}"
+    }
+  },
+  "vendorSelection": {
+    "pageTitleFrance": "Sélection Prestataires Mariage France | Dashboard Mariable",
+    "pageTitleRegion": "Sélection Prestataires Mariage {{region}} | Dashboard Mariable",
+    "pageTitleDefault": "Sélection Prestataires | Dashboard Mariable",
+    "metaFrance": "Sélectionnez les meilleurs prestataires de mariage en France pour votre jour J.",
+    "metaRegion": "Découvrez et sélectionnez les meilleurs prestataires de mariage en {{region}}.",
+    "metaDefault": "Sélectionnez votre région pour découvrir les meilleurs prestataires de mariage.",
+    "back": "Retour au dashboard",
+    "dashboard": "Dashboard",
+    "changeRegion": "Changer de région",
+    "franceEntire": "France entière",
+    "selectorTitle": "Sélection de Prestataires",
+    "selectorSubtitle": "Choisissez votre région pour découvrir les meilleurs prestataires",
+    "titleFrance": "Prestataires de mariage en France",
+    "titleRegion": "Prestataires de mariage en {{region}}",
+    "subtitle": "Découvrez notre sélection de prestataires de qualité pour votre mariage",
+    "register": "Être référencé",
+    "searching": "Recherche en cours...",
+    "searchingDesc": "Nous recherchons les meilleurs prestataires de mariage en {{region}}",
+    "filterHint": "Filtrage par région et critères de qualité",
+    "loadMore": "Charger plus de prestataires",
+    "loading": "Chargement...",
+    "noResults": "Aucun prestataire trouvé",
+    "noResultsDesc": "Essayez de modifier vos critères de recherche pour obtenir plus de résultats.",
+    "errorTitle": "Erreur",
+    "loadError": "Impossible de charger les prestataires. Veuillez réessayer."
+  },
+  "qrcode": {
+    "pageTitle": "Générateur QR Code | Mariable",
+    "pageDescription": "Créez des QR codes pour votre cagnotte de mariage et autres liens importants",
+    "title": "Générateur QR Code",
+    "howItWorks": "Comment ça marche ?",
+    "howItWorksDesc": "Créez des QR codes personnalisés pour votre mariage. Parfait pour partager votre cagnotte en ligne, votre site web, ou tout autre lien important. Vos invités pourront scanner le code avec leur smartphone pour accéder directement au lien.",
+    "createTitle": "Créer un nouveau QR Code",
+    "createDesc": "Entrez le lien de votre cagnotte ou tout autre URL que vous souhaitez partager",
+    "listTitle": "Mes QR Codes",
+    "listDesc": "Gérez vos QR codes sauvegardés et téléchargez-les en PDF",
+    "premiumFeature": "Générateur QR Code",
+    "premiumDescription": "Créez et gérez des QR codes illimités pour votre cagnotte, site web et liens importants"
+  },
+  "guides": {
+    "pageTitle": "Guides PDF - Mon Mariage",
+    "pageDescription": "Téléchargez nos guides pratiques pour votre mariage : Jour-J, Organisation, Prestataires et Checklists.",
+    "title": "Nos Guides PDF",
+    "subtitle": "Téléchargez nos guides pratiques pour vous accompagner dans l'organisation de votre mariage",
+    "premiumBadge": "Fonctionnalité Premium - Abonnez-vous pour télécharger",
+    "download": "Télécharger",
+    "comingSoon": "Bientôt disponible",
+    "comingSoonTitle": "Document à venir",
+    "comingSoonDesc": "Ce guide PDF sera bientôt disponible au téléchargement.",
+    "note": "Note :",
+    "noteDesc": "Les guides s'ouvriront dans un nouvel onglet pour consultation et téléchargement.",
+    "premiumFeature": "Guides PDF Premium",
+    "premiumDescription": "Téléchargez nos guides exclusifs pour organiser votre mariage parfait.",
+    "items": {
+      "jourJ": {
+        "title": "Guide Jour-J",
+        "description": "Tous les conseils pour gérer le jour de votre mariage"
+      },
+      "debut": {
+        "title": "Guide Organisation Débutants",
+        "description": "Les premières étapes pour bien démarrer votre organisation"
+      },
+      "prestataires": {
+        "title": "Guide Prestataires",
+        "description": "Comment choisir et gérer vos prestataires"
+      },
+      "mariee": {
+        "title": "Checklist Mariée",
+        "description": "La liste complète des préparatifs pour la mariée"
+      },
+      "proche": {
+        "title": "Checklist Proche",
+        "description": "Guide pour les témoins et proches aidants"
+      }
+    }
+  },
+  "help": {
+    "pageTitle": "Mode d'emploi | Mariable",
+    "pageDescription": "Guide d'utilisation de votre espace mariage personnalisé",
+    "title": "Mode d'emploi",
+    "subtitle": "Découvrez toutes les fonctionnalités de votre espace mariage",
+    "tourTitle": "Tour guidé interactif",
+    "tourCardTitle": "Visite guidée du dashboard",
+    "tourCompleted": "Vous avez terminé le tour guidé ! Vous pouvez le refaire à tout moment.",
+    "tourPending": "Découvrez toutes les fonctionnalités en 6 étapes simples",
+    "tourStartAgain": "Refaire le tour",
+    "tourStart": "Commencer le tour",
+    "tourDone": "Tour guidé terminé",
+    "featuresTitle": "Fonctionnalités principales",
+    "faqTitle": "Questions fréquentes",
+    "contactTitle": "Besoin d'aide supplémentaire ?",
+    "contactDesc": "Vous ne trouvez pas la réponse à votre question ? N'hésitez pas à nous contacter !",
+    "contactBtn": "Nous contacter",
+    "sections": {
+      "preparation": "Préparation mariage",
+      "before": "Avant votre mariage",
+      "during": "Pendant la préparation",
+      "jourM": "Jour-M",
+      "after": "Après le jour-J",
+      "collab": "Collaboration"
+    },
+    "features": [
+      {
+        "title": "Check-list personnalisée",
+        "description": "Créez votre checklist personnalisée adaptée à vos besoins et préférences",
+        "section": "preparation"
+      },
+      {
+        "title": "Quiz & Checklist",
+        "description": "Découvrez votre style et suivez votre checklist de base",
+        "section": "preparation"
+      },
+      {
+        "title": "Budget",
+        "description": "Calculez et gérez votre budget mariage selon vos critères",
+        "section": "before"
+      },
+      {
+        "title": "Mission Mariage",
+        "description": "Gérez vos tâches et coordonnez votre préparation",
+        "section": "during"
+      },
+      {
+        "title": "Suivi Prestataires",
+        "description": "Centralisez les contacts et suivez vos prestataires",
+        "section": "during"
+      },
+      {
+        "title": "Planning Jour-M",
+        "description": "Organisez votre journée mariage dans les moindres détails",
+        "section": "jourM"
+      },
+      {
+        "title": "Conseils après mariage",
+        "description": "Conseils pour bien gérer l'après mariage : brunch, rangement, retours",
+        "section": "after"
+      },
+      {
+        "title": "Documents",
+        "description": "Centralisez tous vos documents importants",
+        "section": "jourM"
+      },
+      {
+        "title": "Partage",
+        "description": "Partagez votre planning avec famille et prestataires",
+        "section": "collab"
+      }
+    ],
+    "faq": [
+      {
+        "q": "Comment utiliser la check-list personnalisée ?",
+        "a": "Rendez-vous dans « Check-list personnalisée » et décrivez votre situation pour générer une liste de tâches adaptée à votre mariage."
+      },
+      {
+        "q": "Quelle est la différence entre la check-list de base et personnalisée ?",
+        "a": "La check-list de base contient les tâches essentielles universelles, tandis que la personnalisée s'adapte à vos spécificités (lieu, nombre d'invités, style, etc.)."
+      },
+      {
+        "q": "Comment commencer l'organisation de mon mariage ?",
+        "a": "Commencez par le quiz de style pour définir vos préférences, puis utilisez la calculatrice budget pour estimer vos coûts."
+      },
+      {
+        "q": "Puis-je partager mon planning avec mes prestataires ?",
+        "a": "Oui ! Utilisez le bouton « Partager » pour créer un lien consultatif que vous pouvez envoyer à vos prestataires et votre famille."
+      },
+      {
+        "q": "Comment utiliser Mission Mariage ?",
+        "a": "Mission Mariage vous permet de créer des tâches, les assigner à votre équipe et suivre l'avancement de votre préparation."
+      },
+      {
+        "q": "Que faire après mon mariage ?",
+        "a": "Consultez la section « Après le jour-J » pour des conseils sur le brunch du lendemain, le rangement, les retours de matériel et les remerciements."
+      },
+      {
+        "q": "Mes données sont-elles sauvegardées ?",
+        "a": "Oui, toutes vos données sont automatiquement sauvegardées dans votre espace personnel sécurisé."
+      }
+    ]
+  },
+  "installApp": {
+    "pageTitle": "Installer l'application | Mariable",
+    "pageDescription": "Installez Mariable sur votre téléphone pour un accès rapide à vos outils de planification de mariage.",
+    "title": "Installer Mariable sur votre mobile",
+    "subtitle": "Accédez rapidement à tous vos outils de planification de mariage depuis votre écran d'accueil.",
+    "shareLabel": "Partagez ce tutoriel avec vos proches :",
+    "copied": "Lien copié !",
+    "copiedDesc": "Partagez-le avec vos proches",
+    "whyTitle": "Pourquoi installer l'application ?",
+    "why1": "<strong>Accès instantané</strong> - Un tap et vous êtes connecté à vos outils",
+    "why2": "<strong>Mode plein écran</strong> - Interface plus agréable sans la barre du navigateur",
+    "why3": "<strong>Toujours à portée de main</strong> - L'icône sur votre écran d'accueil",
+    "why4": "<strong>100% gratuit</strong> - Pas de téléchargement depuis l'App Store",
+    "iosDetected": "Nous avons détecté que vous utilisez un iPhone/iPad. Suivez les instructions ci-dessous pour Safari.",
+    "androidDetected": "Nous avons détecté que vous utilisez Android. Suivez les instructions ci-dessous pour Chrome.",
+    "iosTitle": "Installation sur iPhone / iPad (Safari)",
+    "iosStep1Title": "Ouvrez Mariable dans Safari",
+    "iosStep1Desc": "Assurez-vous d'utiliser le navigateur Safari (pas Chrome ou autre)",
+    "iosStep2Title": "Appuyez sur le bouton « Partager »",
+    "iosStep2Desc": "C'est l'icône en bas de l'écran (carré avec une flèche vers le haut)",
+    "iosStep3Title": "Faites défiler et appuyez sur « Sur l'écran d'accueil »",
+    "iosStep3Desc": "Cette option peut nécessiter de faire défiler le menu vers le bas",
+    "iosStep4Title": "Confirmez en appuyant sur « Ajouter »",
+    "iosStep4Desc": "L'icône Mariable apparaîtra sur votre écran d'accueil !",
+    "androidTitle": "Installation sur Android (Chrome)",
+    "androidStep1Title": "Ouvrez Mariable dans Chrome",
+    "androidStep1Desc": "Utilisez le navigateur Google Chrome pour de meilleurs résultats",
+    "androidStep2Title": "Appuyez sur le menu (3 points)",
+    "androidStep2Desc": "Les 3 points verticaux se trouvent en haut à droite de l'écran",
+    "androidStep3Title": "Appuyez sur « Ajouter à l'écran d'accueil »",
+    "androidStep3Desc": "Ou « Installer l'application » si cette option apparaît",
+    "androidStep4Title": "Confirmez l'installation",
+    "androidStep4Desc": "L'icône Mariable sera ajoutée à votre écran d'accueil !",
+    "desktopTitle": "Accédez depuis votre mobile",
+    "desktopDesc": "Pour installer Mariable comme une application, ouvrez cette page depuis votre smartphone ou tablette, puis suivez les instructions qui s'afficheront automatiquement.",
+    "desktopCouple": "👩‍❤️‍👨 Futurs mariés :",
+    "desktopCoupleDesc": "Ouvrez sur mobile :",
+    "desktopGuests": "👥 Invités, témoins & prestataires :",
+    "desktopGuestsDesc": "C'est le lien unique de l'appli du Jour-J que les futurs mariés vous ont partagé qu'il faut ouvrir sur mobile."
+  },
+  "wishlist": {
+    "title": "Ma wishlist prestataires",
+    "errorTitle": "Erreur",
+    "loadError": "Impossible de charger votre wishlist.",
+    "removed": "Supprimé de votre wishlist",
+    "removedDesc": "{{name}} a été retiré de votre wishlist",
+    "removeError": "Impossible de retirer cet élément de votre wishlist.",
+    "priceFromPerPerson": "Environ {{price}}€/pers.",
+    "priceFrom": "À partir de {{price}} €",
+    "priceOnRequest": "Prix sur demande",
+    "contact": "Contacter",
+    "remove": "Retirer",
+    "details": "Voir les détails",
+    "emptyTitle": "Votre wishlist est vide",
+    "emptyDesc": "Ajoutez des prestataires à votre wishlist en cliquant sur le ❤️ quand vous parcourez nos prestataires",
+    "discover": "Découvrir nos prestataires"
+  },
+  "moodboard": {
+    "pageTitle": "Moodboard | Mariable",
+    "pageDescription": "Créez votre moodboard de mariage avec extraction automatique de palette de couleurs",
+    "title": "Moodboard",
+    "subtitle": "Créez votre planche d'inspiration avec extraction automatique de palette de couleurs par IA",
+    "step1": "Informations du mariage",
+    "coupleName": "Nom des mariés",
+    "coupleNamePlaceholder": "Ex : Marie & Pierre",
+    "weddingDate": "Date du mariage",
+    "step2": "Photos d'inspiration",
+    "step3": "Générer le moodboard",
+    "analyzing": "Analyse en cours...",
+    "generate": "Générer mon moodboard",
+    "premiumSuffix": "(Premium)",
+    "reset": "Recommencer",
+    "addMore": "Ajoutez encore {{count}} photo pour pouvoir générer le moodboard.",
+    "addMore_plural": "Ajoutez encore {{count}} photos pour pouvoir générer le moodboard.",
+    "resultTitle": "Votre Moodboard",
+    "exporting": "Export...",
+    "downloadPdf": "Télécharger PDF",
+    "pdfSuccess": "PDF téléchargé !",
+    "pdfSuccessDesc": "Votre moodboard a été exporté avec succès.",
+    "pdfError": "Erreur d'export",
+    "pdfErrorDesc": "Impossible de générer le PDF.",
+    "premiumFeature": "Export PDF Moodboard",
+    "premiumDescription": "Téléchargez votre moodboard en PDF haute qualité.",
+    "limitFeature": "Génération Moodboard IA",
+    "limitDescription": "Vous avez déjà utilisé votre génération gratuite. Passez au Premium pour des générations illimitées."
+  },
+  "assistant": {
+    "title": "Des questions ?",
+    "subtitle": "Notre assistant virtuel est là pour vous aider dans l'organisation de votre mariage",
+    "cardTitle": "Assistant Virtuel"
+  },
+  "coordination": {
+    "pageTitle": "Conseils Jour M | Mariable",
+    "pageDescription": "Conseils et coordination pour votre jour M",
+    "title": "Conseils Jour J",
+    "subtitle": "Tous nos conseils pratiques et outils de coordination pour votre jour J",
+    "loginTitle": "Connectez-vous pour accéder aux conseils personnalisés",
+    "loginDesc": "Pour profiter de tous nos conseils et outils de coordination, veuillez vous connecter.",
+    "cardTitle": "Conseils pour votre Jour J",
+    "errorTitle": "Erreur",
+    "loadError": "Impossible de charger les informations utilisateur"
   }
 }
