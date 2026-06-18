@@ -118,33 +118,25 @@ const VendorSelectionPage = () => {
   useEffect(() => {
     if (error) {
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les prestataires. Veuillez réessayer.",
+        title: t('vendorSelection.errorTitle'),
+        description: t('vendorSelection.loadError'),
         variant: "destructive",
       });
       console.error('Error fetching vendors:', error);
     }
-  }, [error]);
+  }, [error, t]);
 
   // Génération du titre SEO
   const getPageTitle = () => {
-    if (regionSlug === 'france-entiere') {
-      return 'Sélection Prestataires Mariage France | Dashboard Mariable';
-    }
-    if (selectedRegion) {
-      return `Sélection Prestataires Mariage ${selectedRegion} | Dashboard Mariable`;
-    }
-    return 'Sélection Prestataires | Dashboard Mariable';
+    if (regionSlug === 'france-entiere') return t('vendorSelection.pageTitleFrance');
+    if (selectedRegion) return t('vendorSelection.pageTitleRegion', { region: selectedRegion });
+    return t('vendorSelection.pageTitleDefault');
   };
 
   const getMetaDescription = () => {
-    if (regionSlug === 'france-entiere') {
-      return 'Sélectionnez les meilleurs prestataires de mariage en France pour votre jour J.';
-    }
-    if (selectedRegion) {
-      return `Découvrez et sélectionnez les meilleurs prestataires de mariage en ${selectedRegion}.`;
-    }
-    return 'Sélectionnez votre région pour découvrir les meilleurs prestataires de mariage.';
+    if (regionSlug === 'france-entiere') return t('vendorSelection.metaFrance');
+    if (selectedRegion) return t('vendorSelection.metaRegion', { region: selectedRegion });
+    return t('vendorSelection.metaDefault');
   };
 
   const handleChangeRegion = () => {
