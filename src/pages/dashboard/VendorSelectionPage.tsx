@@ -29,6 +29,7 @@ export interface VendorFilter {
 }
 
 const VendorSelectionPage = () => {
+  const { t } = useTranslation('weddingDay');
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
   const params = useParams();
