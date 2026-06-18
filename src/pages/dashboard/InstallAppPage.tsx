@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Smartphone, Share, PlusSquare, MoreVertical, Check, Apple, Chrome, Copy, ExternalLink } from 'lucide-react';
@@ -9,13 +10,13 @@ import { useToast } from '@/hooks/use-toast';
 type DeviceType = 'ios' | 'android' | 'desktop' | 'unknown';
 
 const InstallAppPage = () => {
+  const { t } = useTranslation('weddingDay');
   const [deviceType, setDeviceType] = useState<DeviceType>('unknown');
   const { toast } = useToast();
   const shareableUrl = 'https://mariable.fr/installer-app';
 
   useEffect(() => {
     const userAgent = navigator.userAgent.toLowerCase();
-    
     if (/iphone|ipad|ipod/.test(userAgent)) {
       setDeviceType('ios');
     } else if (/android/.test(userAgent)) {
@@ -27,7 +28,7 @@ const InstallAppPage = () => {
 
   const handleCopyLink = () => {
     navigator.clipboard.writeText(shareableUrl);
-    toast({ title: "Lien copié !", description: "Partagez-le avec vos proches" });
+    toast({ title: t('installApp.copied'), description: t('installApp.copiedDesc') });
   };
 
   const IOSInstructions = () => (
@@ -36,57 +37,25 @@ const InstallAppPage = () => {
         <div className="p-2 bg-gray-100 rounded-lg">
           <Apple className="h-6 w-6" />
         </div>
-        <CardTitle>Installation sur iPhone / iPad (Safari)</CardTitle>
+        <CardTitle>{t('installApp.iosTitle')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              1
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="flex items-start gap-4 p-4 bg-muted rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
+                {n}
+              </div>
+              <div>
+                <p className="font-medium">{t(`installApp.iosStep${n}Title`)}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {n === 2 && <Share className="inline h-4 w-4 mr-1" />}
+                  {n === 3 && <PlusSquare className="inline h-4 w-4 mr-1" />}
+                  {t(`installApp.iosStep${n}Desc`)}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium">Ouvrez Mariable dans Safari</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Assurez-vous d'utiliser le navigateur Safari (pas Chrome ou autre)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              2
-            </div>
-            <div>
-              <p className="font-medium">Appuyez sur le bouton "Partager"</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                C'est l'icône <Share className="inline h-4 w-4" /> en bas de l'écran (carré avec une flèche vers le haut)
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              3
-            </div>
-            <div>
-              <p className="font-medium">Faites défiler et appuyez sur "Sur l'écran d'accueil"</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                <PlusSquare className="inline h-4 w-4" /> Cette option peut nécessiter de faire défiler le menu vers le bas
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              4
-            </div>
-            <div>
-              <p className="font-medium">Confirmez en appuyant sur "Ajouter"</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                L'icône Mariable apparaîtra sur votre écran d'accueil !
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -98,57 +67,24 @@ const InstallAppPage = () => {
         <div className="p-2 bg-gray-100 rounded-lg">
           <Chrome className="h-6 w-6" />
         </div>
-        <CardTitle>Installation sur Android (Chrome)</CardTitle>
+        <CardTitle>{t('installApp.androidTitle')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-4">
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              1
+          {[1, 2, 3, 4].map((n) => (
+            <div key={n} className="flex items-start gap-4 p-4 bg-muted rounded-lg">
+              <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
+                {n}
+              </div>
+              <div>
+                <p className="font-medium">{t(`installApp.androidStep${n}Title`)}</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  {n === 2 && <MoreVertical className="inline h-4 w-4 mr-1" />}
+                  {t(`installApp.androidStep${n}Desc`)}
+                </p>
+              </div>
             </div>
-            <div>
-              <p className="font-medium">Ouvrez Mariable dans Chrome</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Utilisez le navigateur Google Chrome pour de meilleurs résultats
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              2
-            </div>
-            <div>
-              <p className="font-medium">Appuyez sur le menu (3 points)</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                <MoreVertical className="inline h-4 w-4" /> Les 3 points verticaux se trouvent en haut à droite de l'écran
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              3
-            </div>
-            <div>
-              <p className="font-medium">Appuyez sur "Ajouter à l'écran d'accueil"</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                Ou "Installer l'application" si cette option apparaît
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4 p-4 bg-muted rounded-lg">
-            <div className="flex-shrink-0 w-8 h-8 bg-wedding-olive text-white rounded-full flex items-center justify-center font-bold">
-              4
-            </div>
-            <div>
-              <p className="font-medium">Confirmez l'installation</p>
-              <p className="text-sm text-muted-foreground mt-1">
-                L'icône Mariable sera ajoutée à votre écran d'accueil !
-              </p>
-            </div>
-          </div>
+          ))}
         </div>
       </CardContent>
     </Card>
@@ -157,23 +93,18 @@ const InstallAppPage = () => {
   const DesktopInstructions = () => (
     <Card className="border-2 border-wedding-olive/20">
       <CardHeader>
-        <CardTitle>Accédez depuis votre mobile</CardTitle>
+        <CardTitle>{t('installApp.desktopTitle')}</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
-        <p className="text-muted-foreground">
-          Pour installer Mariable comme une application, ouvrez cette page depuis votre smartphone ou tablette, 
-          puis suivez les instructions qui s'afficheront automatiquement.
-        </p>
+        <p className="text-muted-foreground">{t('installApp.desktopDesc')}</p>
         <div className="p-4 bg-muted rounded-lg space-y-1">
-          <p className="font-medium text-sm">👩‍❤️‍👨 Futurs mariés :</p>
-          <p className="text-sm text-muted-foreground">Ouvrez sur mobile :</p>
+          <p className="font-medium text-sm">{t('installApp.desktopCouple')}</p>
+          <p className="text-sm text-muted-foreground">{t('installApp.desktopCoupleDesc')}</p>
           <code className="text-sm text-wedding-olive break-all">mariable.fr/dashboard</code>
         </div>
         <div className="p-4 bg-muted rounded-lg space-y-1">
-          <p className="font-medium text-sm">👥 Invités, témoins & prestataires :</p>
-          <p className="text-sm text-muted-foreground">
-            C'est le lien unique de l'appli du Jour-J que les futurs mariés vous ont partagé qu'il faut ouvrir sur mobile.
-          </p>
+          <p className="font-medium text-sm">{t('installApp.desktopGuests')}</p>
+          <p className="text-sm text-muted-foreground">{t('installApp.desktopGuestsDesc')}</p>
         </div>
       </CardContent>
     </Card>
@@ -182,27 +113,24 @@ const InstallAppPage = () => {
   return (
     <>
       <Helmet>
-        <title>Installer l'application | Mariable</title>
-        <meta name="description" content="Installez Mariable sur votre téléphone pour un accès rapide à vos outils de planification de mariage." />
+        <title>{t('installApp.pageTitle')}</title>
+        <meta name="description" content={t('installApp.pageDescription')} />
       </Helmet>
 
       <div className="space-y-6">
         <div>
           <h1 className="text-2xl font-bold flex items-center gap-2">
             <Smartphone className="h-6 w-6 text-wedding-olive" />
-            Installer Mariable sur votre mobile
+            {t('installApp.title')}
           </h1>
-          <p className="text-muted-foreground mt-2">
-            Accédez rapidement à tous vos outils de planification de mariage depuis votre écran d'accueil.
-          </p>
+          <p className="text-muted-foreground mt-2">{t('installApp.subtitle')}</p>
         </div>
 
-        {/* Lien partageable */}
         <Card className="bg-wedding-olive/5 border-wedding-olive/20">
           <CardContent className="p-4">
             <p className="font-medium text-sm mb-2 flex items-center gap-2">
               <ExternalLink className="h-4 w-4" />
-              Partagez ce tutoriel avec vos proches :
+              {t('installApp.shareLabel')}
             </p>
             <div className="flex items-center gap-2">
               <code className="text-sm bg-white px-3 py-2 rounded flex-1 text-wedding-olive break-all">
@@ -215,41 +143,27 @@ const InstallAppPage = () => {
           </CardContent>
         </Card>
 
-        {/* Avantages */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Pourquoi installer l'application ?</CardTitle>
+            <CardTitle className="text-lg">{t('installApp.whyTitle')}</CardTitle>
           </CardHeader>
           <CardContent>
             <ul className="space-y-3">
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span><strong>Accès instantané</strong> - Un tap et vous êtes connecté à vos outils</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span><strong>Mode plein écran</strong> - Interface plus agréable sans la barre du navigateur</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span><strong>Toujours à portée de main</strong> - L'icône sur votre écran d'accueil</span>
-              </li>
-              <li className="flex items-center gap-3">
-                <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
-                <span><strong>100% gratuit</strong> - Pas de téléchargement depuis l'App Store</span>
-              </li>
+              {['why1', 'why2', 'why3', 'why4'].map((k) => (
+                <li key={k} className="flex items-center gap-3">
+                  <Check className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <span dangerouslySetInnerHTML={{ __html: t(`installApp.${k}`) }} />
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
 
-        {/* Instructions selon l'appareil */}
         {deviceType === 'ios' && (
           <>
             <Alert className="bg-blue-50 border-blue-200">
               <Smartphone className="h-4 w-4 text-blue-600" />
-              <AlertDescription className="text-blue-700">
-                Nous avons détecté que vous utilisez un iPhone/iPad. Suivez les instructions ci-dessous pour Safari.
-              </AlertDescription>
+              <AlertDescription className="text-blue-700">{t('installApp.iosDetected')}</AlertDescription>
             </Alert>
             <IOSInstructions />
             <AndroidInstructions />
@@ -260,9 +174,7 @@ const InstallAppPage = () => {
           <>
             <Alert className="bg-green-50 border-green-200">
               <Smartphone className="h-4 w-4 text-green-600" />
-              <AlertDescription className="text-green-700">
-                Nous avons détecté que vous utilisez Android. Suivez les instructions ci-dessous pour Chrome.
-              </AlertDescription>
+              <AlertDescription className="text-green-700">{t('installApp.androidDetected')}</AlertDescription>
             </Alert>
             <AndroidInstructions />
             <IOSInstructions />
