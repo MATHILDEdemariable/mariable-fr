@@ -152,20 +152,18 @@ const VendorSelectionPage = () => {
         </Helmet>
         
         <div className="flex items-center gap-2 text-sm">
-          <button 
+          <button
             onClick={() => navigate('/dashboard')}
             className="flex items-center gap-1 text-muted-foreground hover:text-wedding-olive transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Retour au dashboard
+            {t('vendorSelection.back')}
           </button>
         </div>
 
         <div>
-          <h1 className="text-2xl md:text-3xl font-serif mb-2">Sélection de Prestataires</h1>
-          <p className="text-muted-foreground">
-            Choisissez votre région pour découvrir les meilleurs prestataires
-          </p>
+          <h1 className="text-2xl md:text-3xl font-serif mb-2">{t('vendorSelection.selectorTitle')}</h1>
+          <p className="text-muted-foreground">{t('vendorSelection.selectorSubtitle')}</p>
         </div>
 
         <RegionSelectorPage />
@@ -179,75 +177,70 @@ const VendorSelectionPage = () => {
         <title>{getPageTitle()}</title>
         <meta name="description" content={getMetaDescription()} />
       </Helmet>
-      
+
       {/* Breadcrumb et bouton retour */}
       <div className="flex items-center gap-2 text-sm">
-        <button 
+        <button
           onClick={() => navigate('/dashboard')}
           className="flex items-center gap-1 text-muted-foreground hover:text-wedding-olive transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
-          Dashboard
+          {t('vendorSelection.dashboard')}
         </button>
         <span className="text-muted-foreground">•</span>
-        <button 
+        <button
           onClick={handleChangeRegion}
           className="flex items-center gap-1 text-muted-foreground hover:text-wedding-olive transition-colors"
         >
-          Changer de région
+          {t('vendorSelection.changeRegion')}
         </button>
         <span className="text-muted-foreground">•</span>
         <span className="text-wedding-olive font-medium">
-          {regionSlug === 'france-entiere' ? 'France entière' : selectedRegion}
+          {regionSlug === 'france-entiere' ? t('vendorSelection.franceEntire') : selectedRegion}
         </span>
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl md:text-3xl font-serif mb-2">
-            {regionSlug === 'france-entiere' 
-              ? 'Prestataires de mariage en France' 
-              : `Prestataires de mariage en ${selectedRegion}`
-            }
+            {regionSlug === 'france-entiere'
+              ? t('vendorSelection.titleFrance')
+              : t('vendorSelection.titleRegion', { region: selectedRegion })}
           </h1>
-          <p className="text-muted-foreground">
-            Découvrez notre sélection de prestataires de qualité pour votre mariage
-          </p>
+          <p className="text-muted-foreground">{t('vendorSelection.subtitle')}</p>
         </div>
-        
-        <Button 
+
+        <Button
           className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
           onClick={() => navigate('/professionnels')}
         >
-          Être référencé
+          {t('vendorSelection.register')}
         </Button>
       </div>
-      
+
       <div>
-        <VendorFilters 
-          filters={filters} 
-          onFilterChange={handleFilterChange} 
+        <VendorFilters
+          filters={filters}
+          onFilterChange={handleFilterChange}
         />
       </div>
-      
+
       {isLoading ? (
         <div className="space-y-6">
-          {/* Message informatif pendant le chargement */}
           <div className="bg-wedding-olive/10 border border-wedding-olive/20 rounded-lg p-6 text-center">
             <div className="flex items-center justify-center gap-2 mb-3">
               <Search className="h-5 w-5 text-wedding-olive" />
-              <span className="font-medium text-wedding-olive">Recherche en cours...</span>
+              <span className="font-medium text-wedding-olive">{t('vendorSelection.searching')}</span>
             </div>
             <p className="text-sm text-muted-foreground mb-2">
-              Nous recherchons les meilleurs prestataires de mariage en {selectedRegion}
+              {t('vendorSelection.searchingDesc', { region: selectedRegion })}
             </p>
             <div className="flex items-center justify-center gap-1 text-xs text-muted-foreground">
               <MapPin className="h-3 w-3" />
-              Filtrage par région et critères de qualité
+              {t('vendorSelection.filterHint')}
             </div>
           </div>
-          
-          {/* Skeleton cards */}
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {Array.from({ length: 9 }).map((_, index) => (
               <VendorCardSkeleton key={index} />
@@ -258,29 +251,24 @@ const VendorSelectionPage = () => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {vendors.map(vendor => (
-              <LazyVendorCard 
-                key={vendor.id} 
-                vendor={vendor} 
+              <LazyVendorCard
+                key={vendor.id}
+                vendor={vendor}
                 onClick={navigateToVendorDetails}
                 onWishlistAdd={handleWishlistAdd}
               />
             ))}
           </div>
-          
-          {/* Bouton "Charger plus" */}
+
           {hasMore && (
             <div className="flex justify-center pt-6" id="load-more-section">
               <Button
                 onClick={() => {
                   loadMore();
-                  // Scroll smooth vers les nouveaux éléments après un délai
                   setTimeout(() => {
                     const loadMoreSection = document.getElementById('load-more-section');
                     if (loadMoreSection) {
-                      loadMoreSection.scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'center' 
-                      });
+                      loadMoreSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     }
                   }, 500);
                 }}
@@ -292,10 +280,10 @@ const VendorSelectionPage = () => {
                 {isLoadingMore ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Chargement...
+                    {t('vendorSelection.loading')}
                   </>
                 ) : (
-                  'Charger plus de prestataires'
+                  t('vendorSelection.loadMore')
                 )}
               </Button>
             </div>
@@ -303,10 +291,8 @@ const VendorSelectionPage = () => {
         </div>
       ) : (
         <div className="text-center py-12">
-          <h3 className="text-lg font-medium mb-2">Aucun prestataire trouvé</h3>
-          <p className="text-muted-foreground">
-            Essayez de modifier vos critères de recherche pour obtenir plus de résultats.
-          </p>
+          <h3 className="text-lg font-medium mb-2">{t('vendorSelection.noResults')}</h3>
+          <p className="text-muted-foreground">{t('vendorSelection.noResultsDesc')}</p>
         </div>
       )}
     </div>
