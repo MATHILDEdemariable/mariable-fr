@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
@@ -45,10 +46,11 @@ interface DatabaseChecklist {
 }
 
 const AvantJourJPage: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   const [user, setUser] = useState<User | null>(null);
   const { executeAction, showPremiumModal, closePremiumModal, feature, description } = usePremiumAction({
-    feature: "génération de checklist avant le jour-J",
-    description: "Générez votre checklist personnalisée avant le jour-J avec l'IA"
+    feature: t('avantJourJ.premiumFeature'),
+    description: t('avantJourJ.premiumDescription')
   });
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -63,17 +65,13 @@ const AvantJourJPage: React.FC = () => {
       try {
         const { data: { user } } = await supabase.auth.getUser();
         setUser(user);
-
-        if (user) {
-          await loadExistingChecklist(user.id);
-        }
+        if (user) await loadExistingChecklist(user.id);
       } catch (error) {
         console.error('Erreur lors du chargement:', error);
       } finally {
         setIsLoading(false);
       }
     };
-
     loadUserAndChecklist();
   }, []);
 
@@ -85,17 +83,14 @@ const AvantJourJPage: React.FC = () => {
         .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(1);
-
       if (error) throw error;
-
       if (data && data.length > 0) {
         const dbChecklist = data[0] as DatabaseChecklist;
-        const checklist: ChecklistData = {
+        setChecklist({
           ...dbChecklist,
           tasks: Array.isArray(dbChecklist.tasks) ? dbChecklist.tasks as Task[] : [],
           completed_tasks: Array.isArray(dbChecklist.completed_tasks) ? dbChecklist.completed_tasks as string[] : []
-        };
-        setChecklist(checklist);
+        });
       }
     } catch (error) {
       console.error('Erreur lors du chargement de la checklist:', error);
@@ -104,27 +99,23 @@ const AvantJourJPage: React.FC = () => {
 
   const generateChecklist = async () => {
     if (!user || !inputText.trim()) {
-      toast.error('Veuillez saisir du texte pour générer votre checklist');
+      toast.error(t('avantJourJ.emptyTextError'));
       return;
     }
-
     setIsGenerating(true);
-
     try {
       const { data, error } = await supabase.functions.invoke('generate-checklist-ai', {
         body: { text: inputText, userId: user.id }
       });
-
       if (error) throw error;
-
       if (data?.checklist) {
         setChecklist(data.checklist);
         setInputText('');
-        toast.success('Checklist générée avec succès !');
+        toast.success(t('avantJourJ.generatedSuccess'));
       }
     } catch (error) {
       console.error('Erreur lors de la génération:', error);
-      toast.error('Erreur lors de la génération de la checklist');
+      toast.error(t('avantJourJ.generateError'));
     } finally {
       setIsGenerating(false);
     }
@@ -132,63 +123,46 @@ const AvantJourJPage: React.FC = () => {
 
   const toggleTaskCompletion = async (taskId: string) => {
     if (!checklist || !user) return;
-
     const isCompleted = checklist.completed_tasks.includes(taskId);
     const newCompletedTasks = isCompleted
       ? checklist.completed_tasks.filter(id => id !== taskId)
       : [...checklist.completed_tasks, taskId];
-
-    const updatedChecklist = {
-      ...checklist,
-      completed_tasks: newCompletedTasks
-    };
-
+    const updatedChecklist = { ...checklist, completed_tasks: newCompletedTasks };
     setChecklist(updatedChecklist);
-
     try {
       const { error } = await supabase
         .from('planning_avant_jour_j')
         .update({ completed_tasks: newCompletedTasks })
         .eq('id', checklist.id);
-
       if (error) throw error;
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error(t('avantJourJ.saveError'));
     }
   };
 
   const addManualTask = async () => {
     if (!checklist || !newTaskLabel.trim() || !user) return;
-
     const newTask: Task = {
       id: `manual-${Date.now()}`,
       label: newTaskLabel,
       priority: 'medium',
       completed: false
     };
-
     const updatedTasks = [...checklist.tasks, newTask];
-    const updatedChecklist = {
-      ...checklist,
-      tasks: updatedTasks
-    };
-
-    setChecklist(updatedChecklist);
+    setChecklist({ ...checklist, tasks: updatedTasks });
     setNewTaskLabel('');
     setShowAddTask(false);
-
     try {
       const { error } = await supabase
         .from('planning_avant_jour_j')
         .update({ tasks: updatedTasks as any })
         .eq('id', checklist.id);
-
       if (error) throw error;
-      toast.success('Tâche ajoutée avec succès !');
+      toast.success(t('avantJourJ.taskAdded'));
     } catch (error) {
       console.error('Erreur lors de l\'ajout:', error);
-      toast.error('Erreur lors de l\'ajout de la tâche');
+      toast.error(t('avantJourJ.taskAddError'));
     }
   };
 
@@ -214,7 +188,6 @@ const AvantJourJPage: React.FC = () => {
 
   const handleExportPDF = async () => {
     if (!checklist) return;
-
     setIsExporting(true);
     try {
       const success = await exportAvantJourJToPDF({
@@ -223,15 +196,11 @@ const AvantJourJPage: React.FC = () => {
         completedTasks: checklist.completed_tasks,
         created_at: checklist.created_at
       });
-
-      if (success) {
-        toast.success('PDF téléchargé avec succès');
-      } else {
-        throw new Error('Échec de l\'export');
-      }
+      if (success) toast.success(t('avantJourJ.pdfSuccess'));
+      else throw new Error('Échec de l\'export');
     } catch (error) {
       console.error('Erreur export PDF:', error);
-      toast.error('Impossible d\'exporter le PDF');
+      toast.error(t('avantJourJ.pdfError'));
     } finally {
       setIsExporting(false);
     }
@@ -239,21 +208,18 @@ const AvantJourJPage: React.FC = () => {
 
   const resetChecklist = async () => {
     if (!user) return;
-
     try {
       const { error } = await supabase
         .from('planning_avant_jour_j')
         .delete()
         .eq('user_id', user.id);
-
       if (error) throw error;
-
       setChecklist(null);
       setInputText('');
-      toast.success('Checklist supprimée avec succès');
+      toast.success(t('avantJourJ.deleteSuccess'));
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      toast.error('Impossible de supprimer la checklist');
+      toast.error(t('avantJourJ.deleteError'));
     }
   };
 
@@ -268,19 +234,17 @@ const AvantJourJPage: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Avant le jour-J - Checklist IA | Mariable</title>
-        <meta name="description" content="Générez votre checklist personnalisée pour préparer votre mariage grâce à l'intelligence artificielle." />
+        <title>{t('avantJourJ.pageTitle')}</title>
+        <meta name="description" content={t('avantJourJ.pageDescription')} />
       </Helmet>
 
       <div className="max-w-4xl mx-auto space-y-6">
         <div className="text-center space-y-2">
           <h1 className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
             <Lightbulb className="h-6 w-6 text-wedding-olive" />
-            Avant le jour-J
+            {t('avantJourJ.title')}
           </h1>
-          <p className="text-gray-600">
-            Générez votre checklist personnalisée grâce à l'IA pour ne rien oublier avant votre mariage
-          </p>
+          <p className="text-gray-600">{t('avantJourJ.subtitle')}</p>
         </div>
 
         {!checklist ? (
@@ -288,23 +252,23 @@ const AvantJourJPage: React.FC = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Sparkles className="h-5 w-5 text-wedding-olive" />
-                Générer ma checklist avec l'IA
+                {t('avantJourJ.generateCard')}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Décrivez votre mariage et vos préoccupations
+                  {t('avantJourJ.describeLabel')}
                 </label>
                 <Textarea
-                  placeholder="Ex: Mon mariage aura lieu en juin dans un château avec 120 invités. J'ai peur d'oublier des détails importants comme les alliances, les fleurs, la musique. Je veux aussi penser à la météo et aux préparatifs de la veille..."
+                  placeholder={t('avantJourJ.describePlaceholder')}
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   rows={6}
                   className="w-full"
                 />
               </div>
-              <Button 
+              <Button
                 onClick={() => executeAction(generateChecklist)}
                 disabled={isGenerating || !inputText.trim()}
                 className="w-full"
@@ -312,12 +276,12 @@ const AvantJourJPage: React.FC = () => {
                 {isGenerating ? (
                   <>
                     <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                    Génération en cours...
+                    {t('avantJourJ.generating')}
                   </>
                 ) : (
                   <>
                     <Sparkles className="h-4 w-4 mr-2" />
-                    Générer ma checklist
+                    {t('avantJourJ.generate')}
                   </>
                 )}
               </Button>
@@ -328,62 +292,57 @@ const AvantJourJPage: React.FC = () => {
             <Card>
               <CardHeader>
                 <div className="flex items-center justify-between mb-4">
-                  <CardTitle>To do list personnalisée</CardTitle>
+                  <CardTitle>{t('avantJourJ.listTitle')}</CardTitle>
                   <Badge variant="outline">
-                    {getProgressPercentage()}% complété
+                    {t('avantJourJ.progressDone', { percent: getProgressPercentage() })}
                   </Badge>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2 mb-4">
-                  <div 
+                  <div
                     className="bg-wedding-olive h-2 rounded-full transition-all duration-300"
                     style={{ width: `${getProgressPercentage()}%` }}
                   />
                 </div>
-                
-                 {/* Actions en haut */}
+
                 <div className="flex gap-2 flex-wrap">
                   <AlertDialog>
                     <AlertDialogTrigger asChild>
-                      <Button 
-                        variant="outline" 
+                      <Button
+                        variant="outline"
                         size="sm"
                         onClick={(e) => {
                           e.preventDefault();
-                          executeAction(() => {
-                            // L'action sera gérée par le dialog si premium
-                          });
+                          executeAction(() => {});
                         }}
                       >
                         <RotateCcw className="h-4 w-4 mr-2" />
-                        Générer une nouvelle liste
+                        {t('avantJourJ.regenerate')}
                       </Button>
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                       <AlertDialogHeader>
-                        <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Attention, cela va supprimer votre liste actuelle. Cette action est irréversible.
-                        </AlertDialogDescription>
+                        <AlertDialogTitle>{t('avantJourJ.confirmTitle')}</AlertDialogTitle>
+                        <AlertDialogDescription>{t('avantJourJ.confirmDesc')}</AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
-                        <AlertDialogCancel>Annuler</AlertDialogCancel>
+                        <AlertDialogCancel>{t('avantJourJ.cancel')}</AlertDialogCancel>
                         <AlertDialogAction onClick={resetChecklist}>
-                          Confirmer
+                          {t('avantJourJ.confirm')}
                         </AlertDialogAction>
                       </AlertDialogFooter>
                     </AlertDialogContent>
                   </AlertDialog>
-                  
-                  <Button 
-                    variant="outline" 
+
+                  <Button
+                    variant="outline"
                     size="sm"
                     onClick={handleExportPDF}
                     disabled={isExporting}
                   >
                     <Download className="h-4 w-4 mr-2" />
-                    {isExporting ? 'Export...' : 'Exporter PDF'}
+                    {isExporting ? t('avantJourJ.exporting') : t('avantJourJ.exportPdf')}
                   </Button>
-                  
+
                   <AvantJourJShareButton checklistId={checklist.id} />
                 </div>
               </CardHeader>
@@ -419,7 +378,7 @@ const AvantJourJPage: React.FC = () => {
                 {showAddTask ? (
                   <div className="flex gap-2">
                     <Input
-                      placeholder="Nouvelle tâche..."
+                      placeholder={t('avantJourJ.newTaskPlaceholder')}
                       value={newTaskLabel}
                       onChange={(e) => setNewTaskLabel(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
@@ -428,25 +387,24 @@ const AvantJourJPage: React.FC = () => {
                       <Check className="h-4 w-4" />
                     </Button>
                     <Button variant="outline" onClick={() => setShowAddTask(false)}>
-                      Annuler
+                      {t('avantJourJ.cancel')}
                     </Button>
                   </div>
                 ) : (
-                  <Button 
-                    variant="outline" 
+                  <Button
+                    variant="outline"
                     onClick={() => setShowAddTask(true)}
                     className="w-full"
                   >
                     <Plus className="h-4 w-4 mr-2" />
-                    Ajouter une tâche manuellement
+                    {t('avantJourJ.addTaskManual')}
                   </Button>
                 )}
-
               </CardContent>
             </Card>
           </div>
         )}
-        
+
         <PremiumModal
           isOpen={showPremiumModal}
           onClose={closePremiumModal}
