@@ -1,15 +1,17 @@
 
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import DrinksCalculator from '@/components/drinks/DrinksCalculator'; 
 import { Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 const DrinksCalculatorWidget: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   return (
     <Card className="shadow-sm">
       <CardHeader className="flex flex-col sm:flex-row justify-between items-start sm:items-center pb-2">
-        <CardTitle className="font-serif">Calculateur de Boissons</CardTitle>
+        <CardTitle className="font-serif">{t('drinks.widgetTitle')}</CardTitle>
         <div className="mt-2 sm:mt-0">
           <Button
             variant="outline"
@@ -17,7 +19,7 @@ const DrinksCalculatorWidget: React.FC = () => {
             onClick={() => window.print()}
           >
             <Printer className="mr-2 h-4 w-4" />
-            Imprimer
+            {t('drinks.print')}
           </Button>
         </div>
       </CardHeader>
