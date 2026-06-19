@@ -104,7 +104,7 @@ Create a COMPLETE retroplanning with at least 8 periods, 10 categories and 15 mi
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: 'Génère un rétroplanning complet et détaillé pour ce mariage.' }
+          { role: 'user', content: userMsg }
         ],
       }),
     });
