@@ -886,7 +886,8 @@
     "saveError": "Erreur lors de la sauvegarde",
     "deleteSuccess": "Checklist supprimée avec succès",
     "deleteError": "Impossible de supprimer la checklist",
-    "newReady": "Vous pouvez maintenant générer une nouvelle checklist"
+    "newReady": "Vous pouvez maintenant générer une nouvelle checklist",
+    "addManualBtn": "Ajouter une tâche manuellement"
   },
   "budgetCalc": {
     "cardTitle": "Calculatrice Budget",

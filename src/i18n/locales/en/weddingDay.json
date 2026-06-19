@@ -886,7 +886,8 @@
     "saveError": "Save error",
     "deleteSuccess": "Checklist deleted successfully",
     "deleteError": "Unable to delete checklist",
-    "newReady": "You can now generate a new checklist"
+    "newReady": "You can now generate a new checklist",
+    "addManualBtn": "Add a task manually"
   },
   "budgetCalc": {
     "cardTitle": "Budget Calculator",
