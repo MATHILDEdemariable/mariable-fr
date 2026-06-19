@@ -206,11 +206,12 @@ Strict rules:
       .from('planning_avant_jour_j')
       .insert({
         user_id: userId,
-        title: parsedTasks.title || 'Ma checklist personnalisée',
+        title: parsedTasks.title || (lang === 'en' ? 'My personalized checklist' : 'Ma checklist personnalisée'),
         original_text: text,
         tasks: parsedTasks.tasks || [],
         completed_tasks: [],
-        category: 'AI Générée',
+        category: lang === 'en' ? 'AI Generated' : 'AI Générée',
+
         icon: '🤖'
       })
       .select()
