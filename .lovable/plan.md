@@ -1,68 +1,44 @@
-## Objectif
 
-Étendre le toggle FR/EN aux modules dashboard restants. Suite à la traduction de /dashboard (accueil), /checklist-mariage, /budget et /ceremonie, finaliser les pages encore figées en français.
+# Plan — Compléter la traduction EN du dashboard
 
-## Périmètre
+Objectif: rendre le toggle FR/EN 100% fonctionnel sur les modules signalés.
 
-### Pages prioritaires (mentionnées)
-1. **/dashboard/rsvp** — `RSVPManagement.tsx`, `RSVPTabs.tsx`, `RSVPResponses.tsx` : onglets, formulaires de configuration, colonnes des réponses, statuts (confirmé/refusé/en attente), boutons d'export, modales d'envoi, toasts
-2. **/dashboard/documents** — `DocumentsPage.tsx` + `DocumentsSection.tsx` : titres, états vides, boutons upload/download, libellés de catégories
-3. **/dashboard/apres-jour-j** — `ApresJourJPage.tsx` : sections éditoriales (remerciements, photos, démarches admin), checklists, boutons PDF
-4. **/dashboard/mairie-civile** — `MairieCivilPage.tsx` : étapes du dossier civil, documents requis, contenu éditorial, PDF
-5. **/dashboard/retroplanning** — `PlanningPage.tsx` (ou équivalent rétroplanning) + composants enfants : timeline, génération IA, édition d'étapes, toasts
+## Modules à traiter
 
-### Pages secondaires à inclure pour cohérence
-- **/dashboard/avant-jour-j** (`AvantJourJPage.tsx`) — symétrique à apres-jour-j
-- **/dashboard/coordination** & **/coordinateurs** (`CoordinationPage.tsx`, `CoordinatorsPage.tsx`) — planning Jour-J
-- **/dashboard/accommodations** (`AccommodationsPage.tsx`) — gestion logements
-- **/dashboard/moodboard** (`MoodboardPage.tsx`) — UI outil moodboard
-- **/dashboard/panier**, **/wishlist**, **/messages**, **/vendor-tracking**, **/vendor-selection** — modules prestataires
-- **/dashboard/drinks** (`DrinksCalculatorPage.tsx`) — calculatrice boissons
-- **/dashboard/qr-code** (`QRCodeGenerator.tsx`) — liste de mariage
-- **/dashboard/assistant**, **/guides**, **/help**, **/install-app** — bonus
+### 1. Checklist intelligente (image 1)
+- `src/components/dashboard/ChecklistIntelligente.tsx`: titre "Check-list intelligente", description, placeholder textarea, label "Décrivez votre mariage…", bouton "Générer ma checklist".
+- Edge function `generate-checklist-ai`: passer `language` (fr|en) depuis le client, adapter le system prompt pour générer la checklist dans la langue active.
 
-## Approche
+### 2. Project timeline — détail par mois (image 2)
+- Les tâches affichées proviennent de la table `wedding_retroplanning` (générées par IA en français).
+- Edge function `generate-wedding-retroplanning`: ajouter paramètre `language`, system prompt bilingue (FR ou EN), périodes (`12-9 months before`, etc.), tâches et milestones générés dans la langue active.
+- Côté client (`WeddingRetroplanningEmbed.tsx`): passer `i18n.language` à l'appel `supabase.functions.invoke`.
+- Note: les rétroplannings déjà sauvegardés en FR resteront en FR (contenu DB). Ajout d'un bouton "Regénérer" si nécessaire — sinon ils peuvent supprimer et regénérer.
 
-**Phasage en 2 vagues** pour limiter la taille du diff :
+### 3. Budget calculator (image 3)
+- `src/components/dashboard/BudgetCalculator.tsx`: "Choisissez votre méthode de calcul", "Sélectionnez la méthode…", "Je connais mon budget", "Je ne connais pas mon budget", descriptions, étapes suivantes du wizard.
+- `src/components/dashboard/BudgetSummary.tsx`: textes restants.
 
-### Vague 1 — Pages explicitement demandées
-RSVP, Documents, Après-jour-J, Mairie-Civile, Retroplanning.
-- Nouveau namespace **`weddingDay`** (regroupe RSVP, retroplanning, après/avant jour-J, mairie, coordination) ou namespaces séparés si volume > 200 clés.
-- Pattern identique aux pages déjà traduites : `useTranslation('<ns>')`, remplacement littéraux par `t()`, listes éditoriales via `t('key', { returnObjects: true })`.
-- Dates : `date-fns` avec locale dynamique.
-- PDF exports : titres et en-têtes traduits selon `i18n.language`.
+### 4. Drinks calculator (image 4)
+- `src/components/drinks/DrinksCalculator.tsx`: "Calculatrice boissons : quantité et budget", "Nombre d'invités", "Moments de consommation", labels Champagne/Vin/Alcool, "Gamme de boissons", "Abordable/Premium/Luxe", "Recommandations de service", tout le bloc de recommandations (Apéritif, Repas, Dessert, Soirée), résultats calculés.
+- `src/components/drinks/DrinksCalculatorExport.tsx`: PDF export FR→EN selon langue.
+- `src/components/dashboard/DrinksCalculatorWidget.tsx`: "Calculateur de Boissons", "Imprimer".
+- `src/pages/dashboard/DrinksCalculatorPage.tsx`: Helmet title/description.
 
-### Vague 2 — Cohérence dashboard complet
-Coordination, accommodations, moodboard, panier, messages, vendor-tracking/selection, drinks, qr-code, assistant, guides, help, install-app, avant-jour-j.
-- Namespaces : réutiliser `dashboard` pour chrome court, créer `vendors`, `tools` au besoin.
+### 5. Guide d'utilisation Accommodations (image 5)
+- `src/components/accommodations/AccommodationTutorial.tsx`: "Guide d'utilisation", titres des 4 sections (Comment ajouter un logement, assigner des invités, gérer statuts, conseils) et leur contenu déplié.
 
-## Détails techniques
+### 6. Documents — uploader (image 6)
+- `src/components/documents/DocumentUploader.tsx`: "Uploader un document", "Analyse IA Premium activée", "Type de document", options select (Devis, Contrat, Facture, Autre), "Nom du prestataire (optionnel)", placeholder "Ex: Château de Versailles", "Catégorie (optionnel)", placeholder "Ex: Lieu de réception", "Fichier (PDF, Word…)", "Choisir un fichier / Aucun fichier choisi" (limité par navigateur — laisser tel quel), bouton "Uploader", toasts d'erreur/succès.
 
-- **Fichiers JSON** : créer/étendre `src/i18n/locales/{fr,en}/<ns>.json`
-- **Enregistrement** : ajouter chaque nouveau namespace dans `src/i18n/index.ts` (imports + `resources` + `ns: [...]`)
-- **DB content** : titres d'étapes personnalisés, commentaires utilisateur, items ajoutés manuellement → restent dans la langue d'origine (règle existante)
-- **PDF templates** : header/footer/labels traduits, contenu DB inchangé
-- **Toasts & validations** : passer par `t()` y compris messages d'erreur
+## Implémentation
 
-## Estimation
+- Tout via le namespace existant `weddingDay` (clés ajoutées sous `checklistAI.*`, `timeline.*`, `budgetCalc.*`, `drinks.*`, `accommodationGuide.*`, `documentUploader.*`).
+- `useTranslation('weddingDay')` + remplacement des chaînes en dur.
+- Listes éditoriales (recommandations boissons, guide accommodations): `t('...', { returnObjects: true })`.
+- Edge functions (`generate-checklist-ai`, `generate-wedding-retroplanning`): ajout param `language`, branche système prompt FR/EN. Aucun changement de schéma DB.
+- Aucun refactor de logique métier — seules les chaînes d'affichage et les prompts IA changent.
 
-- Vague 1 : ~200-300 clés (RSVP ~80, retroplanning ~60, documents ~30, mairie ~70, après-jour-J ~60)
-- Vague 2 : ~250-350 clés
-- **Total : ~500-650 clés**, sans modification de logique métier
+## Hors scope
 
-## Validation
-
-1. Build sans erreur
-2. Toggle EN sur chaque page listée → tous les libellés chrome en anglais (titres, boutons, colonnes, toasts, modales)
-3. Dates localisées (`mardi 16 juin` → `Tuesday, June 16`)
-4. Toggle FR remet tout en français
-5. Contenu DB inchangé dans les deux langues
-6. PDF exports : en-têtes traduits selon langue active
-
-## Question
-
-Confirmes-tu :
-- (a) **Vague 1 seulement** (5 pages demandées) — livraison rapide, focus
-- (b) **Vague 1 + Vague 2** (dashboard 100% bilingue) — couverture complète, diff plus large
-
-Par défaut je pars sur **(b)** pour éliminer tout résidu français lors du toggle EN.
+- Re-traduction du contenu DB déjà stocké (checklist/rétroplanning sauvegardés en FR). L'utilisateur peut regénérer en EN.
