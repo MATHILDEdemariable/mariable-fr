@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { User } from '@supabase/supabase-js';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,7 @@ import { exportAvantJourJToPDF } from '@/services/avantJourJExportService';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
 import PremiumModal from '@/components/premium/PremiumModal';
+
 
 interface Task {
   id: string;
@@ -45,12 +47,14 @@ interface DatabaseChecklist {
 }
 
 const ChecklistIntelligente: React.FC = () => {
+  const { t, i18n } = useTranslation('weddingDay');
   const [user, setUser] = useState<User | null>(null);
   const { executeAction, showPremiumModal, closePremiumModal, feature, description, isPremium } = usePremiumAction({
-    feature: "génération de checklist avant le jour-J",
-    description: "Générez votre checklist personnalisée avant le jour-J avec l'IA"
+    feature: t('checklistAI.cardTitle'),
+    description: t('checklistAI.subtitle')
   });
   const { canUseFeature, hasUsedFeature, recordUsage } = useAiUsageLimit();
+
   const [inputText, setInputText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [checklist, setChecklist] = useState<ChecklistData | null>(null);
@@ -105,13 +109,11 @@ const ChecklistIntelligente: React.FC = () => {
 
   const generateChecklist = async () => {
     if (!user || !inputText.trim()) {
-      toast.error('Veuillez saisir du texte pour générer votre checklist');
+      toast.error(t('checklistAI.errorEmpty'));
       return;
     }
 
-    // Vérifier si l'utilisateur peut utiliser la fonctionnalité IA
     if (!canUseFeature('checklist')) {
-      // Afficher le modal premium via executeAction
       executeAction(() => {});
       return;
     }
@@ -119,8 +121,9 @@ const ChecklistIntelligente: React.FC = () => {
     setIsGenerating(true);
 
     try {
+      const language = i18n.language?.startsWith('en') ? 'en' : 'fr';
       const { data, error } = await supabase.functions.invoke('generate-checklist-ai', {
-        body: { text: inputText, userId: user.id }
+        body: { text: inputText, userId: user.id, language }
       });
 
       if (error) throw error;
@@ -128,31 +131,28 @@ const ChecklistIntelligente: React.FC = () => {
       if (data?.checklist) {
         setChecklist(data.checklist);
         setInputText('');
-        // Enregistrer l'utilisation pour les utilisateurs non-premium
         if (!isPremium) {
           await recordUsage('checklist');
         }
-        toast.success('Checklist générée avec succès !');
+        toast.success(t('checklistAI.successCreated'));
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ Error generating checklist:', error);
-      
       const errorMessage = error?.message || '';
-      let userMessage = 'Une erreur est survenue lors de la génération.';
-      
+      let userMessage = t('checklistAI.genericError');
       if (errorMessage.includes('Rate limit') || errorMessage.includes('429')) {
-        userMessage = 'Trop de requêtes. Patientez quelques instants et réessayez.';
+        userMessage = t('checklistAI.rateLimit');
       } else if (errorMessage.includes('Crédits') || errorMessage.includes('épuisés') || errorMessage.includes('402')) {
-        userMessage = 'Crédits IA épuisés.';
+        userMessage = t('checklistAI.noCredits');
       } else if (errorMessage.includes('parse') || errorMessage.includes('Invalid')) {
-        userMessage = 'Erreur de traitement de la réponse IA.';
+        userMessage = t('checklistAI.parseError');
       }
-      
-      toast.error(`${userMessage}\n\nSi l'erreur persiste, consultez la rubrique "Un problème ?"`);
+      toast.error(`${userMessage}\n\n${t('checklistAI.errorPersist')}`);
     } finally {
       setIsGenerating(false);
     }
   };
+
 
   const toggleTaskCompletion = async (taskId: string) => {
     if (!checklist || !user) return;
@@ -178,7 +178,7 @@ const ChecklistIntelligente: React.FC = () => {
       if (error) throw error;
     } catch (error) {
       console.error('Erreur lors de la mise à jour:', error);
-      toast.error('Erreur lors de la sauvegarde');
+      toast.error(t('checklistAI.saveError'));
     }
   };
 
@@ -209,12 +209,13 @@ const ChecklistIntelligente: React.FC = () => {
         .eq('id', checklist.id);
 
       if (error) throw error;
-      toast.success('Tâche ajoutée avec succès !');
+      toast.success(t('checklistAI.addTaskSuccess'));
     } catch (error) {
       console.error('Erreur lors de l\'ajout:', error);
-      toast.error('Erreur lors de l\'ajout de la tâche');
+      toast.error(t('checklistAI.addTaskFailed'));
     }
   };
+
 
   const getCategoryColor = (category: string) => {
     switch (category?.toUpperCase()) {
@@ -249,17 +250,18 @@ const ChecklistIntelligente: React.FC = () => {
       });
 
       if (success) {
-        toast.success('PDF téléchargé avec succès');
+        toast.success(t('checklistAI.exportSuccess'));
       } else {
         throw new Error('Échec de l\'export');
       }
     } catch (error) {
       console.error('Erreur export PDF:', error);
-      toast.error('Impossible d\'exporter le PDF');
+      toast.error(t('checklistAI.exportError'));
     } finally {
       setIsExporting(false);
     }
   };
+
 
   const resetChecklist = async () => {
     if (!user) return;
@@ -274,10 +276,10 @@ const ChecklistIntelligente: React.FC = () => {
 
       setChecklist(null);
       setInputText('');
-      toast.success('Checklist supprimée avec succès');
+      toast.success(t('checklistAI.deleteSuccess'));
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      toast.error('Impossible de supprimer la checklist');
+      toast.error(t('checklistAI.deleteError'));
     }
   };
 
@@ -285,7 +287,6 @@ const ChecklistIntelligente: React.FC = () => {
     if (!user) return;
 
     try {
-      // Supprimer l'ancienne checklist
       const { error } = await supabase
         .from('planning_avant_jour_j')
         .delete()
@@ -293,15 +294,15 @@ const ChecklistIntelligente: React.FC = () => {
 
       if (error) throw error;
 
-      // Reset l'état pour afficher le formulaire de saisie
       setChecklist(null);
       setInputText('');
-      toast.success('Vous pouvez maintenant générer une nouvelle checklist');
+      toast.success(t('checklistAI.newReady'));
     } catch (error) {
       console.error('Erreur lors de la suppression:', error);
-      toast.error('Impossible de supprimer la checklist');
+      toast.error(t('checklistAI.deleteError'));
     }
   };
+
 
   if (isLoading) {
     return (
@@ -316,10 +317,10 @@ const ChecklistIntelligente: React.FC = () => {
       <div className="text-center space-y-2">
         <h2 className="text-xl font-bold text-foreground flex items-center justify-center gap-2">
           <Lightbulb className="h-5 w-5 text-wedding-olive" />
-          Check-list intelligente
+          {t('checklistAI.title')}
         </h2>
         <p className="text-muted-foreground text-sm">
-          Générez votre checklist personnalisée grâce à l'IA pour ne rien oublier avant votre mariage
+          {t('checklistAI.subtitle')}
         </p>
       </div>
 
@@ -328,16 +329,16 @@ const ChecklistIntelligente: React.FC = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="h-5 w-5 text-wedding-olive" />
-              Générer ma checklist avec l'IA
+              {t('checklistAI.cardTitle')}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-foreground mb-2">
-                Décrivez votre mariage et vos préoccupations
+                {t('checklistAI.describeLabel')}
               </label>
               <Textarea
-                placeholder="Ex: Mon mariage aura lieu en juin dans un château avec 120 invités. J'ai peur d'oublier des détails importants comme les alliances, les fleurs, la musique. Je veux aussi penser à la météo et aux préparatifs de la veille..."
+                placeholder={t('checklistAI.placeholder')}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 rows={6}
@@ -352,27 +353,28 @@ const ChecklistIntelligente: React.FC = () => {
               {isGenerating ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                  Génération en cours...
+                  {t('checklistAI.generating')}
                 </>
               ) : (
                 <>
                   {!canUseFeature('checklist') && <Lock className="h-4 w-4 mr-2" />}
                   <Sparkles className="h-4 w-4 mr-2" />
-                  Générer ma checklist
-                  {!canUseFeature('checklist') && <span className="ml-1 text-xs">(Premium)</span>}
+                  {t('checklistAI.generateBtn')}
+                  {!canUseFeature('checklist') && <span className="ml-1 text-xs">{t('checklistAI.premiumSuffix')}</span>}
                 </>
               )}
             </Button>
           </CardContent>
         </Card>
       ) : (
+
         <div className="space-y-6">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between mb-4">
-                <CardTitle>To do list personnalisée</CardTitle>
+                <CardTitle>{t('checklistAI.personalizedList')}</CardTitle>
                 <Badge variant="outline">
-                  {getProgressPercentage()}% complété
+                  {t('checklistAI.percentComplete', { p: getProgressPercentage() })}
                 </Badge>
               </div>
               <div className="w-full bg-muted rounded-full h-2 mb-4">
@@ -382,7 +384,6 @@ const ChecklistIntelligente: React.FC = () => {
                 />
               </div>
               
-               {/* Actions en haut */}
               <div className="flex gap-2 flex-wrap">
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -391,25 +392,23 @@ const ChecklistIntelligente: React.FC = () => {
                       size="sm"
                     >
                       <RotateCcw className="h-4 w-4 mr-2" />
-                      Générer une nouvelle liste
+                      {t('checklistAI.newListBtn')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>⚠️ Attention : Nouvelle checklist</AlertDialogTitle>
+                      <AlertDialogTitle>{t('checklistAI.newListAlertTitle')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        Votre liste actuelle va disparaître. Vous pourrez ensuite saisir 
-                        un nouveau texte pour générer une checklist différente. 
-                        Cette action est irréversible.
+                        {t('checklistAI.newListAlertDesc')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Annuler</AlertDialogCancel>
+                      <AlertDialogCancel>{t('checklistAI.cancel')}</AlertDialogCancel>
                       <AlertDialogAction 
                         onClick={() => executeAction(startNewChecklist)}
                         className="bg-wedding-olive hover:bg-wedding-olive/90"
                       >
-                        Oui, supprimer et recommencer
+                        {t('checklistAI.confirmReset')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -422,12 +421,13 @@ const ChecklistIntelligente: React.FC = () => {
                   disabled={isExporting}
                 >
                   <Download className="h-4 w-4 mr-2" />
-                  {isExporting ? 'Export...' : 'Exporter PDF'}
+                  {isExporting ? t('checklistAI.exporting') : t('checklistAI.exportPdf')}
                 </Button>
                 
                 <AvantJourJShareButton checklistId={checklist.id} />
               </div>
             </CardHeader>
+
             <CardContent className="space-y-4">
               <div className="space-y-3">
                 {checklist.tasks.map((task) => (
@@ -460,7 +460,7 @@ const ChecklistIntelligente: React.FC = () => {
               {showAddTask ? (
                 <div className="flex gap-2">
                   <Input
-                    placeholder="Nouvelle tâche..."
+                    placeholder={t('checklistAI.newTaskPlaceholder')}
                     value={newTaskLabel}
                     onChange={(e) => setNewTaskLabel(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && addManualTask()}
@@ -469,7 +469,7 @@ const ChecklistIntelligente: React.FC = () => {
                     <Check className="h-4 w-4" />
                   </Button>
                   <Button variant="outline" onClick={() => setShowAddTask(false)}>
-                    Annuler
+                    {t('checklistAI.cancel')}
                   </Button>
                 </div>
               ) : (
@@ -479,9 +479,10 @@ const ChecklistIntelligente: React.FC = () => {
                   className="w-full"
                 >
                   <Plus className="h-4 w-4 mr-2" />
-                  Ajouter une tâche manuellement
+                  {t('checklistAI.addManualBtn')}
                 </Button>
               )}
+
 
             </CardContent>
           </Card>

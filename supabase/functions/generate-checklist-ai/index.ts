@@ -14,7 +14,9 @@ serve(async (req) => {
   }
 
   try {
-    const { text, userId } = await req.json();
+    const { text, userId, language } = await req.json();
+    const lang = language === 'en' ? 'en' : 'fr';
+
 
     if (!text || !userId) {
       return new Response(
@@ -43,7 +45,7 @@ serve(async (req) => {
       );
     }
 
-    const prompt = `En tant qu'expert wedding planner avec 15 ans d'expérience dans l'organisation de mariages de luxe, génère une to-do list structurée et catégorisée avec des icônes visuelles pour ce projet de mariage.
+    const promptFR = `En tant qu'expert wedding planner avec 15 ans d'expérience dans l'organisation de mariages de luxe, génère une to-do list structurée et catégorisée avec des icônes visuelles pour ce projet de mariage.
 
 Texte du client: "${text}"
 
@@ -86,6 +88,56 @@ Règles strictes:
 - Une seule catégorie par tâche
 - JSON valide uniquement, pas de formatage markdown`;
 
+    const promptEN = `As an expert wedding planner with 15 years of experience organizing luxury weddings, generate a structured and categorized to-do list with visual icons for this wedding project.
+
+Client text: "${text}"
+
+Available categories with icons:
+📋 Administrative - Paperwork, insurance, authorizations
+💒 Ceremony - Church, officiant, ceremony decoration
+🎉 Reception - Venue, decoration, organization
+👗 Outfit - Dress, suit, accessories
+📸 Photos & Video - Photographer, videographer, planning
+🍰 Catering - Menu, tasting, service
+🎵 Entertainment - DJ, musicians, playlist
+🚗 Transport - Cars, guest shuttles
+👨‍👩‍👧‍👦 Guests - List, invitations, accommodation
+💐 Flowers & Decor - Bouquet, centerpieces, decor
+💍 Rings - Choice, engraving, fitting
+🏨 Honeymoon - Booking, passports
+
+Reply ONLY with valid JSON in this format:
+{
+  "title": "Personalized planning for [First name]",
+  "tasks": [
+    {
+      "id": "task-1",
+      "label": "Precise task title",
+      "description": "Detailed description with expert advice",
+      "priority": "high|medium|low",
+      "category": "Category name",
+      "icon": "category emoji"
+    }
+  ]
+}
+
+Strict rules:
+- Maximum 12 essential tasks
+- HIGH priority: urgent and blocking (3-4 tasks max)
+- MEDIUM priority: important but flexible timing (5-6 tasks)
+- LOW priority: nice-to-have, can wait (2-3 tasks)
+- Concrete actionable tasks with implicit deadlines
+- Descriptions with pro advice and recommended timing
+- One category per task
+- Valid JSON only, no markdown formatting
+- All text in ENGLISH`;
+
+    const prompt = lang === 'en' ? promptEN : promptFR;
+    const systemMsg = lang === 'en'
+      ? 'You are a wedding planning expert. You generate practical and structured checklists in English.'
+      : 'Tu es un expert en organisation de mariage. Tu génères des checklists pratiques et structurées.';
+
+
     console.log('🚀 Calling Lovable AI Gateway...');
     
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
@@ -97,13 +149,14 @@ Règles strictes:
       body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
-          { role: 'system', content: 'Tu es un expert en organisation de mariage. Tu génères des checklists pratiques et structurées.' },
+          { role: 'system', content: systemMsg },
           { role: 'user', content: prompt }
         ],
         temperature: 0.7,
         max_tokens: 4000,
       }),
     });
+
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -153,11 +206,12 @@ Règles strictes:
       .from('planning_avant_jour_j')
       .insert({
         user_id: userId,
-        title: parsedTasks.title || 'Ma checklist personnalisée',
+        title: parsedTasks.title || (lang === 'en' ? 'My personalized checklist' : 'Ma checklist personnalisée'),
         original_text: text,
         tasks: parsedTasks.tasks || [],
         completed_tasks: [],
-        category: 'AI Générée',
+        category: lang === 'en' ? 'AI Generated' : 'AI Générée',
+
         icon: '🤖'
       })
       .select()

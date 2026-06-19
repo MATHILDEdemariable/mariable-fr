@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import PremiumModal from '@/components/premium/PremiumModal';
 
 interface DocumentUploaderProps {
@@ -17,14 +17,10 @@ interface DocumentUploaderProps {
 
 const MAX_FREE_DOCUMENTS = 2;
 
-const DOCUMENT_TYPES = [
-  { value: 'devis', label: '📋 Devis' },
-  { value: 'contrat', label: '📄 Contrat' },
-  { value: 'facture', label: '💰 Facture' },
-  { value: 'autre', label: '📎 Autre' }
-];
+const DOCUMENT_TYPE_KEYS = ['devis', 'contrat', 'facture', 'autre'] as const;
 
 const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, documentCount = 0 }) => {
+  const { t } = useTranslation('weddingDay');
   const [file, setFile] = useState<File | null>(null);
   const [documentType, setDocumentType] = useState<string>('devis');
   const [vendorName, setVendorName] = useState<string>('');
@@ -43,8 +39,8 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
     if (selectedFile) {
       if (selectedFile.size > 20 * 1024 * 1024) {
         toast({
-          title: "Fichier trop volumineux",
-          description: "La taille maximale est de 20MB",
+          title: t('documentUploader.tooLargeTitle'),
+          description: t('documentUploader.tooLargeDesc'),
           variant: "destructive"
         });
         return;
@@ -56,13 +52,12 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
   const handleUpload = async () => {
     if (!file) {
       toast({
-        title: "Aucun fichier sélectionné",
+        title: t('documentUploader.noFile'),
         variant: "destructive"
       });
       return;
     }
 
-    // Vérifier la limite pour les utilisateurs free
     if (isLimitReached) {
       setShowPremiumModal(true);
       return;
@@ -74,10 +69,9 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non authentifié");
 
-      const fileExt = file.name.split('.').pop();
       const fileName = `${user.id}/${Date.now()}_${file.name}`;
       
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('wedding-documents')
         .upload(fileName, file);
 
@@ -107,8 +101,8 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
       if (insertError) throw insertError;
 
       toast({
-        title: "Document uploadé",
-        description: "Votre document a été ajouté avec succès"
+        title: t('documentUploader.uploadedTitle'),
+        description: t('documentUploader.uploadedDesc')
       });
 
       if (isPremium && documentType === 'devis') {
@@ -124,8 +118,8 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
     } catch (error) {
       console.error("Erreur upload:", error);
       toast({
-        title: "Erreur d'upload",
-        description: "Impossible d'uploader le document",
+        title: t('documentUploader.uploadErrorTitle'),
+        description: t('documentUploader.uploadErrorDesc'),
         variant: "destructive"
       });
     } finally {
@@ -136,22 +130,22 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
 
   const analyzeDocument = async (documentId: string, fileUrl: string) => {
     try {
-      const { data, error } = await supabase.functions.invoke('analyze-document', {
+      const { error } = await supabase.functions.invoke('analyze-document', {
         body: { documentId, fileUrl, documentType }
       });
 
       if (error) throw error;
 
       toast({
-        title: "✨ Analyse IA terminée",
-        description: "Le résumé de votre document est disponible"
+        title: t('documentUploader.aiDoneTitle'),
+        description: t('documentUploader.aiDoneDesc')
       });
 
     } catch (error) {
       console.error("Erreur analyse IA:", error);
       toast({
-        title: "Analyse IA non disponible",
-        description: "Le document a été uploadé mais l'analyse a échoué",
+        title: t('documentUploader.aiFailedTitle'),
+        description: t('documentUploader.aiFailedDesc'),
         variant: "destructive"
       });
     }
@@ -162,21 +156,21 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
     <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 space-y-4">
       <div className="text-center">
         <FileText className="h-12 w-12 mx-auto text-gray-400 mb-4" />
-        <h3 className="font-medium mb-2">Uploader un document</h3>
+        <h3 className="font-medium mb-2">{t('documentUploader.title')}</h3>
         <div className="text-sm text-muted-foreground mb-4 space-y-2">
           {isPremium ? (
             <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
-              ✨ Analyse IA Premium activée
+              {t('documentUploader.premiumBadge')}
             </span>
           ) : (
             <div className="flex items-center justify-center gap-2">
               <span className="text-xs text-gray-500">
-                {documentCount}/{MAX_FREE_DOCUMENTS} documents
+                {t('documentUploader.documentsCount', { used: documentCount, max: MAX_FREE_DOCUMENTS })}
               </span>
               {isLimitReached && (
                 <span className="inline-flex items-center gap-1 bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs">
                   <Lock className="w-3 h-3" />
-                  Limite atteinte
+                  {t('documentUploader.limitReached')}
                 </span>
               )}
             </div>
@@ -186,15 +180,15 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
 
       <div className="space-y-3">
         <div>
-          <Label>Type de document</Label>
+          <Label>{t('documentUploader.typeLabel')}</Label>
           <Select value={documentType} onValueChange={setDocumentType}>
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {DOCUMENT_TYPES.map(type => (
-                <SelectItem key={type.value} value={type.value}>
-                  {type.label}
+              {DOCUMENT_TYPE_KEYS.map(key => (
+                <SelectItem key={key} value={key}>
+                  {t(`documentUploader.types.${key}`)}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -202,25 +196,25 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
         </div>
 
         <div>
-          <Label>Nom du prestataire (optionnel)</Label>
+          <Label>{t('documentUploader.vendorLabel')}</Label>
           <Input 
             value={vendorName}
             onChange={(e) => setVendorName(e.target.value)}
-            placeholder="Ex: Château de Versailles"
+            placeholder={t('documentUploader.vendorPlaceholder')}
           />
         </div>
 
         <div>
-          <Label>Catégorie (optionnel)</Label>
+          <Label>{t('documentUploader.categoryLabel')}</Label>
           <Input 
             value={category}
             onChange={(e) => setCategory(e.target.value)}
-            placeholder="Ex: Lieu de réception"
+            placeholder={t('documentUploader.categoryPlaceholder')}
           />
         </div>
 
         <div>
-          <Label>Fichier (PDF, Word, Excel, Image - max 20MB)</Label>
+          <Label>{t('documentUploader.fileLabel')}</Label>
           <Input 
             type="file"
             onChange={handleFileChange}
@@ -237,22 +231,22 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
         {isUploading ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Upload en cours...
+            {t('documentUploader.uploading')}
           </>
         ) : isAnalyzing ? (
           <>
             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-            Analyse IA en cours...
+            {t('documentUploader.analyzing')}
           </>
         ) : isLimitReached ? (
           <>
             <Lock className="h-4 w-4 mr-2" />
-            Passer au Premium
+            {t('documentUploader.upgrade')}
           </>
         ) : (
           <>
             <Upload className="h-4 w-4 mr-2" />
-            Uploader
+            {t('documentUploader.upload')}
           </>
         )}
       </Button>
@@ -261,8 +255,8 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
     <PremiumModal
       isOpen={showPremiumModal}
       onClose={() => setShowPremiumModal(false)}
-      feature="Stockage illimité de documents"
-      description="Passez au Premium pour stocker tous vos documents de mariage sans limite."
+      feature={t('documentUploader.premiumFeature')}
+      description={t('documentUploader.premiumDesc')}
     />
     </>
   );

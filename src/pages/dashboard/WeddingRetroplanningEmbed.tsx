@@ -277,8 +277,9 @@ const WeddingRetroplanningEmbed = () => {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
-        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd') }
+        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd'), language: i18n.language.startsWith('en') ? 'en' : 'fr' }
       });
+
 
       if (error) throw error;
 

@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
@@ -16,6 +17,7 @@ import PremiumModal from '@/components/premium/PremiumModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 
 const DrinksCalculator = () => {
+  const { t } = useTranslation('weddingDay');
   const [guests, setGuests] = useState(100);
   const [selectedMoments, setSelectedMoments] = useState<DrinkMoment[]>([]);
   const [tier, setTier] = useState<DrinkTier>('affordable');
@@ -29,64 +31,48 @@ const DrinksCalculator = () => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
   const { isPremium } = useUserProfile();
-  const { 
-    executeAction, 
-    showPremiumModal, 
-    closePremiumModal, 
+  const {
+    executeAction,
+    showPremiumModal,
+    closePremiumModal,
     feature,
-    description 
+    description
   } = usePremiumAction({
-    feature: "Calculatrice de Boissons",
-    description: "Calculez précisément vos besoins en boissons et exportez le résultat en PDF avec l'abonnement Premium"
+    feature: t('drinks.premiumFeature'),
+    description: t('drinks.premiumDesc')
   });
 
   const moments = [
-    { id: 'cocktail', label: 'Champagne au cocktail', icon: Martini },
-    { id: 'dinner', label: 'Vin pendant le repas', icon: Wine },
-    { id: 'dessert', label: 'Champagne dessert', icon: Martini },
-    { id: 'party', label: 'Alcool fort pour la soirée', icon: Martini },
+    { id: 'cocktail', label: t('drinks.moments.cocktail'), icon: Martini },
+    { id: 'dinner', label: t('drinks.moments.dinner'), icon: Wine },
+    { id: 'dessert', label: t('drinks.moments.dessert'), icon: Martini },
+    { id: 'party', label: t('drinks.moments.party'), icon: Martini },
   ];
 
-  const tierLabels = {
-    economic: 'Économique',
-    affordable: 'Abordable',
-    premium: 'Haut de gamme',
-    luxury: 'Luxe'
-  };
-
   const calculateTotals = () => {
-    let totalBottles = {
-      champagne: 0,
-      wine: 0,
-      spirits: 0,
-    };
-    
+    let totalBottles = { champagne: 0, wine: 0, spirits: 0 };
     let totalCost = 0;
 
     if (selectedMoments.includes('cocktail')) {
-      const champagneBottles = calculateBottles(guests, drinksPerPerson.cocktail, 'champagne');
-      totalBottles.champagne += champagneBottles;
-      totalCost += calculatePrice(champagneBottles, 'champagne', tier);
+      const b = calculateBottles(guests, drinksPerPerson.cocktail, 'champagne');
+      totalBottles.champagne += b;
+      totalCost += calculatePrice(b, 'champagne', tier);
     }
-
     if (selectedMoments.includes('dinner')) {
-      const wineBottles = calculateBottles(guests, drinksPerPerson.dinner, 'wine');
-      totalBottles.wine += wineBottles;
-      totalCost += calculatePrice(wineBottles, 'wine', tier);
+      const b = calculateBottles(guests, drinksPerPerson.dinner, 'wine');
+      totalBottles.wine += b;
+      totalCost += calculatePrice(b, 'wine', tier);
     }
-
     if (selectedMoments.includes('dessert')) {
-      const dessertChampagne = calculateBottles(guests, drinksPerPerson.dessert, 'champagne');
-      totalBottles.champagne += dessertChampagne;
-      totalCost += calculatePrice(dessertChampagne, 'champagne', tier);
+      const b = calculateBottles(guests, drinksPerPerson.dessert, 'champagne');
+      totalBottles.champagne += b;
+      totalCost += calculatePrice(b, 'champagne', tier);
     }
-
     if (selectedMoments.includes('party')) {
-      const spiritsBottles = calculateBottles(guests, drinksPerPerson.party, 'spirits');
-      totalBottles.spirits += spiritsBottles;
-      totalCost += calculatePrice(spiritsBottles, 'spirits', tier);
+      const b = calculateBottles(guests, drinksPerPerson.party, 'spirits');
+      totalBottles.spirits += b;
+      totalCost += calculatePrice(b, 'spirits', tier);
     }
-
     return { totalBottles, totalCost };
   };
 
@@ -94,43 +80,19 @@ const DrinksCalculator = () => {
 
   const exportToPDF = async () => {
     setIsExporting(true);
-    
     try {
-      toast({
-        title: "Préparation",
-        description: "Génération du PDF en cours...",
+      toast({ title: t('drinks.pdfPreparing'), description: t('drinks.pdfPreparingDesc') });
+      const success = await exportDrinksCalculatorToPDF({
+        guests, selectedMoments, tier, drinksPerPerson, totalBottles, totalCost
       });
-
-      const exportData = {
-        guests,
-        selectedMoments,
-        tier,
-        drinksPerPerson,
-        totalBottles,
-        totalCost
-      };
-
-      const success = await exportDrinksCalculatorToPDF(exportData);
-      
       if (success) {
-        toast({
-          title: "Succès",
-          description: "Votre calculateur de boissons a été exporté en PDF",
-        });
+        toast({ title: t('drinks.pdfSuccess'), description: t('drinks.pdfSuccessDesc') });
       } else {
-        toast({
-          title: "Erreur",
-          description: "Impossible de générer le PDF",
-          variant: "destructive"
-        });
+        toast({ title: t('budgetCalc.errorTitle'), description: t('drinks.pdfErrorDesc'), variant: 'destructive' });
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
-      toast({
-        title: "Erreur",
-        description: "Impossible de générer le PDF",
-        variant: "destructive"
-      });
+      toast({ title: t('budgetCalc.errorTitle'), description: t('drinks.pdfErrorDesc'), variant: 'destructive' });
     } finally {
       setIsExporting(false);
     }
@@ -138,35 +100,25 @@ const DrinksCalculator = () => {
 
   const shareLink = () => {
     setIsSharing(true);
-    
     const baseUrl = window.location.origin + '/dashboard/drinks';
     const params = new URLSearchParams({
       guests: guests.toString(),
       moments: selectedMoments.join(','),
-      tier: tier,
+      tier,
       cocktail: drinksPerPerson.cocktail.toString(),
       dinner: drinksPerPerson.dinner.toString(),
       dessert: drinksPerPerson.dessert.toString(),
       party: drinksPerPerson.party.toString()
     });
-    
     const shareUrl = `${baseUrl}?${params.toString()}`;
-    
     navigator.clipboard.writeText(shareUrl)
       .then(() => {
-        toast({
-          title: "Lien copié",
-          description: "Le lien vers votre calcul a été copié dans le presse-papier",
-        });
+        toast({ title: t('drinks.linkCopied'), description: t('drinks.linkCopiedDesc') });
         setTimeout(() => setIsSharing(false), 2000);
       })
       .catch(err => {
         console.error('Error copying link:', err);
-        toast({
-          title: "Erreur",
-          description: "Impossible de copier le lien",
-          variant: "destructive"
-        });
+        toast({ title: t('budgetCalc.errorTitle'), description: t('drinks.copyError'), variant: 'destructive' });
         setIsSharing(false);
       });
   };
@@ -180,12 +132,11 @@ const DrinksCalculator = () => {
         description={description}
       />
       <Card className="p-6 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-serif mb-6">Calculatrice boissons : quantité et budget</h2>
+      <h2 className="text-2xl font-serif mb-6">{t('drinks.title')}</h2>
       
       <div className="space-y-6">
-        {/* Nombre d'invités */}
         <div>
-          <Label htmlFor="guests" className="block mb-2">Nombre d'invités</Label>
+          <Label htmlFor="guests" className="block mb-2">{t('drinks.guests')}</Label>
           <Input
             id="guests"
             type="number"
@@ -196,9 +147,8 @@ const DrinksCalculator = () => {
           />
         </div>
 
-        {/* Moments de consommation */}
         <div>
-          <Label className="block mb-3">Moments de consommation</Label>
+          <Label className="block mb-3">{t('drinks.momentsLabel')}</Label>
           <div className="space-y-2">
             {moments.map((moment) => (
               <div key={moment.id} className="flex items-center space-x-3 py-1">
@@ -223,26 +173,24 @@ const DrinksCalculator = () => {
           </div>
         </div>
 
-        {/* Gamme de boissons */}
         <div>
-          <Label htmlFor="tier" className="block mb-2">Gamme de boissons</Label>
+          <Label htmlFor="tier" className="block mb-2">{t('drinks.tierLabel')}</Label>
           <Select value={tier} onValueChange={(value: DrinkTier) => setTier(value)}>
             <SelectTrigger className="w-full sm:w-[200px] h-10">
-              <SelectValue placeholder="Sélectionnez une gamme" />
+              <SelectValue placeholder={t('drinks.tierPlaceholder')} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="economic">Économique</SelectItem>
-              <SelectItem value="affordable">Abordable</SelectItem>
-              <SelectItem value="premium">Haut de gamme</SelectItem>
-              <SelectItem value="luxury">Luxe</SelectItem>
+              <SelectItem value="economic">{t('drinks.tiers.economic')}</SelectItem>
+              <SelectItem value="affordable">{t('drinks.tiers.affordable')}</SelectItem>
+              <SelectItem value="premium">{t('drinks.tiers.premium')}</SelectItem>
+              <SelectItem value="luxury">{t('drinks.tiers.luxury')}</SelectItem>
             </SelectContent>
           </Select>
         </div>
 
-        {/* Verres par personne */}
         {selectedMoments.length > 0 && (
           <div>
-            <Label className="block mb-3">Verres par personne</Label>
+            <Label className="block mb-3">{t('drinks.glassesPerPerson')}</Label>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {selectedMoments.map((moment) => (
                 <div key={moment} className="space-y-2">
@@ -266,68 +214,65 @@ const DrinksCalculator = () => {
           </div>
         )}
         
-        {/* Recommandations de service */}
         <div className="border-t pt-4">
           <div className="flex items-center gap-2 mb-3">
             <HelpCircle size={18} className="text-wedding-olive" />
-            <h3 className="font-medium">Recommandations de service</h3>
+            <h3 className="font-medium">{t('drinks.recommendationsTitle')}</h3>
           </div>
           
           <div className="bg-wedding-cream/10 p-4 rounded-md text-sm">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <p className="font-medium mb-1">Apéritif/Cocktail (1 à 1,5 heure) :</p>
-                <p>• Champagne ou cocktail : 2 à 3 coupes/verres par personne</p>
+                <p className="font-medium mb-1">{t('drinks.recommendations.aperitifTitle')}</p>
+                <p>{t('drinks.recommendations.aperitifLine1')}</p>
                 
-                <p className="font-medium mt-3 mb-1">Repas (2 à 3 heures) :</p>
-                <p>• Vin Blanc (entrée ou poisson) : 1 verre par personne</p>
-                <p>• Vin Rouge (plat principal) : 2 verres par personne</p>
+                <p className="font-medium mt-3 mb-1">{t('drinks.recommendations.mealTitle')}</p>
+                <p>{t('drinks.recommendations.mealLine1')}</p>
+                <p>{t('drinks.recommendations.mealLine2')}</p>
               </div>
               <div>
-                <p className="font-medium mb-1">Dessert :</p>
-                <p>• Champagne pour le toast : 1 coupe par personne</p>
+                <p className="font-medium mb-1">{t('drinks.recommendations.dessertTitle')}</p>
+                <p>{t('drinks.recommendations.dessertLine1')}</p>
                 
-                <p className="font-medium mt-3 mb-1">Soirée dansante (4 heures ou plus) :</p>
-                <p>• Cocktails : 1 verre par heure par personne</p>
+                <p className="font-medium mt-3 mb-1">{t('drinks.recommendations.partyTitle')}</p>
+                <p>{t('drinks.recommendations.partyLine1')}</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Résultats */}
         <div className="border-t pt-6">
-          <h3 className="font-medium mb-4">Résultats</h3>
+          <h3 className="font-medium mb-4">{t('drinks.resultsTitle')}</h3>
           
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {totalBottles.champagne > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg text-center">
-                <div className="font-medium">Champagne</div>
-                <div className="text-lg font-bold">{totalBottles.champagne} bouteilles</div>
+                <div className="font-medium">{t('drinks.champagne')}</div>
+                <div className="text-lg font-bold">{totalBottles.champagne} {t('drinks.bottles')}</div>
               </div>
             )}
             {totalBottles.wine > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg text-center">
-                <div className="font-medium">Vin</div>
-                <div className="text-lg font-bold">{totalBottles.wine} bouteilles</div>
+                <div className="font-medium">{t('drinks.wine')}</div>
+                <div className="text-lg font-bold">{totalBottles.wine} {t('drinks.bottles')}</div>
               </div>
             )}
             {totalBottles.spirits > 0 && (
               <div className="bg-gray-50 p-4 rounded-lg text-center">
-                <div className="font-medium">Alcools forts</div>
-                <div className="text-lg font-bold">{totalBottles.spirits} bouteilles</div>
+                <div className="font-medium">{t('drinks.spirits')}</div>
+                <div className="text-lg font-bold">{totalBottles.spirits} {t('drinks.bottles')}</div>
               </div>
             )}
           </div>
 
           <div className="border-t pt-4 mt-4">
             <div className="text-lg font-medium flex justify-between items-center">
-              <span>Coût total estimé:</span>
+              <span>{t('drinks.totalCost')}</span>
               <span className="text-wedding-olive font-bold">{totalCost.toFixed(2)}€</span>
             </div>
           </div>
         </div>
         
-        {/* Sharing buttons */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <Button 
             variant="outline"
@@ -338,12 +283,12 @@ const DrinksCalculator = () => {
             {isExporting ? (
               <>
                 <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-                Export...
+                {t('drinks.exporting')}
               </>
             ) : (
               <>
                 <Download className="mr-2 h-4 w-4" />
-                Exporter en PDF
+                {t('drinks.exportPdf')}
               </>
             )}
           </Button>
@@ -357,12 +302,12 @@ const DrinksCalculator = () => {
             {isSharing ? (
               <>
                 <Check className="mr-2 h-4 w-4" />
-                Lien copié
+                {t('drinks.linkCopied')}
               </>
             ) : (
               <>
                 <Share2 className="mr-2 h-4 w-4" />
-                Partager le lien
+                {t('drinks.shareLink')}
               </>
             )}
           </Button>

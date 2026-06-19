@@ -1,13 +1,15 @@
 import React from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import DrinksCalculator from '@/components/drinks/DrinksCalculator';
 
 const DrinksCalculatorPage: React.FC = () => {
+  const { t } = useTranslation('weddingDay');
   return (
     <>
       <Helmet>
-        <title>Calculateur Quantité Boissons Mariage | Mariable</title>
-        <meta name="description" content="Estimez les quantités de boissons pour votre mariage : vin, champagne, soft. Calcul par nombre d'invités, moments et durée de réception." />
+        <title>{t('drinks.pageTitle')}</title>
+        <meta name="description" content={t('drinks.pageDesc')} />
       </Helmet>
 
       <DrinksCalculator />
