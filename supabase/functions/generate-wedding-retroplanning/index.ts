@@ -11,7 +11,9 @@ serve(async (req) => {
   }
 
   try {
-    const { weddingDate } = await req.json();
+    const { weddingDate, language } = await req.json();
+    const lang = language === 'en' ? 'en' : 'fr';
+
     
     if (!weddingDate) {
       throw new Error('Wedding date is required');
@@ -26,7 +28,7 @@ serve(async (req) => {
     
     console.log('🎯 Génération rétroplanning pour:', { weddingDate, currentDate });
 
-    const systemPrompt = `Tu es un expert en organisation de mariages. Tu dois créer un rétroplanning détaillé, dynamique et actionnable pour un mariage.
+    const systemPromptFR = `Tu es un expert en organisation de mariages. Tu dois créer un rétroplanning détaillé, dynamique et actionnable pour un mariage.
 
 IMPORTANT: Le rétroplanning doit être DYNAMIQUE - toutes les dates doivent être calculées en fonction de la date du mariage et s'ajuster automatiquement.
 
@@ -54,35 +56,43 @@ Tu dois retourner un JSON structuré avec:
    - "description": description
    - "monthsBefore": mois avant le mariage
 
-Structure JSON attendue:
-{
-  "timeline": [
-    {
-      "period": "12-9 mois avant",
-      "monthsBefore": 12,
-      "tasks": ["Définir le budget", "Choisir la date", "Liste des invités"],
-      "priority": "high"
-    }
-  ],
-  "categories": [
-    {
-      "name": "Budget & Administration",
-      "color": "#10b981",
-      "tasks": ["Établir le budget global", "Ouvrir un compte dédié"],
-      "completed": false,
-      "dueMonthsBefore": 12
-    }
-  ],
-  "milestones": [
-    {
-      "title": "Réservation lieu",
-      "monthsBefore": 12,
-      "description": "Réserver le lieu de réception"
-    }
-  ]
-}
+Crée un rétroplanning COMPLET avec au moins 8 périodes, 10 catégories et 15 étapes clés. Tout le texte doit être en FRANÇAIS.`;
 
-Crée un rétroplanning COMPLET avec au moins 8 périodes, 10 catégories et 15 étapes clés.`;
+    const systemPromptEN = `You are a wedding planning expert. You must create a detailed, dynamic and actionable retroplanning for a wedding.
+
+IMPORTANT: The retroplanning must be DYNAMIC - all dates must be calculated based on the wedding date and adjust automatically.
+
+Wedding date: ${weddingDate}
+Current date: ${currentDate}
+
+You must return a structured JSON with:
+
+1. "timeline": An array of periods with:
+   - "period": period name (e.g. "12-9 months before", "3 months out")
+   - "monthsBefore": number of months before the wedding (for dynamic calculation)
+   - "tasks": array of tasks to complete during this period
+   - "priority": "high", "medium" or "low"
+
+2. "categories": An array of categories with:
+   - "name": category name
+   - "color": hex color
+   - "tasks": array of specific tasks
+   - "completed": false by default
+   - "dueMonthsBefore": months before the wedding
+
+3. "milestones": An array of key milestones with:
+   - "title": milestone title
+   - "date": dynamically calculated
+   - "description": description
+   - "monthsBefore": months before the wedding
+
+Create a COMPLETE retroplanning with at least 8 periods, 10 categories and 15 milestones. All text must be in ENGLISH.`;
+
+    const systemPrompt = lang === 'en' ? systemPromptEN : systemPromptFR;
+    const userMsg = lang === 'en'
+      ? 'Generate a complete and detailed retroplanning for this wedding.'
+      : 'Génère un rétroplanning complet et détaillé pour ce mariage.';
+
 
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
