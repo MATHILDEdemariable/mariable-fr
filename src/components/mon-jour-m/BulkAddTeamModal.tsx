@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
@@ -54,12 +55,15 @@ const parseLines = (text: string): ParsedRow[] =>
   });
 
 const BulkAddTeamModal: React.FC<BulkAddTeamModalProps> = ({ open, onOpenChange, coordinationId, onAdded }) => {
+  const { t } = useTranslation('monJourM');
   const { toast } = useToast();
   const [text, setText] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
   const rows = useMemo(() => parseLines(text), [text]);
   const validRows = rows.filter(r => r.valid);
+
+  const translateRole = (role: string) => t(`team.roles.${role}`, role);
 
   const handleImport = async () => {
     if (validRows.length === 0) return;
@@ -75,13 +79,13 @@ const BulkAddTeamModal: React.FC<BulkAddTeamModalProps> = ({ open, onOpenChange,
       }));
       const { error } = await supabase.from('coordination_team').insert(payload);
       if (error) throw error;
-      toast({ title: 'Équipe importée', description: `${validRows.length} membre(s) ajouté(s).` });
+      toast({ title: t('bulk.imported'), description: t('bulk.importedDesc', { count: validRows.length }) });
       setText('');
       onAdded();
       onOpenChange(false);
     } catch (e) {
       console.error('❌ Bulk import team error:', e);
-      toast({ title: 'Erreur', description: "Import impossible", variant: 'destructive' });
+      toast({ title: t('bulk.error'), description: t('bulk.importError'), variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
@@ -91,20 +95,15 @@ const BulkAddTeamModal: React.FC<BulkAddTeamModalProps> = ({ open, onOpenChange,
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Ajout en masse de membres</DialogTitle>
-          <DialogDescription>
-            Une ligne par membre. Format : <code>Nom Prénom, Rôle, email (optionnel), téléphone (optionnel)</code>
-          </DialogDescription>
+          <DialogTitle>{t('bulk.title')}</DialogTitle>
+          <DialogDescription>{t('bulk.description')}</DialogDescription>
         </DialogHeader>
 
         <Textarea
           rows={8}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder={`Marie Dupont, Témoins, marie@mail.com, 06 12 34 56 78
-Paul Martin, Famille
-Sophie L., Co-organisateur, sophie@mail.com
-Atelier Photo, Prestataires : Photographe`}
+          placeholder={t('bulk.placeholder')}
           className="font-mono text-sm"
         />
 
@@ -113,19 +112,19 @@ Atelier Photo, Prestataires : Photographe`}
             <table className="w-full text-sm">
               <thead className="bg-muted/50">
                 <tr>
-                  <th className="text-left p-2">Nom</th>
-                  <th className="text-left p-2">Rôle</th>
-                  <th className="text-left p-2">Email</th>
-                  <th className="text-left p-2">Tél.</th>
+                  <th className="text-left p-2">{t('bulk.name')}</th>
+                  <th className="text-left p-2">{t('bulk.role')}</th>
+                  <th className="text-left p-2">{t('bulk.email')}</th>
+                  <th className="text-left p-2">{t('bulk.phone')}</th>
                 </tr>
               </thead>
               <tbody>
                 {rows.map((r, i) => (
                   <tr key={i} className={!r.valid ? 'bg-red-50' : ''}>
-                    <td className="p-2">{r.name || <span className="text-red-600">— manquant</span>}</td>
+                    <td className="p-2">{r.name || <span className="text-red-600">{t('bulk.missing')}</span>}</td>
                     <td className="p-2">
-                      {r.role}
-                      {r.roleAdjusted && <Badge variant="secondary" className="ml-2 text-xs">ajusté</Badge>}
+                      {translateRole(r.role)}
+                      {r.roleAdjusted && <Badge variant="secondary" className="ml-2 text-xs">{t('bulk.adjusted')}</Badge>}
                     </td>
                     <td className="p-2 text-muted-foreground">{r.email || '—'}</td>
                     <td className="p-2 text-muted-foreground">{r.phone || '—'}</td>
@@ -137,9 +136,9 @@ Atelier Photo, Prestataires : Photographe`}
         )}
 
         <div className="flex justify-end gap-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>{t('bulk.cancel')}</Button>
           <Button onClick={handleImport} disabled={validRows.length === 0 || isSaving}>
-            {isSaving ? 'Import…' : `Importer ${validRows.length} membre(s)`}
+            {isSaving ? t('bulk.importing') : t('bulk.importCount', { count: validRows.length })}
           </Button>
         </div>
       </DialogContent>

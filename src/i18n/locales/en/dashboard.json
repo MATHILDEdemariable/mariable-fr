@@ -107,10 +107,22 @@
     "priority": "Priority",
     "done": "Done",
     "defaults": {
-      "budget": { "title": "Set your budget", "description": "Essential first step" },
-      "rsvp": { "title": "Send invitations", "description": "Create your online RSVP" },
-      "venue": { "title": "Find a venue", "description": "Browse the estates" },
-      "checklist": { "title": "Wedding checklist", "description": "Track your progress" }
+      "budget": {
+        "title": "Set your budget",
+        "description": "Essential first step"
+      },
+      "rsvp": {
+        "title": "Send invitations",
+        "description": "Create your online RSVP"
+      },
+      "venue": {
+        "title": "Find a venue",
+        "description": "Browse the estates"
+      },
+      "checklist": {
+        "title": "Wedding checklist",
+        "description": "Track your progress"
+      }
     }
   },
   "tools": {
@@ -120,14 +132,38 @@
     "arsenalHeading": "Your toolkit",
     "finalStretchHeading": "The final stretch",
     "items": {
-      "quiz": { "title": "Wedding Quiz", "description": "Test your knowledge" },
-      "budget": { "title": "Budget", "description": "Manage your spending" },
-      "rsvp": { "title": "Guest RSVP", "description": "Confirmations" },
-      "checklist": { "title": "Checklist", "description": "Your preparations" },
-      "drinks": { "title": "Drinks", "description": "Calculator" },
-      "seating": { "title": "Seating plan", "description": "Place your guests" },
-      "coordination": { "title": "Wedding-Day coordination", "description": "Detailed planning" },
-      "after": { "title": "After the wedding", "description": "Post-wedding tips" }
+      "quiz": {
+        "title": "Wedding Quiz",
+        "description": "Test your knowledge"
+      },
+      "budget": {
+        "title": "Budget",
+        "description": "Manage your spending"
+      },
+      "rsvp": {
+        "title": "Guest RSVP",
+        "description": "Confirmations"
+      },
+      "checklist": {
+        "title": "Checklist",
+        "description": "Your preparations"
+      },
+      "drinks": {
+        "title": "Drinks",
+        "description": "Calculator"
+      },
+      "seating": {
+        "title": "Seating plan",
+        "description": "Place your guests"
+      },
+      "coordination": {
+        "title": "Wedding-Day coordination",
+        "description": "Detailed planning"
+      },
+      "after": {
+        "title": "After the wedding",
+        "description": "Post-wedding tips"
+      }
     }
   },
   "achievements": {
@@ -135,15 +171,96 @@
     "unlocked": "{{count}}/{{total}} unlocked",
     "next": "Next badge",
     "badges": {
-      "firstSteps": { "name": "First steps", "description": "Wedding date set" },
-      "budgetMaster": { "name": "Budget master", "description": "Initial budget set up" },
-      "guestList": { "name": "Golden list", "description": "Over 50 guests" },
-      "taskStarter": { "name": "5 tasks", "description": "Complete 5 tasks" },
-      "taskChampion": { "name": "Champion", "description": "Complete 20 tasks" },
-      "perfectionist": { "name": "Perfectionist", "description": "Complete 50 tasks" }
+      "firstSteps": {
+        "name": "First steps",
+        "description": "Wedding date set"
+      },
+      "budgetMaster": {
+        "name": "Budget master",
+        "description": "Initial budget set up"
+      },
+      "guestList": {
+        "name": "Golden list",
+        "description": "Over 50 guests"
+      },
+      "taskStarter": {
+        "name": "5 tasks",
+        "description": "Complete 5 tasks"
+      },
+      "taskChampion": {
+        "name": "Champion",
+        "description": "Complete 20 tasks"
+      },
+      "perfectionist": {
+        "name": "Perfectionist",
+        "description": "Complete 50 tasks"
+      }
     }
   },
   "summary": {
     "priceModalTitle": "Pricing details"
+  },
+  "profile": {
+    "title": "User profile",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "notSet": "Not set",
+    "loginInfo": "Login information",
+    "email": "Email",
+    "notAvailable": "Not available",
+    "changePassword": "Change password",
+    "accountStatus": "Account status",
+    "premium": "Premium",
+    "free": "Free",
+    "premiumActive": "✅ Premium account active — Lifetime access",
+    "upgradeCta": "Upgrade to Premium — €29 (lifetime access)",
+    "weddingDate": "Wedding date",
+    "guestCount": "Guest count",
+    "logout": "Log out",
+    "noInfo": "No information available",
+    "loggedOut": "Logged out",
+    "loggedOutDesc": "You are now logged out",
+    "logoutError": "Logout problem",
+    "errorTitle": "Error",
+    "emailUnavailable": "Could not retrieve your email",
+    "emailSent": "Email sent",
+    "emailSentDesc": "A reset email has been sent to your address",
+    "resetError": "Could not send the reset email"
+  },
+  "siteInternet": {
+    "title": "Your personalized wedding website",
+    "description": "An elegant, custom-made website to share your wedding details with your guests. After your request, we'll get back to you by email then WhatsApp to validate the images and copy of your site together.",
+    "price": "€50 — Turn-key website",
+    "priceDesc": "Editorial design, responsive, personalized to your style",
+    "included": "Included in your site:",
+    "features": {
+      "countdown": "Countdown",
+      "program": "Day program",
+      "rsvp": "RSVP form",
+      "accommodation": "Accommodation info",
+      "directions": "Directions",
+      "custom": "Custom design"
+    },
+    "seeExample": "See a sample site",
+    "sent": "Request sent!",
+    "sentDesc": "We'll get back to you by email then WhatsApp within 24h to build your site together.",
+    "namePlaceholder": "Your name *",
+    "emailPlaceholder": "Your email *",
+    "messagePlaceholder": "Wedding details (date, location, desired style...)",
+    "submitting": "Sending...",
+    "submitCta": "Request my site — €50",
+    "fillRequired": "Please fill in all required fields",
+    "submitSuccess": "Your request was sent successfully!",
+    "submitError": "Sending error. Please try again."
+  },
+  "rsvpTabs": {
+    "title": "RSVP & Guest list",
+    "subtitle": "Manage your guest list and attendance confirmations",
+    "manualTab": "Manual list",
+    "formTab": "Form-based list",
+    "manualTitle": "Manual guest management",
+    "manualDesc": "Add and manage your guests directly in the app. Ideal to track confirmations, personal notes and dietary preferences. You can import an Excel file or add guests one by one.",
+    "formTitle": "Automatic response collection",
+    "formDesc": "Create a custom RSVP form and share it with your guests by email or link. Responses are automatically collected and centralized here for real-time tracking."
   }
 }

@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ interface CoordinationData {
 }
 
 const PlanningPublic: React.FC = () => {
+  const { t, i18n } = useTranslation('monJourM');
   const { coordinationId } = useParams<{ coordinationId: string }>();
   const [coordinationData, setCoordinationData] = useState<CoordinationData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ const PlanningPublic: React.FC = () => {
     if (coordinationId) {
       loadPublicCoordinationData(coordinationId);
     } else {
-      setError('ID de coordination manquant');
+      setError(t('public.missingId'));
       setLoading(false);
     }
   }, [coordinationId]);
@@ -88,11 +90,11 @@ const PlanningPublic: React.FC = () => {
 
       if (coordError) {
         console.error('❌ Error loading coordination:', coordError);
-        throw new Error(`Erreur lors du chargement: ${coordError.message}`);
+        throw new Error(t('public.loadError', { message: coordError.message }));
       }
 
       if (!coordination) {
-        throw new Error('Planning non trouvé. Vérifiez le lien de partage.');
+        throw new Error(t('public.planningNotFound'));
       }
 
       // Détecter le type de planning basé sur l'URL ou les paramètres
@@ -166,29 +168,28 @@ const PlanningPublic: React.FC = () => {
   };
 
   const formatTime = (timeString?: string) => {
-    if (!timeString) return 'Heure non définie';
+    if (!timeString) return t('public.timeUndefined');
     
     try {
-      // Si c'est déjà au format HH:MM, on le retourne tel quel
       if (/^\d{2}:\d{2}$/.test(timeString)) {
         return timeString;
       }
       
-      // Sinon, on essaie de parser comme une date
       const date = new Date(timeString);
       if (isNaN(date.getTime())) {
         console.warn('formatTime: Invalid date string:', timeString);
-        return 'Heure non définie';
+        return t('public.timeUndefined');
       }
       
-      return date.toLocaleTimeString('fr-FR', {
+      const locale = i18n.language.startsWith('en') ? 'en-US' : 'fr-FR';
+      return date.toLocaleTimeString(locale, {
         hour: '2-digit',
         minute: '2-digit',
         timeZone: 'Europe/Paris'
       });
     } catch (error) {
       console.warn('formatTime error:', error, 'for timeString:', timeString);
-      return 'Heure non définie';
+      return t('public.timeUndefined');
     }
   };
 
@@ -213,7 +214,7 @@ const PlanningPublic: React.FC = () => {
     if (document.file_url) {
       window.open(document.file_url, '_blank');
     } else {
-      alert('Ce document n\'a pas de fichier associé.');
+      alert(t('public.noFile'));
     }
   };
 
@@ -245,7 +246,7 @@ const PlanningPublic: React.FC = () => {
                   <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
                     <div class="text-center">
                       <div class="text-2xl mb-2">📌</div>
-                      <p class="text-sm">Aperçu Pinterest non disponible</p>
+                      <p class="text-sm">${t('public.pinterestUnavailable')}</p>
                     </div>
                   </div>
                 `;
@@ -265,7 +266,7 @@ const PlanningPublic: React.FC = () => {
             className="text-blue-600 hover:underline text-xs mt-2 inline-flex items-center gap-1"
           >
             <ExternalLink className="h-3 w-3" />
-            Voir sur Pinterest
+            {t('public.seeOnPinterest')}
           </a>
         </div>
       </div>
@@ -290,8 +291,8 @@ const PlanningPublic: React.FC = () => {
       
       if (success) {
         toast({
-          title: "Export réussi",
-          description: "Votre planning a été exporté en PDF",
+          title: t('public.exportSuccess'),
+          description: t('public.exportSuccessDesc'),
         });
       } else {
         throw new Error('Export failed');
@@ -299,8 +300,8 @@ const PlanningPublic: React.FC = () => {
     } catch (error) {
       console.error('Error exporting PDF:', error);
       toast({
-        title: "Erreur d'export",
-        description: "Impossible d'exporter le PDF. Veuillez réessayer.",
+        title: t('public.exportError'),
+        description: t('public.exportErrorDesc'),
         variant: "destructive",
       });
     } finally {
@@ -312,12 +313,12 @@ const PlanningPublic: React.FC = () => {
     return (
       <>
         <Helmet>
-          <title>Chargement du planning | Mariable</title>
+          <title>{t('public.loadingTitle')}</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive mx-auto mb-4"></div>
-            <p className="text-gray-600">Chargement du planning...</p>
+            <p className="text-gray-600">{t('public.loading')}</p>
           </div>
         </div>
       </>
@@ -328,18 +329,18 @@ const PlanningPublic: React.FC = () => {
     return (
       <>
         <Helmet>
-          <title>Planning non trouvé | Mariable</title>
+          <title>{t('public.notFoundTitle')}</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center max-w-md mx-auto p-6">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Planning non accessible</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('public.notAccessible')}</h1>
             <p className="text-gray-600 mb-4">{error}</p>
             <div className="bg-gray-100 p-4 rounded-lg text-left text-sm">
-              <p className="font-medium text-gray-800 mb-2">Vérifiez :</p>
-              <p className="text-gray-600">• Que le lien est correct</p>
-              <p className="text-gray-600">• Que le planning existe toujours</p>
-              <p className="text-gray-600">• Votre connexion internet</p>
+              <p className="font-medium text-gray-800 mb-2">{t('public.checkList')}</p>
+              <p className="text-gray-600">{t('public.checkLink')}</p>
+              <p className="text-gray-600">{t('public.checkExists')}</p>
+              <p className="text-gray-600">{t('public.checkInternet')}</p>
             </div>
           </div>
         </div>
@@ -354,8 +355,8 @@ const PlanningPublic: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{coordination.title} - Planning partagé | Mariable</title>
-        <meta name="description" content={`Planning de mariage partagé : ${coordination.title}`} />
+        <title>{t('public.metaTitle', { title: coordination.title })}</title>
+        <meta name="description" content={t('public.metaDescription', { title: coordination.title })} />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -368,11 +369,11 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-sm md:text-base text-gray-600">
-                Jour-J par Mariable
+                {t('public.jourMByMariable')}
               </p>
               {coordination.wedding_date && (
                 <p className="text-xs md:text-sm text-wedding-olive font-medium mt-2">
-                  {new Date(coordination.wedding_date).toLocaleDateString('fr-FR', {
+                  {new Date(coordination.wedding_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -382,11 +383,10 @@ const PlanningPublic: React.FC = () => {
               )}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 md:p-3 mt-4 max-w-md mx-auto">
                 <p className="text-xs md:text-sm text-blue-700">
-                  <strong>Mode consultation :</strong> Ce planning est en lecture seule.
+                  <strong>{t('public.consultationMode')}</strong> {t('public.consultationModeDesc')}
                 </p>
               </div>
               
-              {/* Bouton Export PDF */}
               <div className="mt-4 text-center">
                 <Button 
                   onClick={handleExportPDF}
@@ -396,12 +396,12 @@ const PlanningPublic: React.FC = () => {
                   {isExporting ? (
                     <>
                       <Clock className="h-4 w-4 mr-2 animate-spin" />
-                      Export en cours...
+                      {t('public.exporting')}
                     </>
                   ) : (
                     <>
                       <Download className="h-4 w-4 mr-2" />
-                      Exporter en PDF
+                      {t('public.exportPdf')}
                     </>
                   )}
                 </Button>
@@ -420,15 +420,15 @@ const PlanningPublic: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Camera className="h-4 w-4" />
-                Photos
+                {t('public.tabs.photos')}
               </TabsTrigger>
               <TabsTrigger value="equipe" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Users className="h-4 w-4" />
-                Équipe ({teamMembers.length})
+                {t('public.tabs.team')} ({teamMembers.length})
               </TabsTrigger>
               <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <FileText className="h-4 w-4" />
-                Documents ({documents.length + pinterestLinks.length})
+                {t('public.tabs.documents')} ({documents.length + pinterestLinks.length})
               </TabsTrigger>
             </TabsList>
             
@@ -440,7 +440,7 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>Planning</span>
+                  <span>{t('public.tabs.planning')}</span>
                   <span className="text-[10px] opacity-70">({filteredTasks.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -448,14 +448,14 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Camera className="h-4 w-4" />
-                  <span>Photos</span>
+                  <span>{t('public.tabs.photos')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="equipe" 
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Users className="h-4 w-4" />
-                  <span>Équipe</span>
+                  <span>{t('public.tabs.team')}</span>
                   <span className="text-[10px] opacity-70">({teamMembers.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -463,7 +463,7 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <FileText className="h-4 w-4" />
-                  <span>Docs</span>
+                  <span>{t('public.tabs.docs')}</span>
                   <span className="text-[10px] opacity-70">({documents.length + pinterestLinks.length})</span>
                 </TabsTrigger>
               </TabsList>
@@ -479,7 +479,7 @@ const PlanningPublic: React.FC = () => {
               <Card>
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-                    <CardTitle>Planning</CardTitle>
+                    <CardTitle>{t("public.planningTitle")}</CardTitle>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       {/* Filtre par jour */}
@@ -488,7 +488,7 @@ const PlanningPublic: React.FC = () => {
                           <Calendar className="h-4 w-4 text-gray-500" />
                           <Select value={selectedDay} onValueChange={setSelectedDay}>
                             <SelectTrigger className="w-40 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                              <SelectValue placeholder="Choisir un jour" />
+                              <SelectValue placeholder={t("public.chooseDay")} />
                             </SelectTrigger>
                             <SelectContent>
                               {availableDays.map((day) => (
@@ -507,10 +507,10 @@ const PlanningPublic: React.FC = () => {
                           <Filter className="h-4 w-4 text-gray-500" />
                           <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
                             <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                              <SelectValue placeholder="Filtrer par membre" />
+                              <SelectValue placeholder={t("public.filterMember")} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
+                              <SelectItem value="all" className="font-medium text-wedding-olive">{t("public.allTasks")}</SelectItem>
                               {teamMembers.map((member) => (
                                 <SelectItem key={member.id} value={member.id}>
                                   {member.name} ({member.role})
@@ -569,7 +569,7 @@ const PlanningPublic: React.FC = () => {
                                    <div className="flex flex-wrap items-center gap-1 md:gap-2 mt-2 text-xs">
                                      {task.priority !== 'medium' && (
                                        <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
-                                         {task.priority === 'high' ? 'Élevée' : 'Faible'}
+                                         {task.priority === 'high' ? t('public.priority.high') : t('public.priority.low')}
                                        </Badge>
                                      )}
                                     <span className="text-gray-500 capitalize text-xs">{task.category}</span>
@@ -611,7 +611,7 @@ const PlanningPublic: React.FC = () => {
                               </div>
                             </div>
                             
-                            {/* Bouton "Voir plus" sur mobile uniquement si description existe */}
+                            {/* Bouton "{t("public.seeMore")}" sur mobile uniquement si description existe */}
                             {hasDescription && (
                               <div className="mt-3 md:hidden">
                                 <button
@@ -620,14 +620,14 @@ const PlanningPublic: React.FC = () => {
                                 >
                                   {isExpanded ? (
                                     <>
-                                      Voir moins
+                                      {t("public.seeLess")}
                                       <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                                       </svg>
                                     </>
                                   ) : (
                                     <>
-                                      Voir plus
+                                      {t("public.seeMore")}
                                       <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                       </svg>
@@ -663,7 +663,7 @@ const PlanningPublic: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <User className="h-5 w-5" />
-                      Personnes ({people.length})
+                      {t("public.people")} ({people.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -697,7 +697,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Aucune personne dans l'équipe</p>
+                        <p>{t('public.noPerson')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -708,7 +708,7 @@ const PlanningPublic: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Building className="h-5 w-5" />
-                      Prestataires ({vendors.length})
+                      {t("public.vendors")} ({vendors.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -742,7 +742,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Aucun prestataire dans l'équipe</p>
+                        <p>{t('public.noVendor')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -756,9 +756,9 @@ const PlanningPublic: React.FC = () => {
                 {/* Section Documents */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Documents partagés</CardTitle>
+                    <CardTitle>{t("public.sharedDocs")}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Cliquez sur un document pour le visualiser ou le télécharger.
+                      {t("public.sharedDocsHint")}
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -783,16 +783,16 @@ const PlanningPublic: React.FC = () => {
                                   className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
                                 >
                                   <Eye className="h-4 w-4" />
-                                  Visualiser
+                                  {t("public.view")}
                                 </button>
                               ) : (
                                 <span className="text-sm text-gray-400 flex items-center gap-1">
                                   <FileText className="h-4 w-4" />
-                                  Document texte
+                                  {t("public.textDoc")}
                                 </span>
                               )}
                               <p className="text-xs text-gray-400">
-                                {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                                {new Date(doc.created_at).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR')}
                               </p>
                             </div>
                           </div>
@@ -801,7 +801,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>Aucun document partagé</p>
+                        <p>{t('public.noDoc')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -811,9 +811,9 @@ const PlanningPublic: React.FC = () => {
                 {pinterestLinks.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Inspirations Pinterest</CardTitle>
+                      <CardTitle>{t("public.pinterestTitle")}</CardTitle>
                       <p className="text-sm text-muted-foreground">
-                        Idées et inspirations partagées par les mariés.
+                        {t("public.pinterestHint")}
                       </p>
                     </CardHeader>
                     <CardContent>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,6 +14,7 @@ interface SiteInternetModalProps {
 }
 
 const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChange }) => {
+  const { t } = useTranslation('dashboard');
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [message, setMessage] = useState('');
@@ -23,7 +25,7 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
     e.preventDefault();
     
     if (!name.trim() || !email.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires');
+      toast.error(t('siteInternet.fillRequired'));
       return;
     }
 
@@ -40,11 +42,11 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
       if (error) throw error;
 
       setIsSubmitted(true);
-      toast.success('Votre demande a été envoyée avec succès !');
+      toast.success(t('siteInternet.submitSuccess'));
       console.log('✅ SiteInternetModal submit completed');
     } catch (error) {
       console.error('❌ SiteInternetModal submit failed:', error);
-      toast.error('Erreur lors de l\'envoi. Veuillez réessayer.');
+      toast.error(t('siteInternet.submitError'));
     } finally {
       setIsSubmitting(false);
     }
@@ -60,34 +62,41 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
     onOpenChange(open);
   };
 
+  const features = [
+    t('siteInternet.features.countdown'),
+    t('siteInternet.features.program'),
+    t('siteInternet.features.rsvp'),
+    t('siteInternet.features.accommodation'),
+    t('siteInternet.features.directions'),
+    t('siteInternet.features.custom'),
+  ];
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-w-lg rounded-none border-editorial-noir/10">
         <DialogHeader>
           <DialogTitle className="text-xl font-serif text-editorial-noir">
-            Votre site de mariage personnalisé
+            {t('siteInternet.title')}
           </DialogTitle>
           <DialogDescription className="text-editorial-noir/60">
-            Un site internet élégant et sur-mesure pour partager les détails de votre mariage avec vos invités. Après votre demande, nous vous recontacterons par email puis par WhatsApp pour valider ensemble les images et textes de votre site.
+            {t('siteInternet.description')}
           </DialogDescription>
         </DialogHeader>
 
-        {/* Tarif */}
         <div className="bg-editorial-beige p-4 border border-editorial-noir/10">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-lg font-semibold text-editorial-noir">50 € — Site clé en main</p>
-              <p className="text-sm text-editorial-noir/60 mt-1">Design éditorial, responsive, personnalisé à votre image</p>
+              <p className="text-lg font-semibold text-editorial-noir">{t('siteInternet.price')}</p>
+              <p className="text-sm text-editorial-noir/60 mt-1">{t('siteInternet.priceDesc')}</p>
             </div>
             <Globe className="h-8 w-8 text-editorial-noir/30" />
           </div>
         </div>
 
-        {/* Fonctionnalités */}
         <div className="space-y-2 text-sm text-editorial-noir/70">
-          <p className="font-medium text-editorial-noir">Inclus dans votre site :</p>
+          <p className="font-medium text-editorial-noir">{t('siteInternet.included')}</p>
           <ul className="grid grid-cols-2 gap-1.5">
-            {['Compte à rebours', 'Programme du jour', 'Formulaire RSVP', 'Infos hébergements', 'Plan d\'accès', 'Design sur-mesure'].map((item) => (
+            {features.map((item) => (
               <li key={item} className="flex items-center gap-1.5">
                 <Check className="h-3.5 w-3.5 text-wedding-olive" />
                 {item}
@@ -96,27 +105,25 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
           </ul>
         </div>
 
-        {/* Exemple */}
         <Button
           variant="outline"
           className="w-full rounded-none border-editorial-noir/20 text-editorial-noir"
           onClick={() => window.open('/exemplesite', '_blank')}
         >
           <ExternalLink className="h-4 w-4 mr-2" />
-          Voir un exemple de site
+          {t('siteInternet.seeExample')}
         </Button>
 
-        {/* Formulaire ou confirmation */}
         {isSubmitted ? (
           <div className="text-center py-4">
             <Check className="h-10 w-10 text-wedding-olive mx-auto mb-2" />
-            <p className="font-medium text-editorial-noir">Demande envoyée !</p>
-            <p className="text-sm text-editorial-noir/60 mt-1">Nous vous recontacterons par email puis WhatsApp sous 24h pour créer votre site ensemble.</p>
+            <p className="font-medium text-editorial-noir">{t('siteInternet.sent')}</p>
+            <p className="text-sm text-editorial-noir/60 mt-1">{t('siteInternet.sentDesc')}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-3">
             <Input
-              placeholder="Votre nom *"
+              placeholder={t('siteInternet.namePlaceholder')}
               value={name}
               onChange={(e) => setName(e.target.value)}
               className="rounded-none border-editorial-noir/20"
@@ -124,14 +131,14 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
             />
             <Input
               type="email"
-              placeholder="Votre email *"
+              placeholder={t('siteInternet.emailPlaceholder')}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="rounded-none border-editorial-noir/20"
               required
             />
             <Textarea
-              placeholder="Détails de votre mariage (date, lieu, style souhaité...)"
+              placeholder={t('siteInternet.messagePlaceholder')}
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               className="rounded-none border-editorial-noir/20 min-h-[80px]"
@@ -141,7 +148,7 @@ const SiteInternetModal: React.FC<SiteInternetModalProps> = ({ open, onOpenChang
               disabled={isSubmitting}
               className="w-full bg-editorial-noir hover:bg-editorial-noir/80 text-white rounded-none"
             >
-              {isSubmitting ? 'Envoi en cours...' : 'Demander mon site — 50 €'}
+              {isSubmitting ? t('siteInternet.submitting') : t('siteInternet.submitCta')}
             </Button>
           </form>
         )}

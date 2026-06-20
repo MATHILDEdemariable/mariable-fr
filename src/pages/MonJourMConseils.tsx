@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import MonJourMLayout from '@/components/mon-jour-m/MonJourMLayout';
 import AdviceSidebar from '@/components/wedding-day/components/AdviceSidebar';
 import { Card, CardContent } from '@/components/ui/card';
 
 const MonJourMConseils: React.FC = () => {
+  const { t } = useTranslation('monJourM');
   const [coordinationId, setCoordinationId] = useState<string>('');
 
   useEffect(() => {
@@ -36,8 +38,8 @@ const MonJourMConseils: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>Conseils Jour J - Mon Jour J | Mariable</title>
-        <meta name="description" content="Découvrez nos conseils d'experts pour bien organiser votre jour de mariage. Timing, photos, gestion des invités et moments clés." />
+        <title>{t('pages.advice.metaTitle')}</title>
+        <meta name="description" content={t('pages.advice.metaDescription')} />
       </Helmet>
 
       <MonJourMLayout coordinationId={coordinationId}>

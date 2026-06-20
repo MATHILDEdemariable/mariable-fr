@@ -107,10 +107,22 @@
     "priority": "Priorité",
     "done": "Fait",
     "defaults": {
-      "budget": { "title": "Définir votre budget", "description": "Première étape essentielle" },
-      "rsvp": { "title": "Lancer les invitations", "description": "Créer vos RSVP en ligne" },
-      "venue": { "title": "Trouver un lieu", "description": "Explorer les domaines" },
-      "checklist": { "title": "Check-list mariage", "description": "Suivre vos préparatifs" }
+      "budget": {
+        "title": "Définir votre budget",
+        "description": "Première étape essentielle"
+      },
+      "rsvp": {
+        "title": "Lancer les invitations",
+        "description": "Créer vos RSVP en ligne"
+      },
+      "venue": {
+        "title": "Trouver un lieu",
+        "description": "Explorer les domaines"
+      },
+      "checklist": {
+        "title": "Check-list mariage",
+        "description": "Suivre vos préparatifs"
+      }
     }
   },
   "tools": {
@@ -120,14 +132,38 @@
     "arsenalHeading": "Votre arsenal",
     "finalStretchHeading": "Dernière ligne droite",
     "items": {
-      "quiz": { "title": "Quiz Mariage", "description": "Testez votre niveau" },
-      "budget": { "title": "Budget", "description": "Gérez vos dépenses" },
-      "rsvp": { "title": "RSVP Invités", "description": "Confirmations" },
-      "checklist": { "title": "Check-list", "description": "Vos préparatifs" },
-      "drinks": { "title": "Boissons", "description": "Calculatrice" },
-      "seating": { "title": "Plan de table", "description": "Placez vos invités" },
-      "coordination": { "title": "Coordination Jour J", "description": "Planning détaillé" },
-      "after": { "title": "Après le mariage", "description": "Conseils post jour J" }
+      "quiz": {
+        "title": "Quiz Mariage",
+        "description": "Testez votre niveau"
+      },
+      "budget": {
+        "title": "Budget",
+        "description": "Gérez vos dépenses"
+      },
+      "rsvp": {
+        "title": "RSVP Invités",
+        "description": "Confirmations"
+      },
+      "checklist": {
+        "title": "Check-list",
+        "description": "Vos préparatifs"
+      },
+      "drinks": {
+        "title": "Boissons",
+        "description": "Calculatrice"
+      },
+      "seating": {
+        "title": "Plan de table",
+        "description": "Placez vos invités"
+      },
+      "coordination": {
+        "title": "Coordination Jour J",
+        "description": "Planning détaillé"
+      },
+      "after": {
+        "title": "Après le mariage",
+        "description": "Conseils post jour J"
+      }
     }
   },
   "achievements": {
@@ -135,15 +171,96 @@
     "unlocked": "{{count}}/{{total}} débloqués",
     "next": "Prochain badge",
     "badges": {
-      "firstSteps": { "name": "Premiers pas", "description": "Date de mariage définie" },
-      "budgetMaster": { "name": "Maître du budget", "description": "Budget initial configuré" },
-      "guestList": { "name": "Liste d'or", "description": "Plus de 50 invités" },
-      "taskStarter": { "name": "5 tâches", "description": "Complétez 5 tâches" },
-      "taskChampion": { "name": "Champion", "description": "Complétez 20 tâches" },
-      "perfectionist": { "name": "Perfectionniste", "description": "Complétez 50 tâches" }
+      "firstSteps": {
+        "name": "Premiers pas",
+        "description": "Date de mariage définie"
+      },
+      "budgetMaster": {
+        "name": "Maître du budget",
+        "description": "Budget initial configuré"
+      },
+      "guestList": {
+        "name": "Liste d'or",
+        "description": "Plus de 50 invités"
+      },
+      "taskStarter": {
+        "name": "5 tâches",
+        "description": "Complétez 5 tâches"
+      },
+      "taskChampion": {
+        "name": "Champion",
+        "description": "Complétez 20 tâches"
+      },
+      "perfectionist": {
+        "name": "Perfectionniste",
+        "description": "Complétez 50 tâches"
+      }
     }
   },
   "summary": {
     "priceModalTitle": "Détail des tarifs"
+  },
+  "profile": {
+    "title": "Profil utilisateur",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "notSet": "Non défini",
+    "loginInfo": "Informations de connexion",
+    "email": "Email",
+    "notAvailable": "Non disponible",
+    "changePassword": "Changer le mot de passe",
+    "accountStatus": "Statut du compte",
+    "premium": "Premium",
+    "free": "Gratuit",
+    "premiumActive": "✅ Compte Premium actif — Accès à vie",
+    "upgradeCta": "Passer au Premium — 29€ (accès à vie)",
+    "weddingDate": "Date de mariage",
+    "guestCount": "Nombre d'invités",
+    "logout": "Se déconnecter",
+    "noInfo": "Aucune information disponible",
+    "loggedOut": "Déconnecté",
+    "loggedOutDesc": "Vous êtes maintenant déconnecté",
+    "logoutError": "Problème lors de la déconnexion",
+    "errorTitle": "Erreur",
+    "emailUnavailable": "Impossible de récupérer votre email",
+    "emailSent": "Email envoyé",
+    "emailSentDesc": "Un email de réinitialisation a été envoyé à votre adresse",
+    "resetError": "Impossible d'envoyer l'email de réinitialisation"
+  },
+  "siteInternet": {
+    "title": "Votre site de mariage personnalisé",
+    "description": "Un site internet élégant et sur-mesure pour partager les détails de votre mariage avec vos invités. Après votre demande, nous vous recontacterons par email puis par WhatsApp pour valider ensemble les images et textes de votre site.",
+    "price": "50 € — Site clé en main",
+    "priceDesc": "Design éditorial, responsive, personnalisé à votre image",
+    "included": "Inclus dans votre site :",
+    "features": {
+      "countdown": "Compte à rebours",
+      "program": "Programme du jour",
+      "rsvp": "Formulaire RSVP",
+      "accommodation": "Infos hébergements",
+      "directions": "Plan d'accès",
+      "custom": "Design sur-mesure"
+    },
+    "seeExample": "Voir un exemple de site",
+    "sent": "Demande envoyée !",
+    "sentDesc": "Nous vous recontacterons par email puis WhatsApp sous 24h pour créer votre site ensemble.",
+    "namePlaceholder": "Votre nom *",
+    "emailPlaceholder": "Votre email *",
+    "messagePlaceholder": "Détails de votre mariage (date, lieu, style souhaité...)",
+    "submitting": "Envoi en cours...",
+    "submitCta": "Demander mon site — 50 €",
+    "fillRequired": "Veuillez remplir tous les champs obligatoires",
+    "submitSuccess": "Votre demande a été envoyée avec succès !",
+    "submitError": "Erreur lors de l'envoi. Veuillez réessayer."
+  },
+  "rsvpTabs": {
+    "title": "RSVP & Liste d'invités",
+    "subtitle": "Gérez votre liste d'invités et les confirmations de présence",
+    "manualTab": "Liste Manuelle",
+    "formTab": "Liste Avec l'envoi d'un Formulaire",
+    "manualTitle": "Gestion manuelle de vos invités",
+    "manualDesc": "Ajoutez et gérez vos invités directement dans l'application. Idéal pour suivre les confirmations, notes personnelles et régimes alimentaires. Vous pouvez importer un fichier Excel ou ajouter les invités un par un.",
+    "formTitle": "Collecte automatique des réponses",
+    "formDesc": "Créez un formulaire RSVP personnalisé et partagez-le avec vos invités par email ou lien. Les réponses sont automatiquement collectées et centralisées ici pour un suivi en temps réel."
   }
 }

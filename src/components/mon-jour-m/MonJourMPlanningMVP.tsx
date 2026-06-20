@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { PlanningProvider } from '../wedding-day/context/PlanningContext';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import MonJourMPlanningContent from './MonJourMPlanningContent';
 import { PlanningGuidePopup } from './PlanningGuidePopup';
 
 const MonJourMPlanningMVP: React.FC = () => {
+  const { t } = useTranslation('monJourM');
   const { 
     coordination, 
     isLoading: coordinationLoading, 
@@ -23,7 +25,7 @@ const MonJourMPlanningMVP: React.FC = () => {
   if (coordinationError) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="text-red-600">Erreur de chargement de la coordination</div>
+        <div className="text-red-600">{t('team.loadingError')}</div>
       </div>
     );
   }

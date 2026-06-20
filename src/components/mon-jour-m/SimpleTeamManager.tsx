@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,7 @@ interface SimpleTeamManagerProps {
 }
 
 const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) => {
+  const { t } = useTranslation('monJourM');
   const { toast } = useToast();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,15 +54,17 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
     notes: ''
   });
 
+  const translateRole = (role: string) => t(`team.roles.${role}`, role);
+
   // Premium action hooks
   const addMemberAction = usePremiumAction({
-    feature: "Ajout de membre d'équipe",
-    description: "Pour ajouter des membres à votre équipe de mariage, vous devez être abonné à notre version premium."
+    feature: t('team.premium.addFeature'),
+    description: t('team.premium.addDesc')
   });
 
   const editMemberAction = usePremiumAction({
-    feature: "Modification de membre d'équipe", 
-    description: "Pour modifier les informations des membres de votre équipe, vous devez être abonné à notre version premium."
+    feature: t('team.premium.editFeature'),
+    description: t('team.premium.editDesc')
   });
 
   // Charger les membres de l'équipe
@@ -88,8 +92,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
     } catch (error) {
       console.error('Erreur chargement équipe:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger l'équipe",
+        title: t('team.toasts.error'),
+        description: t('team.toasts.loadError'),
         variant: "destructive"
       });
     } finally {
@@ -118,8 +122,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
   const handleAddMember = async () => {
     if (!formData.name.trim() || !formData.role.trim()) {
       toast({
-        title: "Erreur",
-        description: "Le nom et le rôle sont obligatoires",
+        title: t('team.toasts.error'),
+        description: t('team.toasts.nameRoleRequired'),
         variant: "destructive"
       });
       return;
@@ -143,8 +147,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         if (error) throw error;
 
         toast({
-          title: "Succès",
-          description: "Membre ajouté avec succès"
+          title: t('team.toasts.success'),
+          description: t('team.toasts.added')
         });
 
         resetForm();
@@ -153,8 +157,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
       } catch (error) {
         console.error('Erreur ajout membre:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible d'ajouter le membre",
+          title: t('team.toasts.error'),
+          description: t('team.toasts.addError'),
           variant: "destructive"
         });
       }
@@ -164,8 +168,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
   const handleUpdateMember = async () => {
     if (!editingMember || !editingMember.name.trim() || !editingMember.role.trim()) {
       toast({
-        title: "Erreur",
-        description: "Le nom et le rôle sont obligatoires",
+        title: t('team.toasts.error'),
+        description: t('team.toasts.nameRoleRequired'),
         variant: "destructive"
       });
       return;
@@ -188,8 +192,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         if (error) throw error;
 
         toast({
-          title: "Succès",
-          description: "Membre modifié avec succès"
+          title: t('team.toasts.success'),
+          description: t('team.toasts.updated')
         });
 
         setEditingMember(null);
@@ -197,8 +201,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
       } catch (error) {
         console.error('Erreur modification membre:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible de modifier le membre",
+          title: t('team.toasts.error'),
+          description: t('team.toasts.updateError'),
           variant: "destructive"
         });
       }
@@ -207,7 +211,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
 
   // Supprimer un membre
   const handleDeleteMember = async (memberId: string) => {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce membre ?')) return;
+    if (!confirm(t('team.deleteConfirm'))) return;
 
     try {
       const { error } = await supabase
@@ -218,16 +222,16 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
       if (error) throw error;
 
       toast({
-        title: "Succès",
-        description: "Membre supprimé avec succès"
+        title: t('team.toasts.success'),
+        description: t('team.toasts.deleted')
       });
 
       await loadTeamMembers();
     } catch (error) {
       console.error('Erreur suppression membre:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le membre",
+        title: t('team.toasts.error'),
+        description: t('team.toasts.deleteError'),
         variant: "destructive"
       });
     }
@@ -247,23 +251,23 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h3 className="text-lg font-medium">Équipe du Jour J</h3>
+            <h3 className="text-lg font-medium">{t('team.title')}</h3>
             <p className="text-sm text-muted-foreground mb-3">
-              Créez votre équipe, faites votre planning, enregistrez les documents et partagez.
+              {t('team.intro')}
             </p>
             <p className="text-sm text-muted-foreground">
-              Gérez votre équipe et leurs rôles
+              {t('team.subtitle')}
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
             <SharePublicButton coordinationId={coordination.id} />
             <Button variant="outline" onClick={() => setShowBulkModal(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Ajout en masse
+              {t('team.bulkAdd')}
             </Button>
             <Button onClick={() => setShowAddModal(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter un membre
+              {t('team.addMember')}
             </Button>
           </div>
         </div>
@@ -280,13 +284,13 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
           <Card>
             <CardContent className="py-12 text-center">
               <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium mb-2">Aucun membre dans l'équipe</h3>
+              <h3 className="text-lg font-medium mb-2">{t('team.empty.title')}</h3>
               <p className="text-muted-foreground mb-4">
-                Commencez par ajouter les personnes clés de votre mariage
+                {t('team.empty.desc')}
               </p>
               <Button onClick={() => setShowAddModal(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter un membre
+                {t('team.addMember')}
               </Button>
             </CardContent>
           </Card>
@@ -305,7 +309,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                            ) : (
                              <User className="h-3 w-3" />
                            )}
-                           {member.role}
+                           {translateRole(member.role)}
                          </Badge>
                        </div>
                       {member.notes && (
@@ -357,38 +361,38 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         <Dialog open={showAddModal} onOpenChange={setShowAddModal}>
           <DialogContent className="max-w-md">
             <DialogHeader>
-              <DialogTitle>Nouveau membre</DialogTitle>
+              <DialogTitle>{t('team.modal.newTitle')}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">Nom *</Label>
+                <Label htmlFor="name">{t('team.modal.nameLabel')}</Label>
                 <Input
                   id="name"
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Ex: Marie Dupont"
+                  placeholder={t('team.modal.namePlaceholder')}
                 />
               </div>
 
               <div>
-                <Label htmlFor="role">Rôle *</Label>
+                <Label htmlFor="role">{t('team.modal.roleLabel')}</Label>
                 <Select 
                   value={formData.role} 
                   onValueChange={(value) => setFormData({ ...formData, role: value })}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un rôle" />
+                    <SelectValue placeholder={t('team.modal.rolePlaceholder')} />
                   </SelectTrigger>
                   <SelectContent>
                     {TEAM_ROLES.map((role) => (
-                      <SelectItem key={role} value={role}>{role}</SelectItem>
+                      <SelectItem key={role} value={role}>{translateRole(role)}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="email">Email</Label>
+                <Label htmlFor="email">{t('team.modal.emailLabel')}</Label>
                 <Input
                   id="email"
                   type="email"
@@ -399,22 +403,22 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
               </div>
 
               <div>
-                <Label htmlFor="phone">Téléphone</Label>
+                <Label htmlFor="phone">{t('team.modal.phoneLabel')}</Label>
                 <Input
                   id="phone"
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="06 12 34 56 78"
+                  placeholder={t('team.modal.phonePlaceholder')}
                 />
               </div>
 
               <div>
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="notes">{t('team.modal.notesLabel')}</Label>
                 <Textarea
                   id="notes"
                   value={formData.notes}
                   onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  placeholder="Informations supplémentaires..."
+                  placeholder={t('team.modal.notesPlaceholder')}
                   rows={2}
                 />
               </div>
@@ -424,13 +428,13 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                   onClick={handleAddMember} 
                   disabled={!formData.name.trim() || !formData.role.trim()}
                 >
-                  Ajouter
+                  {t('team.modal.add')}
                 </Button>
                 <Button variant="outline" onClick={() => {
                   resetForm();
                   setShowAddModal(false);
                 }}>
-                  Annuler
+                  {t('team.modal.cancel')}
                 </Button>
               </div>
             </div>
@@ -442,11 +446,11 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
           <Dialog open={!!editingMember} onOpenChange={() => setEditingMember(null)}>
             <DialogContent className="max-w-md">
               <DialogHeader>
-                <DialogTitle>Modifier le membre</DialogTitle>
+                <DialogTitle>{t('team.modal.editTitle')}</DialogTitle>
               </DialogHeader>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="edit-name">Nom *</Label>
+                  <Label htmlFor="edit-name">{t('team.modal.nameLabel')}</Label>
                   <Input
                     id="edit-name"
                     value={editingMember.name}
@@ -455,7 +459,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-role">Rôle *</Label>
+                  <Label htmlFor="edit-role">{t('team.modal.roleLabel')}</Label>
                   <Select 
                     value={editingMember.role} 
                     onValueChange={(value) => setEditingMember({ ...editingMember, role: value })}
@@ -465,14 +469,14 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                     </SelectTrigger>
                     <SelectContent>
                       {TEAM_ROLES.map((role) => (
-                        <SelectItem key={role} value={role}>{role}</SelectItem>
+                        <SelectItem key={role} value={role}>{translateRole(role)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-email">Email</Label>
+                  <Label htmlFor="edit-email">{t('team.modal.emailLabel')}</Label>
                   <Input
                     id="edit-email"
                     type="email"
@@ -482,7 +486,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-phone">Téléphone</Label>
+                  <Label htmlFor="edit-phone">{t('team.modal.phoneLabel')}</Label>
                   <Input
                     id="edit-phone"
                     value={editingMember.phone || ''}
@@ -491,7 +495,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                 </div>
 
                 <div>
-                  <Label htmlFor="edit-notes">Notes</Label>
+                  <Label htmlFor="edit-notes">{t('team.modal.notesLabel')}</Label>
                   <Textarea
                     id="edit-notes"
                     value={editingMember.notes || ''}
@@ -505,10 +509,10 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                     onClick={handleUpdateMember} 
                     disabled={!editingMember.name.trim() || !editingMember.role.trim()}
                   >
-                    Sauvegarder
+                    {t('team.modal.save')}
                   </Button>
                   <Button variant="outline" onClick={() => setEditingMember(null)}>
-                    Annuler
+                    {t('team.modal.cancel')}
                   </Button>
                 </div>
               </div>
