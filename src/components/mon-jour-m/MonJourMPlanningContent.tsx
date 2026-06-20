@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +28,7 @@ interface ReferenceTimeParams {
 const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({ 
   coordinationId 
 }) => {
+  const { t } = useTranslation('monJourM');
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -90,8 +92,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     } catch (error) {
       console.error('❌ Error saving events:', error);
       toast({
-        title: "Erreur de sauvegarde",
-        description: "Impossible de sauvegarder les modifications.",
+        title: t('planning.toasts.saveError'),
+        description: t('planning.toasts.saveErrorDesc'),
         variant: "destructive"
       });
     } finally {
@@ -238,8 +240,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       } catch (error) {
         console.error('❌ Error loading existing planning:', error);
         toast({
-          title: "Erreur de chargement",
-          description: "Impossible de charger le planning existant.",
+          title: t('planning.toasts.loadError'),
+          description: t('planning.toasts.loadErrorDesc'),
           variant: "destructive"
         });
         setEvents([]);
@@ -303,8 +305,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       } catch (error) {
         console.error('❌ Error reloading planning data:', error);
         toast({
-          title: "Erreur de rechargement",
-          description: "Impossible de recharger le planning.",
+          title: t('planning.toasts.reloadError'),
+          description: t('planning.toasts.reloadErrorDesc'),
           variant: "destructive"
         });
         return;
@@ -370,16 +372,18 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       });
       
       toast({
-        title: "Planning mis à jour",
-        description: `${newEvents.length} nouvelle${newEvents.length > 1 ? 's' : ''} étape${newEvents.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'}.`
+        title: t('planning.toasts.updated'),
+        description: newEvents.length > 1
+          ? t('planning.toasts.addedPlural', { count: newEvents.length })
+          : t('planning.toasts.addedSingular', { count: newEvents.length })
       });
       
       setIsTaskModalOpen(false);
     } catch (error) {
       console.error('❌ Error handling AI planning:', error);
       toast({
-        title: "Erreur d'intégration",
-        description: "Impossible d'ajouter les événements générés. Détails: " + (error instanceof Error ? error.message : 'Erreur inconnue'),
+        title: t('planning.toasts.integrationError'),
+        description: t('planning.toasts.integrationErrorDesc', { message: error instanceof Error ? error.message : t('planning.toasts.unknownError') }),
         variant: "destructive"
       });
     }
@@ -428,7 +432,9 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
     if (selectedEvents.length === 0) return;
 
     const confirmed = window.confirm(
-      `Êtes-vous sûr de vouloir supprimer ${selectedEvents.length} tâche${selectedEvents.length > 1 ? 's' : ''} ?`
+      selectedEvents.length > 1
+        ? t('planning.deleteConfirm_other', { count: selectedEvents.length })
+        : t('planning.deleteConfirm_one', { count: selectedEvents.length })
     );
 
     if (!confirmed) return;
@@ -447,14 +453,16 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       setSelectionMode(false);
 
       toast({
-        title: "Tâches supprimées",
-        description: `${selectedEvents.length} tâche${selectedEvents.length > 1 ? 's ont été supprimées' : ' a été supprimée'}.`
+        title: t('planning.toasts.tasksDeleted'),
+        description: selectedEvents.length > 1
+          ? t('planning.toasts.deletedPlural', { count: selectedEvents.length })
+          : t('planning.toasts.deletedSingular', { count: selectedEvents.length })
       });
     } catch (error) {
       console.error('❌ Error deleting selected events:', error);
       toast({
-        title: "Erreur de suppression",
-        description: "Impossible de supprimer les tâches sélectionnées.",
+        title: t('planning.toasts.deleteError'),
+        description: t('planning.toasts.deleteErrorDesc'),
         variant: "destructive"
       });
     }
@@ -483,11 +491,11 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
       <div className="flex items-center gap-6 text-sm text-muted-foreground mb-4">
         <div className="flex items-center gap-2">
           <Calendar className="h-4 w-4 text-wedding-olive" />
-          <span>{stats.total} étapes</span>
+          <span>{t('planning.stats.steps', { count: stats.total })}</span>
         </div>
         <div className="flex items-center gap-2">
           <Users className="h-4 w-4 text-blue-600" />
-          <span>{stats.assigned} assignées</span>
+          <span>{t('planning.stats.assigned', { count: stats.assigned })}</span>
         </div>
       </div>
 
@@ -501,10 +509,9 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           className="shrink-0 text-muted-foreground hover:text-primary"
         >
           <Heart className="h-4 w-4 mr-2" />
-          Exemple mariage de Mathilde
+          {t('planning.mathildeExample')}
         </Button>
         
-        {/* Bouton d'aide pour relancer l'onboarding */}
         <Button
           variant="outline"
           size="sm"
@@ -512,7 +519,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           className="sm:ml-auto shrink-0 text-muted-foreground hover:text-primary"
         >
           <HelpCircle className="h-4 w-4 mr-2" />
-          Guide d'utilisation
+          {t('planning.userGuide')}
         </Button>
       </div>
       
@@ -521,12 +528,12 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
           <DialogTrigger asChild>
             <Button className="bg-wedding-olive hover:bg-wedding-olive/90 flex-1">
               <Plus className="h-4 w-4 mr-2" />
-              Ajouter une étape
+              {t('planning.addStep')}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Ajouter une nouvelle étape</DialogTitle>
+              <DialogTitle>{t('planning.addStepTitle')}</DialogTitle>
             </DialogHeader>
             <UnifiedTaskModal
               coordinationId={coordinationId}
@@ -548,15 +555,14 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             className={selectionMode ? "bg-red-600 hover:bg-red-700" : "text-red-600 border-red-300 hover:bg-red-50"}
           >
             {selectionMode ? <X className="h-4 w-4 mr-2" /> : <Trash2 className="h-4 w-4 mr-2" />}
-            {selectionMode ? "Annuler" : "Supprimer des étapes"}
+            {selectionMode ? t('planning.cancelSelection') : t('planning.deleteSteps')}
           </Button>
         )}
 
-        {/* Indicateur de sauvegarde */}
         {isSaving && (
           <div className="flex items-center gap-2 text-sm text-gray-600">
             <Save className="h-4 w-4 animate-pulse" />
-            Sauvegarde...
+            {t('planning.saving')}
           </div>
         )}
       </div>
@@ -570,13 +576,15 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             onClick={handleSelectAll}
             className="text-blue-700 hover:bg-blue-100"
           >
-            {selectedEvents.length === events.length ? "Tout désélectionner" : "Tout sélectionner"}
+            {selectedEvents.length === events.length ? t('planning.deselectAll') : t('planning.selectAll')}
           </Button>
           
           {selectedEvents.length > 0 && (
             <>
               <Badge variant="secondary">
-                {selectedEvents.length} sélectionnée{selectedEvents.length > 1 ? 's' : ''}
+                {selectedEvents.length > 1
+                  ? t('planning.selectedCount_other', { count: selectedEvents.length })
+                  : t('planning.selectedCount_one', { count: selectedEvents.length })}
               </Badge>
               
               <Button
@@ -585,7 +593,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                 onClick={handleDeleteSelected}
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Supprimer la sélection
+                {t('planning.deleteSelection')}
               </Button>
             </>
           )}
@@ -618,24 +626,26 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => {
-                  const label = window.prompt('Nom du jour à ajouter (ex: J-2, Brunch)');
+                  const label = window.prompt(t('planning.addDayPrompt'));
                   if (label && label.trim()) {
                     setCustomDays(prev => [...prev, label.trim()]);
                     setActiveDay(label.trim());
                   }
                 }}
               >
-                <Plus className="h-3 w-3 mr-1" /> Ajouter un jour
+                <Plus className="h-3 w-3 mr-1" /> {t('planning.addDay')}
               </Button>
             </div>
 
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>Planning — {activeDay}</span>
+                  <span>{t('planning.planningDay', { day: activeDay })}</span>
                   {filtered.length > 0 && (
                     <Badge variant="secondary">
-                      {filtered.length} étape{filtered.length > 1 ? 's' : ''}
+                      {filtered.length > 1
+                        ? t('planning.stepCount_other', { count: filtered.length })
+                        : t('planning.stepCount_one', { count: filtered.length })}
                     </Badge>
                   )}
                 </CardTitle>
@@ -645,10 +655,10 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                   <div className="text-center py-12">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      Aucune étape pour {activeDay}
+                      {t('planning.emptyDay', { day: activeDay })}
                     </h3>
                     <p className="text-gray-500 mb-4">
-                      Ajoutez une étape via le bouton ci-dessus — elle sera rattachée à ce jour.
+                      {t('planning.emptyDayHint')}
                     </p>
                   </div>
                 ) : (
