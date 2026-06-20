@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -63,6 +64,7 @@ interface PinterestLink {
 }
 
 const MonJourMDocuments: React.FC = () => {
+  const { t, i18n } = useTranslation('monJourM');
   const { toast } = useToast();
   const [coordination, setCoordination] = useState<WeddingCoordination | null>(null);
   const [documents, setDocuments] = useState<Document[]>([]);
@@ -99,8 +101,8 @@ const MonJourMDocuments: React.FC = () => {
       
       if (!user) {
         toast({
-          title: "Erreur",
-          description: "Vous devez être connecté",
+          title: t("documents.toasts.error"),
+          description: t("documents.toasts.loginRequired"),
           variant: "destructive"
         });
         return;
@@ -146,8 +148,8 @@ const MonJourMDocuments: React.FC = () => {
     } catch (error) {
       console.error('Erreur initialisation:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de charger les données",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.loadError"),
         variant: "destructive"
       });
     } finally {
@@ -276,10 +278,10 @@ const MonJourMDocuments: React.FC = () => {
                   <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
                     <div class="text-center">
                       <div class="text-2xl mb-2">📌</div>
-                      <p class="text-sm">Aperçu Pinterest non disponible</p>
+                      <p class="text-sm">${t("documents.pinterestUnavailable")}</p>
                       <a href="${link.pinterest_url}" target="_blank" rel="noopener noreferrer" 
                          class="text-blue-600 hover:underline text-xs">
-                        Voir sur Pinterest
+                        {t("documents.seeOnPinterest")}
                       </a>
                     </div>
                   </div>
@@ -329,15 +331,15 @@ const MonJourMDocuments: React.FC = () => {
       setShowAddPinterest(false);
       
       toast({
-        title: "Lien Pinterest ajouté",
-        description: "Le lien a été ajouté avec succès"
+        title: t("documents.toasts.pinterestAdded"),
+        description: t("documents.toasts.pinterestAddedDesc")
       });
 
     } catch (error) {
       console.error('Erreur ajout Pinterest:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le lien Pinterest",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.pinterestAddError"),
         variant: "destructive"
       });
     }
@@ -362,22 +364,22 @@ const MonJourMDocuments: React.FC = () => {
       setEditingPinterest(null);
       
       toast({
-        title: "Lien Pinterest modifié",
-        description: "Les informations ont été mises à jour"
+        title: t("documents.toasts.pinterestUpdated"),
+        description: t("documents.toasts.pinterestUpdatedDesc")
       });
 
     } catch (error) {
       console.error('Erreur modification Pinterest:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de modifier le lien Pinterest",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.pinterestUpdateError"),
         variant: "destructive"
       });
     }
   };
 
   const handleDeletePinterest = async (pinterestId: string) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce lien Pinterest ?')) return;
+    if (!window.confirm(t('documents.deletePinterestConfirm'))) return;
 
     try {
       const { error } = await supabase
@@ -390,15 +392,15 @@ const MonJourMDocuments: React.FC = () => {
       setPinterestLinks(prev => prev.filter(p => p.id !== pinterestId));
       
       toast({
-        title: "Lien Pinterest supprimé",
-        description: "Le lien a été supprimé"
+        title: t("documents.toasts.pinterestDeleted"),
+        description: t("documents.toasts.pinterestDeletedDesc")
       });
 
     } catch (error) {
       console.error('Erreur suppression Pinterest:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le lien Pinterest",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.pinterestDeleteError"),
         variant: "destructive"
       });
     }
@@ -489,15 +491,15 @@ const MonJourMDocuments: React.FC = () => {
       setShowAddDocument(false);
       
       toast({
-        title: "Document ajouté",
-        description: "Le document a été ajouté avec succès"
+        title: t("documents.toasts.added"),
+        description: t("documents.toasts.addedDesc")
       });
 
     } catch (error) {
       console.error('Erreur ajout document:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible d'ajouter le document",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.addError"),
         variant: "destructive"
       });
     } finally {
@@ -525,22 +527,22 @@ const MonJourMDocuments: React.FC = () => {
       setEditingDocument(null);
       
       toast({
-        title: "Document modifié",
-        description: "Les informations ont été mises à jour"
+        title: t("documents.toasts.updated"),
+        description: t("documents.toasts.updatedDesc")
       });
 
     } catch (error) {
       console.error('Erreur modification document:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de modifier le document",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.updateError"),
         variant: "destructive"
       });
     }
   };
 
   const handleDeleteDocument = async (documentId: string) => {
-    if (!window.confirm('Êtes-vous sûr de vouloir supprimer ce document ?')) return;
+    if (!window.confirm(t('documents.deleteConfirm'))) return;
 
     try {
       const { error } = await supabase
@@ -553,15 +555,15 @@ const MonJourMDocuments: React.FC = () => {
       setDocuments(prev => prev.filter(d => d.id !== documentId));
       
       toast({
-        title: "Document supprimé",
-        description: "Le document a été supprimé"
+        title: t("documents.toasts.deleted"),
+        description: t("documents.toasts.deletedDesc")
       });
 
     } catch (error) {
       console.error('Erreur suppression document:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de supprimer le document",
+        title: t("documents.toasts.error"),
+        description: t("documents.toasts.deleteError"),
         variant: "destructive"
       });
     }
@@ -588,7 +590,7 @@ const MonJourMDocuments: React.FC = () => {
     return (
       <div className="flex justify-center items-center p-12">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-wedding-olive"></div>
-        <span className="ml-3">Chargement...</span>
+        <span className="ml-3">{t("documents.loading")}</span>
       </div>
     );
   }
@@ -598,11 +600,11 @@ const MonJourMDocuments: React.FC = () => {
       {/* En-tête avec boutons */}
       <div className="flex flex-col md:flex-row gap-4 justify-between items-start">
         <div>
-          <h2 className="text-2xl font-semibold mb-2">Documents du jour J</h2>
+          <h2 className="text-2xl font-semibold mb-2">{t("documents.title")}</h2>
           <p className="text-sm text-muted-foreground mb-3">
-            Créez votre équipe, faites votre planning, enregistrez les documents et partagez.
+            {t("documents.intro")}
           </p>
-          <p className="text-gray-600">Centralisez tous vos documents importants et inspirations</p>
+          <p className="text-gray-600">{t("documents.subtitle")}</p>
         </div>
         
         <div className="flex gap-2">
@@ -612,8 +614,8 @@ const MonJourMDocuments: React.FC = () => {
 
       <Tabs defaultValue="standard" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Documents Standard</TabsTrigger>
-          <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">Mes Documents</TabsTrigger>
+          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.standard")}</TabsTrigger>
+          <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.mine")}</TabsTrigger>
         </TabsList>
 
         {/* Onglet Documents Standard */}
@@ -621,10 +623,10 @@ const MonJourMDocuments: React.FC = () => {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-2">
               <Sparkles className="h-5 w-5 text-wedding-olive" />
-              <h3 className="text-lg font-medium">Documents pré-chargés</h3>
+              <h3 className="text-lg font-medium">{t("documents.preloaded")}</h3>
             </div>
             <p className="text-sm text-gray-600">
-              Ces documents sont prêts à l'emploi. Personnalisez-les selon vos besoins.
+              {t("documents.preloadedHint")}
             </p>
           </div>
 
@@ -642,71 +644,71 @@ const MonJourMDocuments: React.FC = () => {
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">
           <div className="flex justify-between items-center gap-2 flex-wrap">
-            <h3 className="text-lg font-medium">Mes Documents</h3>
+            <h3 className="text-lg font-medium">{t("documents.myDocs")}</h3>
             <div className="flex gap-2 flex-wrap">
               {coordination && (
                 <Button variant="outline" onClick={() => setShowImportModal(true)}>
                   <ArrowDownToLine className="h-4 w-4 mr-2" />
-                  Importer depuis mon Dashboard
+                  {t("documents.importDashboard")}
                 </Button>
               )}
               <Dialog open={showAddDocument} onOpenChange={setShowAddDocument}>
               <DialogTrigger asChild>
                 <Button className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
-                  Ajouter un document
+                  {t("documents.add")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="max-w-2xl">
                 <DialogHeader>
-                  <DialogTitle>Ajouter un document</DialogTitle>
+                  <DialogTitle>{t("documents.addTitle")}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium mb-1">Titre *</label>
+                    <label className="block text-sm font-medium mb-1">{t("documents.fields.title")}</label>
                     <Input
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      placeholder="Titre du document"
+                      placeholder={t("documents.fields.titlePlaceholder")}
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">Description</label>
+                    <label className="block text-sm font-medium mb-1">{t("documents.fields.description")}</label>
                     <Textarea
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                      placeholder="Description du document"
+                      placeholder={t("documents.fields.descriptionPlaceholder")}
                       rows={3}
                     />
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium mb-1">Catégorie</label>
+                      <label className="block text-sm font-medium mb-1">{t("documents.fields.category")}</label>
                       <Select value={formData.category} onValueChange={(value) => setFormData({ ...formData, category: value })}>
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="general">Général</SelectItem>
-                          <SelectItem value="contract">Contrat</SelectItem>
-                          <SelectItem value="invoice">Facture</SelectItem>
-                          <SelectItem value="planning">Planning</SelectItem>
-                          <SelectItem value="photo">Photo</SelectItem>
-                          <SelectItem value="legal">Légal</SelectItem>
+                          <SelectItem value="general">{t("documents.categories.general")}</SelectItem>
+                          <SelectItem value="contract">{t("documents.categories.contract")}</SelectItem>
+                          <SelectItem value="invoice">{t("documents.categories.invoice")}</SelectItem>
+                          <SelectItem value="planning">{t("documents.categories.planning")}</SelectItem>
+                          <SelectItem value="photo">{t("documents.categories.photo")}</SelectItem>
+                          <SelectItem value="legal">{t("documents.categories.legal")}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium mb-1">Assigné à</label>
+                      <label className="block text-sm font-medium mb-1">{t("documents.fields.assignedTo")}</label>
                       <Select value={formData.assigned_to} onValueChange={(value) => setFormData({ ...formData, assigned_to: value })}>
                         <SelectTrigger>
-                          <SelectValue placeholder="Sélectionner un membre" />
+                          <SelectValue placeholder={t("documents.fields.assignedPlaceholder")} />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="none">Aucun</SelectItem>
+                          <SelectItem value="none">{t("documents.fields.none")}</SelectItem>
                           {teamMembers.map((member) => (
                             <SelectItem key={member.id} value={member.id}>
                               {member.name} ({member.role})
@@ -718,7 +720,7 @@ const MonJourMDocuments: React.FC = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium mb-1">Fichier</label>
+                    <label className="block text-sm font-medium mb-1">{t("documents.fields.file")}</label>
                     <Input
                       type="file"
                       onChange={(e) => setFormData({ ...formData, file: e.target.files?.[0] || null })}
@@ -734,17 +736,17 @@ const MonJourMDocuments: React.FC = () => {
                       {uploadingFile ? (
                         <>
                           <Upload className="mr-2 h-4 w-4 animate-spin" />
-                          Ajout en cours...
+                          {t("documents.adding")}
                         </>
                       ) : (
-                        'Ajouter le document'
+                        t("documents.addCta")
                       )}
                     </Button>
                     <Button variant="outline" onClick={() => {
                       resetForm();
                       setShowAddDocument(false);
                     }}>
-                      Annuler
+                      {t("documents.cancel")}
                     </Button>
                   </div>
                 </div>
@@ -785,8 +787,8 @@ const MonJourMDocuments: React.FC = () => {
                                 } catch (error) {
                                   console.error('Erreur ouverture document:', error);
                                   toast({
-                                    title: "Erreur",
-                                    description: "Impossible d'ouvrir le document",
+                                    title: t("documents.toasts.error"),
+                                    description: t("documents.toasts.error"),
                                     variant: "destructive"
                                   });
                                 }
@@ -826,11 +828,7 @@ const MonJourMDocuments: React.FC = () => {
                             </Badge>
                           )}
                           <Badge className={getCategoryColor(document.category)}>
-                            {document.category === 'contract' ? 'Contrat' : 
-                             document.category === 'invoice' ? 'Facture' :
-                             document.category === 'planning' ? 'Planning' :
-                             document.category === 'photo' ? 'Photo' :
-                             document.category === 'legal' ? 'Légal' : 'Général'}
+                            {t(`documents.categories.${document.category || 'general'}`)}
                           </Badge>
                           
                           {document.file_size && (
@@ -842,16 +840,16 @@ const MonJourMDocuments: React.FC = () => {
 
                         {document.assigned_to && (
                           <div className="flex items-center gap-1 text-sm text-gray-500">
-                            <span>Assigné à:</span>
+                            <span>{t("documents.fields.assignedTo")}:</span>
                             {(() => {
                               const member = teamMembers.find(m => m.id === document.assigned_to);
-                              return member ? member.name : 'Membre inconnu';
+                              return member ? member.name : t('documents.fields.none');
                             })()}
                           </div>
                         )}
 
                         <div className="text-xs text-gray-400">
-                          Ajouté le {new Date(document.created_at).toLocaleDateString('fr-FR')}
+                          {new Date(document.created_at).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR')}
                         </div>
                       </div>
                     </Card>
@@ -860,8 +858,7 @@ const MonJourMDocuments: React.FC = () => {
               ) : (
                 <div className="text-center py-12 text-gray-500">
                   <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg mb-2">Aucun document enregistré</p>
-                  <p className="text-sm">Commencez par ajouter votre premier document</p>
+                  <p className="text-lg mb-2">{t("documents.toasts.deleted")}</p>
                 </div>
               )}
             </CardContent>
@@ -875,7 +872,7 @@ const MonJourMDocuments: React.FC = () => {
         <Dialog open={!!editingDocument} onOpenChange={() => setEditingDocument(null)}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Modifier le document</DialogTitle>
+              <DialogTitle>{t("documents.toasts.updated")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -935,10 +932,10 @@ const MonJourMDocuments: React.FC = () => {
 
             <div className="flex gap-2">
               <Button onClick={handleUpdateDocument}>
-                Sauvegarder
+                {t("team.modal.save")}
               </Button>
               <Button variant="outline" onClick={() => setEditingDocument(null)}>
-                Annuler
+                {t("documents.cancel")}
               </Button>
             </div>
           </div>
@@ -950,7 +947,7 @@ const MonJourMDocuments: React.FC = () => {
         <Dialog open={!!editingPinterest} onOpenChange={() => setEditingPinterest(null)}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Modifier le lien Pinterest</DialogTitle>
+              <DialogTitle>{t("documents.toasts.pinterestUpdated")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
@@ -983,10 +980,10 @@ const MonJourMDocuments: React.FC = () => {
 
               <div className="flex gap-2">
                 <Button onClick={handleUpdatePinterest}>
-                  Sauvegarder
+                  {t("team.modal.save")}
                 </Button>
                 <Button variant="outline" onClick={() => setEditingPinterest(null)}>
-                  Annuler
+                  {t("documents.cancel")}
                 </Button>
               </div>
             </div>
