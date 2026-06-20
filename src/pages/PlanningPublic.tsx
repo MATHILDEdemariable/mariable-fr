@@ -1,5 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -22,6 +23,7 @@ interface CoordinationData {
 }
 
 const PlanningPublic: React.FC = () => {
+  const { t, i18n } = useTranslation('monJourM');
   const { coordinationId } = useParams<{ coordinationId: string }>();
   const [coordinationData, setCoordinationData] = useState<CoordinationData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -56,7 +58,7 @@ const PlanningPublic: React.FC = () => {
     if (coordinationId) {
       loadPublicCoordinationData(coordinationId);
     } else {
-      setError('ID de coordination manquant');
+      setError(t('public.missingId'));
       setLoading(false);
     }
   }, [coordinationId]);
@@ -88,11 +90,11 @@ const PlanningPublic: React.FC = () => {
 
       if (coordError) {
         console.error('❌ Error loading coordination:', coordError);
-        throw new Error(`Erreur lors du chargement: ${coordError.message}`);
+        throw new Error(t('public.loadError', { message: coordError.message }));
       }
 
       if (!coordination) {
-        throw new Error('Planning non trouvé. Vérifiez le lien de partage.');
+        throw new Error(t('public.planningNotFound'));
       }
 
       // Détecter le type de planning basé sur l'URL ou les paramètres
@@ -166,29 +168,28 @@ const PlanningPublic: React.FC = () => {
   };
 
   const formatTime = (timeString?: string) => {
-    if (!timeString) return 'Heure non définie';
+    if (!timeString) return t('public.timeUndefined');
     
     try {
-      // Si c'est déjà au format HH:MM, on le retourne tel quel
       if (/^\d{2}:\d{2}$/.test(timeString)) {
         return timeString;
       }
       
-      // Sinon, on essaie de parser comme une date
       const date = new Date(timeString);
       if (isNaN(date.getTime())) {
         console.warn('formatTime: Invalid date string:', timeString);
-        return 'Heure non définie';
+        return t('public.timeUndefined');
       }
       
-      return date.toLocaleTimeString('fr-FR', {
+      const locale = i18n.language.startsWith('en') ? 'en-US' : 'fr-FR';
+      return date.toLocaleTimeString(locale, {
         hour: '2-digit',
         minute: '2-digit',
         timeZone: 'Europe/Paris'
       });
     } catch (error) {
       console.warn('formatTime error:', error, 'for timeString:', timeString);
-      return 'Heure non définie';
+      return t('public.timeUndefined');
     }
   };
 
@@ -213,7 +214,7 @@ const PlanningPublic: React.FC = () => {
     if (document.file_url) {
       window.open(document.file_url, '_blank');
     } else {
-      alert('Ce document n\'a pas de fichier associé.');
+      alert(t('public.noFile'));
     }
   };
 
@@ -245,7 +246,7 @@ const PlanningPublic: React.FC = () => {
                   <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
                     <div class="text-center">
                       <div class="text-2xl mb-2">📌</div>
-                      <p class="text-sm">Aperçu Pinterest non disponible</p>
+                      <p class="text-sm">${t('public.pinterestUnavailable')}</p>
                     </div>
                   </div>
                 `;
@@ -265,7 +266,7 @@ const PlanningPublic: React.FC = () => {
             className="text-blue-600 hover:underline text-xs mt-2 inline-flex items-center gap-1"
           >
             <ExternalLink className="h-3 w-3" />
-            Voir sur Pinterest
+            {t('public.seeOnPinterest')}
           </a>
         </div>
       </div>
@@ -290,8 +291,8 @@ const PlanningPublic: React.FC = () => {
       
       if (success) {
         toast({
-          title: "Export réussi",
-          description: "Votre planning a été exporté en PDF",
+          title: t('public.exportSuccess'),
+          description: t('public.exportSuccessDesc'),
         });
       } else {
         throw new Error('Export failed');
@@ -299,8 +300,8 @@ const PlanningPublic: React.FC = () => {
     } catch (error) {
       console.error('Error exporting PDF:', error);
       toast({
-        title: "Erreur d'export",
-        description: "Impossible d'exporter le PDF. Veuillez réessayer.",
+        title: t('public.exportError'),
+        description: t('public.exportErrorDesc'),
         variant: "destructive",
       });
     } finally {
@@ -312,12 +313,12 @@ const PlanningPublic: React.FC = () => {
     return (
       <>
         <Helmet>
-          <title>Chargement du planning | Mariable</title>
+          <title>{t('public.loadingTitle')}</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-wedding-olive mx-auto mb-4"></div>
-            <p className="text-gray-600">Chargement du planning...</p>
+            <p className="text-gray-600">{t('public.loading')}</p>
           </div>
         </div>
       </>
@@ -328,18 +329,18 @@ const PlanningPublic: React.FC = () => {
     return (
       <>
         <Helmet>
-          <title>Planning non trouvé | Mariable</title>
+          <title>{t('public.notFoundTitle')}</title>
         </Helmet>
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center max-w-md mx-auto p-6">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
-            <h1 className="text-2xl font-bold text-gray-800 mb-2">Planning non accessible</h1>
+            <h1 className="text-2xl font-bold text-gray-800 mb-2">{t('public.notAccessible')}</h1>
             <p className="text-gray-600 mb-4">{error}</p>
             <div className="bg-gray-100 p-4 rounded-lg text-left text-sm">
-              <p className="font-medium text-gray-800 mb-2">Vérifiez :</p>
-              <p className="text-gray-600">• Que le lien est correct</p>
-              <p className="text-gray-600">• Que le planning existe toujours</p>
-              <p className="text-gray-600">• Votre connexion internet</p>
+              <p className="font-medium text-gray-800 mb-2">{t('public.checkList')}</p>
+              <p className="text-gray-600">{t('public.checkLink')}</p>
+              <p className="text-gray-600">{t('public.checkExists')}</p>
+              <p className="text-gray-600">{t('public.checkInternet')}</p>
             </div>
           </div>
         </div>
@@ -354,8 +355,8 @@ const PlanningPublic: React.FC = () => {
   return (
     <>
       <Helmet>
-        <title>{coordination.title} - Planning partagé | Mariable</title>
-        <meta name="description" content={`Planning de mariage partagé : ${coordination.title}`} />
+        <title>{t('public.metaTitle', { title: coordination.title })}</title>
+        <meta name="description" content={t('public.metaDescription', { title: coordination.title })} />
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
 
@@ -368,11 +369,11 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-sm md:text-base text-gray-600">
-                Jour-J par Mariable
+                {t('public.jourMByMariable')}
               </p>
               {coordination.wedding_date && (
                 <p className="text-xs md:text-sm text-wedding-olive font-medium mt-2">
-                  {new Date(coordination.wedding_date).toLocaleDateString('fr-FR', {
+                  {new Date(coordination.wedding_date).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR', {
                     weekday: 'long',
                     year: 'numeric',
                     month: 'long',
@@ -382,11 +383,10 @@ const PlanningPublic: React.FC = () => {
               )}
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 md:p-3 mt-4 max-w-md mx-auto">
                 <p className="text-xs md:text-sm text-blue-700">
-                  <strong>Mode consultation :</strong> Ce planning est en lecture seule.
+                  <strong>{t('public.consultationMode')}</strong> {t('public.consultationModeDesc')}
                 </p>
               </div>
               
-              {/* Bouton Export PDF */}
               <div className="mt-4 text-center">
                 <Button 
                   onClick={handleExportPDF}
@@ -396,12 +396,12 @@ const PlanningPublic: React.FC = () => {
                   {isExporting ? (
                     <>
                       <Clock className="h-4 w-4 mr-2 animate-spin" />
-                      Export en cours...
+                      {t('public.exporting')}
                     </>
                   ) : (
                     <>
                       <Download className="h-4 w-4 mr-2" />
-                      Exporter en PDF
+                      {t('public.exportPdf')}
                     </>
                   )}
                 </Button>
@@ -420,15 +420,15 @@ const PlanningPublic: React.FC = () => {
               </TabsTrigger>
               <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Camera className="h-4 w-4" />
-                Photos
+                {t('public.tabs.photos')}
               </TabsTrigger>
               <TabsTrigger value="equipe" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Users className="h-4 w-4" />
-                Équipe ({teamMembers.length})
+                {t('public.tabs.team')} ({teamMembers.length})
               </TabsTrigger>
               <TabsTrigger value="documents" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <FileText className="h-4 w-4" />
-                Documents ({documents.length + pinterestLinks.length})
+                {t('public.tabs.documents')} ({documents.length + pinterestLinks.length})
               </TabsTrigger>
             </TabsList>
             
@@ -440,7 +440,7 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Calendar className="h-4 w-4" />
-                  <span>Planning</span>
+                  <span>{t('public.tabs.planning')}</span>
                   <span className="text-[10px] opacity-70">({filteredTasks.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -448,14 +448,14 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Camera className="h-4 w-4" />
-                  <span>Photos</span>
+                  <span>{t('public.tabs.photos')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="equipe" 
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <Users className="h-4 w-4" />
-                  <span>Équipe</span>
+                  <span>{t('public.tabs.team')}</span>
                   <span className="text-[10px] opacity-70">({teamMembers.length})</span>
                 </TabsTrigger>
                 <TabsTrigger 
@@ -463,7 +463,7 @@ const PlanningPublic: React.FC = () => {
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
                 >
                   <FileText className="h-4 w-4" />
-                  <span>Docs</span>
+                  <span>{t('public.tabs.docs')}</span>
                   <span className="text-[10px] opacity-70">({documents.length + pinterestLinks.length})</span>
                 </TabsTrigger>
               </TabsList>
