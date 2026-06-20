@@ -896,7 +896,7 @@ const MonJourMDocuments: React.FC = () => {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium mb-1">Catégorie</label>
+                  <label className="block text-sm font-medium mb-1">{t("documents.fields.category")}</label>
                   <Select value={editingDocument.category} onValueChange={(value) => setEditingDocument({ ...editingDocument, category: value })}>
                     <SelectTrigger>
                       <SelectValue />
@@ -913,7 +913,7 @@ const MonJourMDocuments: React.FC = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium mb-1">Assigné à</label>
+                  <label className="block text-sm font-medium mb-1">{t("documents.fields.assignedTo")}</label>
                   <Select value={editingDocument.assigned_to || 'none'} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
                     <SelectTrigger>
                       <SelectValue placeholder="Sélectionner un membre" />
