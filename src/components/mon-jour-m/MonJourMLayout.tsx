@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Calendar, Users, FileText, Lightbulb, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SharePublicButton from './SharePublicButton';
@@ -13,15 +14,7 @@ interface MonJourMLayoutProps {
 const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationId }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-
-  const getActiveTab = () => {
-    if (currentPath.includes('/planning')) return 'planning';
-    if (currentPath.includes('/equipe')) return 'equipe';
-    if (currentPath.includes('/documents')) return 'documents';
-    if (currentPath.includes('/conseils')) return 'conseils';
-    if (currentPath.includes('/pense-bete')) return 'pense-bete';
-    return 'planning'; // default
-  };
+  const { t } = useTranslation('monJourM');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -32,15 +25,14 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
               <Button variant="ghost" size="sm" asChild className="shrink-0">
                 <Link to="/dashboard" className="flex items-center gap-1 sm:gap-2">
                   <ArrowLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline">Retour au Dashboard</span>
-                  <span className="sm:hidden">Retour</span>
+                  <span className="hidden sm:inline">{t('layout.backToDashboard')}</span>
+                  <span className="sm:hidden">{t('layout.back')}</span>
                 </Link>
               </Button>
               <div className="h-6 w-px bg-gray-300 hidden sm:block" />
-              <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">Mon Jour-J</h1>
+              <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">{t('layout.title')}</h1>
             </div>
 
-            {/* Bouton de partage - conditionnel - optimisé pour mobile */}
             {coordinationId && (
               <div className="shrink-0">
                 <SharePublicButton coordinationId={coordinationId} />
@@ -48,7 +40,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
             )}
           </div>
 
-          {/* Navigation par onglets - mobile responsive */}
           <div className="mt-2 sm:mt-4 pb-3 sm:pb-4">
             <div className="bg-gray-100 rounded-lg p-1">
               <div className="grid grid-cols-5 gap-1 max-w-4xl">
@@ -61,7 +52,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   }`}
                 >
                   <Users className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">Équipe</span>
+                  <span className="text-center leading-tight font-medium">{t('layout.tabs.team')}</span>
                 </Link>
                 <Link 
                   to="/mon-jour-m/planning" 
@@ -72,7 +63,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   }`}
                 >
                   <Calendar className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">Planning</span>
+                  <span className="text-center leading-tight font-medium">{t('layout.tabs.planning')}</span>
                 </Link>
                 <Link 
                   to="/mon-jour-m/documents" 
@@ -83,7 +74,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   }`}
                 >
                   <FileText className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">Documents</span>
+                  <span className="text-center leading-tight font-medium">{t('layout.tabs.documents')}</span>
                 </Link>
                 <Link 
                   to="/mon-jour-m/conseils" 
@@ -94,7 +85,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   }`}
                 >
                   <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">Conseils</span>
+                  <span className="text-center leading-tight font-medium">{t('layout.tabs.advice')}</span>
                 </Link>
                 <Link 
                   to="/mon-jour-m/pense-bete" 
@@ -105,7 +96,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   }`}
                 >
                   <PenTool className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">Pense-bête</span>
+                  <span className="text-center leading-tight font-medium">{t('layout.tabs.notes')}</span>
                 </Link>
               </div>
             </div>
