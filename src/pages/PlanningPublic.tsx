@@ -479,7 +479,7 @@ const PlanningPublic: React.FC = () => {
               <Card>
                 <CardHeader>
                   <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
-                    <CardTitle>Planning</CardTitle>
+                    <CardTitle>{t("public.planningTitle")}</CardTitle>
 
                     <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                       {/* Filtre par jour */}
@@ -488,7 +488,7 @@ const PlanningPublic: React.FC = () => {
                           <Calendar className="h-4 w-4 text-gray-500" />
                           <Select value={selectedDay} onValueChange={setSelectedDay}>
                             <SelectTrigger className="w-40 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                              <SelectValue placeholder="Choisir un jour" />
+                              <SelectValue placeholder={t("public.chooseDay")} />
                             </SelectTrigger>
                             <SelectContent>
                               {availableDays.map((day) => (
@@ -507,10 +507,10 @@ const PlanningPublic: React.FC = () => {
                           <Filter className="h-4 w-4 text-gray-500" />
                           <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
                             <SelectTrigger className="w-48 bg-wedding-olive/10 border-wedding-olive/30 hover:bg-wedding-olive/20">
-                              <SelectValue placeholder="Filtrer par membre" />
+                              <SelectValue placeholder={t("public.filterMember")} />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="all" className="font-medium text-wedding-olive">Voir toutes les tâches</SelectItem>
+                              <SelectItem value="all" className="font-medium text-wedding-olive">{t("public.allTasks")}</SelectItem>
                               {teamMembers.map((member) => (
                                 <SelectItem key={member.id} value={member.id}>
                                   {member.name} ({member.role})
@@ -569,7 +569,7 @@ const PlanningPublic: React.FC = () => {
                                    <div className="flex flex-wrap items-center gap-1 md:gap-2 mt-2 text-xs">
                                      {task.priority !== 'medium' && (
                                        <Badge className={`text-xs px-2 py-0.5 ${getPriorityColor(task.priority)}`}>
-                                         {task.priority === 'high' ? 'Élevée' : 'Faible'}
+                                         {task.priority === 'high' ? t('public.priority.high') : t('public.priority.low')}
                                        </Badge>
                                      )}
                                     <span className="text-gray-500 capitalize text-xs">{task.category}</span>
@@ -611,7 +611,7 @@ const PlanningPublic: React.FC = () => {
                               </div>
                             </div>
                             
-                            {/* Bouton "Voir plus" sur mobile uniquement si description existe */}
+                            {/* Bouton "{t("public.seeMore")}" sur mobile uniquement si description existe */}
                             {hasDescription && (
                               <div className="mt-3 md:hidden">
                                 <button
@@ -620,14 +620,14 @@ const PlanningPublic: React.FC = () => {
                                 >
                                   {isExpanded ? (
                                     <>
-                                      Voir moins
+                                      {t("public.seeLess")}
                                       <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
                                       </svg>
                                     </>
                                   ) : (
                                     <>
-                                      Voir plus
+                                      {t("public.seeMore")}
                                       <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                       </svg>
@@ -663,7 +663,7 @@ const PlanningPublic: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <User className="h-5 w-5" />
-                      Personnes ({people.length})
+                      {t("public.people")} ({people.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -697,7 +697,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <User className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Aucune personne dans l'équipe</p>
+                        <p>{t('public.noPerson')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -708,7 +708,7 @@ const PlanningPublic: React.FC = () => {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Building className="h-5 w-5" />
-                      Prestataires ({vendors.length})
+                      {t("public.vendors")} ({vendors.length})
                     </CardTitle>
                   </CardHeader>
                   <CardContent>
@@ -742,7 +742,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <Building className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                        <p>Aucun prestataire dans l'équipe</p>
+                        <p>{t('public.noVendor')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -756,9 +756,9 @@ const PlanningPublic: React.FC = () => {
                 {/* Section Documents */}
                 <Card>
                   <CardHeader>
-                    <CardTitle>Documents partagés</CardTitle>
+                    <CardTitle>{t("public.sharedDocs")}</CardTitle>
                     <p className="text-sm text-muted-foreground">
-                      Cliquez sur un document pour le visualiser ou le télécharger.
+                      {t("public.sharedDocsHint")}
                     </p>
                   </CardHeader>
                   <CardContent>
@@ -783,16 +783,16 @@ const PlanningPublic: React.FC = () => {
                                   className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
                                 >
                                   <Eye className="h-4 w-4" />
-                                  Visualiser
+                                  {t("public.view")}
                                 </button>
                               ) : (
                                 <span className="text-sm text-gray-400 flex items-center gap-1">
                                   <FileText className="h-4 w-4" />
-                                  Document texte
+                                  {t("public.textDoc")}
                                 </span>
                               )}
                               <p className="text-xs text-gray-400">
-                                {new Date(doc.created_at).toLocaleDateString('fr-FR')}
+                                {new Date(doc.created_at).toLocaleDateString(i18n.language.startsWith('en') ? 'en-US' : 'fr-FR')}
                               </p>
                             </div>
                           </div>
@@ -801,7 +801,7 @@ const PlanningPublic: React.FC = () => {
                     ) : (
                       <div className="text-center py-8 text-gray-500">
                         <FileText className="h-8 w-8 mx-auto mb-2 opacity-50" />
-                        <p>Aucun document partagé</p>
+                        <p>{t('public.noDoc')}</p>
                       </div>
                     )}
                   </CardContent>
@@ -811,9 +811,9 @@ const PlanningPublic: React.FC = () => {
                 {pinterestLinks.length > 0 && (
                   <Card>
                     <CardHeader>
-                      <CardTitle>Inspirations Pinterest</CardTitle>
+                      <CardTitle>{t("public.pinterestTitle")}</CardTitle>
                       <p className="text-sm text-muted-foreground">
-                        Idées et inspirations partagées par les mariés.
+                        {t("public.pinterestHint")}
                       </p>
                     </CardHeader>
                     <CardContent>
