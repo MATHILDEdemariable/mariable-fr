@@ -281,7 +281,7 @@ const MonJourMDocuments: React.FC = () => {
                       <p class="text-sm">${t("documents.pinterestUnavailable")}</p>
                       <a href="${link.pinterest_url}" target="_blank" rel="noopener noreferrer" 
                          class="text-blue-600 hover:underline text-xs">
-                        {t("documents.seeOnPinterest")}
+                        ${t("documents.seeOnPinterest")}
                       </a>
                     </div>
                   </div>
