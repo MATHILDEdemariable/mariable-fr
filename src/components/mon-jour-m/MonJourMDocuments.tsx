@@ -302,7 +302,7 @@ const MonJourMDocuments: React.FC = () => {
             className="text-blue-600 hover:underline text-xs mt-2 inline-flex items-center gap-1"
           >
             <ExternalLink className="h-3 w-3" />
-            Voir sur Pinterest
+            {t("documents.seeOnPinterest")}
           </a>
         </div>
       </div>
