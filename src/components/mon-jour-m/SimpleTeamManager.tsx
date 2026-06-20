@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -36,6 +37,7 @@ interface SimpleTeamManagerProps {
 }
 
 const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) => {
+  const { t } = useTranslation('monJourM');
   const { toast } = useToast();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,15 +54,17 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
     notes: ''
   });
 
+  const translateRole = (role: string) => t(`team.roles.${role}`, role);
+
   // Premium action hooks
   const addMemberAction = usePremiumAction({
-    feature: "Ajout de membre d'équipe",
-    description: "Pour ajouter des membres à votre équipe de mariage, vous devez être abonné à notre version premium."
+    feature: t('team.premium.addFeature'),
+    description: t('team.premium.addDesc')
   });
 
   const editMemberAction = usePremiumAction({
-    feature: "Modification de membre d'équipe", 
-    description: "Pour modifier les informations des membres de votre équipe, vous devez être abonné à notre version premium."
+    feature: t('team.premium.editFeature'),
+    description: t('team.premium.editDesc')
   });
 
   // Charger les membres de l'équipe
