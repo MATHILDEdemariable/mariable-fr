@@ -1,18 +1,38 @@
 {
+  "id": "/",
   "name": "Mariable - Planificateur de Mariage",
   "short_name": "Mariable",
-  "description": "Planifiez votre mariage parfait avec Mariable. Outils, prestataires et conseils pour organiser votre grand jour.",
+  "description": "Planifiez votre mariage avec Mariable. Outils, prestataires et conseils pour organiser votre grand jour.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#8B5CF6",
+  "background_color": "#FAF8F3",
+  "theme_color": "#7F9474",
   "orientation": "portrait-primary",
   "categories": ["lifestyle", "productivity"],
   "lang": "fr",
   "icons": [
     {
-      "src": "/logo-mariable-clean.png",
-      "sizes": "any",
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/apple-touch-icon-180.png",
+      "sizes": "180x180",
       "type": "image/png"
     }
   ]
