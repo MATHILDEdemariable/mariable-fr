@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import StripeButton from '@/components/premium/StripeButton';
+import PushNotificationToggle from '@/components/dashboard/PushNotificationToggle';
+
 
 const UserProfile: React.FC = () => {
   const { t, i18n } = useTranslation('dashboard');
@@ -200,6 +202,8 @@ const UserProfile: React.FC = () => {
               </div>
             )}
 
+            <PushNotificationToggle />
+
             <div className="pt-4 space-y-2">
               <Button 
                 onClick={handleLogout} 
@@ -208,6 +212,7 @@ const UserProfile: React.FC = () => {
                 <LogOut size={16} /> {t('profile.logout')}
               </Button>
             </div>
+
           </div>
         ) : (
           <p>{t('profile.noInfo')}</p>
