@@ -25,8 +25,10 @@ import PhotoCompressionManager from '@/components/admin/PhotoCompressionManager'
 import UsageStats from './UsageStats';
 
 const AdminDashboard = () => {
-  const { isAuthenticated, login, logout } = useAdminAuth();
+  const { isAuthenticated, isLoading, login, logout } = useAdminAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [stats, setStats] = useState({
     totalReservations: 0,
     totalPrestataires: 0,
@@ -44,21 +46,26 @@ const AdminDashboard = () => {
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(password);
-    if (success) {
-      toast({
-        title: "Connexion réussie",
-        description: "Bienvenue dans le dashboard admin"
-      });
-      loadStats();
-    } else {
-      toast({
-        title: "Erreur d'authentification",
-        description: "Mot de passe incorrect",
-        variant: "destructive"
-      });
+    setSubmitting(true);
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans le dashboard admin"
+        });
+        loadStats();
+      } else {
+        toast({
+          title: "Accès refusé",
+          description: "Identifiants invalides ou compte non administrateur",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
