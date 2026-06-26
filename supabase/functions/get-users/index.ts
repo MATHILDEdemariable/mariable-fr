@@ -32,6 +32,9 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const adminCheck = await requireAdmin(req);
+    if (adminCheck) return adminCheck;
+
     console.log('🚀 Starting get-users function...');
 
     // Initialize Supabase client with service role key
