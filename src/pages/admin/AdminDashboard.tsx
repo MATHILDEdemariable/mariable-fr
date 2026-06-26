@@ -25,8 +25,10 @@ import PhotoCompressionManager from '@/components/admin/PhotoCompressionManager'
 import UsageStats from './UsageStats';
 
 const AdminDashboard = () => {
-  const { isAuthenticated, login, logout } = useAdminAuth();
+  const { isAuthenticated, isLoading, login, logout } = useAdminAuth();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const [stats, setStats] = useState({
     totalReservations: 0,
     totalPrestataires: 0,
@@ -44,21 +46,26 @@ const AdminDashboard = () => {
     }
   }, [isAuthenticated]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    const success = login(password);
-    if (success) {
-      toast({
-        title: "Connexion réussie",
-        description: "Bienvenue dans le dashboard admin"
-      });
-      loadStats();
-    } else {
-      toast({
-        title: "Erreur d'authentification",
-        description: "Mot de passe incorrect",
-        variant: "destructive"
-      });
+    setSubmitting(true);
+    try {
+      const success = await login(email, password);
+      if (success) {
+        toast({
+          title: "Connexion réussie",
+          description: "Bienvenue dans le dashboard admin"
+        });
+        loadStats();
+      } else {
+        toast({
+          title: "Accès refusé",
+          description: "Identifiants invalides ou compte non administrateur",
+          variant: "destructive"
+        });
+      }
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -119,6 +126,14 @@ const AdminDashboard = () => {
     setPassword('');
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <p className="text-gray-600">Chargement…</p>
+      </div>
+    );
+  }
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -126,10 +141,22 @@ const AdminDashboard = () => {
           <CardHeader className="text-center">
             <Shield className="h-12 w-12 mx-auto text-wedding-olive mb-4" />
             <CardTitle className="text-2xl font-serif">Administration</CardTitle>
-            <p className="text-gray-600">Authentification requise</p>
+            <p className="text-gray-600">Connexion administrateur</p>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
+              <div>
+                <Label htmlFor="email">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="admin@mariable.fr"
+                  autoComplete="email"
+                  required
+                />
+              </div>
               <div>
                 <Label htmlFor="password">Mot de passe</Label>
                 <Input
@@ -137,12 +164,13 @@ const AdminDashboard = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Entrez le mot de passe admin"
+                  placeholder="••••••••"
+                  autoComplete="current-password"
                   required
                 />
               </div>
-              <Button type="submit" className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
-                Se connecter
+              <Button type="submit" disabled={submitting} className="w-full bg-wedding-olive hover:bg-wedding-olive/80">
+                {submitting ? 'Connexion…' : 'Se connecter'}
               </Button>
             </form>
           </CardContent>
