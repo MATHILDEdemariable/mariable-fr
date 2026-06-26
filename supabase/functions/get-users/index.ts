@@ -1,5 +1,6 @@
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+import { requireAdmin } from '../_shared/adminAuth.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -31,6 +32,9 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const adminCheck = await requireAdmin(req);
+    if (adminCheck) return adminCheck;
+
     console.log('🚀 Starting get-users function...');
 
     // Initialize Supabase client with service role key
