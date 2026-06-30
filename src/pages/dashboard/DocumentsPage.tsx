@@ -72,10 +72,7 @@ const DocumentsPage = () => {
     });
   };
 
-  const handleViewSummary = (document: any) => {
-    setSelectedDocument(document);
-    setSummaryDialogOpen(true);
-  };
+  const handleViewSummary = (_document: any) => {};
 
   const handleViewDocument = (document: any) => {
     setViewedDocument(document);
