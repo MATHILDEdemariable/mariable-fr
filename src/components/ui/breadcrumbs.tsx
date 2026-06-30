@@ -35,7 +35,7 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className = "" }) => {
       'mariage-auvergne-rhone-alpes': 'Mariage Auvergne-Rhône-Alpes',
       'mariage-nouvelle-aquitaine': 'Mariage Nouvelle-Aquitaine',
       'coordinateurs-mariage': 'Coordinateurs de Mariage',
-      'jeunes-maries': 'Jeunes Mariés',
+      
       'contact': 'Contact',
       'faq': 'Questions Fréquentes',
       'about': 'À propos',

@@ -101,11 +101,6 @@ const AdminMaintenance = lazy(() => import("./pages/admin/Maintenance"));
 const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/ProfessionalRegistrations"));
 const AdminPaymentLeads = lazy(() => import("./pages/admin/PaymentLeads"));
 const AdminPartenariats = lazy(() => import("./pages/admin/Partenariats"));
-const JeunesMaries = lazy(() => import("./pages/JeunesMaries"));
-const JeuneMariesInscription = lazy(() => import("./pages/JeuneMariesInscription"));
-const JeuneMariesDetail = lazy(() => import("./pages/JeuneMariesDetail"));
-const JeuneMariesConfirmation = lazy(() => import("./pages/JeuneMariesConfirmation"));
-const AdminJeunesMaries = lazy(() => import("./pages/admin/AdminJeunesMaries"));
 const CustomPages = lazy(() => import("./pages/admin/CustomPages"));
 const AdminCarnetAdresses = lazy(() => import("./pages/admin/CarnetAdresses"));
 const AdminContactRequests = lazy(() => import("./pages/admin/ContactRequests"));
@@ -301,11 +296,6 @@ function App() {
                    <Route path="/about/temoignages" element={<Temoignages />} />
                    <Route path="/comparatif" element={<Comparatif />} />
 
-                   {/* Jeunes Mariés routes */}
-                   <Route path="/jeunes-maries" element={<JeunesMaries />} />
-                   <Route path="/jeunes-maries/inscription" element={<JeuneMariesInscription />} />
-                   <Route path="/jeunes-maries/confirmation" element={<JeuneMariesConfirmation />} />
-                   <Route path="/jeunes-maries/:slug" element={<JeuneMariesDetail />} />
 
                   {/* Prestataires routes */}
                   <Route path="/prestataires" element={<Prestataires />} />
@@ -330,7 +320,7 @@ function App() {
                    <Route path="/admin/reservations-jour-m" element={<AdminReservationsJourM />} />
                    <Route path="/admin/system-check" element={<AdminSystemCheck />} />
                    <Route path="/admin/maintenance" element={<AdminMaintenance />} />
-                    <Route path="/admin/jeunes-maries" element={<AdminJeunesMaries />} />
+                    
                     <Route path="/admin/custom-pages" element={<CustomPages />} />
                     <Route path="/admin/carnet-adresses" element={<AdminCarnetAdresses />} />
                     <Route path="/admin/contact" element={<AdminContactRequests />} />

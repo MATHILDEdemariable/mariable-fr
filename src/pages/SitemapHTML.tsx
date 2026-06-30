@@ -14,7 +14,7 @@ const SitemapHTML: React.FC = () => {
     { title: 'Prestataires', href: '/selection', description: 'Trouvez les meilleurs prestataires de mariage' },
     { title: 'Conseils mariage', href: '/conseilsmariage', description: 'Conseils et inspiration mariage' },
     { title: 'Coordinateurs', href: '/coordinateurs-mariage', description: 'Wedding planners professionnels' },
-    { title: 'Témoignages', href: '/jeunes-maries', description: 'Avis et retours de couples mariés' },
+    
     { title: 'Contact', href: '/contact', description: 'Nous contacter pour vos questions' }
   ];
 

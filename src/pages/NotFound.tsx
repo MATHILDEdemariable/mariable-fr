@@ -69,10 +69,6 @@ const NotFound: React.FC = () => {
                 <Link to="/coordinateurs-mariage" className="text-primary hover:underline">
                   Coordinateurs
                 </Link>
-                <span>•</span>
-                <Link to="/jeunes-maries" className="text-primary hover:underline">
-                  Témoignages
-                </Link>
               </div>
             </div>
           </CardContent>

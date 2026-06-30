@@ -67,7 +67,7 @@ const staticPages: StaticPage[] = [
   { url: "/contact", priority: "0.8", changefreq: "yearly" },
   { url: "/planning-personnalise", priority: "0.7", changefreq: "monthly" },
   { url: "/coordinateurs-mariage", priority: "0.7", changefreq: "monthly" },
-  { url: "/jeunes-maries", priority: "0.7", changefreq: "weekly" },
+  
   { url: "/coordination-jour-j", priority: "0.7", changefreq: "monthly" },
   { url: "/outils-planning-mariage", priority: "0.7", changefreq: "monthly" },
   { url: "/to-do-list-mariage", priority: "0.6", changefreq: "monthly" },

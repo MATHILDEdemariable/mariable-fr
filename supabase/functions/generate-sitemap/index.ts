@@ -45,7 +45,7 @@ const staticPages = [
   { url: "/contact", lastmod: "2026-02-16", priority: "0.8", changefreq: "yearly" },
   { url: "/planning-personnalise", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/coordinateurs-mariage", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
-  { url: "/jeunes-maries", lastmod: "2026-02-16", priority: "0.7", changefreq: "weekly" },
+  
   { url: "/coordination-jour-j", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/outils-planning-mariage", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/to-do-list-mariage", lastmod: "2026-02-16", priority: "0.6", changefreq: "monthly" },
