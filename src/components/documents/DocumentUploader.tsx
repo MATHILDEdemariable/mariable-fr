@@ -26,7 +26,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
   const [vendorName, setVendorName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
-  const [isAnalyzing] = useState(false);
+  const isAnalyzing = false;
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const { toast } = useToast();
   const { profile } = useUserProfile();
@@ -120,7 +120,6 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
       });
     } finally {
       setIsUploading(false);
-      setIsAnalyzing(false);
     }
   };
 
