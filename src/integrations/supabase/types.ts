@@ -1060,87 +1060,6 @@ export type Database = {
         }
         Relationships: []
       }
-      jeunes_maries: {
-        Row: {
-          accept_email_contact: boolean | null
-          admin_notes: string | null
-          budget_approximatif: string | null
-          conseils_couples: string | null
-          created_at: string
-          date_approbation: string | null
-          date_mariage: string
-          date_soumission: string | null
-          email: string
-          experience_partagee: string | null
-          id: string
-          lieu_mariage: string
-          nom_complet: string
-          nombre_invites: number | null
-          note_experience: number | null
-          photo_principale_url: string | null
-          photos_mariage: Json | null
-          prestataires_recommandes: Json | null
-          region: string | null
-          slug: string | null
-          status_moderation: string | null
-          telephone: string | null
-          updated_at: string
-          visible: boolean | null
-        }
-        Insert: {
-          accept_email_contact?: boolean | null
-          admin_notes?: string | null
-          budget_approximatif?: string | null
-          conseils_couples?: string | null
-          created_at?: string
-          date_approbation?: string | null
-          date_mariage: string
-          date_soumission?: string | null
-          email: string
-          experience_partagee?: string | null
-          id?: string
-          lieu_mariage: string
-          nom_complet: string
-          nombre_invites?: number | null
-          note_experience?: number | null
-          photo_principale_url?: string | null
-          photos_mariage?: Json | null
-          prestataires_recommandes?: Json | null
-          region?: string | null
-          slug?: string | null
-          status_moderation?: string | null
-          telephone?: string | null
-          updated_at?: string
-          visible?: boolean | null
-        }
-        Update: {
-          accept_email_contact?: boolean | null
-          admin_notes?: string | null
-          budget_approximatif?: string | null
-          conseils_couples?: string | null
-          created_at?: string
-          date_approbation?: string | null
-          date_mariage?: string
-          date_soumission?: string | null
-          email?: string
-          experience_partagee?: string | null
-          id?: string
-          lieu_mariage?: string
-          nom_complet?: string
-          nombre_invites?: number | null
-          note_experience?: number | null
-          photo_principale_url?: string | null
-          photos_mariage?: Json | null
-          prestataires_recommandes?: Json | null
-          region?: string | null
-          slug?: string | null
-          status_moderation?: string | null
-          telephone?: string | null
-          updated_at?: string
-          visible?: boolean | null
-        }
-        Relationships: []
-      }
       jour_m_reservations: {
         Row: {
           admin_notes: string | null
@@ -3269,8 +3188,6 @@ export type Database = {
       }
       wedding_documents: {
         Row: {
-          ai_key_points: Json | null
-          ai_summary: string | null
           category: string | null
           created_at: string
           document_type: string
@@ -3279,15 +3196,12 @@ export type Database = {
           file_size: number | null
           file_url: string
           id: string
-          is_analyzed: boolean | null
           mime_type: string | null
           updated_at: string
           user_id: string
           vendor_name: string | null
         }
         Insert: {
-          ai_key_points?: Json | null
-          ai_summary?: string | null
           category?: string | null
           created_at?: string
           document_type: string
@@ -3296,15 +3210,12 @@ export type Database = {
           file_size?: number | null
           file_url: string
           id?: string
-          is_analyzed?: boolean | null
           mime_type?: string | null
           updated_at?: string
           user_id: string
           vendor_name?: string | null
         }
         Update: {
-          ai_key_points?: Json | null
-          ai_summary?: string | null
           category?: string | null
           created_at?: string
           document_type?: string
@@ -3313,7 +3224,6 @@ export type Database = {
           file_size?: number | null
           file_url?: string
           id?: string
-          is_analyzed?: boolean | null
           mime_type?: string | null
           updated_at?: string
           user_id?: string
@@ -3749,10 +3659,6 @@ export type Database = {
       count_users_with_documents: { Args: never; Returns: number }
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
-        Returns: string
-      }
-      generate_jeunes_maries_slug: {
-        Args: { jeune_marie_id?: string; nom_input: string }
         Returns: string
       }
       get_user_registrations: {
