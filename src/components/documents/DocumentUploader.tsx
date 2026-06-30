@@ -26,7 +26,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
   const [vendorName, setVendorName] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [isUploading, setIsUploading] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalyzing] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const { toast } = useToast();
   const { profile } = useUserProfile();
@@ -105,10 +105,6 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
         description: t('documentUploader.uploadedDesc')
       });
 
-      if (isPremium && documentType === 'devis') {
-        setIsAnalyzing(true);
-        await analyzeDocument(docData.id, publicUrl);
-      }
 
       setFile(null);
       setVendorName('');
@@ -128,28 +124,6 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
     }
   };
 
-  const analyzeDocument = async (documentId: string, fileUrl: string) => {
-    try {
-      const { error } = await supabase.functions.invoke('analyze-document', {
-        body: { documentId, fileUrl, documentType }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: t('documentUploader.aiDoneTitle'),
-        description: t('documentUploader.aiDoneDesc')
-      });
-
-    } catch (error) {
-      console.error("Erreur analyse IA:", error);
-      toast({
-        title: t('documentUploader.aiFailedTitle'),
-        description: t('documentUploader.aiFailedDesc'),
-        variant: "destructive"
-      });
-    }
-  };
 
   return (
     <>
