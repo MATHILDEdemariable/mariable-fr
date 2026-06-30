@@ -87,7 +87,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   { name: "Approche", route: "/notre-approche", tables: [], status: "active", category: "About" },
   { name: "Histoire", route: "/notre-histoire", tables: [], status: "active", category: "About" },
   { name: "Charte", route: "/notre-charte", tables: [], status: "active", category: "About" },
-  { name: "Temoignages", route: "/temoignages", tables: ["jeunes_maries"], status: "active", category: "About" },
+  
   
   // Contact
   { name: "NousContacter", route: "/nous-contacter", tables: [], status: "active", category: "Contact" },

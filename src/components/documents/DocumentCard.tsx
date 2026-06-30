@@ -14,9 +14,6 @@ interface DocumentCardProps {
     document_type: string;
     vendor_name?: string;
     category?: string;
-    ai_summary?: string;
-    ai_key_points?: any;
-    is_analyzed: boolean;
     created_at: string;
     file_size?: number;
   };

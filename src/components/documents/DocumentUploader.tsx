@@ -92,8 +92,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
           mime_type: file.type,
           document_type: documentType,
           vendor_name: vendorName || null,
-          category: category || null,
-          is_analyzed: false
+          category: category || null
         })
         .select()
         .single();

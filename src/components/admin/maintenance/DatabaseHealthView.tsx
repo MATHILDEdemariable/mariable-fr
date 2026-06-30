@@ -45,7 +45,7 @@ const TABLES_INVENTORY: TableInfo[] = [
   
   // Blog & Content
   { name: "blog_posts", estimatedSize: "~384 KB", category: "Content", status: "healthy", usage: "core" },
-  { name: "jeunes_maries", estimatedSize: "~160 KB", category: "Content", status: "healthy", usage: "active" },
+  
   
   // Planning
   { name: "planning_questions", estimatedSize: "~95 KB", category: "Planning", status: "healthy", usage: "active" },
