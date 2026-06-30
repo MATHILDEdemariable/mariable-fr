@@ -4,7 +4,6 @@ import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/components/ui/use-toast';
 import DocumentUploader from '@/components/documents/DocumentUploader';
 import DocumentCard from '@/components/documents/DocumentCard';
@@ -16,10 +15,9 @@ import PremiumModal from '@/components/premium/PremiumModal';
 const DocumentsPage = () => {
   const { toast } = useToast();
   const { t } = useTranslation('weddingDay');
-  const [selectedDocument, setSelectedDocument] = useState<any>(null);
-  const [summaryDialogOpen, setSummaryDialogOpen] = useState(false);
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewedDocument, setViewedDocument] = useState<any>(null);
+
 
   const {
     executeAction,
