@@ -2,7 +2,7 @@ import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FileText, Download, Trash, Sparkles, Eye } from 'lucide-react';
+import { FileText, Download, Trash, Eye } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 
@@ -96,26 +96,6 @@ const DocumentCard: React.FC<DocumentCardProps> = ({ document, onDelete, onViewS
               </Badge>
             </div>
 
-            {document.is_analyzed && document.ai_summary && (
-              <div className="bg-yellow-50 border border-yellow-200 rounded p-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <Sparkles className="h-4 w-4 text-yellow-600" />
-                  <span className="text-sm font-medium text-yellow-800">Résumé IA</span>
-                </div>
-                <p className="text-sm text-gray-700 line-clamp-3">
-                  {document.ai_summary}
-                </p>
-                <Button
-                  size="sm"
-                  variant="link"
-                  className="text-yellow-700 p-0 h-auto mt-2"
-                  onClick={() => onViewSummary(document)}
-                >
-                  <Eye className="h-3 w-3 mr-1" />
-                  Voir le résumé complet
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </CardContent>

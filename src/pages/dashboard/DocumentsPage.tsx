@@ -165,40 +165,6 @@ const DocumentsPage = () => {
           ))}
         </Tabs>
 
-        <Dialog open={summaryDialogOpen} onOpenChange={setSummaryDialogOpen}>
-          <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-            <DialogHeader>
-              <DialogTitle className="flex items-center gap-2">
-                <FileText className="h-5 w-5" />
-                {t('documents.summaryTitle')} - {selectedDocument?.file_name}
-              </DialogTitle>
-            </DialogHeader>
-
-            {selectedDocument && (
-              <div className="space-y-4">
-                <div>
-                  <h3 className="font-semibold mb-2">{t('documents.summaryLabel')}</h3>
-                  <p className="text-sm whitespace-pre-wrap">
-                    {selectedDocument.ai_summary}
-                  </p>
-                </div>
-
-                {selectedDocument.ai_key_points && (
-                  <div>
-                    <h3 className="font-semibold mb-2">{t('documents.keyPointsLabel')}</h3>
-                    <ul className="list-disc list-inside space-y-1">
-                      {Object.entries(selectedDocument.ai_key_points).map(([key, value]: [string, any]) => (
-                        <li key={key} className="text-sm">
-                          <span className="font-medium">{key}:</span> {value}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-            )}
-          </DialogContent>
-        </Dialog>
 
         <DocumentViewerModal
           isOpen={viewerOpen}
