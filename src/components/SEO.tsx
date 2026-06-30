@@ -72,7 +72,7 @@ const SEO: React.FC<SEOProps> = ({
     'about/temoignages': 'Témoignages',
     'contact': 'Contact',
     'contact/faq': 'FAQ',
-    'jeunes-maries': 'Jeunes Mariés',
+    
     'accompagnement': 'Accompagnement',
     'salon-du-mariage-2025': 'Salon du Mariage 2025',
   };

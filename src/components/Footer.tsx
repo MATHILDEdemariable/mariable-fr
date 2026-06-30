@@ -45,7 +45,7 @@ const Footer = () => {
           <div>
             <h3 className="font-serif text-base mb-3">{t('footer.section.discover')}</h3>
             <ul className="space-y-1 text-sm">
-              <li><Link to="/jeunes-maries" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.club')}</Link></li>
+              
               <li><Link to="/conseilsmariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.advice')}</Link></li>
               <li><Link to="/outils-planning-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.planning')}</Link></li>
               <li><Link to="/coordination-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.jourJ')}</Link></li>

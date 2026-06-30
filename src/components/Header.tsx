@@ -67,15 +67,9 @@ function Menus({ onClick, isLoggedIn }: { onClick?: () => void, isLoggedIn?: boo
         </HeaderDropdownMenu>
       </HeaderDropdown>
       
-      {/* Club Mariable - Dropdown avec Jeunes Mariés et Conseils */}
+      {/* Club Mariable */}
       <HeaderDropdown label="Club Mariable">
         <HeaderDropdownMenu>
-          <HeaderDropdownItem
-            label="Jeunes Mariés"
-            description="Témoignages et expériences de couples"
-            to="/jeunes-maries"
-            onClick={onClick}
-          />
           <HeaderDropdownItem
             label="Conseils"
             description="Blog et conseils pour votre mariage"

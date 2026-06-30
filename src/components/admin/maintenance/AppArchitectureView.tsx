@@ -87,7 +87,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   { name: "Approche", route: "/notre-approche", tables: [], status: "active", category: "About" },
   { name: "Histoire", route: "/notre-histoire", tables: [], status: "active", category: "About" },
   { name: "Charte", route: "/notre-charte", tables: [], status: "active", category: "About" },
-  { name: "Temoignages", route: "/temoignages", tables: ["jeunes_maries"], status: "active", category: "About" },
+  
   
   // Contact
   { name: "NousContacter", route: "/nous-contacter", tables: [], status: "active", category: "Contact" },
@@ -116,7 +116,7 @@ const PAGES_INVENTORY: PageInfo[] = [
   { name: "AdminPrestataireEdit", route: "/admin/prestataires/:id/edit", tables: ["prestataires_rows", "prestataires_photos_preprod", "prestataires_brochures_preprod"], status: "active", category: "Admin" },
   { name: "AdminBlogList", route: "/admin/blog", tables: ["blog_posts"], status: "active", category: "Admin" },
   { name: "AdminBlogEdit", route: "/admin/blog/:id/edit", tables: ["blog_posts"], status: "active", category: "Admin" },
-  { name: "AdminJeunesMaries", route: "/admin/jeunes-maries", tables: ["jeunes_maries"], status: "active", category: "Admin" },
+  
   { name: "AdminSystemCheck", route: "/admin/system-check", tables: [], status: "active", category: "Admin" },
   { name: "AdminMaintenance", route: "/admin/maintenance", tables: ["performance_metrics"], status: "active", category: "Admin" },
   
