@@ -38,6 +38,7 @@ const ProjectSummary = () => {
   const [showVideoModal, setShowVideoModal] = useState(false);
   const [showGuideModal, setShowGuideModal] = useState(false);
   const [showPrixModal, setShowPrixModal] = useState(false);
+  const [showProblemModal, setShowProblemModal] = useState(false);
   const [totalTasksCount, setTotalTasksCount] = useState(0);
   const [completedTasksCount, setCompletedTasksCount] = useState(0);
   
