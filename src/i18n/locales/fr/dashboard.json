@@ -15,6 +15,13 @@
     "mobileTip": "Pour une meilleure expérience, utilisez un ordinateur ou une tablette pour les modules d'organisation. Seul le module Jour-J est optimisé pour mobile."
   },
   "sidebar": {
+    "sections": {
+      "organisation": "Organisation",
+      "jourJ": "Jour-J",
+      "apres": "Après le jour-J",
+      "admin": "Administratif",
+      "bonus": "Bonus"
+    },
     "dashboard": "Tableau de bord",
     "dashboardHome": "Tableau de bord",
     "myWedding": "Mon Mariage",
@@ -25,6 +32,7 @@
     "retroplanning": "Retroplanning",
     "budget": "Budget",
     "budgetCalculator": "Calculatrice Budget",
+    "budgetManagement": "Gestion du budget",
     "drinksCalculator": "Calculatrice Boisson",
     "vendors": "Prestataires",
     "vendorsAll": "Tous les prestataires",
@@ -41,13 +49,23 @@
     "website": "Site Internet",
     "ceremony": "Cérémonie",
     "civil": "Mairie - Civil",
-    "qrCode": "Liste de mariage",
+    "qrCode": "Liste de mariage / QR Code",
     "documents": "Documents",
     "afterDay": "Après le jour-J",
-    "bonus": "Bonus",
+    "bonus": "Assistants IA",
     "bonusChatGPT": "ChatGPT Mariage",
     "bonusAssistant": "Assistant Virtuel",
     "guidesPdf": "Guides PDF"
+  },
+  "installBanner": {
+    "title": "📱 Installez l'app sur votre mobile — sans téléchargement",
+    "subtitle": "Recommandé pour le Jour-J. Pour préparer votre mariage, préférez un ordinateur ou une tablette 💻",
+    "cta": "Installer"
+  },
+  "support": {
+    "title": "Besoin d'aide ?",
+    "subtitle": "Une question, un bug, une suggestion — notre équipe vous répond sous 24h.",
+    "cta": "Contacter le support"
   },
   "mobileNav": {
     "home": "Accueil",

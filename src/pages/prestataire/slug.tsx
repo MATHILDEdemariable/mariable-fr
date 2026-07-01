@@ -32,16 +32,21 @@ const SinglePrestataire = () => {
     queryFn: async () => {
       if (!slug) return null;
 
+      // Public-safe column list (excludes email, telephone, siret, status_crm,
+      // date_derniere_contact, source_inscription, accord_*, assurance_nom).
+      const PUBLIC_COLUMNS =
+        "id,created_at,updated_at,nom,categorie,categorie_lieu,description,description_more,ville,latitude,longitude,regions,capacite_invites,hebergement_inclus,nombre_couchages,prix_minimum,prix_a_partir_de,prix_par_personne,first_price_package,first_price_package_name,first_price_package_description,second_price_package,second_price_package_name,second_price_package_description,third_price_package,third_price_package_name,third_price_package_description,fourth_price_package,fourth_price_package_name,fourth_price_package_description,responsable_nom,responsable_bio,site_web,visible,featured,partner,slug,styles,show_prices,show_contact_form,show_description,show_photos,show_brochures,show_responsable,google_rating,google_reviews_count,google_place_id,google_business_url,avantage_propose,prestataires_photos_preprod(*)";
+
       let { data, error } = await supabase
         .from("prestataires_rows")
-        .select("*, prestataires_photos_preprod(*)")
+        .select(PUBLIC_COLUMNS)
         .eq("slug", slug)
         .maybeSingle();
 
       if (!data && !error) {
         const result = await supabase
           .from("prestataires_rows")
-          .select("*, prestataires_photos_preprod(*)")
+          .select(PUBLIC_COLUMNS)
           .eq("id", slug)
           .maybeSingle();
         data = result.data;

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
+import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
@@ -14,10 +15,23 @@ import { useIsMobile } from '@/hooks/use-mobile';
 
 const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
-  const [activeTab, setActiveTab] = useState<string>('calculator');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab') === 'detailed' ? 'detailed' : 'calculator';
+  const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
   const { isPremium, loading: loadingProfile } = useUserProfile();
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'detailed' || tab === 'calculator') setActiveTab(tab);
+  }, [searchParams]);
+
+  const handleTabChange = (value: string) => {
+    setActiveTab(value);
+    setSearchParams({ tab: value }, { replace: true });
+  };
+
 
   // Fetch budget data for export
   const { data: budgetData } = useQuery({
@@ -78,7 +92,7 @@ const BudgetPage: React.FC = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="calculator" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
               value="detailed" 

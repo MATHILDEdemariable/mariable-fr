@@ -1,50 +1,69 @@
-# Suppressions demandées
+# Plan — Refonte dashboard + fix prestataires
 
-## 1. Section "Jeunes Mariés" (suppression complète)
+## 1. Réorganisation de la sidebar (`src/components/dashboard/DashboardSidebar.tsx`)
 
-### Pages publiques à supprimer
-- `src/pages/JeunesMaries.tsx` (liste publique)
-- `src/pages/JeuneMariesDetail.tsx`
-- `src/pages/JeuneMariesInscription.tsx`
-- `src/pages/JeuneMariesConfirmation.tsx`
-- `src/components/jeunes-maries/` (dossier entier : Card, Filters, ListItem)
-- `src/hooks/useJeunesMaries.ts`
-- `src/types/jeunes-maries.ts`
+Regrouper visuellement les items par **sections** avec de petits titres (`ORGANISATION`, `JOUR-J`, `APRÈS`, `ADMIN`, `BONUS`) au lieu de la liste plate actuelle. Ordre demandé :
 
-### Admin à supprimer
-- `src/pages/admin/AdminJeunesMaries.tsx`
-- `src/components/admin/JeuneMariesFormViewer.tsx`
-- Entrée "Jeunes Mariés" dans `src/components/admin/AdminLayout.tsx`
-- Route admin dans `src/pages/admin/AdminDashboard.tsx`
+**ORGANISATION**
+- Tableau de bord (accueil)
+- Rétroplanning (lien direct)
+- Calculatrice Budget → `/dashboard/budget?tab=calculator`
+- Gestion du budget → `/dashboard/budget?tab=detailed`
+- RSVP Invités
+- Prestataires (dropdown existant)
+- Check-list (dropdown existant)
 
-### Routing & liens
-- Retirer les 4 routes `/jeunes-maries*` + route admin dans `src/App.tsx` (+ imports lazy)
-- Retirer les liens dans `src/components/Header.tsx`, `src/components/Footer.tsx`, `src/components/ui/breadcrumbs.tsx`, `src/components/SEO.tsx`, `src/components/SEOTestimonial.tsx`
-- Retirer les entrées dans `src/pages/Sitemap.tsx`, `src/pages/SitemapHTML.tsx`, `src/pages/NotFound.tsx`, `src/components/admin/maintenance/AppArchitectureView.tsx`, `src/data/fakeTestimonials.ts`
-- Retirer la génération dans `supabase/functions/generate-sitemap/index.ts` et `scripts/generate-sitemap.ts`
+**JOUR-J**
+- Planning Jour-J (badge Exclusif)
+- Plan de table
+- Calculatrice Boisson → `/dashboard/drinks` (sortie du dropdown Budget)
+- Cérémonie
+- Gestion des logements
 
-### Base de données
-- Migration Supabase : `DROP TABLE public.jeunes_maries CASCADE;` (+ tables liées si existantes, + policies, + storage bucket éventuel)
+**APRÈS JOUR-J**
+- Après le jour-J
 
-## 2. Analyse IA des documents (suppression complète)
+**ADMIN**
+- Mairie – Civil
+- Documents
+- Site Internet (modal)
+- Moodboard
 
-### Frontend
-- `src/components/documents/DocumentUploader.tsx` : retirer l'appel `supabase.functions.invoke('analyze-document')` et l'état `analyzing`, garder l'upload simple
-- `src/components/documents/DocumentCard.tsx` : retirer le bloc `ai_summary` (lignes 99-107) et les champs du type
-- `src/pages/dashboard/DocumentsPage.tsx` : retirer l'affichage du résumé IA (ligne 182) et tout bouton "Analyser"
+**BONUS**
+- Guides PDF
+- Générateur QR Code / Liste de mariage
+- Assistant virtuel + ChatGPT (sous-menu existant)
 
-### Backend
-- Supprimer `supabase/functions/analyze-document/` (dossier entier)
-- Retirer l'entrée dans `supabase/config.toml` si présente
-- Migration : `ALTER TABLE public.wedding_documents DROP COLUMN ai_summary, DROP COLUMN ai_key_points, DROP COLUMN is_analyzed;`
+**Bas de sidebar** (inchangé) : Paramètres, Installer l'app, Un problème ?, Déconnexion.
 
-## Vérifications après build
-- Build TS passe (aucune ref orpheline aux composants supprimés)
-- `/dashboard/documents` : upload OK sans bouton/affichage IA
-- `/jeunes-maries` → 404 propre
-- Header/Footer ne contiennent plus le lien
-- Sitemap régénéré sans URLs jeunes-mariés
+Modifications concrètes :
+- Supprimer le dropdown "Budget" à 2 items et créer 2 liens standalone (`Calculatrice Budget` / `Gestion du budget`) avec query param `?tab=`.
+- Ajouter dans `BudgetPage.tsx` la lecture de `useSearchParams()` pour piloter `activeTab` (`detailed` / `calculator`).
+- Introduire un petit composant interne `SidebarSection({title, children})` qui rend un label `text-[10px] uppercase tracking-wider text-muted-foreground px-3 pt-4 pb-1` puis les enfants.
+- Ajouter les mêmes clés/labels dans `src/i18n/locales/fr/dashboard.json` et `en/dashboard.json` (sections + `budgetManagement`, `budgetCalculatorItem`, `drinksCalculatorItem`, `qrCodeRegistry`).
 
-## Notes
-- Action irréversible côté DB (données jeunes_maries et colonnes IA perdues). La migration sera soumise pour approbation avant exécution.
-- Les articles de blog et témoignages SEO génériques restent inchangés ; seules les références directes à la section sont retirées.
+## 2. Modernisation de l'accueil dashboard (`src/components/dashboard/ProjectSummary.tsx`)
+
+- **Supprimer** les blocs `<QuestCards />` et `<AchievementBadges />` (+ imports inutilisés).
+- **Ajouter** un bandeau large *Install App* juste après `HeroStats`, avant `QuickActions` :
+  - Fond dégradé sage (`bg-gradient-to-r from-wedding-olive to-wedding-olive/80`), texte blanc, coins arrondis, icône `Smartphone`.
+  - Titre : « 📱 Installez l'app sur votre mobile — sans téléchargement »
+  - Sous-titre : « Recommandé pour le Jour-J. Pour préparer votre mariage, préférez un ordinateur ou une tablette 💻 »
+  - CTA blanc → `/dashboard/installer-app`.
+  - Clés i18n `dashboard.installBanner.*` (FR + EN).
+- **Refonte du bloc "Besoin d'aide"** : remplacer `WhatsAppButton` (variant featured) par un bouton unique « Contacter le support » qui ouvre la même `ProblemModal` que "Un problème ?" (importer `ProblemModal`, state local, un seul CTA sage-olive).
+
+## 3. Fix page prestataire publique (`src/pages/prestataire/slug.tsx`)
+
+Erreur : `permission denied for table prestataires_rows` en anon car les grants colonne-par-colonne récents excluent `email/telephone/siret/crm_*`, mais la requête fait `select("*, prestataires_photos_preprod(*)")` → PostgREST refuse.
+
+Correction : remplacer le `select("*")` par une **liste explicite des colonnes publiques** (nom, slug, description, description_complete, ville, region, categorie, sous_categorie, capacite_max_invites, prix_a_partir_de, prix_par_personne, prix_par_groupe, styles, image_url, instagram, site_web, google_place_id, google_rating, google_reviews_count, visible, featured, brochure_url, distance_grande_ville, etc.), plus la relation `prestataires_photos_preprod(*)`. Idem pour la seconde requête `.eq("id", slug)`. Aucune modification RLS/DB (la sécurité récente reste intacte).
+
+Vérifier les usages downstream (`VendorMoreInfo`, `GoogleReviews`, `PhotoGalleryViewer`) qui ne consomment que des champs déjà publics → OK.
+
+## Détails techniques
+
+- Aucune migration DB, aucun changement d'edge function.
+- Tous les libellés passent par `t()` avec `dashboard` namespace pour rester bilingue.
+- Aucun refactor hors périmètre (les autres pages restent intactes).
+- Préserver la logique reader-mode et badge "Exclusif" sur Planning Jour-J.
