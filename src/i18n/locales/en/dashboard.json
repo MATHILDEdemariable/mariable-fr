@@ -15,6 +15,13 @@
     "mobileTip": "For the best experience, use a computer or tablet for planning modules. Only the Wedding-Day module is optimized for mobile."
   },
   "sidebar": {
+    "sections": {
+      "organisation": "Planning",
+      "jourJ": "Wedding-Day",
+      "apres": "After the wedding",
+      "admin": "Admin",
+      "bonus": "Bonus"
+    },
     "dashboard": "Dashboard",
     "dashboardHome": "Dashboard",
     "myWedding": "My Wedding",
@@ -25,6 +32,7 @@
     "retroplanning": "Timeline",
     "budget": "Budget",
     "budgetCalculator": "Budget calculator",
+    "budgetManagement": "Budget management",
     "drinksCalculator": "Drinks calculator",
     "vendors": "Vendors",
     "vendorsAll": "All vendors",
@@ -41,13 +49,23 @@
     "website": "Website",
     "ceremony": "Ceremony",
     "civil": "Civil ceremony",
-    "qrCode": "Wedding registry",
+    "qrCode": "Wedding registry / QR code",
     "documents": "Documents",
     "afterDay": "After the wedding",
-    "bonus": "Bonus",
+    "bonus": "AI assistants",
     "bonusChatGPT": "Wedding ChatGPT",
     "bonusAssistant": "Virtual assistant",
     "guidesPdf": "PDF guides"
+  },
+  "installBanner": {
+    "title": "📱 Install the app on your phone — no download needed",
+    "subtitle": "Recommended for the Wedding Day. To plan your wedding, use a computer or tablet 💻",
+    "cta": "Install"
+  },
+  "support": {
+    "title": "Need help?",
+    "subtitle": "A question, a bug, a suggestion — our team replies within 24h.",
+    "cta": "Contact support"
   },
   "mobileNav": {
     "home": "Home",
