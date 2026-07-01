@@ -92,7 +92,7 @@ const BudgetPage: React.FC = () => {
           </Button>
         </div>
 
-        <Tabs defaultValue="calculator" value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
               value="detailed" 
