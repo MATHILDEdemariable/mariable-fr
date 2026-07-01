@@ -244,23 +244,52 @@ const ProjectSummary = () => {
         setShowGuideModal={setShowGuideModal}
       />
 
-      {/* Quest Cards */}
-      <QuestCards tasks={tasks} />
+      {/* Install App Banner */}
+      <Link
+        to="/dashboard/installer-app"
+        className="block bg-gradient-to-r from-wedding-olive to-wedding-olive/80 text-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
+      >
+        <div className="flex items-start sm:items-center gap-4">
+          <div className="bg-white/15 p-3 rounded-lg shrink-0">
+            <Smartphone className="h-6 w-6 sm:h-7 sm:w-7" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-base sm:text-lg font-serif font-medium">
+              {t('installBanner.title')}
+            </h3>
+            <p className="text-xs sm:text-sm text-white/85 mt-1 leading-relaxed">
+              {t('installBanner.subtitle')}
+            </p>
+          </div>
+          <span className="hidden sm:inline-flex items-center px-4 py-2 rounded-md bg-white text-wedding-olive text-sm font-medium shrink-0">
+            {t('installBanner.cta')}
+          </span>
+        </div>
+      </Link>
 
       {/* Tools Grid */}
       <ToolsGrid />
 
-      {/* Achievement Badges */}
-      <AchievementBadges
-        completedTasks={completedTasksCount}
-        totalTasks={totalTasksCount}
-        hasSetBudget={moduleProgress.budget}
-        hasSetDate={!!localWeddingDate}
-        guestCount={parseInt(localGuestCount) || 0}
-      />
+      {/* Contact Support */}
+      <div className="bg-muted/30 border border-border rounded-xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex-1">
+          <h3 className="text-base sm:text-lg font-serif text-foreground">
+            {t('support.title')}
+          </h3>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1">
+            {t('support.subtitle')}
+          </p>
+        </div>
+        <Button
+          onClick={() => setShowProblemModal(true)}
+          className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+        >
+          <LifeBuoy className="h-4 w-4 mr-2" />
+          {t('support.cta')}
+        </Button>
+      </div>
 
-      {/* WhatsApp Support - Premium Only */}
-      <WhatsAppButton variant="featured" requirePremium={true} />
+      <ProblemModal isOpen={showProblemModal} onClose={() => setShowProblemModal(false)} />
 
       {/* Modal Détail du prix */}
       <Dialog open={showPrixModal} onOpenChange={setShowPrixModal}>
