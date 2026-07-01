@@ -41,7 +41,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
   const jourMItems = [
     { label: t('sidebar.weddingDayPlanning'), icon: <Calendar className="h-4 w-4" />, path: '/mon-jour-m' },
-    { label: t('sidebar.weddingDayCoordinators'), icon: <Users className="h-4 w-4" />, path: '/dashboard/coordinateurs' },
   ];
 
   const bonusItems = [
