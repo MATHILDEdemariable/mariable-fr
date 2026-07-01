@@ -1,19 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PaymentModal from '@/components/pricing/PaymentModal';
-import { WhatsAppButton } from '@/components/support/WhatsAppButton';
 import ClubMariableModal from './ClubMariableModal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import PricingContent from './PricingContent';
+import { Smartphone, LifeBuoy } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { ProblemModal } from '@/components/support/ProblemModal';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
-import QuestCards from './gaming/QuestCards';
 import ToolsGrid from './gaming/ToolsGrid';
-import AchievementBadges from './gaming/AchievementBadges';
 import QuickActions from './gaming/QuickActions';
 
 interface Task {
