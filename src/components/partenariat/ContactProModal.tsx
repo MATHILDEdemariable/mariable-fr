@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Mail, Send, MessageCircle } from "lucide-react";
+import { Mail, Send, Linkedin } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,8 +16,9 @@ interface ContactProModalProps {
 }
 
 const EMAIL = "mathilde@mariable.fr";
-const PHONE_DISPLAY = "+33 7 60 10 81 89";
-const WHATSAPP_URL = "https://wa.me/33760108189";
+const LINKEDIN_URL = "https://www.linkedin.com/in/lambertmathilde/";
+const LINKEDIN_DISPLAY = "linkedin.com/in/lambertmathilde";
+
 
 const ContactProModal = ({ open, onOpenChange, defaultSubject }: ContactProModalProps) => {
   const { t } = useTranslation("partenariat");
@@ -117,7 +118,7 @@ const ContactProModal = ({ open, onOpenChange, defaultSubject }: ContactProModal
                   {t("modal.phoneLabel")}
                 </label>
                 <div className="relative">
-                  <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 opacity-0" />
                   <Input
                     type="tel"
                     value={formData.phone}
@@ -185,17 +186,17 @@ const ContactProModal = ({ open, onOpenChange, defaultSubject }: ContactProModal
               </a>
 
               <a
-                href={WHATSAPP_URL}
+                href={LINKEDIN_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 p-3 bg-white border border-editorial-noir/10 hover:border-editorial-noir transition-colors"
               >
-                <MessageCircle className="w-5 h-5 text-premium-sage shrink-0" />
+                <Linkedin className="w-5 h-5 text-premium-sage shrink-0" />
                 <div className="text-left">
                   <p className="text-xs uppercase tracking-widest text-editorial-noir/50">
-                    {t("modal.directPhone")}
+                    {t("modal.directLinkedin")}
                   </p>
-                  <p className="text-sm text-editorial-noir">{PHONE_DISPLAY}</p>
+                  <p className="text-sm text-editorial-noir">{LINKEDIN_DISPLAY}</p>
                 </div>
               </a>
             </div>

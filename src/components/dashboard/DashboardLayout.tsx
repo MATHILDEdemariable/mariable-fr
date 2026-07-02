@@ -5,7 +5,8 @@ import DashboardSidebar from './DashboardSidebar';
 import MobileBottomNav from './MobileBottomNav';
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
-import { Home, Users, Info, X } from 'lucide-react';
+import { Home, Users, Info, X, Crown } from 'lucide-react';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import SatisfactionModal from './SatisfactionModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -20,6 +21,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const { t } = useTranslation('dashboard');
+  const { isPremium } = useUserProfile();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
@@ -95,6 +97,17 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {t('header.vendorSelection')}
             </Button>
           </Link>
+          {!isPremium && (
+            <Link to="/paiement">
+              <Button
+                size="sm"
+                className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
+              >
+                <Crown className="h-4 w-4 mr-1" />
+                {t('header.upgradePremium')}
+              </Button>
+            </Link>
+          )}
         </div>
         
         <div className="flex flex-1 relative">
