@@ -1,0 +1,130 @@
+{
+  "seo": {
+    "title": "Wedding Content Creator: the complete guide (photos, reels, aftermovie from €490) | Mariable",
+    "description": "Why and how to add a content creator to your wedding. Formats, pricing (€490 to €1,490), how it works with your photographer, real examples."
+  },
+  "backHome": "Back to home",
+  "meta": {
+    "author": "Mathilde — Mariable",
+    "date": "Published in 2025",
+    "readTime": "8 min read",
+    "category": "Vendors · Content"
+  },
+  "hero": {
+    "eyebrow": "New service · 2025 vendors",
+    "title": "Wedding Content Creator: the complete guide to capturing your day differently",
+    "subtitle": "Stories, reels, aftermovies: a new kind of coverage, complementary to the photographer, made for couples who want to relive — and share — their wedding as soon as the day after."
+  },
+  "intro": {
+    "p1": "In 2025, a wedding is no longer told solely through a photo album delivered 3 months later. Couples want to relive their day immediately, share the best moments with loved ones, and keep a short, dynamic video trace that matches their generation.",
+    "p2": "That's exactly the role of a wedding content creator: a vendor halfway between a photographer, a videographer and a community manager, able to deliver Instagram stories, reels and an aftermovie in just a few days."
+  },
+  "sections": [
+    {
+      "heading": "Content creator vs photographer: what's the difference?",
+      "body": "The traditional photographer captures key moments with a strong aesthetic and artistic vision — for a timeless result delivered over several weeks. The content creator focuses on short, vertical, ready-to-post formats: 30-second reels, live stories, 3–5-minute aftermovies. The two services complement each other — they don't compete.",
+      "bullets": [
+        "Fast delivery: stories & reels within 48h, aftermovie within 5 days",
+        "Social-native formats (Instagram, TikTok)",
+        "More accessible pricing than a traditional videographer",
+        "Discreet presence, tuned to the wedding's atmosphere"
+      ]
+    },
+    {
+      "heading": "What a content creator actually captures",
+      "body": "A good content creator can tell your wedding in 60 seconds as well as in 5 minutes. They alternate wide and tight shots, catch the glances, the laughs, the details — the flowing dress, the clinking glasses, the first dance — and edit it all with an emotional soundtrack.",
+      "bullets": [
+        "Real-time photo & video capture",
+        "Instagram stories shared live with your guests",
+        "Dynamic reels of the highlights",
+        "Aftermovie edited in a few days"
+      ]
+    },
+    {
+      "heading": "Our Mariable Content Creator packages",
+      "body": "Three formats designed around your budget and desired coverage level. All include upstream prep, day-of capture, and fast delivery via a private gallery."
+    },
+    {
+      "heading": "How does it work, step by step?",
+      "body": "Three simple steps, turnkey organisation, zero logistical stress on the day.",
+      "bullets": [
+        "1. You book your package online",
+        "2. We plan a call together to understand your expectations",
+        "3. The content creator captures your day and delivers your content in a few days"
+      ]
+    },
+    {
+      "heading": "They tried it and loved it",
+      "body": "Three couples we worked with in 2024 share their feedback — same conclusion: the stories shared the day after remain the most vivid memory of their wedding."
+    }
+  ],
+  "packs": {
+    "heading": "The 3 packages",
+    "items": [
+      {
+        "name": "Essential Pack",
+        "price": "€490",
+        "description": "The essentials to capture your day",
+        "features": [
+          "Real-time Instagram stories",
+          "Dynamic reels of your highlights",
+          "4h on site",
+          "Delivery within 48h",
+          "Professional music & transitions"
+        ]
+      },
+      {
+        "name": "Complete Pack",
+        "price": "€890",
+        "description": "The full solution to relive your wedding",
+        "features": [
+          "Everything in the Essential Pack",
+          "Cinematic aftermovie (3–5 min)",
+          "High-quality photos (200+)",
+          "8h on site",
+          "Delivery within 5 days",
+          "Private online gallery"
+        ]
+      },
+      {
+        "name": "Premium Pack",
+        "price": "€1,490",
+        "description": "The ultimate experience for an unforgettable memory",
+        "features": [
+          "Everything in the Complete Pack",
+          "Long-form aftermovie (8–12 min)",
+          "Unlimited photos",
+          "Full day (12h)",
+          "Cinematic drone",
+          "Interview with the couple"
+        ]
+      }
+    ],
+    "popular": "Most popular",
+    "cta": "Book this package"
+  },
+  "testimonials": {
+    "heading": "They loved their content creator",
+    "items": [
+      { "name": "Marie & Thomas", "location": "Paris", "text": "We got to relive our wedding the very next day thanks to the stories. Our guests loved discovering the behind-the-scenes live." },
+      { "name": "Sophie & Alexandre", "location": "Lyon", "text": "The aftermovie is stunning — we cry every time we watch it. The content creator truly captured the essence of our day." },
+      { "name": "Julie & Pierre", "location": "Bordeaux", "text": "Impeccable, discreet service. The reels were ready before dinner ended — a perfect gift for us." }
+    ]
+  },
+  "faq": {
+    "heading": "Frequently asked questions",
+    "items": [
+      { "q": "What's the difference vs. a traditional photographer or videographer?", "a": "Our content creator focuses on modern, shareable formats (stories, reels, short aftermovies) in addition to classic photos. Social-ready, fast-delivered, more affordable." },
+      { "q": "When do we receive our content?", "a": "Stories and reels within 48h. Aftermovie within 5 days (Complete Pack) or 7 days (Premium Pack). Photos via a private online gallery." },
+      { "q": "Can we offer this as a wedding gift?", "a": "Absolutely. We offer personalised gift vouchers — an original, memorable present for the couple-to-be." },
+      { "q": "Is the content creator discreet during the ceremony?", "a": "Yes, our content creators are trained to remain fully discreet while capturing the best moments, working in harmony with the photographer and videographer." },
+      { "q": "Can we change our booking?", "a": "Yes, free of charge up to 30 days before the wedding date. After that, our T&Cs apply." }
+    ]
+  },
+  "cta": {
+    "heading": "Ready to capture the magical moments of your wedding?",
+    "body": "Book your content creator now and receive your content in just a few days.",
+    "primary": "Book now",
+    "secondary": "Request a quote"
+  }
+}

@@ -1,0 +1,130 @@
+{
+  "seo": {
+    "title": "Content Creator Mariage : le guide complet (photos, reels, aftermovie dès 490€) | Mariable",
+    "description": "Pourquoi et comment intégrer un content creator à votre mariage. Formats, tarifs (490€ à 1490€), organisation avec le photographe, exemples concrets."
+  },
+  "backHome": "Retour à l'accueil",
+  "meta": {
+    "author": "Mathilde — Mariable",
+    "date": "Publié en 2025",
+    "readTime": "8 min de lecture",
+    "category": "Prestataires · Contenu"
+  },
+  "hero": {
+    "eyebrow": "Nouveau service · Prestataires 2025",
+    "title": "Content Creator mariage : le guide complet pour capturer votre journée autrement",
+    "subtitle": "Stories, reels, aftermovies : un nouveau format de captation, complémentaire du photographe, pensé pour les mariés qui veulent revivre — et partager — leur mariage dès le lendemain."
+  },
+  "intro": {
+    "p1": "En 2025, un mariage ne se raconte plus uniquement à travers un album photo remis 3 mois après la cérémonie. Les couples veulent revivre leur journée immédiatement, partager les meilleurs moments avec leurs proches, et garder une trace vidéo courte, dynamique, à l'image de leur génération.",
+    "p2": "C'est exactement le rôle d'un content creator mariage : un prestataire à mi-chemin entre le photographe, le vidéaste et le community manager, capable de livrer stories Instagram, reels et aftermovie en quelques jours seulement."
+  },
+  "sections": [
+    {
+      "heading": "Content creator vs photographe : quelles différences ?",
+      "body": "Le photographe traditionnel capte les moments forts avec une exigence esthétique et artistique haute — pour un rendu intemporel livré en plusieurs semaines. Le content creator, lui, se concentre sur des formats courts, verticaux, prêts à publier : reels de 30 secondes, stories en direct, aftermovie de 3 à 5 minutes. Les deux prestations sont complémentaires — pas concurrentes.",
+      "bullets": [
+        "Livraison rapide : stories & reels sous 48h, aftermovie sous 5 jours",
+        "Formats natifs réseaux sociaux (Instagram, TikTok)",
+        "Tarif plus accessible qu'un vidéaste traditionnel",
+        "Présence discrète, adaptée à l'ambiance du mariage"
+      ]
+    },
+    {
+      "heading": "Ce que capte concrètement un content creator",
+      "body": "Un bon content creator sait raconter votre mariage en 60 secondes comme en 5 minutes. Il alterne plans larges et plans serrés, capte les regards, les rires, les détails — la robe qui bouge, les mains qui trinquent, la première danse — et monte le tout avec une bande son émotionnelle.",
+      "bullets": [
+        "Captation photo & vidéo en temps réel",
+        "Stories Instagram partagées en direct avec vos invités",
+        "Reels dynamiques des moments forts",
+        "Aftermovie souvenir monté en quelques jours"
+      ]
+    },
+    {
+      "heading": "Nos packs Content Creator Mariable",
+      "body": "Trois formules pensées selon votre budget et le niveau de couverture souhaité. Toutes incluent une préparation en amont, la captation le jour J, et une livraison rapide sur galerie privée."
+    },
+    {
+      "heading": "Comment ça se passe, concrètement ?",
+      "body": "Trois étapes simples, une organisation clé en main, aucun stress logistique le jour J.",
+      "bullets": [
+        "1. Vous réservez votre pack en ligne",
+        "2. Nous planifions ensemble un échange pour comprendre vos attentes",
+        "3. Le content creator capture votre journée et vous livre les contenus en quelques jours"
+      ]
+    },
+    {
+      "heading": "Ils ont testé et adoré",
+      "body": "Trois couples accompagnés en 2024 partagent leur retour d'expérience — même conclusion : les stories partagées dès le lendemain restent le souvenir le plus vivant de leur mariage."
+    }
+  ],
+  "packs": {
+    "heading": "Les 3 packs",
+    "items": [
+      {
+        "name": "Pack Essentiel",
+        "price": "490€",
+        "description": "L'essentiel pour capturer votre journée",
+        "features": [
+          "Stories Instagram en temps réel",
+          "Reels dynamiques de vos moments forts",
+          "4h de présence",
+          "Livraison sous 48h",
+          "Musique & transitions professionnelles"
+        ]
+      },
+      {
+        "name": "Pack Complet",
+        "price": "890€",
+        "description": "La solution complète pour revivre votre mariage",
+        "features": [
+          "Tout du Pack Essentiel",
+          "Aftermovie cinématographique (3-5 min)",
+          "Photos haute qualité (200+ clichés)",
+          "8h de présence",
+          "Livraison sous 5 jours",
+          "Galerie privée en ligne"
+        ]
+      },
+      {
+        "name": "Pack Premium",
+        "price": "1490€",
+        "description": "L'expérience ultime pour un souvenir inoubliable",
+        "features": [
+          "Tout du Pack Complet",
+          "Aftermovie long format (8-12 min)",
+          "Photos illimitées",
+          "Journée complète (12h)",
+          "Drone cinématique",
+          "Interview des mariés"
+        ]
+      }
+    ],
+    "popular": "Le plus populaire",
+    "cta": "Réserver ce pack"
+  },
+  "testimonials": {
+    "heading": "Ils ont adoré leur content creator",
+    "items": [
+      { "name": "Marie & Thomas", "location": "Paris", "text": "On a pu revivre notre mariage dès le lendemain grâce aux stories. Nos invités ont adoré découvrir les coulisses en direct." },
+      { "name": "Sophie & Alexandre", "location": "Lyon", "text": "L'aftermovie est magnifique, on pleure à chaque visionnage. Le content creator a su capter l'essence de notre journée." },
+      { "name": "Julie & Pierre", "location": "Bordeaux", "text": "Service impeccable et discret. Les reels étaient prêts avant même la fin du repas — un cadeau parfait pour nous." }
+    ]
+  },
+  "faq": {
+    "heading": "Questions fréquentes",
+    "items": [
+      { "q": "Quelle différence avec un photographe ou vidéaste traditionnel ?", "a": "Notre content creator se concentre sur des contenus modernes et partageables (stories, reels, aftermovies courts) en plus des photos classiques. Un format adapté aux réseaux sociaux, livré rapidement, à un tarif plus accessible." },
+      { "q": "Quand recevons-nous nos contenus ?", "a": "Stories et reels sous 48h. Aftermovie sous 5 jours (Pack Complet) ou 7 jours (Pack Premium). Photos accessibles via une galerie privée en ligne." },
+      { "q": "Peut-on offrir ce service en cadeau de mariage ?", "a": "Absolument. Nous proposons des bons cadeaux personnalisables — un cadeau original et mémorable pour les futurs mariés." },
+      { "q": "Le content creator est-il discret pendant la cérémonie ?", "a": "Oui, nos content creators sont formés pour être totalement discrets tout en capturant les meilleurs moments, en harmonie avec le photographe et le vidéaste." },
+      { "q": "Peut-on modifier notre réservation ?", "a": "Oui, jusqu'à 30 jours avant la date du mariage sans frais. Au-delà, des conditions s'appliquent selon nos CGV." }
+    ]
+  },
+  "cta": {
+    "heading": "Prêts à capturer les moments magiques de votre mariage ?",
+    "body": "Réservez votre content creator dès maintenant et recevez vos contenus en quelques jours.",
+    "primary": "Réserver maintenant",
+    "secondary": "Demander un devis"
+  }
+}
