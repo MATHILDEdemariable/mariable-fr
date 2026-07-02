@@ -1,69 +1,39 @@
-# Plan — Refonte dashboard + fix prestataires
+## 1. Vérification Google Search Console sur mariable.fr
 
-## 1. Réorganisation de la sidebar (`src/components/dashboard/DashboardSidebar.tsx`)
+- Récupérer un nouveau token de vérification META pour `https://mariable.fr/` via le gateway GSC.
+- Remplacer la meta `google-site-verification` actuelle dans `index.html` par le token de `mariable.fr`.
+- Après publication, lancer la vérification + soumettre `https://mariable.fr/sitemap.xml`.
 
-Regrouper visuellement les items par **sections** avec de petits titres (`ORGANISATION`, `JOUR-J`, `APRÈS`, `ADMIN`, `BONUS`) au lieu de la liste plate actuelle. Ordre demandé :
+## 2. Page /content-creator-mariage — format article + toggle FR/EN
 
-**ORGANISATION**
-- Tableau de bord (accueil)
-- Rétroplanning (lien direct)
-- Calculatrice Budget → `/dashboard/budget?tab=calculator`
-- Gestion du budget → `/dashboard/budget?tab=detailed`
-- RSVP Invités
-- Prestataires (dropdown existant)
-- Check-list (dropdown existant)
+- Refondre `src/pages/ContentCreatorMariage.tsx` sur le même gabarit visuel que les articles de blog (`BlogArticle.tsx`) :
+  - Header avec logo Mariable + `LanguageToggle` (variant dark).
+  - Hero éditorial (cover image, titre h1 Playfair, sous-titre, meta auteur/date).
+  - Corps `prose` (Tailwind typography) avec sections h2/h3, blockquotes, listes.
+  - CTA final vers formulaire de contact / réservation.
+  - Helmet SEO (title, description, canonical, og:*, JSON-LD Article).
+- Créer namespace i18n dédié : `src/i18n/locales/fr/contentCreator.json` + `src/i18n/locales/en/contentCreator.json` (traduction complète EN).
+- Enregistrer le namespace dans `src/i18n/index.ts`.
+- Toggle FR/EN fonctionnel via `LanguageToggle` déjà existant.
 
-**JOUR-J**
-- Planning Jour-J (badge Exclusif)
-- Plan de table
-- Calculatrice Boisson → `/dashboard/drinks` (sortie du dropdown Budget)
-- Cérémonie
-- Gestion des logements
+## 3. Onglet "Passer Premium" dans /dashboard
 
-**APRÈS JOUR-J**
-- Après le jour-J
+- Dans `DashboardLayout.tsx`, ajouter un 3ᵉ bouton à côté de "Accueil" et "Sélection de professionnels" :
+  - Label : "Passer Premium — 29€" (au lieu de 59€).
+  - Style : accent (sage/gold) pour se démarquer.
+  - Lien vers la page de paiement premium existante (`/paiement` ou équivalent — à confirmer via `useUserStatus`).
+- Conditionner l'affichage : masquer si l'utilisateur est déjà premium (via `useUserStatus` hook déjà présent).
+- Ajouter les clés i18n dans `dashboard.json` (FR/EN).
 
-**ADMIN**
-- Mairie – Civil
-- Documents
-- Site Internet (modal)
-- Moodboard
+## 4. Page /partenariat — retirer WhatsApp, ajouter LinkedIn
 
-**BONUS**
-- Guides PDF
-- Générateur QR Code / Liste de mariage
-- Assistant virtuel + ChatGPT (sous-menu existant)
+- Dans `src/pages/Partenariat.tsx` (et son modal `ContactModal`), remplacer l'affichage du numéro WhatsApp (`directPhone`) par un lien LinkedIn : `https://www.linkedin.com/in/lambertmathilde/`.
+- Mettre à jour les clés `partenariat.json` FR/EN :
+  - Supprimer `modal.directPhone` (numéro).
+  - Ajouter `modal.directLinkedin` : "LinkedIn" + label.
+- Garder l'email direct.
 
-**Bas de sidebar** (inchangé) : Paramètres, Installer l'app, Un problème ?, Déconnexion.
+## Questions ouvertes
 
-Modifications concrètes :
-- Supprimer le dropdown "Budget" à 2 items et créer 2 liens standalone (`Calculatrice Budget` / `Gestion du budget`) avec query param `?tab=`.
-- Ajouter dans `BudgetPage.tsx` la lecture de `useSearchParams()` pour piloter `activeTab` (`detailed` / `calculator`).
-- Introduire un petit composant interne `SidebarSection({title, children})` qui rend un label `text-[10px] uppercase tracking-wider text-muted-foreground px-3 pt-4 pb-1` puis les enfants.
-- Ajouter les mêmes clés/labels dans `src/i18n/locales/fr/dashboard.json` et `en/dashboard.json` (sections + `budgetManagement`, `budgetCalculatorItem`, `drinksCalculatorItem`, `qrCodeRegistry`).
-
-## 2. Modernisation de l'accueil dashboard (`src/components/dashboard/ProjectSummary.tsx`)
-
-- **Supprimer** les blocs `<QuestCards />` et `<AchievementBadges />` (+ imports inutilisés).
-- **Ajouter** un bandeau large *Install App* juste après `HeroStats`, avant `QuickActions` :
-  - Fond dégradé sage (`bg-gradient-to-r from-wedding-olive to-wedding-olive/80`), texte blanc, coins arrondis, icône `Smartphone`.
-  - Titre : « 📱 Installez l'app sur votre mobile — sans téléchargement »
-  - Sous-titre : « Recommandé pour le Jour-J. Pour préparer votre mariage, préférez un ordinateur ou une tablette 💻 »
-  - CTA blanc → `/dashboard/installer-app`.
-  - Clés i18n `dashboard.installBanner.*` (FR + EN).
-- **Refonte du bloc "Besoin d'aide"** : remplacer `WhatsAppButton` (variant featured) par un bouton unique « Contacter le support » qui ouvre la même `ProblemModal` que "Un problème ?" (importer `ProblemModal`, state local, un seul CTA sage-olive).
-
-## 3. Fix page prestataire publique (`src/pages/prestataire/slug.tsx`)
-
-Erreur : `permission denied for table prestataires_rows` en anon car les grants colonne-par-colonne récents excluent `email/telephone/siret/crm_*`, mais la requête fait `select("*, prestataires_photos_preprod(*)")` → PostgREST refuse.
-
-Correction : remplacer le `select("*")` par une **liste explicite des colonnes publiques** (nom, slug, description, description_complete, ville, region, categorie, sous_categorie, capacite_max_invites, prix_a_partir_de, prix_par_personne, prix_par_groupe, styles, image_url, instagram, site_web, google_place_id, google_rating, google_reviews_count, visible, featured, brochure_url, distance_grande_ville, etc.), plus la relation `prestataires_photos_preprod(*)`. Idem pour la seconde requête `.eq("id", slug)`. Aucune modification RLS/DB (la sécurité récente reste intacte).
-
-Vérifier les usages downstream (`VendorMoreInfo`, `GoogleReviews`, `PhotoGalleryViewer`) qui ne consomment que des champs déjà publics → OK.
-
-## Détails techniques
-
-- Aucune migration DB, aucun changement d'edge function.
-- Tous les libellés passent par `t()` avec `dashboard` namespace pour rester bilingue.
-- Aucun refactor hors périmètre (les autres pages restent intactes).
-- Préserver la logique reader-mode et badge "Exclusif" sur Planning Jour-J.
+- **Point 3** : confirme-tu que le lien "Passer Premium" doit pointer vers `/paiement` ? (ou une autre route ?)
+- **Point 2** : dois-je conserver le contenu texte actuel de `/content-creator-mariage` tel quel (juste re-mise en forme éditoriale) ou souhaites-tu que je réécrive/enrichisse le contenu façon article SEO long-form ?
