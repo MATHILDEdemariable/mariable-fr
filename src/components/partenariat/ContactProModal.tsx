@@ -118,7 +118,7 @@ const ContactProModal = ({ open, onOpenChange, defaultSubject }: ContactProModal
                   {t("modal.phoneLabel")}
                 </label>
                 <div className="relative">
-                  <MessageCircle className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 opacity-0" />
                   <Input
                     type="tel"
                     value={formData.phone}
