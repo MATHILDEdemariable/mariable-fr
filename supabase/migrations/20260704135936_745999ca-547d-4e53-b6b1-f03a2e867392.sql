@@ -1,0 +1,2 @@
+ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.vendors_tracking_preprod ENABLE ROW LEVEL SECURITY;
