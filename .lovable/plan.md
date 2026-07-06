@@ -1,57 +1,78 @@
-# Plan — 3 actions
 
-## 1. Migrer "Content Creator Mariage" vers un article de blog
+# Map prestataires + Mise en avant Instagram
 
-**Objectif :** L'article ne doit plus vivre sur `/content-creator-mariage` (page custom avec packs) mais dans la zone blog (`/conseilsmariage/[slug]`), au même format que les autres articles (via table `blog_posts`).
-
-**Actions :**
-- Créer une entrée dans `blog_posts` via migration Supabase (INSERT) avec :
-  - `slug` : `best-wedding-content-creator-france`
-  - `language` : `fr` (+ variante EN dans une seconde entrée `best-french-wedding-content-creator` pour le toggle FR/EN natif du blog)
-  - `title` / `h1_title` : "Best wedding content creator for a French wedding" (FR : "Content creator mariage : le meilleur choix pour un mariage en France")
-  - `meta_title` / `meta_description` optimisés autour du mot-clé **"best wedding content creator for france wedding"** / **"french wedding content creator"**
-  - `background_image_url` : uploader l'image 1 (jeune femme Paris `mariable.fr`) via Lovable Assets ou bucket `blog-images`, puis coller l'URL
-  - `content` (HTML) : version éditoriale reprenant le corps de `ContentCreatorMariage.tsx`, **SANS** les sections "Nos packs Content Creator" ni "Comment ça se passe", **SANS** aucun tarif Mariable.
-    - CTA final : bouton "Créer votre compte Mariable" → `/register`
-    - Embed / lien vers le post Instagram : `https://instagram.com/p/DYZU7FHDgeF/?img_index=1` (bloc citation + lien "Voir le carousel sur Instagram")
-  - `status` : `published`, `published_at` : now()
-- Supprimer la route `/content-creator-mariage` dans `src/App.tsx` (import + `<Route>`) et supprimer `src/pages/ContentCreatorMariage.tsx` + les 2 fichiers i18n `contentCreator.json` + la ligne d'enregistrement du namespace dans `src/i18n/index.ts`.
-- Ajouter une redirection 301 propre : nouvelle petite route `/content-creator-mariage` → `<Navigate to="/conseilsmariage/best-wedding-content-creator-france" replace />` pour ne pas perdre le SEO existant.
-
-## 2. Refonte SEO du contenu de l'article
-
-Intégré directement dans le HTML du `blog_posts.content` (point 1) :
-- **Mot-clé principal** : "best wedding content creator for france wedding" (H1, meta, intro, alt image)
-- **Mot-clé secondaire** : "french wedding content creator" (H2, ancres, closing)
-- **Structure H2/H3** :
-  - H2 : What is a wedding content creator?
-  - H2 : Why book a French wedding content creator?
-  - H2 : What they capture (stories, reels, aftermovie)
-  - H2 : Content creator vs photographer
-  - H2 : Real example — see it on Instagram (embed / lien)
-  - H2 : FAQ
-  - CTA final : créer un compte Mariable
-- Alt de l'image hero : "Best wedding content creator for a French wedding — Paris"
-- **Supprimé** : "Nos packs Content Creator Mariable" + "Comment ça se passe, concrètement ?" + tout prix (490/890/1490 €).
-
-## 3. Alerte sécurité Supabase (issue GitHub)
-
-**Diagnostic :**
-- `.env` est déjà dans `.gitignore` de ce sandbox — donc le fichier local n'est plus tracké côté Lovable.
-- L'issue mentionne `SUPABASE_URL` + `anon key` exposés. **Ces deux valeurs sont publiques par design** : elles sont déjà présentes en dur dans `src/integrations/supabase/client.ts` (ligne visible dans le bundle JS du site) et Supabase les envoie au navigateur. **Ce n'est PAS une vulnérabilité en soi** tant que la RLS est active.
-- La vraie question : `.env` a-t-il historiquement contenu la **service_role_key** ? Si oui, elle est compromise et doit être tournée immédiatement.
-
-**Recommandation (à faire côté user, pas côté code) :**
-1. Vérifier dans le dashboard Supabase → Settings → API si la `service_role_key` a été utilisée en dehors des edge functions. Si un `.env` public a pu la contenir → **rotation immédiate** de la service_role key (bouton "Reset" dans le dashboard). L'anon key peut aussi être rotée par précaution.
-2. Auditer les policies RLS : lancer un scan de sécurité sur le projet Lovable (je peux le déclencher).
-3. Répondre à l'issue GitHub en expliquant que l'anon key est publique par design + confirmer que RLS protège les données.
-4. Aucun changement code nécessaire côté Lovable — `.gitignore` est déjà correct et le client Supabase utilise correctement l'anon key.
-
-**Ce que je ferai côté code :** rien de destructif. Je peux uniquement **lancer un scan de sécurité Supabase** (`security--run_security_scan`) pour vérifier l'état des RLS et te livrer un rapport actionnable.
+Objectif : enrichir la découverte des pros sans transformer Mariable en plateforme de réservation. Deux ajouts qui servent le modèle **Club Mariable** (adhésion pro payante = plus de visibilité).
 
 ---
 
-## Questions avant exécution
-- **Image hero** : je récupère l'image 1 uploadée (`Capture_d_écran_2026-07-02_à_09.07.19.png`) et la publie via Lovable Assets pour l'utiliser comme `background_image_url`. OK ?
-- **Redirection** : je garde `/content-creator-mariage` en 301 vers le nouvel article blog (recommandé pour SEO). OK ?
-- **Version EN** : je crée les 2 versions (FR + EN) dans `blog_posts` avec le toggle langue natif du blog, ou seulement une version bilingue ?
+## 1. Map interactive des prestataires (Leaflet + OSM, gratuit)
+
+**Où** : nouvel onglet "Carte" sur `/dashboard/professionnels` (à côté de la liste), + version publique sur `/professionnels`.
+
+**Données** : `prestataires_rows` a déjà `latitude` / `longitude` — 166 des 264 pros visibles sont géolocalisés. Les 98 restants seront traités séparément (script de géocodage à partir de `ville` — hors scope de ce plan).
+
+**Fonctionnement** :
+- Carte France centrée, clustering des pins (nombreux pros à Paris/Provence).
+- Filtres réutilisés (catégorie, région, recherche) → la carte se met à jour en direct via le même `useOptimizedVendors`.
+- Pin cliqué → popup avec photo, nom, ville, catégorie, bouton "Voir la fiche" (→ `/prestataire/:slug`).
+- Adhérents Club Mariable = pin doré/plus gros (mise en avant visuelle liée au business model).
+
+**Stack** : `leaflet` + `react-leaflet` + `leaflet.markercluster`. Aucune clé API.
+
+---
+
+## 2. Mise en avant Instagram (éditorial curaté)
+
+**Concept** : toi (admin) sélectionnes des posts Instagram inspirants → ils s'affichent en grille cliquable sur le blog + sur la page pros. Clic sur l'image → ouvre le post Instagram dans un nouvel onglet. Positionnement média/prescripteur, pas de scraping.
+
+### Nouvelle table `instagram_highlights`
+| Champ | Type |
+|---|---|
+| `id` | uuid |
+| `instagram_url` | text (le lien du post) |
+| `image_url` | text (miniature uploadée manuellement dans bucket `visuels`) |
+| `caption` | text nullable |
+| `prestataire_id` | uuid nullable → FK `prestataires_rows` |
+| `context` | text (`blog`, `professionnels`, `both`) |
+| `display_order` | int |
+| `active` | boolean |
+| `created_at`, `updated_at` | timestamps |
+
+RLS : lecture publique (anon+authenticated), écriture réservée `is_admin()`. Grants standards.
+
+### Back-office admin
+Nouvel onglet dans `/admin/prestataires` : "Sélection Instagram" — CRUD simple : coller URL Insta, uploader miniature, choisir contexte + ordre, lier optionnellement à un pro existant.
+
+### Affichage front
+- **Blog** (`/conseilsmariage`) : nouvelle section "Inspirations Instagram" en bas de l'index → grille 5×2 masonry. Titre : "Sélection Mariable du moment".
+- **Pros** (`/professionnels`) : section "Coups de cœur Instagram" au-dessus de la liste. Si le highlight est lié à un pro Club Mariable → mini-badge "Découvrir ce prestataire" qui renvoie vers sa fiche.
+
+Grille inspirée du visuel que tu as partagé : images carrées, hover léger, icône Instagram en overlay.
+
+---
+
+## Pourquoi ça sert le business
+
+1. **Map** = argument de vente pour l'adhésion pro (pin premium visible = valeur tangible).
+2. **Instagram curaté** = pas de bypass possible (tu ne fais pas de mise en relation transactionnelle), tu deviens prescripteur média, ce qui **justifie l'adhésion** (être choisi éditorialement) et **crée du trafic vers les pros** sans passer par un formulaire de devis.
+3. **Base qualitative pour matching IA plus tard** : chaque highlight lié à un pro enrichit progressivement la data (style visuel, ambiance). C'est l'embryon d'un matching par vibe sans avoir à tout tagger manuellement dès le départ.
+
+---
+
+## Hors scope (à traiter séparément si tu valides)
+
+- Géocodage automatique des 98 pros sans coordonnées (script one-shot via Google Places API — clé déjà en secret).
+- Enrichissement IA de la database (scrape site pro + Insta → tags auto). Complexe, à cadrer dans un plan dédié après validation du modèle Club Mariable.
+- Audit RLS (que tu as choisi de traiter hors de ce plan — tu peux lancer le scan quand tu veux, je resterai dispo).
+
+---
+
+## Détails techniques
+
+- Package : `bun add leaflet react-leaflet leaflet.markercluster @types/leaflet`
+- Import CSS Leaflet dans `src/main.tsx`
+- Nouveau composant : `src/components/vendors/VendorsMap.tsx`
+- Nouveau composant : `src/components/instagram/InstagramHighlightsGrid.tsx`
+- Nouvelle page admin : `src/components/admin/InstagramHighlightsAdmin.tsx` (onglet dans `AdminPrestataires`)
+- Migration Supabase : table `instagram_highlights` + RLS + grants + trigger `updated_at`
+- Hook : `useInstagramHighlights({ context })` avec React Query, staleTime 5 min.
