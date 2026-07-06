@@ -184,14 +184,43 @@ const InstagramHighlightsAdmin = () => {
               />
             </div>
             <div>
-              <Label>URL de la miniature (image) *</Label>
-              <Input
-                placeholder="https://... (uploadez d'abord dans un bucket)"
-                value={form.image_url}
-                onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-              />
+              <Label>Image (upload JPG/PNG) ou URL *</Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://... ou uploadez ci-contre"
+                  value={form.image_url}
+                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                  className="flex-1"
+                />
+                <label className="inline-flex items-center gap-2 px-3 py-2 border border-input rounded-md cursor-pointer bg-background hover:bg-accent text-sm whitespace-nowrap">
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploading ? 'Upload...' : 'Fichier'}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    disabled={uploading}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleFileUpload(f);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+              {form.image_url && (
+                <div className="mt-2">
+                  <img
+                    src={form.image_url}
+                    alt="Aperçu"
+                    className="h-24 w-24 object-cover rounded border"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  />
+                </div>
+              )}
             </div>
           </div>
+
 
           <div>
             <Label>Légende (optionnel)</Label>
