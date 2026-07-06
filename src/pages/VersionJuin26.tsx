@@ -47,6 +47,12 @@ export default function VersionJuin26() {
           <PricingHighlight />
           <FAQSection />
           <BlogSection />
+          <InstagramHighlightsGrid
+            context="homepage"
+            eyebrow="Coups de cœur"
+            title="Sélection Instagram Mariable"
+            limit={10}
+          />
           <FinalCTASection />
         </main>
         <Footer />
