@@ -276,6 +276,11 @@ const ProfessionnelsMariable = () => {
               </div>
             )}
 
+            {/* Map view */}
+            {viewMode === 'map' ? (
+              <VendorsMap category={category} region={region} search={debouncedSearch} />
+            ) : (
+            <>
             {/* Vendors Grid */}
             {isLoading ? (
               <div className="flex justify-center items-center py-20">
