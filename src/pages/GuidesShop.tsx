@@ -135,21 +135,21 @@ export default function GuidesShop() {
               </h1>
               <div className="prose prose-lg max-w-none text-editorial-noir/80 mt-8">
                 <p>
-                  Organiser un mariage, c'est prendre plus de 200 décisions en quelques mois. Ce <strong>guide mariage Mariable</strong>
-                  {' '}rassemble tout ce dont vous avez besoin pour préparer sereinement le vôtre : <strong>checklist mariage 12 mois</strong>,
+                  Organiser un mariage, c'est prendre plus de 200 décisions en quelques mois.&nbsp;
+                  Mariable rassemble tout ce dont vous avez besoin pour préparer sereinement le vôtre : <strong>checklist mariage 12 mois</strong>,
                   <strong> rétroplanning gratuit</strong>, <strong>guide budget mariage</strong>, sélection de <strong>prestataires vérifiés</strong>,
                   déroulé du jour J et modèles PDF téléchargeables.
                 </p>
                 <p>
-                  Que vous en soyez au tout premier jour de vos préparatifs ou à J-30, vous trouverez ici les ressources adaptées à votre étape.
-                  Tous les outils Mariable sont <strong>100 % gratuits</strong> pour démarrer ; les guides PDF téléchargeables (dès 4 €) et les
-                  fonctionnalités avancées sont regroupés dans l'offre Premium à <strong>29 € à vie</strong>.
+                  Que vous en soyez au tout premier jour de vos préparatifs ou à J-30, vous trouverez ici les ressources adaptées à votre étape.<br />
+                  Tous les outils Mariable sont <strong>100 % gratuits</strong> pour démarrer en créant un compte; les guides PDF téléchargeables (dès 4 €) et des
+                  fonctionnalités avancées (ainsi que tous les guides) sont regroupés dans l'offre Premium à <strong>29 € à vie</strong>.
                 </p>
               </div>
 
               {/* Sommaire ancré */}
               <nav aria-label="Sommaire" className="mt-10 bg-editorial-beige/50 border border-editorial-noir/10 rounded p-6">
-                <p className="uppercase tracking-[0.2em] text-[11px] text-editorial-olive mb-4">Sommaire du guide</p>
+                <p className="uppercase tracking-[0.2em] text-[11px] text-editorial-olive mb-4">DETAILS</p>
                 <ul className="space-y-2">
                   {GUIDE_SECTIONS.map((s) => (
                     <li key={s.id}>
