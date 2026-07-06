@@ -13,8 +13,10 @@ const InstagramHighlightsGrid = ({
   context,
   title = 'Sélection Instagram Mariable',
   eyebrow = 'Inspiration',
+  limit,
 }: Props) => {
-  const { data: highlights = [], isLoading } = useInstagramHighlights(context);
+  const { data: allHighlights = [], isLoading } = useInstagramHighlights(context);
+  const highlights = limit ? allHighlights.slice(0, limit) : allHighlights;
 
   if (isLoading || highlights.length === 0) return null;
 
