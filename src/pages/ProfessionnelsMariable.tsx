@@ -349,9 +349,18 @@ const ProfessionnelsMariable = () => {
                 )}
               </>
             )}
+            </>
+            )}
           </div>
         </div>
+
+        <InstagramHighlightsGrid
+          context="professionnels"
+          eyebrow="Coups de cœur"
+          title="Sélection Instagram Mariable"
+        />
       </main>
+
 
       <Footer />
     </>
