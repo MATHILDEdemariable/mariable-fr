@@ -1060,6 +1060,53 @@ export type Database = {
         }
         Relationships: []
       }
+      instagram_highlights: {
+        Row: {
+          active: boolean
+          caption: string | null
+          context: string
+          created_at: string
+          display_order: number
+          id: string
+          image_url: string
+          instagram_url: string
+          prestataire_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          caption?: string | null
+          context?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url: string
+          instagram_url: string
+          prestataire_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          caption?: string | null
+          context?: string
+          created_at?: string
+          display_order?: number
+          id?: string
+          image_url?: string
+          instagram_url?: string
+          prestataire_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "instagram_highlights_prestataire_id_fkey"
+            columns: ["prestataire_id"]
+            isOneToOne: false
+            referencedRelation: "prestataires_rows"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       jour_m_reservations: {
         Row: {
           admin_notes: string | null

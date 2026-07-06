@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input';
 import VendorCard from '@/components/vendors/VendorCard';
 import { useOptimizedVendors } from '@/hooks/useOptimizedVendors';
 import { useDebounce } from 'use-debounce';
-import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, ArrowDown } from 'lucide-react';
+import { Loader2, Search, X, ChevronLeft, ChevronRight, Camera, Utensils, Building2, Music, Flower2, Sparkles, Star, Palette, Gift, Car, Users, Calendar, ArrowDown, Map as MapIcon, LayoutGrid } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Database } from '@/integrations/supabase/types';
@@ -16,6 +16,8 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import CartIcon from '@/components/cart/CartIcon';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import VendorsMap from '@/components/vendors/VendorsMap';
+import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 
@@ -140,6 +142,7 @@ const ProfessionnelsMariable = () => {
   const [category, setCategory] = useState<PrestataireCategorie | 'Tous'>('Tous');
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [debouncedSearch] = useDebounce(search, 500);
 
   const { data: categoryCounts } = useQuery({
@@ -237,6 +240,25 @@ const ProfessionnelsMariable = () => {
               </select>
             </div>
 
+            {/* View toggle : Liste / Carte */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex border border-editorial-noir/20 rounded-none">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider transition ${viewMode === 'list' ? 'bg-editorial-noir text-white' : 'text-editorial-noir hover:bg-editorial-beige/50'}`}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" /> Liste
+                </button>
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider transition ${viewMode === 'map' ? 'bg-editorial-noir text-white' : 'text-editorial-noir hover:bg-editorial-beige/50'}`}
+                >
+                  <MapIcon className="h-3.5 w-3.5" /> Carte
+                </button>
+              </div>
+            </div>
+
+
             {/* Counter + reset */}
             {!isLoading && (
               <div className="flex items-center justify-between mb-8 pb-3 border-b border-editorial-noir/10">
@@ -254,6 +276,11 @@ const ProfessionnelsMariable = () => {
               </div>
             )}
 
+            {/* Map view */}
+            {viewMode === 'map' ? (
+              <VendorsMap category={category} region={region} search={debouncedSearch} />
+            ) : (
+            <>
             {/* Vendors Grid */}
             {isLoading ? (
               <div className="flex justify-center items-center py-20">
@@ -322,9 +349,18 @@ const ProfessionnelsMariable = () => {
                 )}
               </>
             )}
+            </>
+            )}
           </div>
         </div>
+
+        <InstagramHighlightsGrid
+          context="professionnels"
+          eyebrow="Coups de cœur"
+          title="Sélection Instagram Mariable"
+        />
       </main>
+
 
       <Footer />
     </>
