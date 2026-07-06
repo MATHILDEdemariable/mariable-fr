@@ -11,6 +11,7 @@ import PricingContent from './PricingContent';
 import { Smartphone, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProblemModal } from '@/components/support/ProblemModal';
+import PushNotificationBanner from './PushNotificationBanner';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
