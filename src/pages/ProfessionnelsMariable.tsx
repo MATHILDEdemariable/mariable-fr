@@ -240,6 +240,25 @@ const ProfessionnelsMariable = () => {
               </select>
             </div>
 
+            {/* View toggle : Liste / Carte */}
+            <div className="flex justify-center mb-6">
+              <div className="inline-flex border border-editorial-noir/20 rounded-none">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider transition ${viewMode === 'list' ? 'bg-editorial-noir text-white' : 'text-editorial-noir hover:bg-editorial-beige/50'}`}
+                >
+                  <LayoutGrid className="h-3.5 w-3.5" /> Liste
+                </button>
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`flex items-center gap-2 px-4 py-2 text-xs uppercase tracking-wider transition ${viewMode === 'map' ? 'bg-editorial-noir text-white' : 'text-editorial-noir hover:bg-editorial-beige/50'}`}
+                >
+                  <MapIcon className="h-3.5 w-3.5" /> Carte
+                </button>
+              </div>
+            </div>
+
+
             {/* Counter + reset */}
             {!isLoading && (
               <div className="flex items-center justify-between mb-8 pb-3 border-b border-editorial-noir/10">
