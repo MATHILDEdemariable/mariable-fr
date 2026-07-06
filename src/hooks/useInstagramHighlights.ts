@@ -13,20 +13,24 @@ export interface InstagramHighlight {
   prestataire?: { slug: string | null; nom: string } | null;
 }
 
-type Context = 'blog' | 'professionnels';
+type Context = 'blog' | 'professionnels' | 'homepage';
 
 export const useInstagramHighlights = (context: Context) => {
   return useQuery({
     queryKey: ['instagram-highlights', context],
     queryFn: async (): Promise<InstagramHighlight[]> => {
-      const { data, error } = await supabase
+      let query = supabase
         .from('instagram_highlights')
         .select('id, instagram_url, image_url, caption, prestataire_id, context, display_order, active, prestataire:prestataires_rows(slug, nom)')
         .eq('active', true)
-        .in('context', [context, 'both'])
         .order('display_order', { ascending: true })
         .limit(20);
 
+      if (context !== 'homepage') {
+        query = query.in('context', [context, 'both']);
+      }
+
+      const { data, error } = await query;
       if (error) throw new Error(error.message);
       return (data || []) as any;
     },
