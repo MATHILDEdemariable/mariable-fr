@@ -238,6 +238,9 @@ const ProjectSummary = () => {
         onGuestCountChange={setLocalGuestCount}
       />
 
+      {/* Push Notifications opt-in banner */}
+      <PushNotificationBanner />
+
       {/* Quick Actions (Guide, Video, Instagram) */}
       <QuickActions
         showVideoModal={showVideoModal}
