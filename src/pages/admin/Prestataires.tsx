@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import VendorContactsAdmin from "@/components/admin/VendorContactsAdmin";
 import VendorMessagesAdmin from "@/components/admin/VendorMessagesAdmin";
+import InstagramHighlightsAdmin from "@/components/admin/InstagramHighlightsAdmin";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
