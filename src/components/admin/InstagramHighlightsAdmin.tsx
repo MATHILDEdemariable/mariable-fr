@@ -22,12 +22,24 @@ interface Highlight {
   active: boolean;
 }
 
-const emptyForm = {
+type ContextValue = 'blog' | 'professionnels' | 'both';
+
+interface FormState {
+  instagram_url: string;
+  image_url: string;
+  caption: string;
+  prestataire_id: string;
+  context: ContextValue;
+  display_order: number;
+  active: boolean;
+}
+
+const emptyForm: FormState = {
   instagram_url: '',
   image_url: '',
   caption: '',
   prestataire_id: '',
-  context: 'both' as const,
+  context: 'both',
   display_order: 0,
   active: true,
 };
