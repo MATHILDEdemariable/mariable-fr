@@ -48,6 +48,36 @@ const InstagramHighlightsAdmin = () => {
   const qc = useQueryClient();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Merci de sélectionner une image');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image trop lourde (max 10 Mo)');
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const filename = `instagram-highlights/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('prestataires-photos')
+        .upload(filename, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('prestataires-photos').getPublicUrl(filename);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success('Image uploadée');
+    } catch (e: any) {
+      console.error('❌ upload instagram highlight failed:', e);
+      toast.error(e.message || "Erreur d'upload");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const { data: highlights = [], isLoading } = useQuery({
     queryKey: ['admin-instagram-highlights'],
