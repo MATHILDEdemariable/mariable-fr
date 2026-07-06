@@ -142,6 +142,7 @@ const ProfessionnelsMariable = () => {
   const [category, setCategory] = useState<PrestataireCategorie | 'Tous'>('Tous');
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
   const [debouncedSearch] = useDebounce(search, 500);
 
   const { data: categoryCounts } = useQuery({
