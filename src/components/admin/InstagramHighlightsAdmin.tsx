@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { toast } from 'sonner';
-import { Trash2, Plus, ExternalLink } from 'lucide-react';
+import { Trash2, Plus, ExternalLink, Upload, Loader2 } from 'lucide-react';
 
 interface Highlight {
   id: string;
@@ -48,6 +48,36 @@ const InstagramHighlightsAdmin = () => {
   const qc = useQueryClient();
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const handleFileUpload = async (file: File) => {
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error('Merci de sélectionner une image');
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error('Image trop lourde (max 10 Mo)');
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split('.').pop() || 'jpg';
+      const filename = `instagram-highlights/${crypto.randomUUID()}.${ext}`;
+      const { error: upErr } = await supabase.storage
+        .from('prestataires-photos')
+        .upload(filename, file, { cacheControl: '3600', upsert: false, contentType: file.type });
+      if (upErr) throw upErr;
+      const { data } = supabase.storage.from('prestataires-photos').getPublicUrl(filename);
+      setForm((f) => ({ ...f, image_url: data.publicUrl }));
+      toast.success('Image uploadée');
+    } catch (e: any) {
+      console.error('❌ upload instagram highlight failed:', e);
+      toast.error(e.message || "Erreur d'upload");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const { data: highlights = [], isLoading } = useQuery({
     queryKey: ['admin-instagram-highlights'],
@@ -154,14 +184,43 @@ const InstagramHighlightsAdmin = () => {
               />
             </div>
             <div>
-              <Label>URL de la miniature (image) *</Label>
-              <Input
-                placeholder="https://... (uploadez d'abord dans un bucket)"
-                value={form.image_url}
-                onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-              />
+              <Label>Image (upload JPG/PNG) ou URL *</Label>
+              <div className="flex gap-2">
+                <Input
+                  placeholder="https://... ou uploadez ci-contre"
+                  value={form.image_url}
+                  onChange={(e) => setForm({ ...form, image_url: e.target.value })}
+                  className="flex-1"
+                />
+                <label className="inline-flex items-center gap-2 px-3 py-2 border border-input rounded-md cursor-pointer bg-background hover:bg-accent text-sm whitespace-nowrap">
+                  {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                  {uploading ? 'Upload...' : 'Fichier'}
+                  <input
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                    className="hidden"
+                    disabled={uploading}
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleFileUpload(f);
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
+              </div>
+              {form.image_url && (
+                <div className="mt-2">
+                  <img
+                    src={form.image_url}
+                    alt="Aperçu"
+                    className="h-24 w-24 object-cover rounded border"
+                    onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+                  />
+                </div>
+              )}
             </div>
           </div>
+
 
           <div>
             <Label>Légende (optionnel)</Label>

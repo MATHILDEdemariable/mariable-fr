@@ -172,7 +172,14 @@ const BlogPage = () => {
           </div>
         </section>
 
+        <InstagramHighlightsGrid
+          context="blog"
+          eyebrow="Conseils de prestataires"
+          title="Sélection Instagram Mariable"
+        />
+
         <section className="py-12 px-4">
+
           <div className="container mx-auto max-w-6xl">
             {posts && posts.length > 0 ? (
               <>
@@ -263,11 +270,7 @@ const BlogPage = () => {
           </div>
         </section>
 
-        <InstagramHighlightsGrid
-          context="blog"
-          eyebrow="Inspiration"
-          title="Sélection Instagram Mariable"
-        />
+
 
         <section className="py-12 px-4 bg-wedding-olive/5">
           <div className="container mx-auto max-w-4xl text-center">

@@ -195,11 +195,17 @@ const ProfessionnelsMariable = () => {
 
       <main className="min-h-screen bg-white pt-16 md:pt-20">
         <EditorialHero onScrollToResults={scrollToResults} />
-        
+
+        <InstagramHighlightsGrid
+          context="professionnels"
+          eyebrow="Coups de cœur"
+          title="Sélection Instagram Mariable"
+        />
 
         {/* Results Section */}
         <div ref={resultsRef} className="scroll-mt-24 py-16 md:py-20 bg-white">
           <div className="container max-w-7xl mx-auto px-4">
+
             {/* Editorial section header */}
             <div className="text-center mb-10">
               <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">{t('guide.eyebrow')}</p>
@@ -353,13 +359,8 @@ const ProfessionnelsMariable = () => {
             )}
           </div>
         </div>
-
-        <InstagramHighlightsGrid
-          context="professionnels"
-          eyebrow="Coups de cœur"
-          title="Sélection Instagram Mariable"
-        />
       </main>
+
 
 
       <Footer />

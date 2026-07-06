@@ -13,6 +13,7 @@ import DifferentiatorSection from '@/components/home/v2/DifferentiatorSection';
 import PricingHighlight from '@/components/home/v2/PricingHighlight';
 import FAQSection from '@/components/home/v2/FAQSection';
 import FinalCTASection from '@/components/home/v2/FinalCTASection';
+import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 
 
 export default function VersionJuin26() {
@@ -46,6 +47,12 @@ export default function VersionJuin26() {
           <PricingHighlight />
           <FAQSection />
           <BlogSection />
+          <InstagramHighlightsGrid
+            context="homepage"
+            eyebrow="Coups de cœur"
+            title="Sélection Instagram Mariable"
+            limit={10}
+          />
           <FinalCTASection />
         </main>
         <Footer />

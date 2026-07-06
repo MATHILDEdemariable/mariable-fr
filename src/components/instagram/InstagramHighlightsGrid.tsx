@@ -3,17 +3,20 @@ import { Link } from 'react-router-dom';
 import { useInstagramHighlights } from '@/hooks/useInstagramHighlights';
 
 interface Props {
-  context: 'blog' | 'professionnels';
+  context: 'blog' | 'professionnels' | 'homepage';
   title?: string;
   eyebrow?: string;
+  limit?: number;
 }
 
 const InstagramHighlightsGrid = ({
   context,
   title = 'Sélection Instagram Mariable',
   eyebrow = 'Inspiration',
+  limit,
 }: Props) => {
-  const { data: highlights = [], isLoading } = useInstagramHighlights(context);
+  const { data: allHighlights = [], isLoading } = useInstagramHighlights(context);
+  const highlights = limit ? allHighlights.slice(0, limit) : allHighlights;
 
   if (isLoading || highlights.length === 0) return null;
 
