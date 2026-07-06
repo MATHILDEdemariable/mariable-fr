@@ -81,36 +81,142 @@ export default function GuidesShop() {
   return (
     <>
       <Helmet>
-        <title>E-shop guides mariage — PDF dès 4€ | Mariable</title>
+        <title>Guide mariage & checklist mariage gratuite | Mariable</title>
         <meta
           name="description"
-          content="Achetez à l'unité nos guides et ebooks de mariage en PDF : témoins, mariée, prestataires, planning Jour-J, cérémonie. Dès 4€."
+          content="Le guide mariage complet pour tout organiser : checklist mariage 12 mois, rétroplanning, budget, prestataires vérifiés. Modèles gratuits + ebooks PDF dès 4€."
         />
+        <link rel="canonical" href="https://www.mariable.fr/guides" />
+        <meta property="og:title" content="Guide mariage & checklist mariage gratuite | Mariable" />
+        <meta property="og:description" content="Checklist mariage 12 mois, rétroplanning, budget, jour J. Le guide complet Mariable pour organiser votre mariage." />
+        <meta property="og:url" content="https://www.mariable.fr/guides" />
+        <meta property="og:type" content="article" />
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'Article',
+          headline: 'Guide mariage complet : checklist, rétroplanning et conseils pour organiser votre mariage',
+          description: "Le guide de référence Mariable : checklist mariage 12 mois, rétroplanning, budget, prestataires, jour J.",
+          author: { '@type': 'Organization', name: 'Mariable' },
+          publisher: { '@type': 'Organization', name: 'Mariable', url: 'https://www.mariable.fr' },
+          mainEntityOfPage: 'https://www.mariable.fr/guides',
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'BreadcrumbList',
+          itemListElement: [
+            { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.mariable.fr/' },
+            { '@type': 'ListItem', position: 2, name: 'Guide mariage', item: 'https://www.mariable.fr/guides' },
+          ],
+        })}</script>
+        <script type="application/ld+json">{JSON.stringify({
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: FAQ.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a },
+          })),
+        })}</script>
       </Helmet>
 
       <div className="min-h-screen bg-editorial-cream flex flex-col">
         <PremiumHeader />
 
         <main className="flex-grow">
-          {/* Hero */}
-          <section className="bg-white py-20 md:py-28 border-b border-editorial-noir/10">
-            <div className="container mx-auto px-6 text-center max-w-3xl">
-              <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
-                E-shop · PDF à imprimer
+          {/* Hero éditorial SEO */}
+          <section className="bg-white py-16 md:py-24 border-b border-editorial-noir/10">
+            <div className="container mx-auto px-6 max-w-4xl">
+              <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive text-center">
+                Guide mariage · Ressources gratuites
               </p>
-              <h1 className="font-serif text-4xl md:text-6xl text-editorial-noir leading-tight mb-6">
-                Guides & ebooks
-                <br />
-                <span className="italic">à l'unité, dès 4€ (A VENIR)</span>
+              <h1 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight mb-6 text-center">
+                Guide de mariage complet :<br />
+                <span className="italic">checklist, rétroplanning et conseils pour organiser votre mariage</span>
               </h1>
-              <p className="text-editorial-noir/70 text-base md:text-lg leading-relaxed">
-                Téléchargez un guide précis pour un sujet précis. À lire à l'écran ou à imprimer.
-              </p>
+              <div className="prose prose-lg max-w-none text-editorial-noir/80 mt-8">
+                <p>
+                  Organiser un mariage, c'est prendre plus de 200 décisions en quelques mois. Ce <strong>guide mariage Mariable</strong>
+                  {' '}rassemble tout ce dont vous avez besoin pour préparer sereinement le vôtre : <strong>checklist mariage 12 mois</strong>,
+                  <strong> rétroplanning gratuit</strong>, <strong>guide budget mariage</strong>, sélection de <strong>prestataires vérifiés</strong>,
+                  déroulé du jour J et modèles PDF téléchargeables.
+                </p>
+                <p>
+                  Que vous en soyez au tout premier jour de vos préparatifs ou à J-30, vous trouverez ici les ressources adaptées à votre étape.
+                  Tous les outils Mariable sont <strong>100 % gratuits</strong> pour démarrer ; les guides PDF téléchargeables (dès 4 €) et les
+                  fonctionnalités avancées sont regroupés dans l'offre Premium à <strong>29 € à vie</strong>.
+                </p>
+              </div>
+
+              {/* Sommaire ancré */}
+              <nav aria-label="Sommaire" className="mt-10 bg-editorial-beige/50 border border-editorial-noir/10 rounded p-6">
+                <p className="uppercase tracking-[0.2em] text-[11px] text-editorial-olive mb-4">Sommaire du guide</p>
+                <ul className="space-y-2">
+                  {GUIDE_SECTIONS.map((s) => (
+                    <li key={s.id}>
+                      <a href={`#${s.id}`} className="inline-flex items-center gap-2 text-editorial-noir hover:text-editorial-olive text-sm">
+                        <ChevronRight className="w-3 h-3" />
+                        {s.h2}
+                      </a>
+                    </li>
+                  ))}
+                  <li>
+                    <a href="#faq" className="inline-flex items-center gap-2 text-editorial-noir hover:text-editorial-olive text-sm">
+                      <ChevronRight className="w-3 h-3" />
+                      FAQ mariage
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#ebooks" className="inline-flex items-center gap-2 text-editorial-noir hover:text-editorial-olive text-sm">
+                      <ChevronRight className="w-3 h-3" />
+                      E-books PDF à télécharger
+                    </a>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          </section>
+
+          {/* Sections éditoriales SEO */}
+          <section className="py-16 md:py-20 bg-editorial-cream">
+            <div className="container mx-auto px-6 max-w-4xl space-y-14">
+              {GUIDE_SECTIONS.map((s) => (
+                <article key={s.id} id={s.id} className="scroll-mt-24">
+                  <h2 className="font-serif text-2xl md:text-3xl text-editorial-noir mb-4">{s.h2}</h2>
+                  <p className="text-editorial-noir/80 leading-relaxed">{s.intro}</p>
+                  <Link
+                    to={s.cta.href}
+                    className="inline-flex items-center gap-2 mt-4 text-editorial-olive hover:underline text-sm font-medium"
+                  >
+                    {s.cta.label}
+                    <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </article>
+              ))}
+            </div>
+          </section>
+
+          {/* FAQ SEO */}
+          <section id="faq" className="py-16 md:py-20 bg-white border-t border-editorial-noir/10 scroll-mt-24">
+            <div className="container mx-auto px-6 max-w-3xl">
+              <h2 className="font-serif text-2xl md:text-3xl text-editorial-noir mb-8 text-center">
+                FAQ mariage
+              </h2>
+              <div className="space-y-6">
+                {FAQ.map((f) => (
+                  <details key={f.q} className="border-b border-editorial-noir/10 pb-4 group">
+                    <summary className="font-serif text-lg text-editorial-noir cursor-pointer list-none flex justify-between items-center">
+                      {f.q}
+                      <ChevronRight className="w-4 h-4 transition-transform group-open:rotate-90" />
+                    </summary>
+                    <p className="text-sm text-editorial-noir/75 mt-3 leading-relaxed">{f.a}</p>
+                  </details>
+                ))}
+              </div>
             </div>
           </section>
 
           {/* Banner Premium */}
-          <section className="bg-editorial-beige py-6 border-b border-editorial-noir/10">
+          <section id="ebooks" className="bg-editorial-beige py-6 border-y border-editorial-noir/10 scroll-mt-24">
             <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-center gap-3 md:gap-6 text-center md:text-left">
               <p className="text-sm text-editorial-noir">
                 <strong>Tous ces guides sont inclus gratuitement</strong> dans Mariable Premium — 29€ à vie · plus rentable dès 4 guides.
@@ -124,6 +230,7 @@ export default function GuidesShop() {
               </Link>
             </div>
           </section>
+
 
           {/* Grid guides */}
           <section className="py-20">
