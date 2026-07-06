@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 import { useInstagramHighlights } from '@/hooks/useInstagramHighlights';
 
 interface Props {
-  context: 'blog' | 'professionnels';
+  context: 'blog' | 'professionnels' | 'homepage';
   title?: string;
   eyebrow?: string;
+  limit?: number;
 }
 
 const InstagramHighlightsGrid = ({
