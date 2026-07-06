@@ -12,6 +12,7 @@ import SEO from '@/components/SEO';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, ArrowRight, Clock, ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 
 type LangFilter = 'all' | 'fr' | 'en';
 
