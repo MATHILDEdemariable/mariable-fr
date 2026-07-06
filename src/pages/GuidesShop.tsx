@@ -127,7 +127,7 @@ export default function GuidesShop() {
           <section className="bg-white py-16 md:py-24 border-b border-editorial-noir/10">
             <div className="container mx-auto px-6 max-w-4xl">
               <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive text-center">
-                Guide mariage · Ressources gratuites
+                GUIDES MARIAGE · E-BOOKS
               </p>
               <h1 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight mb-6 text-center">
                 Guide de mariage complet :<br />
