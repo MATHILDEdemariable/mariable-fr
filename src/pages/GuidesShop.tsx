@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Check, X, ChevronRight } from 'lucide-react';
+import { ArrowRight, BookOpen, X, ChevronRight, Loader2 } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { GUIDES, GUIDE_THEMES, Guide, GuideTheme } from '@/data/guides';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const GUIDE_SECTIONS = [
   {
@@ -79,11 +81,34 @@ const findGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
 export default function GuidesShop() {
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
+  const [email, setEmail] = useState('');
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { toast } = useToast();
 
   const filteredGuides = useMemo(
     () => (activeTheme === 'all' ? GUIDES : GUIDES.filter((g) => g.theme === activeTheme)),
     [activeTheme]
   );
+
+  const handleBuy = async () => {
+    if (!selectedGuide) return;
+    const trimmed = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      toast({ title: 'Email invalide', description: 'Merci de saisir un email valide.', variant: 'destructive' });
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-ebook-checkout', {
+        body: { guideSlug: selectedGuide.slug, email: trimmed },
+      });
+      if (error || !data?.url) throw new Error(error?.message || 'Session Stripe indisponible');
+      window.location.href = data.url;
+    } catch (e) {
+      toast({ title: 'Erreur', description: (e as Error).message, variant: 'destructive' });
+      setCheckoutLoading(false);
+    }
+  };
 
   return (
     <>
