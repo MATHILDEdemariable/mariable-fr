@@ -78,12 +78,27 @@ const FAQ = [
 
 const findGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
 
+const formatPrice = (n: number) =>
+  n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 export default function GuidesShop() {
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [modalStep, setModalStep] = useState<'preview' | 'checkout'>('preview');
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
   const [email, setEmail] = useState('');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const { toast } = useToast();
+
+  const openGuide = (g: Guide) => {
+    setSelectedGuide(g);
+    setModalStep('preview');
+  };
+
+  const closeModal = () => {
+    if (checkoutLoading) return;
+    setSelectedGuide(null);
+    setModalStep('preview');
+  };
 
   const filteredGuides = useMemo(
     () => (activeTheme === 'all' ? GUIDES : GUIDES.filter((g) => g.theme === activeTheme)),
