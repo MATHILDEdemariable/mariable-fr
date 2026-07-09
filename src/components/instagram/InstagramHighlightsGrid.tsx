@@ -78,7 +78,6 @@ const InstagramHighlightsGrid = ({
             </a>
           ))}
 
-          ))}
         </div>
       </div>
     </section>
