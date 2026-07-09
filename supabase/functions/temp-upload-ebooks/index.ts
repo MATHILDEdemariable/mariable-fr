@@ -9,21 +9,23 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const { slug, contentBase64 } = await req.json();
+    const { slug, url } = await req.json();
     
-    if (!slug || !contentBase64) {
-      return new Response(JSON.stringify({ error: "Missing slug or content" }), { status: 400, headers: corsHeaders });
+    if (!slug || !url) {
+      return new Response(JSON.stringify({ error: "Missing slug or url" }), { status: 400, headers: corsHeaders });
     }
 
     const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
 
-    const binary = Uint8Array.from(atob(contentBase64), c => c.charCodeAt(0));
+    const fileResponse = await fetch(url);
+    if (!fileResponse.ok) throw new Error(`Failed to fetch file from ${url}`);
+    const blob = await fileResponse.blob();
 
     const { error } = await supabase.storage
       .from("ebooks")
-      .upload(`${slug}.pdf`, binary, {
+      .upload(`${slug}.pdf`, blob, {
         contentType: "application/pdf",
         upsert: true
       });
