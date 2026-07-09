@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, X, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowRight, BookOpen, X, ChevronRight, Loader2, Check } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { GUIDES, GUIDE_THEMES, Guide, GuideTheme } from '@/data/guides';
