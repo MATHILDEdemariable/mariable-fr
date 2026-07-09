@@ -950,6 +950,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ebook_purchases: {
+        Row: {
+          access_token: string
+          amount_paid: number
+          created_at: string
+          email: string
+          guide_slug: string
+          id: string
+          stripe_session_id: string | null
+        }
+        Insert: {
+          access_token: string
+          amount_paid: number
+          created_at?: string
+          email: string
+          guide_slug: string
+          id?: string
+          stripe_session_id?: string | null
+        }
+        Update: {
+          access_token?: string
+          amount_paid?: number
+          created_at?: string
+          email?: string
+          guide_slug?: string
+          id?: string
+          stripe_session_id?: string | null
+        }
+        Relationships: []
+      }
       generated_planning: {
         Row: {
           created_at: string
@@ -3706,6 +3736,18 @@ export type Database = {
       count_users_with_documents: { Args: never; Returns: number }
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
+        Returns: string
+      }
+      get_purchases_by_token: {
+        Args: { token_value: string }
+        Returns: {
+          created_at: string
+          email: string
+          guide_slug: string
+        }[]
+      }
+      get_token_by_session: {
+        Args: { session_id_value: string }
         Returns: string
       }
       get_user_registrations: {
