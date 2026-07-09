@@ -7,13 +7,13 @@ const corsHeaders = {
 };
 
 const EBOOK_URLS: Record<string, string> = {
-  "catalogue-prix-mariage-2026": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/8168466e-d535-419a-9dfe-9bb2ad8850f6/catalogue-prix-mariage-2026.pdf",
-  "guide-ceremonie-laique": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/37b519d4-e379-4b4c-b7ee-c599207d9d3a/guide-ceremonie-laique.pdf",
-  "guide-debutants-mariage": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/bf239344-da79-4b1d-9b3f-213500b26fc6/guide-debutants-mariage.pdf",
-  "guide-discours-mariage": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/c22b963c-e311-4e7b-a42b-b68134afacea/guide-discours-mariage.pdf",
-  "checklist-temoins": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/a1eb200d-c7dd-46f8-af18-4c537c6da042/checklist-temoins.pdf",
-  "checklist-questions-prestataires": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/82238ac8-ccf9-4358-9818-5cb63baf626a/checklist-questions-prestataires.pdf",
-  "checklist-mariee": "https://id-preview--a37bea4b-6ff4-4b13-ab2a-e05df741ab69.lovable.app/__l5e/assets-v1/9a3bae33-0a8d-4ce9-8eac-b9e8f4c87c17/checklist-mariee.pdf",
+  "catalogue-prix-mariage-2026": "/__l5e/assets-v1/8168466e-d535-419a-9dfe-9bb2ad8850f6/catalogue-prix-mariage-2026.pdf",
+  "guide-ceremonie-laique": "/__l5e/assets-v1/37b519d4-e379-4b4c-b7ee-c599207d9d3a/guide-ceremonie-laique.pdf",
+  "guide-debutants-mariage": "/__l5e/assets-v1/bf239344-da79-4b1d-9b3f-213500b26fc6/guide-debutants-mariage.pdf",
+  "guide-discours-mariage": "/__l5e/assets-v1/c22b963c-e311-4e7b-a42b-b68134afacea/guide-discours-mariage.pdf",
+  "checklist-temoins": "/__l5e/assets-v1/a1eb200d-c7dd-46f8-af18-4c537c6da042/checklist-temoins.pdf",
+  "checklist-questions-prestataires": "/__l5e/assets-v1/82238ac8-ccf9-4358-9818-5cb63baf626a/checklist-questions-prestataires.pdf",
+  "checklist-mariee": "/__l5e/assets-v1/9a3bae33-0a8d-4ce9-8eac-b9e8f4c87c17/checklist-mariee.pdf",
 };
 
 const ALLOWED_SLUGS = new Set(Object.keys(EBOOK_URLS));
@@ -118,9 +118,6 @@ Deno.serve(async (req) => {
     }
 
     return new Response(JSON.stringify({ url: ebookUrl }), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

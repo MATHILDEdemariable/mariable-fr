@@ -25,7 +25,19 @@ const GuidesPage = () => {
           body: { slug },
         });
         if (error || !data?.url) throw new Error(error?.message || 'Téléchargement impossible');
-        window.open(data.url, '_blank');
+
+        const response = await fetch(data.url);
+        if (!response.ok) throw new Error('PDF indisponible');
+
+        const pdfBlob = await response.blob();
+        const downloadUrl = URL.createObjectURL(pdfBlob);
+        const downloadLink = document.createElement('a');
+        downloadLink.href = downloadUrl;
+        downloadLink.download = `${slug}.pdf`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        downloadLink.remove();
+        URL.revokeObjectURL(downloadUrl);
       } catch (e) {
         toast({
           title: 'Erreur',
