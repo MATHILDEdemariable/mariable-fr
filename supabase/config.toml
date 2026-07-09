@@ -60,3 +60,12 @@ verify_jwt = false
 
 [functions.notify-partenariat-contact]
 verify_jwt = false
+
+[functions.create-ebook-checkout]
+verify_jwt = false
+
+[functions.send-ebook-email]
+verify_jwt = false
+
+[functions.get-ebook-download-url]
+verify_jwt = false
