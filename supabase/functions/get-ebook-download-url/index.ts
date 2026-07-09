@@ -14,6 +14,7 @@ const EBOOK_URLS: Record<string, string> = {
   "checklist-temoins": "/__l5e/assets-v1/a1eb200d-c7dd-46f8-af18-4c537c6da042/checklist-temoins.pdf",
   "checklist-questions-prestataires": "/__l5e/assets-v1/82238ac8-ccf9-4358-9818-5cb63baf626a/checklist-questions-prestataires.pdf",
   "checklist-mariee": "/__l5e/assets-v1/9a3bae33-0a8d-4ce9-8eac-b9e8f4c87c17/checklist-mariee.pdf",
+  "guide-jour-j": "/__l5e/assets-v1/19bbe9cc-8908-4140-9bdf-728288d4c042/guide-jour-j.pdf",
 };
 
 const ALLOWED_SLUGS = new Set(Object.keys(EBOOK_URLS));
