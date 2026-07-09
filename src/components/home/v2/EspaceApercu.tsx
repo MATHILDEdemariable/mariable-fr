@@ -81,7 +81,7 @@ export default function EspaceApercu() {
               {/* Body : sidebar + main */}
               <div className="grid grid-cols-[140px_1fr] min-h-[280px]">
                 {/* Sidebar */}
-                <aside className="bg-white border-r border-editorial-noir/10 py-3 hidden sm:block">
+                <aside className="bg-white border-r border-editorial-noir/10 py-3">
                   <p className="font-serif text-[11px] text-editorial-noir px-3 mb-2">
                     {t('apercu.sidebarTitle')}
                   </p>
