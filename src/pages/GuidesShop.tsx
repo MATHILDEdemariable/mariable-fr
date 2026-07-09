@@ -418,65 +418,116 @@ export default function GuidesShop() {
         <Footer />
       </div>
 
-      {/* Modal achat */}
+      {/* Modal — Étape 1 aperçu / Étape 2 paiement */}
       {selectedGuide && (
         <div
-          className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4"
-          onClick={() => !checkoutLoading && setSelectedGuide(null)}
+          className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4 overflow-y-auto"
+          onClick={closeModal}
         >
           <div
-            className="bg-white max-w-md w-full p-8 relative"
+            className="bg-white max-w-lg w-full p-6 md:p-8 relative my-8"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setSelectedGuide(null)}
+              onClick={closeModal}
               disabled={checkoutLoading}
               className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir disabled:opacity-40"
               aria-label="Fermer"
             >
               <X className="w-5 h-5" />
             </button>
-            <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
-              Acheter ce guide
-            </p>
-            <h3 className="font-serif text-2xl text-editorial-noir mb-2">
-              {selectedGuide.title}
-            </h3>
-            <p className="font-serif text-3xl text-editorial-noir mb-4">{selectedGuide.price}€</p>
-            <p className="text-sm text-editorial-noir/70 mb-5">
-              Recevez le PDF par email + accès permanent depuis un lien personnel.
-            </p>
-            <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
-              Votre email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="vous@email.com"
-              className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
-              disabled={checkoutLoading}
-            />
-            <button
-              onClick={handleBuy}
-              disabled={checkoutLoading}
-              className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
-            >
-              {checkoutLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Redirection vers Stripe…
-                </>
-              ) : (
-                <>
-                  Payer {selectedGuide.price}€
+
+            {modalStep === 'preview' ? (
+              <>
+                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
+                  Aperçu du guide
+                </p>
+                <h3 className="font-serif text-2xl text-editorial-noir mb-2">
+                  {selectedGuide.title}
+                </h3>
+                <p className="font-serif text-3xl text-editorial-noir mb-4">
+                  {formatPrice(selectedGuide.price)}€
+                </p>
+                <p className="text-sm text-editorial-noir/70 mb-5">
+                  {selectedGuide.description}
+                </p>
+                <p className="uppercase tracking-[0.15em] text-[11px] text-editorial-noir/60 mb-3">
+                  Ce que contient ce guide
+                </p>
+                <ul className="space-y-2.5 mb-6">
+                  {selectedGuide.summary.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
+                      <Check className="w-4 h-4 text-editorial-olive mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-editorial-noir/80 leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => setModalStep('checkout')}
+                  className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors"
+                >
+                  Continuer vers le paiement
                   <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-            <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
-              Paiement sécurisé Stripe · Aucune création de compte requise
-            </p>
+                </button>
+                <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+                  PDF haute qualité · Accès permanent par lien personnel
+                </p>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setModalStep('preview')}
+                  disabled={checkoutLoading}
+                  className="text-xs text-editorial-noir/60 hover:text-editorial-noir mb-3 disabled:opacity-40"
+                >
+                  ← Retour à l'aperçu
+                </button>
+                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
+                  Acheter ce guide
+                </p>
+                <h3 className="font-serif text-2xl text-editorial-noir mb-2">
+                  {selectedGuide.title}
+                </h3>
+                <p className="font-serif text-3xl text-editorial-noir mb-4">
+                  {formatPrice(selectedGuide.price)}€
+                </p>
+                <p className="text-sm text-editorial-noir/70 mb-5">
+                  Recevez le PDF par email + accès permanent depuis un lien personnel.
+                </p>
+                <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
+                  Votre email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@email.com"
+                  className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
+                  disabled={checkoutLoading}
+                />
+                <button
+                  onClick={handleBuy}
+                  disabled={checkoutLoading}
+                  className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
+                >
+                  {checkoutLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Redirection vers Stripe…
+                    </>
+                  ) : (
+                    <>
+                      Payer {formatPrice(selectedGuide.price)}€
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+                <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+                  Paiement sécurisé Stripe · Aucune création de compte requise
+                </p>
+              </>
+            )}
           </div>
         </div>
       )}
