@@ -68,7 +68,7 @@ const FAQ = [
   },
   {
     q: 'Puis-je acheter un seul guide ou dois-je prendre Premium ?',
-    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité dès 4 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € à vie devient plus rentable dès 4 guides achetés.",
+    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité à 4,90 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € à vie devient plus rentable dès 6 guides achetés.",
   },
   {
     q: 'Combien de temps avant le mariage envoyer les faire-part ?',
