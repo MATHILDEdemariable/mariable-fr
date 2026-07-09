@@ -308,7 +308,7 @@ export default function GuidesShop() {
             <div className="container mx-auto px-6">
               <div className="max-w-3xl mx-auto text-center bg-editorial-noir text-white p-10 md:p-12">
                 <p className="uppercase tracking-[0.3em] text-xs text-editorial-olive-light mb-4">
-                  Plus rentable dès 4 guides
+                  PLUS RENTABLE&nbsp;
                 </p>
                 <h2 className="font-serif text-3xl md:text-4xl mb-6">
                   Tout débloquer pour <span className="italic">29€</span>
