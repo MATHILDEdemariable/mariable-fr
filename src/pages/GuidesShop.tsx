@@ -195,7 +195,7 @@ export default function GuidesShop() {
               </h1>
               <p className="text-editorial-noir/80 text-base md:text-lg max-w-2xl mx-auto mb-8">
                 Checklists, rétroplannings, guides prestataires et jour J.
-                Des PDF prêts à imprimer, écrits par une wedding planner — <strong>dès 4 €</strong>.
+                Des PDF prêts à imprimer, écrits par une wedding planner — <strong>dès 4,90 €</strong>.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
