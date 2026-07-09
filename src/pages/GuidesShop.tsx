@@ -128,14 +128,14 @@ export default function GuidesShop() {
   return (
     <>
       <Helmet>
-        <title>E-books & guides mariage à télécharger dès 4€ | Mariable</title>
+        <title>E-books & guides mariage à télécharger dès 4,90€ | Mariable</title>
         <meta
           name="description"
-          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4€ ou toute la bibliothèque avec Premium 29€ à vie."
+          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4,90€ ou toute la bibliothèque avec Premium 29€ à vie."
         />
         <link rel="canonical" href="https://www.mariable.fr/guides" />
         <meta property="og:title" content="E-books & guides mariage à télécharger | Mariable" />
-        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4€ ou tout inclus avec Premium 29€ à vie." />
+        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4,90€ ou tout inclus avec Premium 29€ à vie." />
         <meta property="og:url" content="https://www.mariable.fr/guides" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify({
