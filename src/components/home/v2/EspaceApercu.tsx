@@ -162,8 +162,10 @@ export default function EspaceApercu() {
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
+            </div>
+          </div>
+
           </div>
 
           {/* Liste fonctionnalités */}
