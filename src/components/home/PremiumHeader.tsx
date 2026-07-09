@@ -68,6 +68,12 @@ const PremiumHeader = () => {
           )}
 
           <div className="hidden md:flex items-center space-x-4">
+            <Link
+              to="/guides"
+              className={`text-xs tracking-widest uppercase transition-colors font-sans ${isHomepage ? 'text-white/80 hover:text-white' : 'text-editorial-noir/80 hover:text-editorial-noir'}`}
+            >
+              {t('header.nav.ebooks')}
+            </Link>
             {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
