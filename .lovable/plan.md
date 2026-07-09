@@ -1,39 +1,57 @@
-# Remplacer les 7 PDF du bucket `ebooks`
+## Diagnostic
 
-Parfait, les 7 vrais PDF sont fournis. Je vais les uploader dans le bucket `ebooks` en écrasant les fichiers HTML corrompus actuels, avec les noms exacts attendus par l'edge function `get-ebook-download-url`.
+Le blocage ne vient pas d’un simple re-load : la chaîne actuelle est fragile à deux endroits.
 
-## Mapping fichier uploadé → nom cible dans le bucket
+1. **Edge function `get-ebook-download-url` cassée**
+   - Le fichier contient du code dupliqué/orphelin après le `return` final (`status: 200...` répété).
+   - Ce type d’erreur peut empêcher le déploiement ou faire tourner une ancienne version.
 
-| Fichier uploadé | → Nom cible |
-|---|---|
-| `Catalogue_Prix_Mariage_2026_en_France` | `catalogue-prix-mariage-2026.pdf` |
-| `Organiser_la_Cérémonie_Laïque` | `guide-ceremonie-laique.pdf` |
-| `Débutants_Mariage` | `guide-debutants-mariage.pdf` |
-| `Do_Dont_du_Discours_de_Mariage` | `guide-discours-mariage.pdf` |
-| `Checklist_pour_les_Témoins` | `checklist-temoins.pdf` |
-| `Sélection_des_prestataires_Checklist_questions` | `checklist-questions-prestataires.pdf` |
-| `Checklist_pour_la_Mariée` | `checklist-mariee.pdf` |
+2. **Accès PDF trop dépendant d’URLs externes**
+   - Le dashboard et `/mes-guides/:token` appellent l’edge function, puis ouvrent une URL PDF externe.
+   - Si le navigateur bloque l’URL, ou si l’edge function renvoie une ancienne URL Supabase/signée, l’utilisateur voit encore une erreur.
 
-## Méthode
+3. **Bucket `ebooks` non fiable actuellement**
+   - Les objets existent, mais les tailles remontées côté Supabase Storage sont ~2,6 KB, alors que les vrais PDF font ~1,5 MB.
+   - Donc je ne vais pas baser le correctif principal sur ce bucket tant que les fichiers ne sont pas ré-uploadés proprement.
 
-Script shell qui, pour chaque fichier :
-1. Récupère un token d'upload via l'API Supabase Storage (avec la service role key)
-2. Fait un `PUT` sur `/storage/v1/object/ebooks/<slug>.pdf` avec `x-upsert: true` pour écraser
-3. Vérifie que le nouveau fichier fait bien plusieurs Mo et commence par `%PDF-`
+4. **Logique attendue confirmée**
+   - `/dashboard/guides` : accès uniquement si utilisateur connecté + premium.
+   - `/guides` : utilisateur non premium, connecté ou non, passe par Stripe.
+   - Après paiement Stripe : accès via lien personnel `/mes-guides/:token`.
 
-Aucun changement de code : bucket, edge function, table `ebook_purchases`, pages `/mes-guides/[token]` et `/dashboard/mes-guides` restent identiques — elles fonctionnaient déjà, c'était juste le contenu du bucket qui était mauvais.
+## Plan de correction minimal
 
-## Vérification post-upload
+### 1. Réparer `get-ebook-download-url`
+- Supprimer le code dupliqué invalide.
+- Garder deux modes d’accès :
+  - **token achat Stripe** pour `/mes-guides/:token` ;
+  - **session utilisateur premium** pour `/dashboard/guides`.
+- Retourner une erreur claire si : non premium, token invalide, guide inconnu.
 
-Après upload, je testerai avec votre token existant :
-```
-POST get-ebook-download-url { slug: "catalogue-prix-mariage-2026", token: "26be01d6..." }
-→ télécharger l'URL signée → vérifier que le fichier commence par %PDF- et pèse plusieurs Mo
-```
+### 2. Ne plus ouvrir le PDF avec `window.open(..., '_blank')`
+- Remplacer sur :
+  - `src/pages/dashboard/GuidesPage.tsx`
+  - `src/pages/MesGuides.tsx`
+- Utiliser la logique native d’export PDF déjà attendue :
+  - récupérer l’URL via l’edge function ;
+  - `fetch(url)` ;
+  - créer un `Blob` PDF ;
+  - déclencher un téléchargement dans le même onglet via un lien temporaire `download`.
 
-Puis je vous donne le OK pour re-tester le clic « Télécharger » sur `/mes-guides/[token]`.
+### 3. Sécuriser la compatibilité prod
+- Les URLs PDF retournées par l’edge function doivent utiliser les assets Lovable CDN déjà accessibles en production.
+- Je garderai les URLs absolues fonctionnelles, mais je vérifierai qu’elles ne pointent plus vers Supabase signed URLs.
 
-## Détails techniques
-- Utilise `SUPABASE_SERVICE_ROLE_KEY` (déjà en secret) pour l'upload — jamais exposée au client
-- `x-upsert: true` écrase les 7 fichiers HTML corrompus (uploadés le 09/07 à 07:14, ~2.6 Ko chacun)
-- Le bucket reste privé (correct), accès uniquement via URL signée générée par l'edge function
+### 4. Vérifier les deux parcours
+- Tester l’edge function :
+  - avec token achat invalide → refus attendu ;
+  - avec token achat existant → URL PDF attendue ;
+  - sans token et sans session premium → refus attendu.
+- Vérifier que le PDF public CDN est bien accessible.
+- Contrôler que les deux composants frontend utilisent bien le téléchargement Blob même onglet.
+
+## Hors scope volontaire
+
+- Je ne ré-upload pas les PDF dans le bucket `ebooks` pour ce correctif, car le chemin le plus simple et robuste est d’utiliser les PDF Lovable CDN déjà accessibles.
+- Je ne change pas la logique Stripe ni les prix.
+- Je ne modifie pas le statut premium ni les règles business existantes.
