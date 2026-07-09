@@ -107,21 +107,20 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Générer une URL signée (1h)
-    const adminClient = createClient(SUPABASE_URL, SERVICE_KEY);
-    const { data: signed, error: signError } = await adminClient.storage
-      .from("ebooks")
-      .createSignedUrl(`${slug}.pdf`, 3600);
+    // Retourner l'URL directe (CDN Lovable)
+    const ebookUrl = EBOOK_URLS[slug];
 
-    if (signError || !signed) {
-      console.error("Sign URL error:", signError);
+    if (!ebookUrl) {
       return new Response(JSON.stringify({ error: "Fichier introuvable" }), {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    return new Response(JSON.stringify({ url: signed.signedUrl }), {
+    return new Response(JSON.stringify({ url: ebookUrl }), {
+      status: 200,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
