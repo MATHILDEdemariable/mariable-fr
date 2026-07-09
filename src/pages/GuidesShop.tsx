@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, X, ChevronRight, Loader2 } from 'lucide-react';
+import { ArrowRight, BookOpen, X, ChevronRight, Loader2, Check } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { GUIDES, GUIDE_THEMES, Guide, GuideTheme } from '@/data/guides';
@@ -68,7 +68,7 @@ const FAQ = [
   },
   {
     q: 'Puis-je acheter un seul guide ou dois-je prendre Premium ?',
-    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité dès 4 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € à vie devient plus rentable dès 4 guides achetés.",
+    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité à 4,90 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € à vie devient plus rentable dès 6 guides achetés.",
   },
   {
     q: 'Combien de temps avant le mariage envoyer les faire-part ?',
@@ -78,12 +78,27 @@ const FAQ = [
 
 const findGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
 
+const formatPrice = (n: number) =>
+  n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
 export default function GuidesShop() {
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
+  const [modalStep, setModalStep] = useState<'preview' | 'checkout'>('preview');
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
   const [email, setEmail] = useState('');
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const { toast } = useToast();
+
+  const openGuide = (g: Guide) => {
+    setSelectedGuide(g);
+    setModalStep('preview');
+  };
+
+  const closeModal = () => {
+    if (checkoutLoading) return;
+    setSelectedGuide(null);
+    setModalStep('preview');
+  };
 
   const filteredGuides = useMemo(
     () => (activeTheme === 'all' ? GUIDES : GUIDES.filter((g) => g.theme === activeTheme)),
@@ -113,14 +128,14 @@ export default function GuidesShop() {
   return (
     <>
       <Helmet>
-        <title>E-books & guides mariage à télécharger dès 4€ | Mariable</title>
+        <title>E-books & guides mariage à télécharger dès 4,90€ | Mariable</title>
         <meta
           name="description"
-          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4€ ou toute la bibliothèque avec Premium 29€ à vie."
+          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4,90€ ou toute la bibliothèque avec Premium 29€ à vie."
         />
         <link rel="canonical" href="https://www.mariable.fr/guides" />
         <meta property="og:title" content="E-books & guides mariage à télécharger | Mariable" />
-        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4€ ou tout inclus avec Premium 29€ à vie." />
+        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4,90€ ou tout inclus avec Premium 29€ à vie." />
         <meta property="og:url" content="https://www.mariable.fr/guides" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify({
@@ -180,7 +195,7 @@ export default function GuidesShop() {
               </h1>
               <p className="text-editorial-noir/80 text-base md:text-lg max-w-2xl mx-auto mb-8">
                 Checklists, rétroplannings, guides prestataires et jour J.
-                Des PDF prêts à imprimer, écrits par une wedding planner — <strong>dès 4 €</strong>.
+                Des PDF prêts à imprimer, écrits par une wedding planner — <strong>dès 4,90 €</strong>.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <a
@@ -251,44 +266,34 @@ export default function GuidesShop() {
                   ))}
                 </div>
 
-                {/* Grille */}
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {/* Grille compacte */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
                   {filteredGuides.map((g) => (
                     <article
                       key={g.slug}
                       id={`ebook-${g.slug}`}
-                      className="bg-white border border-editorial-noir/10 flex flex-col group hover:shadow-lg transition-shadow scroll-mt-24"
+                      className="bg-white border border-editorial-noir/10 flex flex-col group hover:shadow-md transition-shadow scroll-mt-24"
                     >
-                      <div className="aspect-[4/5] bg-gradient-to-br from-editorial-beige to-editorial-cream border-b border-editorial-noir/10 flex flex-col items-center justify-center p-6 text-center relative">
-                        <BookOpen className="w-8 h-8 text-editorial-olive mb-4 opacity-60" />
-                        <p className="uppercase tracking-[0.25em] text-[10px] text-editorial-olive mb-3">
+                      <div className="aspect-square bg-gradient-to-br from-editorial-beige to-editorial-cream border-b border-editorial-noir/10 flex flex-col items-center justify-center p-4 text-center">
+                        <BookOpen className="w-6 h-6 text-editorial-olive mb-2 opacity-60" />
+                        <p className="uppercase tracking-[0.2em] text-[9px] text-editorial-olive mb-2">
                           Mariable · PDF
                         </p>
-                        <h3 className="font-serif text-xl text-editorial-noir leading-tight">
+                        <h3 className="font-serif text-sm md:text-base text-editorial-noir leading-snug line-clamp-3">
                           {g.title}
                         </h3>
-                        {g.pages && (
-                          <p className="absolute bottom-3 right-3 text-[10px] text-editorial-noir/40">
-                            {g.pages} pages
-                          </p>
-                        )}
                       </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <p className="text-sm text-editorial-noir/70 mb-6 flex-1">
-                          {g.description}
-                        </p>
-                        <div className="flex items-center justify-between gap-4">
-                          <span className="font-serif text-2xl text-editorial-noir">
-                            {g.price}€
-                          </span>
-                          <button
-                            onClick={() => setSelectedGuide(g)}
-                            className="inline-flex items-center gap-2 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-4 py-2.5 text-sm font-medium transition-colors"
-                          >
-                            Acheter
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                      <div className="p-3 md:p-4 flex items-center justify-between gap-2">
+                        <span className="font-serif text-lg md:text-xl text-editorial-noir">
+                          {formatPrice(g.price)}€
+                        </span>
+                        <button
+                          onClick={() => openGuide(g)}
+                          className="inline-flex items-center gap-1 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-3 py-2 text-xs font-medium transition-colors"
+                        >
+                          Acheter
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
                       </div>
                     </article>
                   ))}
@@ -371,7 +376,7 @@ export default function GuidesShop() {
                           href={`#ebook-${g.slug}`}
                           className="inline-flex items-center gap-2 mt-4 text-editorial-olive hover:underline text-sm font-medium"
                         >
-                          {s.cta.label} — {g.price}€
+                          {s.cta.label} — {formatPrice(g.price)}€
                           <ArrowRight className="w-4 h-4" />
                         </a>
                       )}
@@ -413,65 +418,116 @@ export default function GuidesShop() {
         <Footer />
       </div>
 
-      {/* Modal achat */}
+      {/* Modal — Étape 1 aperçu / Étape 2 paiement */}
       {selectedGuide && (
         <div
-          className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4"
-          onClick={() => !checkoutLoading && setSelectedGuide(null)}
+          className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4 overflow-y-auto"
+          onClick={closeModal}
         >
           <div
-            className="bg-white max-w-md w-full p-8 relative"
+            className="bg-white max-w-lg w-full p-6 md:p-8 relative my-8"
             onClick={(e) => e.stopPropagation()}
           >
             <button
-              onClick={() => setSelectedGuide(null)}
+              onClick={closeModal}
               disabled={checkoutLoading}
               className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir disabled:opacity-40"
               aria-label="Fermer"
             >
               <X className="w-5 h-5" />
             </button>
-            <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
-              Acheter ce guide
-            </p>
-            <h3 className="font-serif text-2xl text-editorial-noir mb-2">
-              {selectedGuide.title}
-            </h3>
-            <p className="font-serif text-3xl text-editorial-noir mb-4">{selectedGuide.price}€</p>
-            <p className="text-sm text-editorial-noir/70 mb-5">
-              Recevez le PDF par email + accès permanent depuis un lien personnel.
-            </p>
-            <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
-              Votre email
-            </label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="vous@email.com"
-              className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
-              disabled={checkoutLoading}
-            />
-            <button
-              onClick={handleBuy}
-              disabled={checkoutLoading}
-              className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
-            >
-              {checkoutLoading ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Redirection vers Stripe…
-                </>
-              ) : (
-                <>
-                  Payer {selectedGuide.price}€
+
+            {modalStep === 'preview' ? (
+              <>
+                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
+                  Aperçu du guide
+                </p>
+                <h3 className="font-serif text-2xl text-editorial-noir mb-2">
+                  {selectedGuide.title}
+                </h3>
+                <p className="font-serif text-3xl text-editorial-noir mb-4">
+                  {formatPrice(selectedGuide.price)}€
+                </p>
+                <p className="text-sm text-editorial-noir/70 mb-5">
+                  {selectedGuide.description}
+                </p>
+                <p className="uppercase tracking-[0.15em] text-[11px] text-editorial-noir/60 mb-3">
+                  Ce que contient ce guide
+                </p>
+                <ul className="space-y-2.5 mb-6">
+                  {selectedGuide.summary.map((item) => (
+                    <li key={item} className="flex items-start gap-2.5">
+                      <Check className="w-4 h-4 text-editorial-olive mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-editorial-noir/80 leading-relaxed">{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <button
+                  onClick={() => setModalStep('checkout')}
+                  className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors"
+                >
+                  Continuer vers le paiement
                   <ArrowRight className="w-4 h-4" />
-                </>
-              )}
-            </button>
-            <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
-              Paiement sécurisé Stripe · Aucune création de compte requise
-            </p>
+                </button>
+                <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+                  PDF haute qualité · Accès permanent par lien personnel
+                </p>
+              </>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setModalStep('preview')}
+                  disabled={checkoutLoading}
+                  className="text-xs text-editorial-noir/60 hover:text-editorial-noir mb-3 disabled:opacity-40"
+                >
+                  ← Retour à l'aperçu
+                </button>
+                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
+                  Acheter ce guide
+                </p>
+                <h3 className="font-serif text-2xl text-editorial-noir mb-2">
+                  {selectedGuide.title}
+                </h3>
+                <p className="font-serif text-3xl text-editorial-noir mb-4">
+                  {formatPrice(selectedGuide.price)}€
+                </p>
+                <p className="text-sm text-editorial-noir/70 mb-5">
+                  Recevez le PDF par email + accès permanent depuis un lien personnel.
+                </p>
+                <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
+                  Votre email
+                </label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="vous@email.com"
+                  className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
+                  disabled={checkoutLoading}
+                />
+                <button
+                  onClick={handleBuy}
+                  disabled={checkoutLoading}
+                  className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
+                >
+                  {checkoutLoading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Redirection vers Stripe…
+                    </>
+                  ) : (
+                    <>
+                      Payer {formatPrice(selectedGuide.price)}€
+                      <ArrowRight className="w-4 h-4" />
+                    </>
+                  )}
+                </button>
+                <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+                  Paiement sécurisé Stripe · Aucune création de compte requise
+                </p>
+              </>
+            )}
           </div>
         </div>
       )}

@@ -1,57 +1,67 @@
-## Diagnostic
+# Plan — Refonte page /guides + ajout ebook Jour J
 
-Le blocage ne vient pas d’un simple re-load : la chaîne actuelle est fragile à deux endroits.
+## 1. Lien "E-books" dans le header d'accueil
 
-1. **Edge function `get-ebook-download-url` cassée**
-   - Le fichier contient du code dupliqué/orphelin après le `return` final (`status: 200...` répété).
-   - Ce type d’erreur peut empêcher le déploiement ou faire tourner une ancienne version.
+`src/components/home/PremiumHeader.tsx`
+- Ajouter un lien vers `/guides` dans la nav desktop de la homepage (actuellement vide), placé **avant** le bloc compte/login.
+- Ajouter le même lien dans le menu mobile (Sheet).
+- Clé i18n `header.nav.ebooks` = « E-books » / « E-books » (FR/EN) dans `src/i18n/locales/{fr,en}/common.json`.
 
-2. **Accès PDF trop dépendant d’URLs externes**
-   - Le dashboard et `/mes-guides/:token` appellent l’edge function, puis ouvrent une URL PDF externe.
-   - Si le navigateur bloque l’URL, ou si l’edge function renvoie une ancienne URL Supabase/signée, l’utilisateur voit encore une erreur.
+## 2. Prix affiché à 4,90€
 
-3. **Bucket `ebooks` non fiable actuellement**
-   - Les objets existent, mais les tailles remontées côté Supabase Storage sont ~2,6 KB, alors que les vrais PDF font ~1,5 MB.
-   - Donc je ne vais pas baser le correctif principal sur ce bucket tant que les fichiers ne sont pas ré-uploadés proprement.
+`src/data/guides.ts`
+- Passer `price: 4` → `price: 4.9` sur les 7 guides (+ le nouveau, cf. §4).
 
-4. **Logique attendue confirmée**
-   - `/dashboard/guides` : accès uniquement si utilisateur connecté + premium.
-   - `/guides` : utilisateur non premium, connecté ou non, passe par Stripe.
-   - Après paiement Stripe : accès via lien personnel `/mes-guides/:token`.
+Impact automatique : cartes, modal, JSON-LD Product, section SEO.
 
-## Plan de correction minimal
+Textes à ajuster :
+- `src/pages/GuidesShop.tsx` : « dès 4 € » → « dès 4,90 € » (hero + FAQ + bloc Premium « rentable dès 4 guides » recalculé → « dès 6 guides »).
+- `src/pages/Prix.tsx` / `src/i18n/locales/{fr,en}/pricing.json` : occurrences éventuelles de « 4€ ».
 
-### 1. Réparer `get-ebook-download-url`
-- Supprimer le code dupliqué invalide.
-- Garder deux modes d’accès :
-  - **token achat Stripe** pour `/mes-guides/:token` ;
-  - **session utilisateur premium** pour `/dashboard/guides`.
-- Retourner une erreur claire si : non premium, token invalide, guide inconnu.
+**Point à confirmer** : le Price Stripe partagé `price_1Tqv7UKHghqBzkgj4mOMVYty` est aujourd'hui à 4,00 €. L'affichage 4,90 € ne suffit pas — Stripe encaissera toujours 4 €. Deux options :
+- **(a)** vous me fournissez un nouveau `price_id` Stripe à 4,90 € → je mets à jour `SHARED_EBOOK_PRICE_ID`.
+- **(b)** je change uniquement l'affichage et vous mettez le prix Stripe à jour ensuite depuis le dashboard Stripe (le même `price_id` réutilisé si vous éditez ce Price côté Stripe).
 
-### 2. Ne plus ouvrir le PDF avec `window.open(..., '_blank')`
-- Remplacer sur :
-  - `src/pages/dashboard/GuidesPage.tsx`
-  - `src/pages/MesGuides.tsx`
-- Utiliser la logique native d’export PDF déjà attendue :
-  - récupérer l’URL via l’edge function ;
-  - `fetch(url)` ;
-  - créer un `Blob` PDF ;
-  - déclencher un téléchargement dans le même onglet via un lien temporaire `download`.
+À défaut de réponse, je pars sur **(b)** (affichage + le `price_id` reste, à mettre à jour côté Stripe).
 
-### 3. Sécuriser la compatibilité prod
-- Les URLs PDF retournées par l’edge function doivent utiliser les assets Lovable CDN déjà accessibles en production.
-- Je garderai les URLs absolues fonctionnelles, mais je vérifierai qu’elles ne pointent plus vers Supabase signed URLs.
+## 3. Cartes plus petites + preview sommaire au clic sur "Acheter"
 
-### 4. Vérifier les deux parcours
-- Tester l’edge function :
-  - avec token achat invalide → refus attendu ;
-  - avec token achat existant → URL PDF attendue ;
-  - sans token et sans session premium → refus attendu.
-- Vérifier que le PDF public CDN est bien accessible.
-- Contrôler que les deux composants frontend utilisent bien le téléchargement Blob même onglet.
+`src/data/guides.ts`
+- Ajouter un champ `summary: string[]` par guide, avec le sommaire que vous avez fourni (Jour-J, Débutants, Checklist Mariée, Checklist Témoins, Sélection prestataires, Do & Don't Discours, Cérémonie Laïque, Catalogue Prix 2026).
 
-## Hors scope volontaire
+`src/pages/GuidesShop.tsx`
+- **Cartes plus compactes** : remplacer le visuel plein format `aspect-[4/5]` par une carte carrée réduite (`aspect-square` ou hauteur fixe ~200px), grille passée à `sm:grid-cols-2 lg:grid-cols-4` pour densifier. Titre + prix + bouton visibles sans scroll interne.
+- **Modal en 2 étapes** au clic sur « Acheter » :
+  1. **Étape 1 — Aperçu** : titre du guide + prix + liste `summary` (icônes check, style éditorial), bouton « Continuer vers le paiement » (ou bouton retour).
+  2. **Étape 2 — Email + Stripe** (le formulaire actuel).
+- État local `modalStep: 'preview' | 'checkout'`, reset à la fermeture.
 
-- Je ne ré-upload pas les PDF dans le bucket `ebooks` pour ce correctif, car le chemin le plus simple et robuste est d’utiliser les PDF Lovable CDN déjà accessibles.
-- Je ne change pas la logique Stripe ni les prix.
-- Je ne modifie pas le statut premium ni les règles business existantes.
+## 4. Nouvel ebook « Guide Ultime Jour-J »
+
+**Asset PDF** (fichier fourni : `Guide_Ultime_Jour-J_Mariable.pdf`)
+- Upload via `lovable-assets create --file /mnt/user-uploads/...pdf` → `src/assets/ebooks/guide-jour-j.pdf.asset.json`.
+
+**`src/data/guides.ts`**
+- Nouvelle entrée :
+  - `slug: 'guide-jour-j'`
+  - `title: 'Guide Ultime Jour-J'`
+  - `theme: 'organisation'`
+  - `price: 4.9`
+  - Description courte + `summary[]` (timeline M-1 → J-J, prestataires, valises, déroulé heure/heure, check-lists).
+
+**Edge function `supabase/functions/get-ebook-download-url/index.ts`**
+- Ajouter dans `EBOOK_URLS` : `"guide-jour-j": "/__l5e/assets-v1/<uuid>/guide-jour-j.pdf"` (uuid récupéré du pointeur asset).
+- Redéployer.
+
+**`src/pages/dashboard/GuidesPage.tsx`** : rien à faire — la page itère sur `GUIDES`, le nouveau guide apparaît automatiquement pour les Premium.
+
+**Stripe** : même `SHARED_EBOOK_PRICE_ID`, aucun changement côté `create-ebook-checkout`.
+
+## Hors périmètre
+- Pas de refonte du flow paiement/webhook.
+- Pas de changement du système Premium ni de la page `/prix` (hors ajustements de wording 4€ → 4,90 €).
+- Pas de nouveau bucket Storage — les PDF restent servis via CDN Lovable.
+
+## Détail technique
+- Le flux download blob (déjà en place sur `MesGuides.tsx` et `dashboard/GuidesPage.tsx`) reste inchangé.
+- Le nouveau guide hérite du même mécanisme d'accès (token public post-Stripe OU session Premium).
