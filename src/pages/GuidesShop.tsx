@@ -376,7 +376,7 @@ export default function GuidesShop() {
                           href={`#ebook-${g.slug}`}
                           className="inline-flex items-center gap-2 mt-4 text-editorial-olive hover:underline text-sm font-medium"
                         >
-                          {s.cta.label} — {g.price}€
+                          {s.cta.label} — {formatPrice(g.price)}€
                           <ArrowRight className="w-4 h-4" />
                         </a>
                       )}
