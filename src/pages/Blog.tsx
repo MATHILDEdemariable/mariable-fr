@@ -83,9 +83,21 @@ const BlogPage = () => {
   const getPostLang = (post: BlogPost): 'fr' | 'en' =>
     ((post as any).language === 'en' ? 'en' : 'fr');
 
-  const filteredPosts = (posts || []).filter(
-    p => langFilter === 'all' || getPostLang(p) === langFilter
-  );
+  const filteredPosts = (posts || [])
+    .filter(p => langFilter === 'all' || getPostLang(p) === langFilter)
+    .sort((a, b) => {
+      // Si on filtre par langue spécifique, on garde l'ordre original
+      if (langFilter !== 'all') return 0;
+      
+      const langA = getPostLang(a);
+      const langB = getPostLang(b);
+      
+      // Priorité FR sur EN
+      if (langA === 'fr' && langB === 'en') return -1;
+      if (langA === 'en' && langB === 'fr') return 1;
+      
+      return 0;
+    });
 
   if (isLoading) {
     return (
