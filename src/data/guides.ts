@@ -1,7 +1,7 @@
 export type GuideTheme =
+  | 'budget'
   | 'ceremonie'
   | 'organisation'
-  | 'jour-j'
   | 'prestataires'
   | 'mariee'
   | 'temoins';
@@ -15,10 +15,13 @@ export interface Guide {
   theme: GuideTheme;
 }
 
+// Un seul Price Stripe partagé pour les 7 ebooks à 4€.
+export const SHARED_EBOOK_PRICE_ID = 'price_1Tqv7UKHghqBzkgj4mOMVYty';
+
 export const GUIDE_THEMES: { value: GuideTheme; label: string }[] = [
+  { value: 'budget', label: 'Budget' },
   { value: 'ceremonie', label: 'Cérémonie' },
   { value: 'organisation', label: 'Organisation' },
-  { value: 'jour-j', label: 'Jour-J' },
   { value: 'prestataires', label: 'Prestataires' },
   { value: 'mariee', label: 'Mariée' },
   { value: 'temoins', label: 'Témoins' },
@@ -26,67 +29,59 @@ export const GUIDE_THEMES: { value: GuideTheme; label: string }[] = [
 
 export const GUIDES: Guide[] = [
   {
-    slug: 'checklist-mariage-civil-mairie',
-    title: 'Checklist mariage Civil — Mairie',
-    description: "Toutes les démarches administratives à connaître pour un mariage civil sans stress.",
+    slug: 'catalogue-prix-mariage-2026',
+    title: 'Catalogue Prix Mariage 2026 en France',
+    description:
+      "Les fourchettes de prix réelles par poste (lieu, traiteur, photographe, DJ, fleuriste…) pour anticiper votre budget mariage 2026.",
     price: 4,
-    pages: 8,
+    theme: 'budget',
+  },
+  {
+    slug: 'guide-ceremonie-laique',
+    title: 'Guide Ultime — Organiser la Cérémonie Laïque',
+    description:
+      "Le déroulé complet d'une cérémonie laïque qui vous ressemble : rôles, rituels, textes et timing.",
+    price: 4,
     theme: 'ceremonie',
   },
   {
-    slug: 'checklist-ceremonie-laique-catholique',
-    title: 'Checklist cérémonie (Laïque ou Catholique)',
-    description: "Le déroulé étape par étape pour préparer une cérémonie qui vous ressemble.",
-    price: 6,
-    pages: 14,
-    theme: 'ceremonie',
-  },
-  {
-    slug: 'guide-temoins',
-    title: 'Guide témoins',
-    description: "Le rôle, les missions et les attentions à offrir aux témoins du jour J.",
-    price: 6,
-    pages: 12,
-    theme: 'temoins',
-  },
-  {
-    slug: 'guide-planning-jour-j',
-    title: 'Guide planning Jour-J',
-    description: "Le rétroplanning heure par heure pensé par un wedding planner pro.",
-    price: 9,
-    pages: 20,
-    theme: 'jour-j',
-  },
-  {
-    slug: 'checklist-photo-jour-j',
-    title: 'Checklist photo du Jour-J',
-    description: "La liste des photos à ne surtout pas oublier — à transmettre à votre photographe.",
+    slug: 'guide-debutants-mariage',
+    title: 'Guide Ultime — Débutants Mariage',
+    description:
+      "Le guide de démarrage pour organiser votre mariage à partir de zéro : étapes, priorités et pièges à éviter.",
     price: 4,
-    pages: 6,
-    theme: 'jour-j',
-  },
-  {
-    slug: 'guide-mariee',
-    title: 'Guide mariée',
-    description: "Tous les conseils essentiels pour vivre sereinement le jour J côté mariée.",
-    price: 6,
-    pages: 16,
-    theme: 'mariee',
-  },
-  {
-    slug: 'guide-organisation-complete-debutants',
-    title: 'Guide Organisation complète (débutants)',
-    description: "Le guide complet pour démarrer l'organisation de votre mariage de zéro.",
-    price: 9,
-    pages: 28,
     theme: 'organisation',
   },
   {
-    slug: 'guide-prestataires-mariage',
-    title: 'Guide prestataires de mariage',
-    description: "Comment choisir, briefer et coordonner chaque prestataire du mariage.",
-    price: 9,
-    pages: 24,
+    slug: 'guide-discours-mariage',
+    title: 'Do & Don\'t du Discours de Mariage',
+    description:
+      "Les bonnes pratiques et les erreurs à éviter pour un discours de mariage réussi, avec structure et exemples.",
+    price: 4,
+    theme: 'temoins',
+  },
+  {
+    slug: 'checklist-temoins',
+    title: 'Checklist pour les Témoins',
+    description:
+      "La checklist complète des missions du témoin, avant, pendant et après le mariage.",
+    price: 4,
+    theme: 'temoins',
+  },
+  {
+    slug: 'checklist-questions-prestataires',
+    title: 'Sélection des prestataires — Checklist questions',
+    description:
+      "Les bonnes questions à poser à chaque prestataire (lieu, traiteur, photographe, DJ…) avant de signer.",
+    price: 4,
     theme: 'prestataires',
+  },
+  {
+    slug: 'checklist-mariee',
+    title: 'Checklist pour la Mariée',
+    description:
+      "La checklist essentielle des préparatifs de la mariée : tenue, beauté, accessoires, jour J.",
+    price: 4,
+    theme: 'mariee',
   },
 ];
