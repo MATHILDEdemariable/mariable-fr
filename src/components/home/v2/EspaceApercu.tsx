@@ -53,7 +53,9 @@ export default function EspaceApercu() {
         <div className="grid lg:grid-cols-[1.6fr_1fr] gap-12 items-center max-w-6xl mx-auto">
           {/* Mockup navigateur */}
           <div className="relative">
+            <div className="origin-top-left scale-[0.72] w-[139%] -mb-[28%] md:scale-100 md:w-full md:mb-0">
             <div className="rounded-lg border border-editorial-noir/15 bg-white shadow-2xl overflow-hidden">
+
               {/* Browser bar */}
               <div className="flex items-center gap-2 px-4 py-2.5 bg-editorial-cream border-b border-editorial-noir/10">
                 <span className="w-2.5 h-2.5 rounded-full bg-red-400" />
@@ -79,7 +81,7 @@ export default function EspaceApercu() {
               {/* Body : sidebar + main */}
               <div className="grid grid-cols-[140px_1fr] min-h-[280px]">
                 {/* Sidebar */}
-                <aside className="bg-white border-r border-editorial-noir/10 py-3 hidden sm:block">
+                <aside className="bg-white border-r border-editorial-noir/10 py-3">
                   <p className="font-serif text-[11px] text-editorial-noir px-3 mb-2">
                     {t('apercu.sidebarTitle')}
                   </p>
@@ -160,8 +162,10 @@ export default function EspaceApercu() {
                     </div>
                   </div>
                 </div>
-              </div>
             </div>
+            </div>
+          </div>
+
           </div>
 
           {/* Liste fonctionnalités */}

@@ -33,7 +33,7 @@ const InstagramHighlightsGrid = ({
         </div>
 
         <div className={cn(
-          "flex gap-4 md:gap-6 pb-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide",
+          "flex gap-3 md:gap-4 pb-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide",
           highlights.length <= 4 ? "md:justify-center" : ""
         )}>
           {highlights.map((h) => (
@@ -42,45 +42,42 @@ const InstagramHighlightsGrid = ({
               href={h.instagram_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="group relative block min-w-[280px] md:min-w-[320px] aspect-[4/5] overflow-hidden bg-editorial-noir/5 snap-center flex-shrink-0"
+              className="group block w-[180px] md:w-[220px] flex-shrink-0 snap-center"
             >
-              <img
-                src={h.image_url}
-                alt={h.caption || `Post Instagram ${h.prestataire?.nom || ''}`.trim()}
-                loading="lazy"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-              />
-              
-              {/* Overlay with Caption */}
-              <div className="absolute inset-0 bg-gradient-to-t from-editorial-noir/80 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
-              
-              <div className="absolute inset-0 p-6 flex flex-col justify-end text-white">
-                <Instagram className="h-6 w-6 mb-4 opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-2 group-hover:translate-y-0" />
-                
-                {h.caption && (
-                  <h3 className="font-serif text-lg md:text-xl leading-tight mb-2 drop-shadow-sm">
-                    {h.caption}
-                  </h3>
-                )}
-                
-                {h.prestataire?.nom && (
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-editorial-cream/80">
-                    {h.prestataire.nom}
-                  </p>
-                )}
+              <div className="relative aspect-square overflow-hidden bg-editorial-noir/5">
+                <img
+                  src={h.image_url}
+                  alt={h.caption || `Post Instagram ${h.prestataire?.nom || ''}`.trim()}
+                  loading="lazy"
+                  className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-editorial-noir/0 group-hover:bg-editorial-noir/20 transition-colors flex items-center justify-center">
+                  <Instagram className="h-6 w-6 text-white opacity-0 group-hover:opacity-100 transition-opacity drop-shadow-md" />
+                </div>
               </div>
 
-              {h.prestataire?.slug && (
+              {h.caption && (
+                <h3 className="mt-3 font-serif text-[13px] md:text-sm leading-snug text-editorial-noir line-clamp-2">
+                  {h.caption}
+                </h3>
+              )}
+
+              {h.prestataire?.slug ? (
                 <Link
                   to={`/prestataire/${h.prestataire.slug}`}
                   onClick={(e) => e.stopPropagation()}
-                  className="absolute top-4 right-4 bg-white/90 text-editorial-noir text-[9px] uppercase tracking-wider py-1.5 px-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="mt-1 inline-block text-[10px] uppercase tracking-[0.2em] text-premium-sage hover:underline"
                 >
-                  Voir fiche
+                  {h.prestataire.nom}
                 </Link>
-              )}
+              ) : h.prestataire?.nom ? (
+                <p className="mt-1 text-[10px] uppercase tracking-[0.2em] text-editorial-noir/50">
+                  {h.prestataire.nom}
+                </p>
+              ) : null}
             </a>
           ))}
+
         </div>
       </div>
     </section>
