@@ -413,11 +413,11 @@ export default function GuidesShop() {
         <Footer />
       </div>
 
-      {/* Modal "bientôt" */}
+      {/* Modal achat */}
       {selectedGuide && (
         <div
           className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4"
-          onClick={() => setSelectedGuide(null)}
+          onClick={() => !checkoutLoading && setSelectedGuide(null)}
         >
           <div
             className="bg-white max-w-md w-full p-8 relative"
@@ -425,37 +425,53 @@ export default function GuidesShop() {
           >
             <button
               onClick={() => setSelectedGuide(null)}
-              className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir"
+              disabled={checkoutLoading}
+              className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir disabled:opacity-40"
               aria-label="Fermer"
             >
               <X className="w-5 h-5" />
             </button>
             <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
-              Bientôt disponible
+              Acheter ce guide
             </p>
-            <h3 className="font-serif text-2xl text-editorial-noir mb-3">
+            <h3 className="font-serif text-2xl text-editorial-noir mb-2">
               {selectedGuide.title}
             </h3>
-            <p className="text-sm text-editorial-noir/70 mb-6">
-              L'achat à l'unité ({selectedGuide.price}€) sera disponible très prochainement.
-              En attendant, débloquez <strong>tous les guides</strong> + l'ensemble des outils avec Mariable Premium.
+            <p className="font-serif text-3xl text-editorial-noir mb-4">{selectedGuide.price}€</p>
+            <p className="text-sm text-editorial-noir/70 mb-5">
+              Recevez le PDF par email + accès permanent depuis un lien personnel.
             </p>
-            <div className="space-y-3">
-              <Link
-                to="/paiement"
-                className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors"
-              >
-                Passer Premium — 29€
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href={`mailto:contact@mariable.fr?subject=Pré-commande%20${encodeURIComponent(selectedGuide.title)}`}
-                className="inline-flex items-center justify-center gap-2 w-full border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 font-medium transition-colors"
-              >
-                <Check className="w-4 h-4" />
-                Me prévenir par email
-              </a>
-            </div>
+            <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
+              Votre email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="vous@email.com"
+              className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
+              disabled={checkoutLoading}
+            />
+            <button
+              onClick={handleBuy}
+              disabled={checkoutLoading}
+              className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
+            >
+              {checkoutLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Redirection vers Stripe…
+                </>
+              ) : (
+                <>
+                  Payer {selectedGuide.price}€
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+            <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+              Paiement sécurisé Stripe · Aucune création de compte requise
+            </p>
           </div>
         </div>
       )}
