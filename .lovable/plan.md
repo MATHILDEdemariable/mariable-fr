@@ -1,86 +1,89 @@
 ## Objectif
 
-Repositionner **/guides** comme une vraie **marketplace e-books** (achat en haut, filtres par thème), en gardant le contenu SEO en support — pas en obstacle. Laisser **/outils-planning-mariage** comme page descriptive de l'appli.
+1. **`/guides`** (marketplace public) : 7 ebooks à **4 €** via **1 seul Price Stripe partagé**, livraison email + page token `/mes-guides/[token]`.
+2. **`/dashboard/guides`** (Premium) : mêmes 7 PDFs, téléchargement direct gratuit pour les Premium.
 
-## Positionnement des 2 pages (clarifier les rôles)
+## Éléments fournis
 
-| Page | Intention | KPI |
+- **Price ID Stripe partagé** : `price_1Tqv7UKHghqBzkgj4mOMVYty` (produit `prod_UqcMXTc9H2lUFH`, 4 €)
+- **7 PDFs identifiés** dans les uploads → à placer dans un bucket privé `ebooks/{slug}.pdf`
+
+| PDF source | slug | thème |
 |---|---|---|
-| `/outils-planning-mariage` | SEO + démo appli → **création de compte** | Signups |
-| `/guides` | SEO + marketplace ebooks → **achat guide** ou **Premium 29€** | Ventes PDF / Premium |
+| `..._Catalogue_Prix_Mariage_2026_en_France.pdf` | `catalogue-prix-mariage-2026` | `budget` |
+| `..._Organiser_la_Crmonie_Laque.pdf` | `guide-ceremonie-laique` | `ceremonie` |
+| `..._Dbutants_Mariage.pdf` | `guide-debutants-mariage` | `organisation` |
+| `..._Do_Dont_du_Discours_de_Mariage.pdf` | `guide-discours-mariage` | `temoins` |
+| `..._Checklist_pour_les_Tmoins.pdf` | `checklist-temoins` | `temoins` |
+| `..._Slection_des_prestataires_Checklist_questions_poser.pdf` | `checklist-questions-prestataires` | `prestataires` |
+| `..._Checklist_pour_la_Marie.pdf` | `checklist-mariee` | `mariee` |
 
-## Nouvelle structure de /guides (ordre)
+## Architecture
 
+### Storage
+- Nouveau bucket **privé `ebooks`** (via `supabase--storage_create_bucket`)
+- Copie des 7 PDFs → `ebooks/{slug}.pdf`
+- **Source unique** partagée entre marketplace et dashboard Premium
+
+### Table `ebook_purchases`
+```sql
+CREATE TABLE public.ebook_purchases (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  email text NOT NULL,
+  access_token text NOT NULL UNIQUE,
+  guide_slug text NOT NULL,
+  stripe_session_id text UNIQUE,
+  amount_paid integer NOT NULL,
+  created_at timestamptz DEFAULT now()
+);
 ```
-1. HERO éditorial court
-   ├── H1 : "Guides & e-books mariage à télécharger"
-   ├── Sous-titre : "Checklists, rétroplannings, guides prestataires… dès 4€"
-   └── 2 CTA : [Voir les guides] (scroll) · [Tout débloquer 29€ Premium]
++ GRANTs `service_role` uniquement, RLS strict, 2 RPCs SECURITY DEFINER :
+- `get_purchases_by_token(token)` → liste des guides pour la page `/mes-guides/:token`
+- `get_token_by_session(session_id)` → utilisée par `/mes-guides/pending`
 
-2. MARKETPLACE (juste sous le hero — plus tout en bas)
-   ├── Barre de filtres par thème (pills)
-   │    Tous · Cérémonie · Organisation · Jour-J · Prestataires · Mariée · Témoins
-   ├── Grille cards ebooks (existante, réutilisée)
-   ├── Tri prix / pages (secondaire)
-   └── Bandeau "Tous inclus dans Premium 29€ à vie"
+### Edge functions
+- **`create-ebook-checkout`** : `{ guideSlug, email }` → session Stripe avec `price_1Tqv7UKHghqBzkgj4mOMVYty` + `metadata: { type: 'ebook', guide_slug }` + `custom_text.submit.message` = titre du guide
+- **`stripe-webhook`** (étendue) : sur `checkout.session.completed` avec `metadata.type === 'ebook'` → génère `access_token` (crypto), insert `ebook_purchases`, appelle `send-ebook-email`
+- **`send-ebook-email`** : Resend, lien `https://www.mariable.fr/mes-guides/{token}`
+- **`get-ebook-download-url`** : deux modes
+  - **Public** (`{ token, slug }`) : vérifie via RPC → URL signée Storage 1 h
+  - **Auth** (`{ slug }` + JWT) : vérifie `profiles.subscription_type = 'premium'` → URL signée 1 h
 
-3. BLOC CONVERSION Premium
-   └── Card sombre "29€ à vie · plus rentable dès 4 guides" (existant, déplacé)
+### Frontend
+- **`/guides`** : bouton « Acheter 4 € » → modal email → `create-ebook-checkout` → redirect Stripe
+- **`/mes-guides/pending?session_id=…`** : polling 2-3 s, puis redirect `/mes-guides/{token}` (page « Merci pour votre achat »)
+- **`/mes-guides/:token`** : liste des guides achetés + « Télécharger » (URL fraîche) + « Renvoyer email »
+- **`/dashboard/guides`** : refonte pour consommer `GUIDES` de `src/data/guides.ts` (source unique), bouton « Télécharger » appelle `get-ebook-download-url` mode auth. Comportement Free (lock + `PremiumModal`) conservé.
 
-4. CONTENU SEO condensé (garde le jus SEO, sans détailler l'appli)
-   ├── Intro 2 paragraphes courts
-   ├── Sommaire ancré
-   ├── 6 sections H2 long tail (checklist, rétroplanning, budget, prestataires, invités, jour J)
-   │   → chaque section CTA vers **le guide correspondant** (pas vers l'appli)
-   └── FAQ (garde le FAQPage JSON-LD)
+## Fichiers
 
-5. Footer
-```
+**Nouveaux**
+- `supabase/functions/create-ebook-checkout/index.ts`
+- `supabase/functions/send-ebook-email/index.ts`
+- `supabase/functions/get-ebook-download-url/index.ts`
+- `src/pages/MesGuides.tsx`
+- `src/pages/MesGuidesPending.tsx`
+- Migration SQL (table + RPCs + RLS + GRANTs)
 
-**Différence clé vs actuel** : la grille d'ebooks est **en position 2** (visible sans scroll long), pas en position 5.
+**Modifiés**
+- `src/data/guides.ts` : ajout thème `budget`, remplacement par les 7 nouveaux guides (tous 4 €) + champ `stripePriceId` partagé
+- `src/pages/GuidesShop.tsx` : modal achat réelle, filtre `budget`
+- `src/pages/dashboard/GuidesPage.tsx` : consomme `GUIDES` + télécharge via `get-ebook-download-url`
+- `supabase/functions/stripe-webhook/index.ts` : handler ebook
+- `src/App.tsx` : routes `/mes-guides/*`
+- `src/i18n/locales/{fr,en}/weddingDay.json` : 7 nouvelles entrées `guides.items.*`
 
-## Filtres marketplace
+## Ordre d'exécution (mode build)
 
-Ajouter un champ `theme` dans `src/data/guides.ts` :
+1. Créer bucket `ebooks` + copier les 7 PDFs
+2. Migration SQL (table + RPCs)
+3. 3 edge functions + extension `stripe-webhook`
+4. Refonte `/guides` + `/dashboard/guides` + pages `/mes-guides/*`
+5. Test : achat Stripe test → email → page token → download, + login Premium → download depuis dashboard
 
-```ts
-theme: 'ceremonie' | 'organisation' | 'jour-j' | 'prestataires' | 'mariee' | 'temoins'
-```
+## Hors scope
 
-Mapping proposé :
-- Checklist Civil → `ceremonie`
-- Checklist Cérémonie → `ceremonie`
-- Guide témoins → `temoins`
-- Guide planning Jour-J → `jour-j`
-- Checklist photo Jour-J → `jour-j`
-- Guide mariée → `mariee`
-- Guide Organisation complète → `organisation`
-- Guide prestataires → `prestataires`
-
-Filtre = simple `useState` + `.filter()`, aucune dépendance.
-
-## SEO
-
-- **Conservé** : `<title>`, meta description, canonical, JSON-LD (Article + BreadcrumbList + FAQPage), les 6 H2 long tail, la FAQ.
-- **Ajouté** : JSON-LD `ItemList` (produits ebooks) + `Product` pour chaque guide (name, offers.price, offers.priceCurrency).
-- **Recentré** : les CTA des sections SEO pointent désormais vers `#ebooks` ou l'ebook thématique, plus vers `/dashboard/*` (ça, c'est le job de /outils-planning-mariage).
-
-## /outils-planning-mariage
-
-Aucune refonte demandée. On vérifie juste que le maillage interne est cohérent :
-- Depuis `/guides` : lien texte discret "Vous cherchez plutôt les outils gratuits ? → /outils-planning-mariage"
-- Depuis `/outils-planning-mariage` : lien "Guides PDF à télécharger → /guides"
-
-## Détails techniques
-
-Fichiers touchés :
-- `src/data/guides.ts` — ajouter `theme` + type `GuideTheme`
-- `src/pages/GuidesShop.tsx` — réorganisation des sections (ordre) + composant filtres inline + JSON-LD Product/ItemList
-- Rien d'autre. Aucun nouveau fichier, aucun package.
-
-Approche : **simple** (règle #1 projet) — 1 `useState` pour le filtre actif, `.filter()` inline, pas de nouveau composant, pas de refacto de la card ebook.
-
-## Hors scope (à confirmer si tu veux)
-
-- Vrai paiement Stripe/Paddle sur les ebooks (aujourd'hui la modale dit "bientôt disponible")
-- Pages produit dédiées `/guides/[slug]` (utile SEO long terme, mais lourd — à faire dans un 2e temps)
+- Bundle « tous les guides » (Premium 29 € joue déjà ce rôle)
+- Compte utilisateur obligatoire pour acheter (invité par email uniquement)
+- Pages produit SEO dédiées `/guides/[slug]`
+- Factures PDF custom (reçus Stripe suffisent)
