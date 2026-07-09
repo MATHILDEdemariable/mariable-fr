@@ -122,7 +122,13 @@ serve(async (req) => {
     logStep("Event received", { type: event.type, id: event.id });
 
     if (event.type === "checkout.session.completed") {
-      await handleCheckoutCompleted(event, supabaseClient);
+      const session = event.data.object as Stripe.Checkout.Session;
+      // Router selon le type de checkout (ebook vs premium)
+      if (session.metadata?.type === "ebook") {
+        await handleEbookPurchase(session, supabaseClient);
+      } else {
+        await handleCheckoutCompleted(event, supabaseClient);
+      }
       await logAudit('success');
     } else if (event.type === "customer.subscription.created") {
       await handleSubscriptionCreated(event, supabaseClient);
@@ -466,4 +472,79 @@ async function handleSubscriptionDeleted(event: Stripe.Event, supabaseClient: an
 
   if (error) throw error;
   logStep("Profile downgraded to free", { subscriptionId: subscription.id });
+}
+
+// ============ EBOOK PURCHASES ============
+async function handleEbookPurchase(session: Stripe.Checkout.Session, supabaseClient: any) {
+  const email = session.customer_details?.email || session.customer_email;
+  const guideSlug = session.metadata?.guide_slug;
+  const guideTitle = session.metadata?.guide_title || "Votre guide Mariable";
+
+  logStep("Ebook checkout completed", { sessionId: session.id, email, guideSlug });
+
+  if (!email || !guideSlug) {
+    throw new Error("Ebook purchase missing email or guide_slug");
+  }
+  if (session.payment_status !== "paid") {
+    throw new Error(`Ebook payment not completed: ${session.payment_status}`);
+  }
+
+  // Idempotence: si session_id déjà traité, on ne recrée pas
+  const { data: existing } = await supabaseClient
+    .from("ebook_purchases")
+    .select("access_token")
+    .eq("stripe_session_id", session.id)
+    .maybeSingle();
+
+  let accessToken: string;
+
+  if (existing?.access_token) {
+    accessToken = existing.access_token;
+    logStep("Ebook purchase already exists — skipping insert", { sessionId: session.id });
+  } else {
+    // Tente de réutiliser un token existant pour cet email (regroupement)
+    const { data: prior } = await supabaseClient
+      .from("ebook_purchases")
+      .select("access_token")
+      .eq("email", email)
+      .limit(1)
+      .maybeSingle();
+
+    accessToken = prior?.access_token || generateToken();
+
+    const { error: insertError } = await supabaseClient
+      .from("ebook_purchases")
+      .insert({
+        email,
+        access_token: accessToken,
+        guide_slug: guideSlug,
+        stripe_session_id: session.id,
+        amount_paid: session.amount_total || 0,
+      });
+
+    if (insertError) {
+      logStep("ERROR: Failed to insert ebook_purchase", { error: insertError });
+      throw insertError;
+    }
+  }
+
+  // Envoyer l'email (non bloquant)
+  try {
+    const { error: emailError } = await supabaseClient.functions.invoke("send-ebook-email", {
+      body: { email, guideTitle, accessToken },
+    });
+    if (emailError) {
+      logStep("ERROR: Failed to send ebook email (non-blocking)", { error: emailError });
+    } else {
+      logStep("Ebook email sent", { email });
+    }
+  } catch (e) {
+    logStep("ERROR: send-ebook-email exception (non-blocking)", { error: (e as Error).message });
+  }
+}
+
+function generateToken(): string {
+  const bytes = new Uint8Array(32);
+  crypto.getRandomValues(bytes);
+  return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }

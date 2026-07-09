@@ -1,53 +1,55 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, Check, X, ChevronRight } from 'lucide-react';
+import { ArrowRight, BookOpen, X, ChevronRight, Loader2 } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { GUIDES, GUIDE_THEMES, Guide, GuideTheme } from '@/data/guides';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 
 const GUIDE_SECTIONS = [
   {
-    id: 'checklist-mariage',
-    h2: 'Checklist mariage : les 12 mois avant le jour J',
+    id: 'organisation-mariage',
+    h2: 'Organiser son mariage quand on débute',
     intro:
-      "La checklist mariage 12 mois est la colonne vertébrale de votre organisation. Elle liste, mois après mois, les décisions à prendre pour préparer votre mariage sereinement : réservation du lieu, sélection du photographe, envoi des faire-part, essayages, dégustation traiteur… Notre e-book « Guide Organisation complète » reprend cette checklist enrichie et prête à imprimer.",
-    cta: { label: 'Voir l\'e-book Organisation complète', slug: 'guide-organisation-complete-debutants' },
-  },
-  {
-    id: 'retroplanning-mariage',
-    h2: 'Rétroplanning mariage : les étapes clés mois par mois',
-    intro:
-      "Un bon rétroplanning mariage transforme un projet complexe en petites étapes réalisables. Nous détaillons chaque phase — 12 mois avant, 6 mois, 3 mois, 1 mois, la semaine, la veille — pour que vous sachiez exactement quoi faire à quel moment. Le « Guide planning Jour-J » propose un rétroplanning éditable pensé par un wedding planner.",
-    cta: { label: 'Voir le Guide planning Jour-J', slug: 'guide-planning-jour-j' },
+      "Vous ne savez pas par où commencer ? Le guide « Débutants Mariage » balaie les priorités mois par mois : lieu, budget, prestataires clés, invités, papeterie. Un point de départ clair pour ne rien oublier.",
+    cta: { label: 'Acheter le Guide Débutants', slug: 'guide-debutants-mariage' },
   },
   {
     id: 'budget-mariage',
-    h2: 'Budget mariage : combien prévoir pour 100 invités ?',
+    h2: 'Budget mariage : combien prévoir en 2026 ?',
     intro:
-      "Le budget mariage moyen en France pour 100 invités se situe entre 15 000 € et 30 000 € selon la région, le lieu et vos choix de prestataires. Notre guide détaille la répartition poste par poste (lieu, traiteur, photographe, décoration, tenues, alliances, papeterie) pour anticiper les vrais coûts et éviter les mauvaises surprises.",
-    cta: { label: 'Voir le Guide prestataires', slug: 'guide-prestataires-mariage' },
+      "Le budget mariage moyen en France pour 100 invités se situe entre 15 000 € et 30 000 €. Notre « Catalogue Prix Mariage 2026 » détaille les fourchettes réelles par poste (lieu, traiteur, photographe, DJ, fleuriste…) pour anticiper les vrais coûts et éviter les mauvaises surprises.",
+    cta: { label: 'Voir le Catalogue Prix 2026', slug: 'catalogue-prix-mariage-2026' },
   },
   {
     id: 'prestataires-mariage',
-    h2: 'Choisir ses prestataires : lieu, traiteur, photographe',
+    h2: 'Choisir ses prestataires : les bonnes questions',
     intro:
-      "Les prestataires de mariage représentent 70 à 80 % de votre budget total. Bien les choisir, c'est la garantie d'un mariage réussi. Notre e-book explique comment briefer un lieu, comparer plusieurs devis traiteur, sélectionner un photographe dont le style correspond au vôtre, et négocier sans y perdre en qualité.",
-    cta: { label: 'Acheter le Guide prestataires', slug: 'guide-prestataires-mariage' },
+      "Les prestataires représentent 70 à 80 % de votre budget. La checklist des questions à poser vous évite les mauvaises surprises : contrats, disponibilité, options, annulation, plan B…",
+    cta: { label: 'Acheter la Checklist prestataires', slug: 'checklist-questions-prestataires' },
   },
   {
     id: 'ceremonie-mariage',
-    h2: 'Cérémonie civile, laïque ou religieuse : le déroulé',
+    h2: 'Cérémonie laïque : le déroulé complet',
     intro:
-      "Chaque type de cérémonie a ses codes, ses temps forts et ses écueils à éviter. Nos checklists dédiées couvrent les démarches mairie, la préparation d'une cérémonie laïque personnalisée et le déroulé d'une cérémonie religieuse, avec exemples de rituels et de textes.",
-    cta: { label: 'Voir les checklists cérémonie', slug: 'checklist-ceremonie-laique-catholique' },
+      "Une cérémonie laïque personnalisée demande une vraie préparation. Rôles, rituels, textes, timing : le guide couvre tout ce qu'il faut pour un moment fort et fluide.",
+    cta: { label: 'Voir le Guide Cérémonie Laïque', slug: 'guide-ceremonie-laique' },
   },
   {
-    id: 'jour-j',
-    h2: 'Checklist jour J : le déroulé minute par minute',
+    id: 'temoins-mariage',
+    h2: 'Témoins & discours : réussir son rôle',
     intro:
-      "Le jour J passe très vite. Une checklist et un déroulé minuté permettent à vos témoins ou coordinateur d'orchestrer la journée sans vous solliciter. Notre modèle couvre la préparation, la cérémonie, le cocktail, le dîner, l'ouverture de bal, jusqu'au brunch du lendemain.",
-    cta: { label: 'Voir le Guide planning Jour-J', slug: 'guide-planning-jour-j' },
+      "Être témoin, c'est un rôle qui se prépare. Nos deux guides — la « Checklist Témoins » et le « Do & Don't du Discours » — couvrent missions, timing et bonnes pratiques pour un rôle réussi sans stress.",
+    cta: { label: 'Voir la Checklist Témoins', slug: 'checklist-temoins' },
+  },
+  {
+    id: 'checklist-mariee',
+    h2: 'Préparatifs de la mariée : la checklist essentielle',
+    intro:
+      "Robe, essayages, beauté, accessoires, kit d'urgence du jour J : la checklist mariée regroupe tout ce qu'il ne faut pas oublier pour un jour J serein côté mariée.",
+    cta: { label: 'Acheter la Checklist Mariée', slug: 'checklist-mariee' },
   },
 ];
 
@@ -79,11 +81,34 @@ const findGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
 export default function GuidesShop() {
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
+  const [email, setEmail] = useState('');
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { toast } = useToast();
 
   const filteredGuides = useMemo(
     () => (activeTheme === 'all' ? GUIDES : GUIDES.filter((g) => g.theme === activeTheme)),
     [activeTheme]
   );
+
+  const handleBuy = async () => {
+    if (!selectedGuide) return;
+    const trimmed = email.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      toast({ title: 'Email invalide', description: 'Merci de saisir un email valide.', variant: 'destructive' });
+      return;
+    }
+    setCheckoutLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('create-ebook-checkout', {
+        body: { guideSlug: selectedGuide.slug, email: trimmed },
+      });
+      if (error || !data?.url) throw new Error(error?.message || 'Session Stripe indisponible');
+      window.location.href = data.url;
+    } catch (e) {
+      toast({ title: 'Erreur', description: (e as Error).message, variant: 'destructive' });
+      setCheckoutLoading(false);
+    }
+  };
 
   return (
     <>
@@ -388,11 +413,11 @@ export default function GuidesShop() {
         <Footer />
       </div>
 
-      {/* Modal "bientôt" */}
+      {/* Modal achat */}
       {selectedGuide && (
         <div
           className="fixed inset-0 z-50 bg-editorial-noir/70 flex items-center justify-center p-4"
-          onClick={() => setSelectedGuide(null)}
+          onClick={() => !checkoutLoading && setSelectedGuide(null)}
         >
           <div
             className="bg-white max-w-md w-full p-8 relative"
@@ -400,37 +425,53 @@ export default function GuidesShop() {
           >
             <button
               onClick={() => setSelectedGuide(null)}
-              className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir"
+              disabled={checkoutLoading}
+              className="absolute top-4 right-4 text-editorial-noir/50 hover:text-editorial-noir disabled:opacity-40"
               aria-label="Fermer"
             >
               <X className="w-5 h-5" />
             </button>
             <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-3">
-              Bientôt disponible
+              Acheter ce guide
             </p>
-            <h3 className="font-serif text-2xl text-editorial-noir mb-3">
+            <h3 className="font-serif text-2xl text-editorial-noir mb-2">
               {selectedGuide.title}
             </h3>
-            <p className="text-sm text-editorial-noir/70 mb-6">
-              L'achat à l'unité ({selectedGuide.price}€) sera disponible très prochainement.
-              En attendant, débloquez <strong>tous les guides</strong> + l'ensemble des outils avec Mariable Premium.
+            <p className="font-serif text-3xl text-editorial-noir mb-4">{selectedGuide.price}€</p>
+            <p className="text-sm text-editorial-noir/70 mb-5">
+              Recevez le PDF par email + accès permanent depuis un lien personnel.
             </p>
-            <div className="space-y-3">
-              <Link
-                to="/paiement"
-                className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors"
-              >
-                Passer Premium — 29€
-                <ArrowRight className="w-4 h-4" />
-              </Link>
-              <a
-                href={`mailto:contact@mariable.fr?subject=Pré-commande%20${encodeURIComponent(selectedGuide.title)}`}
-                className="inline-flex items-center justify-center gap-2 w-full border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 font-medium transition-colors"
-              >
-                <Check className="w-4 h-4" />
-                Me prévenir par email
-              </a>
-            </div>
+            <label className="block text-xs uppercase tracking-[0.15em] text-editorial-noir/60 mb-2">
+              Votre email
+            </label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="vous@email.com"
+              className="w-full border border-editorial-noir/20 px-4 py-3 mb-4 focus:outline-none focus:border-editorial-olive"
+              disabled={checkoutLoading}
+            />
+            <button
+              onClick={handleBuy}
+              disabled={checkoutLoading}
+              className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3 font-medium transition-colors disabled:opacity-70"
+            >
+              {checkoutLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Redirection vers Stripe…
+                </>
+              ) : (
+                <>
+                  Payer {selectedGuide.price}€
+                  <ArrowRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+            <p className="text-[11px] text-editorial-noir/50 mt-3 text-center">
+              Paiement sécurisé Stripe · Aucune création de compte requise
+            </p>
           </div>
         </div>
       )}
