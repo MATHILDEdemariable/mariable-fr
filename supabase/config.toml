@@ -69,3 +69,6 @@ verify_jwt = false
 
 [functions.get-ebook-download-url]
 verify_jwt = false
+
+[functions.temp-upload-ebooks]
+verify_jwt = false
