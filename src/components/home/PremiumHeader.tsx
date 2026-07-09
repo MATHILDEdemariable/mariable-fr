@@ -127,6 +127,14 @@ const PremiumHeader = () => {
                   </Link>
                 ))}
                 <hr className="border-editorial-noir/10" />
+                <Link
+                  to="/guides"
+                  onClick={() => setMobileOpen(false)}
+                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                >
+                  {t('header.nav.ebooks')}
+                </Link>
+                <hr className="border-editorial-noir/10" />
                 <Link 
                   to="/partenariat"
                   onClick={() => setMobileOpen(false)}
