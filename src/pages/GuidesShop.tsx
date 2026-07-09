@@ -266,44 +266,34 @@ export default function GuidesShop() {
                   ))}
                 </div>
 
-                {/* Grille */}
-                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                {/* Grille compacte */}
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
                   {filteredGuides.map((g) => (
                     <article
                       key={g.slug}
                       id={`ebook-${g.slug}`}
-                      className="bg-white border border-editorial-noir/10 flex flex-col group hover:shadow-lg transition-shadow scroll-mt-24"
+                      className="bg-white border border-editorial-noir/10 flex flex-col group hover:shadow-md transition-shadow scroll-mt-24"
                     >
-                      <div className="aspect-[4/5] bg-gradient-to-br from-editorial-beige to-editorial-cream border-b border-editorial-noir/10 flex flex-col items-center justify-center p-6 text-center relative">
-                        <BookOpen className="w-8 h-8 text-editorial-olive mb-4 opacity-60" />
-                        <p className="uppercase tracking-[0.25em] text-[10px] text-editorial-olive mb-3">
+                      <div className="aspect-square bg-gradient-to-br from-editorial-beige to-editorial-cream border-b border-editorial-noir/10 flex flex-col items-center justify-center p-4 text-center">
+                        <BookOpen className="w-6 h-6 text-editorial-olive mb-2 opacity-60" />
+                        <p className="uppercase tracking-[0.2em] text-[9px] text-editorial-olive mb-2">
                           Mariable · PDF
                         </p>
-                        <h3 className="font-serif text-xl text-editorial-noir leading-tight">
+                        <h3 className="font-serif text-sm md:text-base text-editorial-noir leading-snug line-clamp-3">
                           {g.title}
                         </h3>
-                        {g.pages && (
-                          <p className="absolute bottom-3 right-3 text-[10px] text-editorial-noir/40">
-                            {g.pages} pages
-                          </p>
-                        )}
                       </div>
-                      <div className="p-6 flex flex-col flex-1">
-                        <p className="text-sm text-editorial-noir/70 mb-6 flex-1">
-                          {g.description}
-                        </p>
-                        <div className="flex items-center justify-between gap-4">
-                          <span className="font-serif text-2xl text-editorial-noir">
-                            {g.price}€
-                          </span>
-                          <button
-                            onClick={() => setSelectedGuide(g)}
-                            className="inline-flex items-center gap-2 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-4 py-2.5 text-sm font-medium transition-colors"
-                          >
-                            Acheter
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
+                      <div className="p-3 md:p-4 flex items-center justify-between gap-2">
+                        <span className="font-serif text-lg md:text-xl text-editorial-noir">
+                          {formatPrice(g.price)}€
+                        </span>
+                        <button
+                          onClick={() => openGuide(g)}
+                          className="inline-flex items-center gap-1 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-3 py-2 text-xs font-medium transition-colors"
+                        >
+                          Acheter
+                          <ArrowRight className="w-3 h-3" />
+                        </button>
                       </div>
                     </article>
                   ))}
