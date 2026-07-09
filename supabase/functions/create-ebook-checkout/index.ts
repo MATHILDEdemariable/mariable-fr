@@ -17,6 +17,7 @@ const ALLOWED_GUIDES: Record<string, string> = {
   "checklist-temoins": "Checklist pour les Témoins",
   "checklist-questions-prestataires": "Sélection des prestataires — Checklist questions",
   "checklist-mariee": "Checklist pour la Mariée",
+  "guide-jour-j": "Guide Ultime Jour-J",
 };
 
 const BodySchema = z.object({
