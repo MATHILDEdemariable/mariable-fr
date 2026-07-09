@@ -10,46 +10,46 @@ import { useToast } from '@/hooks/use-toast';
 
 const GUIDE_SECTIONS = [
   {
-    id: 'checklist-mariage',
-    h2: 'Checklist mariage : les 12 mois avant le jour J',
+    id: 'organisation-mariage',
+    h2: 'Organiser son mariage quand on débute',
     intro:
-      "La checklist mariage 12 mois est la colonne vertébrale de votre organisation. Elle liste, mois après mois, les décisions à prendre pour préparer votre mariage sereinement : réservation du lieu, sélection du photographe, envoi des faire-part, essayages, dégustation traiteur… Notre e-book « Guide Organisation complète » reprend cette checklist enrichie et prête à imprimer.",
-    cta: { label: 'Voir l\'e-book Organisation complète', slug: 'guide-organisation-complete-debutants' },
-  },
-  {
-    id: 'retroplanning-mariage',
-    h2: 'Rétroplanning mariage : les étapes clés mois par mois',
-    intro:
-      "Un bon rétroplanning mariage transforme un projet complexe en petites étapes réalisables. Nous détaillons chaque phase — 12 mois avant, 6 mois, 3 mois, 1 mois, la semaine, la veille — pour que vous sachiez exactement quoi faire à quel moment. Le « Guide planning Jour-J » propose un rétroplanning éditable pensé par un wedding planner.",
-    cta: { label: 'Voir le Guide planning Jour-J', slug: 'guide-planning-jour-j' },
+      "Vous ne savez pas par où commencer ? Le guide « Débutants Mariage » balaie les priorités mois par mois : lieu, budget, prestataires clés, invités, papeterie. Un point de départ clair pour ne rien oublier.",
+    cta: { label: 'Acheter le Guide Débutants', slug: 'guide-debutants-mariage' },
   },
   {
     id: 'budget-mariage',
-    h2: 'Budget mariage : combien prévoir pour 100 invités ?',
+    h2: 'Budget mariage : combien prévoir en 2026 ?',
     intro:
-      "Le budget mariage moyen en France pour 100 invités se situe entre 15 000 € et 30 000 € selon la région, le lieu et vos choix de prestataires. Notre guide détaille la répartition poste par poste (lieu, traiteur, photographe, décoration, tenues, alliances, papeterie) pour anticiper les vrais coûts et éviter les mauvaises surprises.",
-    cta: { label: 'Voir le Guide prestataires', slug: 'guide-prestataires-mariage' },
+      "Le budget mariage moyen en France pour 100 invités se situe entre 15 000 € et 30 000 €. Notre « Catalogue Prix Mariage 2026 » détaille les fourchettes réelles par poste (lieu, traiteur, photographe, DJ, fleuriste…) pour anticiper les vrais coûts et éviter les mauvaises surprises.",
+    cta: { label: 'Voir le Catalogue Prix 2026', slug: 'catalogue-prix-mariage-2026' },
   },
   {
     id: 'prestataires-mariage',
-    h2: 'Choisir ses prestataires : lieu, traiteur, photographe',
+    h2: 'Choisir ses prestataires : les bonnes questions',
     intro:
-      "Les prestataires de mariage représentent 70 à 80 % de votre budget total. Bien les choisir, c'est la garantie d'un mariage réussi. Notre e-book explique comment briefer un lieu, comparer plusieurs devis traiteur, sélectionner un photographe dont le style correspond au vôtre, et négocier sans y perdre en qualité.",
-    cta: { label: 'Acheter le Guide prestataires', slug: 'guide-prestataires-mariage' },
+      "Les prestataires représentent 70 à 80 % de votre budget. La checklist des questions à poser vous évite les mauvaises surprises : contrats, disponibilité, options, annulation, plan B…",
+    cta: { label: 'Acheter la Checklist prestataires', slug: 'checklist-questions-prestataires' },
   },
   {
     id: 'ceremonie-mariage',
-    h2: 'Cérémonie civile, laïque ou religieuse : le déroulé',
+    h2: 'Cérémonie laïque : le déroulé complet',
     intro:
-      "Chaque type de cérémonie a ses codes, ses temps forts et ses écueils à éviter. Nos checklists dédiées couvrent les démarches mairie, la préparation d'une cérémonie laïque personnalisée et le déroulé d'une cérémonie religieuse, avec exemples de rituels et de textes.",
-    cta: { label: 'Voir les checklists cérémonie', slug: 'checklist-ceremonie-laique-catholique' },
+      "Une cérémonie laïque personnalisée demande une vraie préparation. Rôles, rituels, textes, timing : le guide couvre tout ce qu'il faut pour un moment fort et fluide.",
+    cta: { label: 'Voir le Guide Cérémonie Laïque', slug: 'guide-ceremonie-laique' },
   },
   {
-    id: 'jour-j',
-    h2: 'Checklist jour J : le déroulé minute par minute',
+    id: 'temoins-mariage',
+    h2: 'Témoins & discours : réussir son rôle',
     intro:
-      "Le jour J passe très vite. Une checklist et un déroulé minuté permettent à vos témoins ou coordinateur d'orchestrer la journée sans vous solliciter. Notre modèle couvre la préparation, la cérémonie, le cocktail, le dîner, l'ouverture de bal, jusqu'au brunch du lendemain.",
-    cta: { label: 'Voir le Guide planning Jour-J', slug: 'guide-planning-jour-j' },
+      "Être témoin, c'est un rôle qui se prépare. Nos deux guides — la « Checklist Témoins » et le « Do & Don't du Discours » — couvrent missions, timing et bonnes pratiques pour un rôle réussi sans stress.",
+    cta: { label: 'Voir la Checklist Témoins', slug: 'checklist-temoins' },
+  },
+  {
+    id: 'checklist-mariee',
+    h2: 'Préparatifs de la mariée : la checklist essentielle',
+    intro:
+      "Robe, essayages, beauté, accessoires, kit d'urgence du jour J : la checklist mariée regroupe tout ce qu'il ne faut pas oublier pour un jour J serein côté mariée.",
+    cta: { label: 'Acheter la Checklist Mariée', slug: 'checklist-mariee' },
   },
 ];
 
