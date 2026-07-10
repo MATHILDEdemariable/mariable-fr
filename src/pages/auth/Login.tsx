@@ -28,7 +28,14 @@ const Login = () => {
   const location = useLocation();
   const { user } = useAuth();
 
-  const redirectPath = location.state?.redirectAfterLogin || '/professionnelsmariable';
+  // Support ?next=/some/path (used by OAuth MCP consent flow) — must be a
+  // same-origin relative path.
+  const nextParam = new URLSearchParams(location.search).get('next');
+  const safeNext = nextParam && nextParam.startsWith('/') && !nextParam.startsWith('//')
+    ? nextParam
+    : null;
+  const redirectPath = safeNext || location.state?.redirectAfterLogin || '/professionnelsmariable';
+
 
   useEffect(() => {
     if (user) {
