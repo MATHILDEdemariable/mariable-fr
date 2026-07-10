@@ -1,0 +1,125 @@
+{
+  "version": 1,
+  "sdk_version": "0.20.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://bgidfcqktsttzlwlumtz.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "mariable-mcp",
+      "version": "0.1.0",
+      "title": "Mariable"
+    },
+    "tools": [
+      {
+        "name": "search_prestataires",
+        "title": "Rechercher des prestataires",
+        "description": "Rechercher des prestataires de mariage visibles dans l'annuaire Mariable (lieux, traiteurs, photographes, etc.). Retourne nom, catégorie, ville, prix, description, slug.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "Texte libre recherché dans le nom ou la description"
+            },
+            "categorie": {
+              "type": "string",
+              "description": "Catégorie exacte (ex: Lieu de réception, Traiteur, Photographe)"
+            },
+            "ville": {
+              "type": "string",
+              "description": "Filtrer par ville"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 10
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_blog_posts",
+        "title": "Lister les articles de blog",
+        "description": "Lister les articles de conseils mariage publiés sur Mariable. Retourne titre, slug, catégorie, extrait.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "string",
+              "description": "Filtrer par catégorie"
+            },
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 50,
+              "default": 20
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_my_profile",
+        "title": "Mon profil Mariable",
+        "description": "Retourne le profil Mariable de l'utilisateur connecté (email, nom, date de mariage prévue, statut premium).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_my_wedding_projects",
+        "title": "Mes projets de mariage",
+        "description": "Lister les projets de mariage (VibeWedding) de l'utilisateur connecté : titre, résumé, budget, planning, prestataires.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 20,
+              "default": 10
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
