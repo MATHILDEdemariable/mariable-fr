@@ -138,6 +138,8 @@ const MairieCivilPublic = lazy(() => import("./pages/MairieCivilPublic"));
 const CeremonieCatholiquePublic = lazy(() => import("./pages/CeremonieCatholiquePublic"));
 const WeddingSeverineOlivier = lazy(() => import("./pages/WeddingSeverineOlivier"));
 const ExempleSite = lazy(() => import("./pages/ExempleSite"));
+const OAuthConsent = lazy(() => import("./pages/OAuthConsent"));
+
 
 // Loading component with accessibility improvements
 const PageLoader = () => (
@@ -255,6 +257,8 @@ function App() {
                    <Route path="/auth/reset-password" element={<ResetPassword />} />
                    <Route path="/email-confirmation" element={<EmailConfirmation />} />
                    <Route path="/auth/email-confirmation" element={<Navigate to="/email-confirmation" replace />} />
+                   <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
+
 
                   {/* Static routes */}
                   <Route path="/detail-coordination-jourm" element={<Pricing />} />
