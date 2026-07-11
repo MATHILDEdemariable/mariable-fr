@@ -1,67 +1,84 @@
-# Plan — Refonte page /guides + ajout ebook Jour J
+# Plan — 4 chantiers
 
-## 1. Lien "E-books" dans le header d'accueil
+## 1. Menu sticky bas (mobile PWA)
+Nouveau composant `src/components/layout/MobileBottomNav.tsx` :
+- 4 items : **Dashboard** (`/dashboard`), **Jour-J** (`/dashboard/mon-jour-m` ou route équivalente à confirmer via `dashboardFeatures.ts`), **Prestataires** (`/professionnels`), **Guides** (`/guides`).
+- Fixed bottom, `md:hidden`, safe-area (`pb-[env(safe-area-inset-bottom)]`), fond blanc + border-top olive.
+- Icônes lucide (LayoutDashboard, Heart, Search, BookOpen), label court, état actif via `useLocation`.
+- Injecté dans `App.tsx` (au niveau global, sous les routes) pour qu'il apparaisse partout sur mobile connecté. Ajout d'un `pb-16 md:pb-0` sur les layouts scrollables si nécessaire.
 
-`src/components/home/PremiumHeader.tsx`
-- Ajouter un lien vers `/guides` dans la nav desktop de la homepage (actuellement vide), placé **avant** le bloc compte/login.
-- Ajouter le même lien dans le menu mobile (Sheet).
-- Clé i18n `header.nav.ebooks` = « E-books » / « E-books » (FR/EN) dans `src/i18n/locales/{fr,en}/common.json`.
+## 2. Page `/guides` mobile-friendly
+Dans `src/pages/GuidesShop.tsx` :
+- Grid → `grid-cols-2 md:grid-cols-3 lg:grid-cols-4` (au lieu de 1 col sur mobile).
+- Cartes compactes : icône + titre 2 lignes (`line-clamp-2`) + prix 4,90 € + bouton "Aperçu" pleine largeur, padding réduit (`p-3`).
+- Header page : titre plus petit sur mobile, filtres thèmes en scroll horizontal (`overflow-x-auto flex-nowrap`).
+- Modal aperçu/checkout : `max-h-[90dvh] overflow-y-auto`, boutons sticky bas.
 
-## 2. Prix affiché à 4,90€
+## 3. Email d'envoi de guide
+Dans `supabase/functions/send-ebook-email/index.ts` :
+- Remplacer `from: "Mariable <contact@mariable.fr>"` → `from: "Mariable <mathilde@mariable.fr>"`.
+- Remplacer le mail de contact affiché en pied (`contact@mariable.fr`) → `mathilde@mariable.fr`.
+- Redéployer la fonction.
 
-`src/data/guides.ts`
-- Passer `price: 4` → `price: 4.9` sur les 7 guides (+ le nouveau, cf. §4).
+## 4. Refonte du quiz mariage (dashboard)
 
-Impact automatique : cartes, modal, JSON-LD Product, section SEO.
+### Objectif
+Déterminer le **profil d'organisatrice** de l'utilisatrice → 4 profils :
+- **Militaire** — planifie tout, contrôle, deadlines
+- **Déléguée** — préfère confier à un pro / wedding planner
+- **Détente** — zen, spontanée, peu structurée
+- **Débutante** — perdue, besoin d'être guidée pas à pas
 
-Textes à ajuster :
-- `src/pages/GuidesShop.tsx` : « dès 4 € » → « dès 4,90 € » (hero + FAQ + bloc Premium « rentable dès 4 guides » recalculé → « dès 6 guides »).
-- `src/pages/Prix.tsx` / `src/i18n/locales/{fr,en}/pricing.json` : occurrences éventuelles de « 4€ ».
+### Approche technique
+- **Ne plus utiliser la table `quiz_scoring` avec score numérique unique** (c'est ce qui casse la personnalisation aujourd'hui).
+- Nouvelle logique : chaque réponse mappe sur **un profil** (A/B/C/D). Le profil majoritaire gagne. Égalité → priorité Militaire > Déléguée > Détente > Débutante.
+- Refonte via **migration SQL** :
+  - Vider `quiz_questions` et re-seed avec 10 questions, chaque option taggée `profile: 'militaire' | 'deleguee' | 'detente' | 'debutante'`.
+  - Ajouter colonne `option_profiles jsonb` à `quiz_questions` (tableau aligné avec `options`).
+  - Vider `quiz_scoring` et re-seed avec 4 lignes (une par profil) contenant `status`, `categories`, `objectives` personnalisés.
+- Refonte `src/hooks/useWeddingQuiz.ts` : agrégation par comptage de profil au lieu de somme de scores.
+- Adaptation `QuizResults.tsx` : afficher le profil + description + 3-5 objectifs personnalisés + CTA vers les outils correspondants (ex. Militaire → planning, Déléguée → prestataires wedding planner, Débutante → guide débutant).
 
-**Point à confirmer** : le Price Stripe partagé `price_1Tqv7UKHghqBzkgj4mOMVYty` est aujourd'hui à 4,00 €. L'affichage 4,90 € ne suffit pas — Stripe encaissera toujours 4 €. Deux options :
-- **(a)** vous me fournissez un nouveau `price_id` Stripe à 4,90 € → je mets à jour `SHARED_EBOOK_PRICE_ID`.
-- **(b)** je change uniquement l'affichage et vous mettez le prix Stripe à jour ensuite depuis le dashboard Stripe (le même `price_id` réutilisé si vous éditez ce Price côté Stripe).
+### Les 10 questions (draft à valider en build)
 
-À défaut de réponse, je pars sur **(b)** (affichage + le `price_id` reste, à mettre à jour côté Stripe).
+1. **Combien de temps avant le mariage as-tu commencé à organiser ?**
+   - +18 mois (Militaire) / 12-18 mois (Déléguée) / 6-12 mois (Détente) / <6 mois ou pas commencé (Débutante)
 
-## 3. Cartes plus petites + preview sommaire au clic sur "Acheter"
+2. **Comment gères-tu ta to-do liste mariage ?**
+   - Notion/Excel ultra détaillé (M) / Je paie qqn pour la gérer (Dé) / Dans ma tête (Dt) / Quelle to-do ? (Db)
 
-`src/data/guides.ts`
-- Ajouter un champ `summary: string[]` par guide, avec le sommaire que vous avez fourni (Jour-J, Débutants, Checklist Mariée, Checklist Témoins, Sélection prestataires, Do & Don't Discours, Cérémonie Laïque, Catalogue Prix 2026).
+3. **Ton budget est-il défini ?**
+   - Chiffré au poste près (M) / Un pro s'en occupe (Dé) / Une fourchette large (Dt) / Aucune idée (Db)
 
-`src/pages/GuidesShop.tsx`
-- **Cartes plus compactes** : remplacer le visuel plein format `aspect-[4/5]` par une carte carrée réduite (`aspect-square` ou hauteur fixe ~200px), grille passée à `sm:grid-cols-2 lg:grid-cols-4` pour densifier. Titre + prix + bouton visibles sans scroll interne.
-- **Modal en 2 étapes** au clic sur « Acheter » :
-  1. **Étape 1 — Aperçu** : titre du guide + prix + liste `summary` (icônes check, style éditorial), bouton « Continuer vers le paiement » (ou bouton retour).
-  2. **Étape 2 — Email + Stripe** (le formulaire actuel).
-- État local `modalStep: 'preview' | 'checkout'`, reset à la fermeture.
+4. **Combien de prestataires as-tu déjà contactés ?**
+   - +10 (M) / 0, je délègue (Dé) / 2-3 coup de cœur (Dt) / 0, je sais pas par où commencer (Db)
 
-## 4. Nouvel ebook « Guide Ultime Jour-J »
+5. **Quand tu penses au Jour-J tu ressens :**
+   - Excitation de tout maîtriser (M) / Sérénité, c'est géré (Dé) / Hâte, on verra bien (Dt) / Angoisse, trop de choses (Db)
 
-**Asset PDF** (fichier fourni : `Guide_Ultime_Jour-J_Mariable.pdf`)
-- Upload via `lovable-assets create --file /mnt/user-uploads/...pdf` → `src/assets/ebooks/guide-jour-j.pdf.asset.json`.
+6. **Tu préfères :**
+   - Tout décider toi-même (M) / Qu'un pro décide pour toi (Dé) / Décider au dernier moment (Dt) / Qu'on te propose des options simples (Db)
 
-**`src/data/guides.ts`**
-- Nouvelle entrée :
-  - `slug: 'guide-jour-j'`
-  - `title: 'Guide Ultime Jour-J'`
-  - `theme: 'organisation'`
-  - `price: 4.9`
-  - Description courte + `summary[]` (timeline M-1 → J-J, prestataires, valises, déroulé heure/heure, check-lists).
+7. **Sur les prestataires, tu :**
+   - Demandes 5 devis et compares (M) / Prends la reco du WP (Dé) / Fais confiance au feeling (Dt) / Tu ne sais pas quoi demander (Db)
 
-**Edge function `supabase/functions/get-ebook-download-url/index.ts`**
-- Ajouter dans `EBOOK_URLS` : `"guide-jour-j": "/__l5e/assets-v1/<uuid>/guide-jour-j.pdf"` (uuid récupéré du pointeur asset).
-- Redéployer.
+8. **Combien d'heures/semaine consacres-tu à ton mariage ?**
+   - +10h (M) / <2h, un pro gère (Dé) / 2-5h quand j'ai envie (Dt) / Je sais pas, ça déborde (Db)
 
-**`src/pages/dashboard/GuidesPage.tsx`** : rien à faire — la page itère sur `GUIDES`, le nouveau guide apparaît automatiquement pour les Premium.
+9. **Le rétro-planning :**
+   - J'en ai un affiché au mur (M) / Le WP l'a fait (Dé) / Bof, ça se fera (Dt) / C'est quoi (Db)
 
-**Stripe** : même `SHARED_EBOOK_PRICE_ID`, aucun changement côté `create-ebook-checkout`.
+10. **Ton plus grand besoin actuel :**
+    - Un outil de coordination puissant (M) / Trouver le bon wedding planner (Dé) / Des idées inspirantes (Dt) / Une checklist claire pour démarrer (Db)
 
-## Hors périmètre
-- Pas de refonte du flow paiement/webhook.
-- Pas de changement du système Premium ni de la page `/prix` (hors ajustements de wording 4€ → 4,90 €).
-- Pas de nouveau bucket Storage — les PDF restent servis via CDN Lovable.
+### Résultats (exemples d'objectifs par profil)
 
-## Détail technique
-- Le flux download blob (déjà en place sur `MesGuides.tsx` et `dashboard/GuidesPage.tsx`) reste inchangé.
-- Le nouveau guide hérite du même mécanisme d'accès (token public post-Stripe OU session Premium).
+- **Militaire** → "Utilise le planning J-J détaillé, le suivi budget par poste, le seating plan et les exports PDF."
+- **Déléguée** → "Découvre nos wedding planners partenaires, réserve un rendez-vous, délègue la coordination Jour-M."
+- **Détente** → "Explore les moodboards, la sélection coup de cœur de prestataires, et le guide cérémonie laïque."
+- **Débutante** → "Commence par le Guide Débutant, la checklist mariage, et la définition budget."
+
+## Détails techniques
+- Migration SQL : `alter table quiz_questions add column if not exists option_profiles jsonb;` + truncate + insert.
+- Grants déjà en place (tables existantes), pas de nouvelles tables.
+- Aucune modification de la structure `user_quiz_results` (les champs `status`, `categories`, `objectives` sont réutilisés — `score` sera stocké = 0 ou nombre de réponses profil majoritaire).
