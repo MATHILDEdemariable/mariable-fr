@@ -360,6 +360,7 @@ function App() {
                    
                    <Route path="*" element={<NotFound />} />
                   </Routes>
+                  <MobileBottomNav />
                 </Suspense>
               </AnalyticsProvider>
             </BrowserRouter>
