@@ -238,7 +238,8 @@ export default function GuidesShop() {
                 </div>
 
                 {/* Filtres */}
-                <div className="flex flex-wrap gap-2 mb-10">
+                <div className="flex md:flex-wrap gap-2 mb-10 overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0 md:overflow-visible pb-2 md:pb-0 scrollbar-none">
+                  <style>{`.scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{scrollbar-width:none}`}</style>
                   <button
                     type="button"
                     onClick={() => setActiveTheme('all')}
