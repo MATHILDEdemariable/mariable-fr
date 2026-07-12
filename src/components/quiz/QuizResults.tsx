@@ -52,20 +52,29 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
           </p>
         </CardHeader>
         <CardContent className="text-center space-y-4">
-          <div className="space-y-2">
-            <div className="text-4xl md:text-5xl font-bold text-wedding-olive">
-              {results.totalScore}
-            </div>
-            <div className="text-sm text-muted-foreground">points sur 20</div>
-          </div>
-          
-          <Badge variant="outline" className="bg-wedding-olive text-white border-wedding-olive px-4 py-1 text-base">
-            Niveau {results.level.status}
-          </Badge>
-          
-          <p className="text-lg font-medium text-gray-800">
-            {results.level.status}
+          <p className="text-sm uppercase tracking-[0.2em] text-muted-foreground">
+            Ton profil d'organisation
           </p>
+          <div className="text-3xl md:text-4xl font-serif text-wedding-olive">
+            {results.level.status}
+          </div>
+
+          <Badge variant="outline" className="bg-wedding-olive text-white border-wedding-olive px-4 py-1 text-sm">
+            {results.totalScore} réponse{results.totalScore > 1 ? 's' : ''} sur {Object.keys(results.answers).length} correspondent à ce profil
+          </Badge>
+
+          {results.level.categories && results.level.categories.length > 0 && (
+            <div className="flex flex-wrap justify-center gap-2 pt-2">
+              {results.level.categories.map((cat, i) => (
+                <span
+                  key={i}
+                  className="text-xs px-3 py-1 border border-wedding-olive/30 text-wedding-olive bg-wedding-cream/30"
+                >
+                  {cat}
+                </span>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 
