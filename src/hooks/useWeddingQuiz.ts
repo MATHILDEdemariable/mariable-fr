@@ -114,13 +114,31 @@ export const useWeddingQuiz = () => {
   };
 
   const calculateResults = (answers: Record<string, QuizAnswer>): QuizResults => {
-    const totalScore = Object.values(answers).reduce((sum, answer) => sum + answer.score, 0);
-    const level = levels.find(l => totalScore >= l.score_min && totalScore <= l.score_max) || null;
-    
+    // Chaque réponse porte un score = code profil (1=Militaire, 2=Déléguée, 3=Détente, 4=Débutante)
+    // On compte les occurrences et le profil majoritaire l'emporte.
+    // Égalité → priorité Militaire > Déléguée > Détente > Débutante (ordre naturel 1→4).
+    const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
+    Object.values(answers).forEach((a) => {
+      if (counts[a.score] !== undefined) counts[a.score] += 1;
+    });
+
+    let winningProfile = 1;
+    let maxCount = -1;
+    for (const p of [1, 2, 3, 4]) {
+      if (counts[p] > maxCount) {
+        maxCount = counts[p];
+        winningProfile = p;
+      }
+    }
+
+    const level = levels.find(
+      (l) => winningProfile >= l.score_min && winningProfile <= l.score_max
+    ) || null;
+
     return {
-      totalScore,
+      totalScore: maxCount, // nb de réponses du profil dominant (pour affichage)
       level,
-      answers
+      answers,
     };
   };
 

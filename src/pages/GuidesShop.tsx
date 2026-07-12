@@ -238,11 +238,12 @@ export default function GuidesShop() {
                 </div>
 
                 {/* Filtres */}
-                <div className="flex flex-wrap gap-2 mb-10">
+                <div className="flex md:flex-wrap gap-2 mb-10 overflow-x-auto -mx-6 px-6 md:mx-0 md:px-0 md:overflow-visible pb-2 md:pb-0 scrollbar-none">
+                  <style>{`.scrollbar-none::-webkit-scrollbar{display:none}.scrollbar-none{scrollbar-width:none}`}</style>
                   <button
                     type="button"
                     onClick={() => setActiveTheme('all')}
-                    className={`px-4 py-2 text-xs uppercase tracking-[0.15em] border transition-colors ${
+                    className={`px-4 py-2 text-xs uppercase tracking-[0.15em] border transition-colors shrink-0 whitespace-nowrap ${
                       activeTheme === 'all'
                         ? 'bg-editorial-noir text-white border-editorial-noir'
                         : 'bg-white text-editorial-noir border-editorial-noir/20 hover:border-editorial-noir'
@@ -255,7 +256,7 @@ export default function GuidesShop() {
                       key={t.value}
                       type="button"
                       onClick={() => setActiveTheme(t.value)}
-                      className={`px-4 py-2 text-xs uppercase tracking-[0.15em] border transition-colors ${
+                      className={`px-4 py-2 text-xs uppercase tracking-[0.15em] border transition-colors shrink-0 whitespace-nowrap ${
                         activeTheme === t.value
                           ? 'bg-editorial-noir text-white border-editorial-noir'
                           : 'bg-white text-editorial-noir border-editorial-noir/20 hover:border-editorial-noir'

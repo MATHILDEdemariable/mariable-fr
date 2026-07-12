@@ -55,7 +55,7 @@ Deno.serve(async (req) => {
       <a href="${link}" style="color:#63745A;word-break:break-all">${link}</a>
     </p>
     <hr style="border:none;border-top:1px solid #e5e0d5;margin:32px 0">
-    <p style="font-size:12px;color:#999">Une question ? Répondez à cet email — <a href="mailto:contact@mariable.fr" style="color:#63745A">contact@mariable.fr</a></p>
+    <p style="font-size:12px;color:#999">Une question ? Répondez à cet email — <a href="mailto:mathilde@mariable.fr" style="color:#63745A">mathilde@mariable.fr</a></p>
   </div>
 </body></html>`;
 
