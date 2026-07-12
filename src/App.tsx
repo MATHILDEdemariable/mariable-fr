@@ -362,6 +362,7 @@ function App() {
                    <Route path="*" element={<NotFound />} />
                   </Routes>
                   <MobileBottomNav />
+                  <div className="md:hidden h-16" aria-hidden="true" />
                 </Suspense>
               </AnalyticsProvider>
             </BrowserRouter>
