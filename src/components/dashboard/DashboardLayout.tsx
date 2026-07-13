@@ -81,7 +81,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   
   return <OnboardingProvider>
       <div className="min-h-screen bg-gray-50 flex flex-col">
-        <PremiumHeader />
+        {!isMobile && <PremiumHeader />}
         
         {/* Quick navigation bar */}
         <div className="fixed top-[88px] left-4 z-40 flex gap-2">

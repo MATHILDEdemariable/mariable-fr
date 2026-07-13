@@ -69,6 +69,8 @@ const HIDDEN_PATTERNS = [
   /^\/$/,
   /^\/accueil/,
   /^\/mariable/,
+  /^\/partenariat/,
+  /^\/professionnels$/,
   /^\/landing/,
   /^\/admin/,
   /^\/auth/,

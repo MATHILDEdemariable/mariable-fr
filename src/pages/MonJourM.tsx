@@ -31,11 +31,6 @@ const MonJourM: React.FC = () => {
         }
 
         if (!data.session) {
-          toast({
-            title: "Non connecté",
-            description: "Vous devez être connecté pour accéder à Mon Jour-M",
-            variant: "destructive"
-          });
           navigate('/login', { state: { from: location.pathname } });
           return;
         }
