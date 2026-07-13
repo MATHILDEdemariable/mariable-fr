@@ -57,11 +57,6 @@ const UserDashboard: React.FC = () => {
     const checkAuth = async () => {
       const { data, error } = await supabase.auth.getSession();
       if (error || !data.session) {
-        toast({
-          title: "Non connecté",
-          description: "Vous devez être connecté pour accéder à votre tableau de bord",
-          variant: "destructive"
-        });
         navigate('/login', { state: { redirectAfterLogin: location.pathname } });
       }
     };
