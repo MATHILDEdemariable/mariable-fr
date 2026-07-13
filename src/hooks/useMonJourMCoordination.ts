@@ -1,5 +1,6 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -32,7 +33,9 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
-  
+  const navigate = useNavigate();
+  const location = useLocation();
+
   // Ref pour éviter les setState sur composant démonté
   const mountedRef = useRef(true);
 
@@ -55,7 +58,13 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       if (!mountedRef.current) return null;
       
       if (!user) {
-        throw new Error('Utilisateur non authentifié');
+        // Rediriger silencieusement vers login sans afficher d'erreur/toast rouge
+        if (mountedRef.current) {
+          setIsLoading(false);
+          setIsInitializing(false);
+        }
+        navigate('/login', { state: { from: location.pathname } });
+        return null;
       }
 
       console.log('🚀 useMonJourMCoordination: Initializing coordination for user:', user.id);

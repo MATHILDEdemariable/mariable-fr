@@ -11,7 +11,7 @@ import {
 } from '@/lib/pushNotifications';
 
 const DISMISS_KEY = 'push-banner-dismissed-at';
-const DISMISS_DAYS = 7;
+const DISMISS_DAYS = 2;
 
 const PushNotificationBanner = () => {
   const [visible, setVisible] = useState(false);

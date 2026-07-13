@@ -19,7 +19,7 @@ const PrestataireContent = () => {
         <div className="flex flex-wrap gap-3">
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => navigate('/selection')}
+            onClick={() => navigate('/professionnelsmariable')}
           >
             <Search className="mr-2 h-4 w-4" />
             Trouver des prestataires
@@ -27,7 +27,7 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/planning-personnalise')}
+            onClick={() => navigate('/register')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             Planning personnalisé
@@ -149,7 +149,7 @@ const PrestataireContent = () => {
         <div className="flex flex-wrap gap-3">
           <Button 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => navigate('/selection')}
+            onClick={() => navigate('/professionnelsmariable')}
           >
             <Search className="mr-2 h-4 w-4" />
             Rechercher des prestataires
@@ -157,7 +157,7 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/planning-personnalise')}
+            onClick={() => navigate('/register')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             Planning personnalisé
