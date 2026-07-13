@@ -11,6 +11,7 @@ import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSec
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
+import PushNotificationBanner from '@/components/dashboard/PushNotificationBanner';
 
 const Index = () => {
   useScrollEffects();
@@ -94,6 +95,11 @@ const Index = () => {
       <PremiumHeader />
       
       <main className="flex-grow">
+        {/* Push Notifications opt-in banner */}
+        <div className="container mx-auto px-4 pt-4">
+          <PushNotificationBanner />
+        </div>
+
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 
