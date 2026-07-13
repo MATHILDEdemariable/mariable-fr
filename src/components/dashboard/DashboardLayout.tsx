@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import DashboardSidebar from './DashboardSidebar';
-import MobileBottomNav from './MobileBottomNav';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { Home, Users, Info, X, Crown } from 'lucide-react';
@@ -142,8 +142,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           </main>
         </div>
         
-        {/* Mobile Bottom Navigation */}
-        {isMobile && <MobileBottomNav />}
+        {/* Mobile Bottom Navigation est monté globalement dans App.tsx */}
         </div>
 
         {/* Tour d'onboarding */}
