@@ -27,7 +27,7 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/planning-personnalise')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             Planning personnalisé
@@ -157,7 +157,7 @@ const PrestataireContent = () => {
           <Button 
             variant="outline"
             className="border-wedding-olive/30 text-wedding-olive hover:bg-wedding-olive/10"
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/planning-personnalise')}
           >
             <BookOpen className="mr-2 h-4 w-4" />
             Planning personnalisé

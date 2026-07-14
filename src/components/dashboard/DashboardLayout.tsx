@@ -83,7 +83,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
       <div className="min-h-screen bg-gray-50 flex flex-col">
         {!isMobile && <PremiumHeader />}
         
-        {/* Quick navigation bar */}
+        {/* Quick navigation bar - desktop only */}
+        {!isMobile && (
         <div className="fixed top-[88px] left-4 z-40 flex gap-2">
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
@@ -109,6 +110,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             </Link>
           )}
         </div>
+        )}
         
         <div className="flex flex-1 relative">
         {/* Sidebar - only visible on desktop */}
@@ -120,7 +122,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Main content area - with bottom padding for mobile nav */}
         <div className="flex-1 flex justify-start items-start transition-all duration-300">
-          <main className={`w-full px-2 sm:px-3 lg:px-4 pt-44 ${isMobile ? 'pb-24' : 'pb-6'}`} data-page-root>
+          <main className={`w-full px-2 sm:px-3 lg:px-4 ${isMobile ? 'pt-4 pb-24' : 'pt-44 pb-6'}`} data-page-root>
             {isMobile && showMobileBanner && (
               <div className="mb-4 p-3 bg-editorial-beige border border-editorial-noir/10 flex items-start gap-3">
                 <Info className="h-5 w-5 text-editorial-noir shrink-0 mt-0.5" />
