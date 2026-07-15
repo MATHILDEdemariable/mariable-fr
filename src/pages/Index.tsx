@@ -102,6 +102,31 @@ const Index = () => {
           <PushNotificationBanner />
         </div>
 
+        {/* CTA Installer l'application */}
+        <div className="container mx-auto px-4 pt-4">
+          <Link
+            to="/installer-app"
+            className="flex items-center justify-between gap-4 bg-wedding-cream/60 border border-wedding-olive/20 px-4 py-3 md:px-6 md:py-4 hover:bg-wedding-cream transition-colors group"
+          >
+            <div className="flex items-center gap-3">
+              <Smartphone className="h-5 w-5 md:h-6 md:w-6 text-wedding-olive flex-shrink-0" />
+              <div>
+                <p className="font-serif text-sm md:text-base text-wedding-olive leading-tight">
+                  Installez l'application sans téléchargement
+                </p>
+                <p className="text-xs text-muted-foreground hidden sm:block">
+                  Accédez à Mariable depuis votre écran d'accueil
+                </p>
+              </div>
+            </div>
+            <span className="flex items-center gap-1 text-xs md:text-sm font-medium text-wedding-olive whitespace-nowrap">
+              Découvrir
+              <ArrowRight className="h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </span>
+          </Link>
+        </div>
+
+
         {/* Hero Section Premium */}
         <PremiumHeroSection />
 
