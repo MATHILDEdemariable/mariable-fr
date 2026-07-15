@@ -12,6 +12,7 @@ import PremiumToolsSection from '@/components/home/PremiumToolsSection';
 import PremiumCoordinationSection from '@/components/home/PremiumCoordinationSection';
 import PremiumTestimonialsSection from '@/components/home/PremiumTestimonialsSection';
 import PremiumFinalCTASection from '@/components/home/PremiumFinalCTASection';
+import CreateAccountCTA from '@/components/home/CreateAccountCTA';
 import { useScrollEffects } from '@/hooks/useScrollEffects';
 import PushNotificationBanner from '@/components/dashboard/PushNotificationBanner';
 
