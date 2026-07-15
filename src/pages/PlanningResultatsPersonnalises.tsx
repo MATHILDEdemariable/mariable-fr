@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { Clock, Heart } from 'lucide-react';
+import { Clock, Heart, RotateCcw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const PlanningResultatsPersonnalises: React.FC = () => {
