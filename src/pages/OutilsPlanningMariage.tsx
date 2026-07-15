@@ -245,10 +245,10 @@ const OutilsPlanningMariage: React.FC = () => {
                     </ul>
                     <Button 
                       variant="outline" 
-                      className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none"
+                      className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white rounded-none"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate('/register');
+                        navigate('/login');
                       }}
                     >
                       Utiliser cet outil
@@ -262,26 +262,25 @@ const OutilsPlanningMariage: React.FC = () => {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 px-4 bg-editorial-beige">
+        <section className="py-12 px-4 bg-wedding-olive">
           <div className="container mx-auto max-w-4xl text-center">
-            <h2 className="text-2xl md:text-3xl font-serif mb-6 text-editorial-noir">
+            <h2 className="text-2xl md:text-3xl font-serif mb-6 text-white">
               Prêt à organiser votre mariage parfait ?
             </h2>
-            <p className="text-lg text-editorial-noir/60 mb-8">
+            <p className="text-lg text-white/90 mb-8">
               Rejoignez des milliers de couples qui utilisent nos outils pour planifier leur mariage sans stress.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => navigate('/register')}
-                variant="editorial"
-                className="px-8 py-3"
+                onClick={() => navigate('/login')}
+                className="px-8 py-3 bg-white text-wedding-olive hover:bg-white/90 rounded-none"
               >
                 Créer mon compte gratuit
               </Button>
               <Button 
                 variant="outline"
                 onClick={() => navigate('/dashboard')}
-                className="border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none px-8 py-3"
+                className="border-white text-white hover:bg-white hover:text-wedding-olive rounded-none px-8 py-3 bg-transparent"
               >
                 Découvrir le dashboard
               </Button>
