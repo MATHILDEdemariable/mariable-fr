@@ -94,8 +94,10 @@ const HIDDEN_PATTERNS = [
 const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, loading } = useAuth();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  if (loading || !isAuthenticated) return null;
   if (HIDDEN_PATTERNS.some((r) => r.test(location.pathname))) return null;
 
   const isActive = (path: string) => {
