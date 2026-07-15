@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Loader2, RefreshCw } from 'lucide-react';
 
@@ -14,6 +14,8 @@ const PlanningPersonnalise: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [hasCompletedQuiz, setHasCompletedQuiz] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const retake = searchParams.get('retake') === '1';
 
   useEffect(() => {
     checkExistingQuizResults();
@@ -21,8 +23,15 @@ const PlanningPersonnalise: React.FC = () => {
 
   const checkExistingQuizResults = async () => {
     console.log('🔍 Checking for existing quiz results...');
-    
+
     try {
+      if (retake) {
+        console.log('🔄 Retake mode - clearing local quiz result');
+        localStorage.removeItem('quizResult');
+        setHasCompletedQuiz(false);
+        return;
+      }
+
       // Check localStorage first
       const localResult = localStorage.getItem('quizResult');
       if (localResult) {
