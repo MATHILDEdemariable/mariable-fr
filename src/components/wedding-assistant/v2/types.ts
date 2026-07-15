@@ -88,11 +88,22 @@ export const SECTION_ORDER = [
 ];
 
 // Generate quiz result from answers
+// Logique: chaque réponse porte un code profil (1=Militaire, 2=Déléguée, 3=Détente, 4=Débutante).
+// Le profil majoritaire l'emporte. Égalité → priorité au code le plus petit.
 export const generateQuizResult = async (answers: Record<string, { answer: string; score: number }>): Promise<PlanningResult> => {
-  let totalScore = 0;
-  Object.values(answers).forEach((answer) => {
-    totalScore += answer.score;
+  const counts: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  Object.values(answers).forEach((a) => {
+    if (counts[a.score] !== undefined) counts[a.score] += 1;
   });
+
+  let winningCode = 4;
+  let maxCount = -1;
+  for (const code of [1, 2, 3, 4]) {
+    if (counts[code] > maxCount) {
+      maxCount = counts[code];
+      winningCode = code;
+    }
+  }
 
   try {
     const { data: scoringLevels, error } = await supabase
@@ -100,59 +111,41 @@ export const generateQuizResult = async (answers: Record<string, { answer: strin
       .select('*')
       .order('score_min');
 
-    if (error) {
-      console.error('Error fetching quiz scoring:', error);
-      throw error;
-    }
-    
-    const levelData = scoringLevels.find(l => totalScore >= l.score_min && totalScore <= l.score_max);
+    if (error) throw error;
+
+    const levelData = scoringLevels?.find(
+      (l) => winningCode >= l.score_min && winningCode <= l.score_max
+    );
 
     if (levelData) {
       return {
-        score: totalScore,
+        score: winningCode,
         status: levelData.status,
         objectives: Array.isArray(levelData.objectives) ? levelData.objectives.map(String) : [],
         categories: Array.isArray(levelData.categories) ? levelData.categories.map(String) : [],
         level: levelData.status,
       };
     }
-  } catch(e) {
-    console.error('Failed to generate results from Supabase, using fallback', e);
+  } catch (e) {
+    console.error('Failed to generate results from Supabase, using safe fallback', e);
   }
 
-  // Fallback hardcoded logic
-  console.warn('Using fallback quiz result generation logic.');
-  const answerCount = Object.keys(answers).length;
-  const averageScore = answerCount > 0 ? Math.round(totalScore / answerCount) : 0;
-  let level = '';
-  let status = '';
-  let objectives: string[] = [];
-  let categories: string[] = [];
-
-  if (averageScore <= 2) {
-    level = 'Débutant';
-    status = 'Début de planification';
-    objectives = ['Définir un budget', 'Créer une liste d\'invités', 'Choisir une date'];
-    categories = ['Budget', 'Organisation générale'];
-  } else if (averageScore <= 4) {
-    level = 'Intermédiaire';
-    status = 'Planification en cours';
-    objectives = ['Réserver les prestataires', 'Finaliser les détails', 'Organiser la coordination'];
-    categories = ['Prestataires', 'Réception', 'Cérémonie'];
-  } else {
-    level = 'Avancé';
-    status = 'Finalisation';
-    objectives = ['Coordination jour J', 'Derniers détails', 'Confirmation finale'];
-    categories = ['Coordination', 'Invités', 'Mariés'];
-  }
-
-  return {
-    score: averageScore,
-    status,
-    objectives,
-    categories,
-    level
+  // Safe fallback: profils fun, jamais l'ancien wording "Début de planification"
+  const fallbackMap: Record<number, PlanningResult> = {
+    1: { score: 1, status: 'Militaire', level: 'Militaire',
+      categories: ['Organisation stratégique', 'Contrôle & suivi', 'Budget détaillé'],
+      objectives: ['Utilise le planning Jour-J détaillé', 'Suis ton budget poste par poste', 'Construis ton seating plan'] },
+    2: { score: 2, status: 'Déléguée', level: 'Déléguée',
+      categories: ['Wedding planner', 'Coordination pro', 'Sérénité'],
+      objectives: ['Découvre nos wedding planners partenaires', 'Réserve un Jour-M avec un coordinateur', 'Partage ton dashboard'] },
+    3: { score: 3, status: 'Détente', level: 'Détente',
+      categories: ['Inspiration', 'Coup de cœur', 'Personnalisation'],
+      objectives: ['Explore les moodboards', 'Utilise le sélecteur par vibe', 'Fais confiance à ton feeling'] },
+    4: { score: 4, status: 'Débutante', level: 'Débutante',
+      categories: ['Démarrage', 'Checklist', 'Guides'],
+      objectives: ['Commence par le Guide Débutants', 'Télécharge la Checklist Mariage', 'Définis ton budget'] },
   };
+  return fallbackMap[winningCode];
 };
 
 // Save quiz result to database

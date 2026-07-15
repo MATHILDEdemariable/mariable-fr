@@ -24,20 +24,28 @@ const PlanningResultatsPersonnalises: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const LEGACY_STATUSES = ['Début de planification', 'Planification en cours', 'Finalisation'];
+
     const loadResult = async () => {
       // 1. localStorage first (dernier quiz effectué)
       try {
         const local = localStorage.getItem('quizResult');
         if (local) {
           const parsed = JSON.parse(local);
-          setResult({
-            status: parsed.status || parsed.level || 'Votre profil',
-            level: parsed.level,
-            categories: Array.isArray(parsed.categories) ? parsed.categories.map(String) : [],
-            objectives: Array.isArray(parsed.objectives) ? parsed.objectives.map(String) : [],
-          });
-          setLoading(false);
-          return;
+          const status = parsed.status || parsed.level;
+          if (status && LEGACY_STATUSES.includes(status)) {
+            // Ancien résultat obsolète → purge et retour au quiz
+            localStorage.removeItem('quizResult');
+          } else {
+            setResult({
+              status: status || 'Votre profil',
+              level: parsed.level,
+              categories: Array.isArray(parsed.categories) ? parsed.categories.map(String) : [],
+              objectives: Array.isArray(parsed.objectives) ? parsed.objectives.map(String) : [],
+            });
+            setLoading(false);
+            return;
+          }
         }
       } catch (e) {
         console.error('quizResult parse error', e);
@@ -54,8 +62,15 @@ const PlanningResultatsPersonnalises: React.FC = () => {
           .maybeSingle();
 
         if (!error && data) {
+          const status = data.status || data.level;
+          if (status && LEGACY_STATUSES.includes(status)) {
+            // Ancien résultat obsolète en base → purge et redirection quiz
+            await supabase.from('user_quiz_results').delete().eq('user_id', user.id);
+            navigate('/planning-personnalise?retake=1', { replace: true });
+            return;
+          }
           setResult({
-            status: data.status || data.level || 'Votre profil',
+            status: status || 'Votre profil',
             level: data.level,
             categories: Array.isArray(data.categories) ? (data.categories as any[]).map(String) : [],
             objectives: Array.isArray(data.objectives) ? (data.objectives as any[]).map(String) : [],

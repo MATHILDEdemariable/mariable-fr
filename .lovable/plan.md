@@ -1,32 +1,55 @@
-## Problème
+## Diagnostic
 
-La page `/planning-resultats-personnalises` est **statique** :
-- Elle affiche toujours "Félicitations pour votre mariage à venir !" + le même bloc "Continuez votre organisation", quel que soit le résultat.
-- Elle ne lit **jamais** `localStorage.quizResult` ni la table `user_quiz_results` → l'utilisateur ne voit pas son profil (Militaire / Déléguée / Détente / Débutante), ni ses catégories, ni ses objectifs.
-- Elle utilise `<Header />` (marketing) + `<Footer />` alors que l'utilisateur vient du dashboard → mauvais header.
+Le quiz `/planning-personnalise` monte `WeddingQuiz` (v2), qui appelle `generateQuizResult` de `src/components/wedding-assistant/v2/types.ts`. Cette fonction **additionne** les scores des 10 réponses (total entre 10 et 40) puis cherche un niveau où `score_min ≤ total ≤ score_max`.
 
-## Fix
+Or en base `quiz_scoring` a `score_min = score_max ∈ {1, 2, 3, 4}` (chaque code = un profil). Aucun total entre 10 et 40 ne matche → la fonction tombe systématiquement dans le **fallback hardcodé** qui renvoie :
+- `averageScore ≤ 2` → "Début de planification"
+- `≤ 4` → "Planification en cours"
+- sinon → "Finalisation"
 
-### 1. Afficher le vrai résultat du quiz
+C'est exactement ce que tu vois. Les vrais profils (Militaire / Déléguée / Détente / Débutante) sont bien en base mais ne sont jamais atteints.
 
-Dans `src/pages/PlanningResultatsPersonnalises.tsx` :
+Le calcul correct existe déjà dans `src/hooks/useWeddingQuiz.ts` (compte des occurrences du code, profil majoritaire l'emporte, égalité tranchée en faveur du code le plus petit).
 
-- Au montage : charger le résultat depuis `localStorage.getItem('quizResult')`. Si absent et user connecté → lire la dernière ligne de `user_quiz_results` (colonnes `status`, `level`, `categories`, `objectives`, `score`).
-- Si aucun résultat trouvé → rediriger vers `/planning-personnalise`.
-- Afficher dans la card principale :
-  - Titre "Votre profil : **{status}**" (ex. "Détente")
-  - Sous-titre "Félicitations pour votre mariage à venir !"
-  - Badges des `categories` (chips sage green)
-  - Bloc "Vos objectifs prioritaires" avec la liste `objectives`
-- Garder les deux boutons existants : "Accéder à mon tableau de bord" + "Refaire le quiz".
-- Garder la section "Continuez votre organisation" (elle est utile).
+## Correction (frontend only, aucun changement DB)
 
-### 2. Corriger le header
+### 1. `src/components/wedding-assistant/v2/types.ts` — Réécrire `generateQuizResult`
 
-Remplacer `<Header />` + `<Footer />` par `<DashboardLayout>` autour du contenu quand l'utilisateur est **authentifié** (via `useAuth`). Fallback marketing (`<Header />/<Footer />`) uniquement si non connecté (parcours quiz anonyme depuis la landing).
+Remplacer la logique "somme + fallback moyenne" par la logique "profil majoritaire" :
 
-## Fichier modifié
+- Compter les occurrences de chaque code (1, 2, 3, 4) dans `answers`.
+- Élire le code avec le plus d'occurrences, égalité → code le plus petit (Militaire > Déléguée > Détente > Débutante).
+- Charger `quiz_scoring` depuis Supabase, trouver la ligne où `winningCode` ∈ [`score_min`, `score_max`].
+- Retourner `{ score: winningCode, status, level: status, objectives, categories }`.
+- Supprimer le fallback hardcodé "Début de planification" / "Planification en cours" / "Finalisation" — le remplacer par un fallback sûr sur "Débutante" si la table est injoignable.
 
-- `src/pages/PlanningResultatsPersonnalises.tsx` — chargement du résultat + affichage profil/objectifs + wrapping conditionnel `DashboardLayout`.
+### 2. `src/pages/PlanningResultatsPersonnalises.tsx` — Nettoyer les anciens résultats
 
-Aucun changement de route, aucun changement backend, aucun refactor du quiz lui-même.
+La ligne existante dans `user_quiz_results` de ton compte contient encore l'ancien statut ("Début de planification"). Deux options :
+
+- **A. Auto-nettoyage** : au chargement, si `status` ∈ `['Début de planification', 'Planification en cours', 'Finalisation']`, ignorer la ligne DB et rediriger vers `/planning-personnalise?retake=1`.
+- **B. Rien** : laisser l'utilisateur cliquer "Refaire le quiz" qui purge déjà DB + localStorage.
+
+→ Je pars sur **A** pour que tu voies immédiatement le bon profil au prochain chargement, sans devoir recliquer.
+
+### 3. Aucune modification de :
+- `useWeddingQuiz.ts` (calcul déjà correct, non utilisé par la v2)
+- `quiz_questions` / `quiz_scoring` (données OK)
+- Le composant `WeddingQuiz.tsx` lui-même (le rendu et la sauvegarde sont OK, seule la fonction de calcul est cassée)
+
+## Récap du calcul final (validé)
+
+| Réponses sélectionnées | Code compté | Profil final |
+|---|---|---|
+| Majorité de "1" | Militaire | Organisation stratégique, contrôle, budget détaillé |
+| Majorité de "2" | Déléguée | Wedding planner, coordination pro, sérénité |
+| Majorité de "3" | Détente | Inspiration, coup de cœur, personnalisation |
+| Majorité de "4" | Débutante | Démarrage, checklist, guides |
+| Égalité | Code le plus petit gagne | Militaire > Déléguée > Détente > Débutante |
+
+## Vérification après implémentation
+
+1. Aller sur `/planning-resultats-personnalises` → doit rediriger vers le quiz (car ancien statut détecté).
+2. Refaire le quiz avec 10 réponses "1" → doit afficher **Militaire**.
+3. 10 réponses "3" → **Détente**.
+4. 5×"2" + 5×"3" → **Déléguée** (égalité tranchée par code le plus petit).
