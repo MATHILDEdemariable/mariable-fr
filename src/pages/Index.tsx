@@ -1,4 +1,6 @@
 import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Smartphone, ArrowRight } from 'lucide-react';
 import SEO from '@/components/SEO';
 import Footer from '@/components/Footer';
 import ChatbotButton from '@/components/ChatbotButton';
