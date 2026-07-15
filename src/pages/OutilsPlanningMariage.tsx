@@ -154,7 +154,7 @@ const OutilsPlanningMariage: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-editorial-beige page-content">
+      <main className="min-h-screen bg-white page-content">
         {/* Hero Section */}
         <section className="pb-12 px-4" style={{ paddingTop: 'var(--header-h)' }}>
           <div className="container mx-auto max-w-6xl">
@@ -163,7 +163,7 @@ const OutilsPlanningMariage: React.FC = () => {
                 <Button 
                   variant="outline"
                   onClick={() => navigate('/')}
-                  className="border-editorial-noir/30 text-editorial-noir hover:bg-editorial-noir/5 rounded-none"
+                  className="border-wedding-olive/40 text-wedding-olive hover:bg-wedding-olive/10 rounded-none"
                 >
                   ← Retour à l'accueil
                 </Button>
@@ -177,9 +177,8 @@ const OutilsPlanningMariage: React.FC = () => {
                 du budget à la coordination du jour J.
               </p>
               <Button 
-                onClick={() => navigate('/register')}
-                variant="editorial"
-                className="px-8 py-3 text-lg"
+                onClick={() => navigate('/login')}
+                className="px-8 py-3 text-lg bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-none"
               >
                 Commencer gratuitement
                 <ArrowRight className="ml-2 h-5 w-5" />
@@ -189,7 +188,7 @@ const OutilsPlanningMariage: React.FC = () => {
         </section>
 
         {/* Process Steps */}
-        <section className="py-12 px-4 bg-white">
+        <section className="py-12 px-4 bg-editorial-beige/40">
           <div className="container mx-auto max-w-6xl">
             <h2 className="text-2xl md:text-3xl font-serif text-center mb-12 text-editorial-noir">
               Comment bien organiser votre mariage ?
@@ -197,10 +196,10 @@ const OutilsPlanningMariage: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
               {processSteps.map((step) => (
                 <div key={step.step} className="text-center">
-                  <div className="bg-editorial-beige w-16 h-16 flex items-center justify-center mx-auto mb-4">
-                    <div className="text-editorial-noir">{step.icon}</div>
+                  <div className="bg-white border border-wedding-olive/20 w-16 h-16 flex items-center justify-center mx-auto mb-4">
+                    <div className="text-wedding-olive">{step.icon}</div>
                   </div>
-                  <div className="bg-editorial-noir text-white w-8 h-8 flex items-center justify-center mx-auto mb-3 text-sm font-medium">
+                  <div className="bg-wedding-olive text-white w-8 h-8 flex items-center justify-center mx-auto mb-3 text-sm font-medium">
                     {step.step}
                   </div>
                   <h3 className="font-serif text-lg mb-2 text-editorial-noir">{step.title}</h3>
