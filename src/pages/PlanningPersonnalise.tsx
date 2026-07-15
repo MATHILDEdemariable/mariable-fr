@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import WeddingQuiz from '@/components/wedding-assistant/v2/WeddingQuiz';
 import { Card, CardContent } from "@/components/ui/card";
@@ -79,7 +79,7 @@ const PlanningPersonnalise: React.FC = () => {
   if (isLoading) {
     return (
       <>
-        <Header />
+        <PremiumHeader />
         <main className="container mx-auto px-4 py-8 mb-16">
           <div className="text-center py-12">
             <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -98,7 +98,7 @@ const PlanningPersonnalise: React.FC = () => {
         <meta name="description" content="Répondez aux premières questions essentielles pour bien organiser votre mariage - Mariable" />
       </Helmet>
 
-      <Header />
+      <PremiumHeader />
       
       <main className="container mx-auto px-4 py-8 mb-16">
         <h1 className="text-3xl font-serif text-center mb-4">Quiz Mariage</h1>
