@@ -4,7 +4,7 @@ import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from '@/components/ui/button';
-import { Clock, Heart } from 'lucide-react';
+import { Clock, Heart, RotateCcw } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 
 const PlanningResultatsPersonnalises: React.FC = () => {
@@ -34,12 +34,25 @@ const PlanningResultatsPersonnalises: React.FC = () => {
               <p className="text-lg text-muted-foreground mb-6">
                 Avec les outils Mariable, vous allez pouvoir vivre un moment unique et parfaitement organisé.
               </p>
-              <Button 
-                onClick={() => navigate('/dashboard')}
-                className="bg-wedding-olive hover:bg-wedding-olive/90 text-lg px-8 py-3"
-              >
-                Accéder à mon tableau de bord
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                <Button
+                  onClick={() => navigate('/dashboard')}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 text-lg px-8 py-3"
+                >
+                  Accéder à mon tableau de bord
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    localStorage.removeItem('quizResult');
+                    navigate('/planning-personnalise?retake=1');
+                  }}
+                  className="border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 text-lg px-8 py-3"
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Refaire le quiz
+                </Button>
+              </div>
             </CardHeader>
           </Card>
 

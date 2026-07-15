@@ -1,29 +1,44 @@
-## Corrections mobile
+## 1. Refaire le quiz personnalisé
 
-### 1. Supprimer le hamburger dans le dashboard
+**Problème :** Sur `/planning-personnalise`, si un résultat existe (localStorage ou BDD), on redirige automatiquement vers `/planning-resultats-personnalises` sans possibilité de revenir au quiz. La page résultats n'a aucun bouton "refaire".
 
-Le `PremiumHeader` (marketing) est actuellement monté dans `DashboardLayout.tsx` (ligne 84) — c'est lui qui affiche le hamburger avec Prestataires/Outils/Prix/E-books.
+**Fix :**
+- **`src/pages/PlanningResultatsPersonnalises.tsx`** : ajouter un bouton "Refaire le quiz" (variant outline, wedding-olive) qui :
+  - supprime `localStorage.quizResult`
+  - supprime la ligne `user_quiz_results` de l'utilisateur connecté (ou passe un flag)
+  - navigue vers `/planning-personnalise?retake=1`
+- **`src/pages/PlanningPersonnalise.tsx`** : dans `checkExistingQuizResults`, si `searchParams.get('retake') === '1'`, on saute la redirection auto et on nettoie le localStorage. Le quiz s'affiche à nouveau.
 
-- Dans `DashboardLayout.tsx` : retirer `<PremiumHeader />` **en version mobile uniquement** (`{!isMobile && <PremiumHeader />}`). Sur mobile connecté, le menu sticky bas (5 items + Plus) suffit.
-- Le hamburger marketing reste sur les pages publiques (Index, Prestataires, /login, etc.).
+Note sur le "mauvais header" : la page résultats utilise `<Header />` (marketing) car c'est une route publique partagée. On la laisse — le bouton "Refaire" + "Accéder à mon tableau de bord" suffisent au parcours. Pas de refactor du layout.
 
-### 2. Toast "Non connecté" non bloquant
+## 2. Sticky menu mobile visible uniquement si connecté
 
-Aujourd'hui, quand un visiteur non-connecté atterrit sur une page protégée, on affiche un toast rouge `destructive` "Non connecté" AVANT de rediriger vers `/login`. Le toast peut rester à l'écran et gêner.
+**Problème :** `MobileBottomNav` est monté globalement dans `App.tsx` et se cache uniquement par pattern d'URL. Quand on clique "E-books" depuis le menu hamburger de la landing (route non listée dans `HIDDEN_PATTERNS`), le sticky s'affiche alors qu'on n'est pas connecté.
 
-- `src/pages/MonJourM.tsx` : supprimer le toast destructif ; rediriger directement vers `/login` avec `state.from`.
-- `src/pages/dashboard/UserDashboard.tsx` : idem, supprimer le toast destructif, redirection directe.
-- Les toasts de session expirée légitimes (perte de session après connexion) restent inchangés.
+**Fix :**
+- **`src/components/layout/MobileBottomNav.tsx`** : importer `useAuth` et ajouter en tout début de composant :
+  ```ts
+  const { isAuthenticated, loading } = useAuth();
+  if (loading || !isAuthenticated) return null;
+  ```
+- Conserver `HIDDEN_PATTERNS` pour masquer aussi sur les routes admin/embed/etc même connecté.
 
-### 3. Masquer le menu sticky bas sur `/partenariat`
+Résultat : le sticky bas n'apparaît **jamais** en anonyme, quelle que soit la route. Seul le hamburger en haut à droite reste sur les pages publiques.
 
-Dans `src/components/layout/MobileBottomNav.tsx`, ajouter `^\/partenariat` et `^\/professionnels` (alias) à la liste `HIDDEN_PATTERNS`. Cohérent avec la page d'accueil / marketing.
+## 3. Bandeau "Installer l'application" sur la landing
+
+**Fix :**
+- **`src/pages/Index.tsx`** : ajouter un CTA / bandeau discret (mobile-first, sage green sur beige, `rounded-none`) au-dessus ou juste sous le hero, avec :
+  - texte "Installer l'application sans téléchargement"
+  - bouton `<Link to="/installer-app">` "Découvrir"
+  - icône `Smartphone` (lucide)
+- Visible sur mobile ET desktop mais compact. Pas de logique de détection PWA — c'est un simple CTA vers `/installer-app`.
 
 ## Fichiers modifiés
 
-- `src/components/dashboard/DashboardLayout.tsx` (PremiumHeader desktop uniquement)
-- `src/pages/MonJourM.tsx` (redirection silencieuse)
-- `src/pages/dashboard/UserDashboard.tsx` (redirection silencieuse)
-- `src/components/layout/MobileBottomNav.tsx` (patterns cachés)
+- `src/pages/PlanningResultatsPersonnalises.tsx` — bouton "Refaire le quiz"
+- `src/pages/PlanningPersonnalise.tsx` — support `?retake=1`
+- `src/components/layout/MobileBottomNav.tsx` — gate `useAuth`
+- `src/pages/Index.tsx` — bandeau CTA installer-app
 
-Aucune modification backend.
+Aucun changement backend, aucun refactor.
