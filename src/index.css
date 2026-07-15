@@ -199,7 +199,7 @@ select:focus {
   /* Editorial colors */
   --editorial-olive: 107 13% 40%;   /* #63745a */
   --editorial-noir: 0 0% 6%;        /* #0F0F0F */
-  --editorial-beige: 40 23% 85%;    /* #E1DACA - Chalk Beige */
+  --editorial-beige: 40 33% 96%;    /* #F8F5EF - Ivoire clair (aligné /professionnelsmariable) */
 }
 
 /* Glassmorphism */

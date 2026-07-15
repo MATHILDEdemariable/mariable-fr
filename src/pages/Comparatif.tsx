@@ -51,16 +51,16 @@ const Comparatif = () => {
 
             <div className="max-w-6xl mx-auto">
               {/* CTA Section */}
-              <div className="text-center mt-16 p-8 bg-editorial-olive">
+              <div className="text-center mt-16 p-8 bg-wedding-olive">
                 <h2 className="font-serif text-2xl text-white mb-4">
                   Prêt(e) à organiser votre mariage intelligemment ?
                 </h2>
-                <p className="text-white/80 mb-6 max-w-2xl mx-auto">
+                <p className="text-white/90 mb-6 max-w-2xl mx-auto">
                   Rejoignez les milliers de couples qui ont choisi Mariable pour organiser leur mariage de rêve sans stress ni budget excessif.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Button asChild className="bg-white text-editorial-noir hover:bg-white/90 rounded-none">
-                    <Link to="/register">Créer mon compte gratuit</Link>
+                  <Button asChild className="bg-white text-wedding-olive hover:bg-white/90 rounded-none">
+                    <Link to="/login">Créer mon compte gratuit</Link>
                   </Button>
                 </div>
               </div>

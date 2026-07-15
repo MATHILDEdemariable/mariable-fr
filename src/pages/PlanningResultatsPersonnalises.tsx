@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
-import Header from '@/components/Header';
+import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -183,6 +183,24 @@ const PlanningResultatsPersonnalises: React.FC = () => {
               </Card>
             )}
 
+            {/* CTA création de compte (lead magnet) — visible si non connecté */}
+            {!isAuthenticated && (
+              <Card className="border-wedding-olive bg-wedding-olive text-white mb-8">
+                <CardContent className="py-8 text-center">
+                  <h3 className="font-serif text-2xl mb-3">Sauvegardez votre profil</h3>
+                  <p className="text-white/90 mb-6 max-w-xl mx-auto">
+                    Créez un compte gratuit pour retrouver votre profil, accéder aux outils (budget, checklist, planning jour-J) et personnaliser votre organisation.
+                  </p>
+                  <Button
+                    onClick={() => navigate('/login')}
+                    className="bg-white text-wedding-olive hover:bg-white/90"
+                  >
+                    Créer un compte gratuit
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Continuez votre organisation */}
             <Card className="border-wedding-olive/20">
               <CardHeader>
@@ -232,7 +250,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
 
   return (
     <>
-      <Header />
+      <PremiumHeader />
       <main className="container mx-auto px-4 py-8 mb-16">{content}</main>
       <Footer />
     </>
