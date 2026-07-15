@@ -143,6 +143,9 @@ const Index = () => {
         {/* Section Coordination Innovation */}
         <PremiumCoordinationSection />
 
+        {/* CTA Création de compte (entre espace mariable et outils/services) */}
+        <CreateAccountCTA />
+
         {/* Section Témoignages */}
         <PremiumTestimonialsSection />
 
