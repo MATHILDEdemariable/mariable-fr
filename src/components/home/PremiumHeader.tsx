@@ -6,6 +6,7 @@ import { Menu, ChevronDown } from 'lucide-react';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 
