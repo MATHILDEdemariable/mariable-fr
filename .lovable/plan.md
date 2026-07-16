@@ -1,37 +1,42 @@
-## Plan validé
+# Plan
 
-### 1. Quiz en page standalone (lead magnet)
-- Quiz déjà accessible publiquement via `/planning-personnalise` (pas d'auth) → OK.
-- Ajouter sur la page résultats un CTA proéminent **"Créer un compte gratuit"** → `/login` avec argumentaire "Sauvegarder mes résultats + accéder aux outils".
-- Si utilisateur non connecté sur la page résultats : bandeau/section CTA visible.
+## 1. Menu déroulant mobile (authentifié) — PremiumHeader.tsx
 
-### 2. Header unifié quiz ↔ home
-Remplacer `<Header />` par `<PremiumHeader />` dans :
-- `src/pages/PlanningPersonnalise.tsx`
-- `src/pages/PlanningResultatsPersonnalises.tsx`
+Ajouter un bouton **Tableau de bord** (`/dashboard`) dans le menu hamburger en haut à droite, entre Accueil et Déconnexion.
 
-### 3. D.A. vert sauge sur `/comparatif` et `/outils-planning-mariage`
-- Aligner sur la D.A. de `/guides` : fond blanc/ivoire très clair, accents vert sauge (`wedding-olive`).
-- Remplacer les backgrounds beiges dominants (`bg-wedding-cream`, `bg-wedding-beige`) par `bg-white` ou beige ivoire très clair.
-- Titres, bordures, CTA en `wedding-olive`.
+État authentifié final :
+- Accueil (`/`)
+- Tableau de bord (`/dashboard`)
+- Déconnexion
+- Toggle FR/EN
 
-### 4. Home page — CTA "Créer un compte gratuit"
-- Ajouter un CTA vert sauge **"Créer un compte gratuit"** entre `PremiumCoordinationSection` (ton espace mariable) et `PremiumToolsSection` (service en détail).
-- Tous les CTA "Créer un compte gratuit" du site → `to="/login"` (le formulaire gère signup).
+## 2. Sticky menu du bas — visible sur landing page
 
-### 5. Beige plus clair (comme `/professionnelsmariable`)
-- Ajuster le token beige dans `src/index.css` vers un ivoire très clair (ex. `#FAF8F3`).
-- Vérifier sections concernées : section prix, PremiumFinalCTASection, cards home.
-- Point à valider en build : créer un nouveau token `--wedding-ivory` OU écraser `--wedding-cream` — décision prise au moment de l'implémentation en auditant l'impact global.
+Actuellement le sticky bottom menu (mobile, utilisateur connecté) n'apparaît pas sur `/`. Vérifier la condition de rendu dans le composant sticky (probablement `MobileStickyNav` ou équivalent) et retirer l'exclusion de la route `/` pour qu'il s'affiche partout quand l'utilisateur est loggé.
 
-### 6. ~~Élargissement copy mariage / anniversaire / PACS~~
-**Reporté** — on reste sur mariage pur pour l'instant.
+## 3. Ajout de 3 articles de blog
 
-### Fichiers principaux impactés
-- `src/pages/PlanningPersonnalise.tsx`
-- `src/pages/PlanningResultatsPersonnalises.tsx`
-- `src/pages/Comparatif.tsx`
-- `src/pages/OutilsPlanningMariage.tsx`
-- `src/pages/Index.tsx` (ordre sections + CTA)
-- Nouveau composant `src/components/home/CreateAccountCTA.tsx`
-- `src/index.css` (token beige)
+Upload des 3 images de couverture via `lovable-assets` (source `/mnt/user-uploads/`), puis insertion des articles dans la table `blog_posts` via migration Supabase :
+
+| # | Slug | Image |
+|---|------|-------|
+| A | `belle-famille-mariage-guide-survie` | image 1 (couple + wedding planner) |
+| B | `demande-en-mariage-guide-homme` | image 2 (demande sur plage) |
+| C | `creer-site-web-mariage` | image 3 (couple devant laptop) |
+
+Pour chaque article : `title`, `subtitle`, `slug`, `category` (Conseils / Fiançailles / Organisation), `content` (HTML converti depuis markdown fourni), `meta_description`, `background_image_url` (URL CDN Lovable), `status: 'published'`, `published_at: now()`, `order_index` incrémenté, `featured: false`.
+
+## 4. Sitemap
+
+Ajouter les 3 nouvelles URLs `/blog/<slug>` dans `scripts/generate-sitemap.ts` (section blog dynamique si elle existe déjà — sinon ajout en dur).
+
+## Détails techniques
+
+- Fichier édité : `src/components/home/PremiumHeader.tsx` + composant sticky bottom mobile.
+- Migration Supabase pour l'INSERT des 3 articles (rollback facile si besoin).
+- Le contenu markdown est converti en HTML sémantique (h2/h3/p/ul/table) pour respecter le format éditorial existant du blog.
+
+## Hors périmètre
+
+- Pas de modification du design des cartes de blog ni de la page article.
+- Pas de refonte du menu hamburger — juste ajout du lien Dashboard.

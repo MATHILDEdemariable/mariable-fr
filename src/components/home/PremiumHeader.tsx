@@ -127,6 +127,14 @@ const PremiumHeader = () => {
                       {t('header.nav.home', 'Accueil')}
                     </Link>
                     <hr className="border-editorial-noir/10" />
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                    >
+                      {t('header.myTools', 'Tableau de bord')}
+                    </Link>
+                    <hr className="border-editorial-noir/10" />
                     <Button
                       variant="outline"
                       onClick={async () => {
