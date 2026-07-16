@@ -28,7 +28,7 @@ const ChatbotButton = () => {
               </div>
             </div>
           </Card>
-        </div> : <Button onClick={toggleChat} className="rounded-full w-14 h-14 shadow-md transition-transform hover:scale-105 bg-editorial-beige text-primary">
+        </div> : <Button onClick={toggleChat} className="rounded-full w-14 h-14 shadow-md transition-transform hover:scale-105 bg-wedding-olive text-white hover:bg-wedding-olive/90">
           <MessageCircle size={24} className="text-white" />
         </Button>}
     </div>;
