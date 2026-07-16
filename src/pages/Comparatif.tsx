@@ -60,7 +60,7 @@ const Comparatif = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button asChild className="bg-white text-wedding-olive hover:bg-white/90 rounded-none">
-                    <Link to="/login">Créer mon compte gratuit</Link>
+                    <Link to="/register-gratuit">Créer mon compte gratuit</Link>
                   </Button>
                 </div>
               </div>
