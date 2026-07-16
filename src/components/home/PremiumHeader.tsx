@@ -116,48 +116,54 @@ const PremiumHeader = () => {
             </SheetTrigger>
             <SheetContent side="right" className="w-[300px] bg-white pt-20">
               <div className="flex flex-col space-y-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    to={link.href}
-                    onClick={() => setMobileOpen(false)}
-                    className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <hr className="border-editorial-noir/10" />
-                <Link
-                  to="/guides"
-                  onClick={() => setMobileOpen(false)}
-                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
-                >
-                  {t('header.nav.ebooks')}
-                </Link>
-                <hr className="border-editorial-noir/10" />
-                <Link 
-                  to="/partenariat"
-                  onClick={() => setMobileOpen(false)}
-                  className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
-                >
-                  {t('header.iAmPro')}
-                </Link>
-                <hr className="border-editorial-noir/10" />
                 {isAuthenticated ? (
-                  <Button 
-                    onClick={() => { navigate('/dashboard'); setMobileOpen(false); }} 
-                    className="bg-editorial-noir text-white rounded-none w-full"
-                  >
-                    {t('header.myTools')}
-                  </Button>
+                  <>
+                    <Link
+                      to="/"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                    >
+                      {t('header.nav.home', 'Accueil')}
+                    </Link>
+                    <hr className="border-editorial-noir/10" />
+                    <Button
+                      variant="outline"
+                      onClick={async () => {
+                        await supabase.auth.signOut();
+                        setMobileOpen(false);
+                        navigate('/');
+                      }}
+                      className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
+                    >
+                      {t('header.logout', 'Déconnexion')}
+                    </Button>
+                  </>
                 ) : (
-                  <Button 
-                    variant="outline"
-                    onClick={() => { navigate('/login'); setMobileOpen(false); }} 
-                    className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
-                  >
-                    {t('header.login')}
-                  </Button>
+                  <>
+                    <Link
+                      to="/guides"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                    >
+                      {t('header.nav.ebooks')}
+                    </Link>
+                    <hr className="border-editorial-noir/10" />
+                    <Link
+                      to="/partenariat"
+                      onClick={() => setMobileOpen(false)}
+                      className="text-sm tracking-widest uppercase text-editorial-noir/80 hover:text-editorial-noir"
+                    >
+                      {t('header.iAmPro')}
+                    </Link>
+                    <hr className="border-editorial-noir/10" />
+                    <Button
+                      variant="outline"
+                      onClick={() => { navigate('/login'); setMobileOpen(false); }}
+                      className="border-editorial-noir/20 text-editorial-noir rounded-none w-full"
+                    >
+                      {t('header.login')}
+                    </Button>
+                  </>
                 )}
                 <hr className="border-editorial-noir/10" />
                 <div className="flex justify-center">
