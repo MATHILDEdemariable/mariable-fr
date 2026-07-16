@@ -192,7 +192,7 @@ const PlanningResultatsPersonnalises: React.FC = () => {
                     Créez un compte gratuit pour retrouver votre profil, accéder aux outils (budget, checklist, planning jour-J) et personnaliser votre organisation.
                   </p>
                   <Button
-                    onClick={() => navigate('/login')}
+                    onClick={() => navigate('/register-gratuit')}
                     className="bg-white text-wedding-olive hover:bg-white/90"
                   >
                     Créer un compte gratuit

@@ -18,7 +18,7 @@ const CreateAccountCTA: React.FC = () => {
           asChild
           className="bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-none px-8 py-6 text-base"
         >
-          <Link to="/login">
+          <Link to="/register-gratuit">
             Créer un compte gratuit
             <ArrowRight className="ml-2 h-4 w-4" />
           </Link>

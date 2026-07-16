@@ -177,7 +177,7 @@ const OutilsPlanningMariage: React.FC = () => {
                 du budget à la coordination du jour J.
               </p>
               <Button 
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/register-gratuit')}
                 className="px-8 py-3 text-lg bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-none"
               >
                 Commencer gratuitement
@@ -248,7 +248,7 @@ const OutilsPlanningMariage: React.FC = () => {
                       className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white rounded-none"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate('/login');
+                        navigate('/register-gratuit');
                       }}
                     >
                       Utiliser cet outil
@@ -272,7 +272,7 @@ const OutilsPlanningMariage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button 
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/register-gratuit')}
                 className="px-8 py-3 bg-white text-wedding-olive hover:bg-white/90 rounded-none"
               >
                 Créer mon compte gratuit
