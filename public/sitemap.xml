@@ -1939,7 +1939,19 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.mariable.fr/conseilsmariage/belle-famille-mariage-guide-survie</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.mariable.fr/conseilsmariage/do-i-need-a-wedding-planner-in-france</loc>
+    <lastmod>2026-07-16</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mariable.fr/conseilsmariage/demande-en-mariage-guide-homme</loc>
     <lastmod>2026-07-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1977,6 +1989,12 @@
   <url>
     <loc>https://www.mariable.fr/conseilsmariage/ceremonie-laique-votre-guide-complet-pour-un-mariage-unique-et-personnalise</loc>
     <lastmod>2026-06-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mariable.fr/conseilsmariage/creer-site-web-mariage</loc>
+    <lastmod>2026-07-16</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
