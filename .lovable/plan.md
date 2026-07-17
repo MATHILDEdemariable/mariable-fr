@@ -1,42 +1,35 @@
-# Plan
+# Publication de 5 articles de blog
 
-## 1. Menu déroulant mobile (authentifié) — PremiumHeader.tsx
+Créer et publier 5 nouveaux articles sur `/conseilsmariage` avec leurs photos de couverture, puis régénérer le sitemap.
 
-Ajouter un bouton **Tableau de bord** (`/dashboard`) dans le menu hamburger en haut à droite, entre Accueil et Déconnexion.
+## Articles à créer
 
-État authentifié final :
-- Accueil (`/`)
-- Tableau de bord (`/dashboard`)
-- Déconnexion
-- Toggle FR/EN
+| # | Slug | Titre | Catégorie | Image |
+|---|------|-------|-----------|-------|
+| 1 | `anniversaire-mariage-nouveau-mariage` | Anniversaire de mariage : et si tu organisais un nouveau mariage (en mieux) ? | Après mariage | image 5 (dîner cake extérieur lumières) |
+| 2 | `mariage-petit-comite-qualite-quantite` | Mariage en petit comité : pourquoi la qualité battra toujours la quantité | Organisation | image 1 (garden party château) |
+| 3 | `mariage-petit-budget-reception-non-obligatoire` | Mariage petit budget : et si la réception traditionnelle n'était pas obligatoire ? | Budget | image 4 (grand déjeuner sous l'arbre) |
+| 4 | `renouvellement-voeux-guide-complet` | Renouvellement de vœux : le guide complet (et 100 % libre) | Cérémonie | image 3 (mariés signature mairie) |
+| 5 | `mariage-ou-pacs-deux-facons-sengager` | Mariage ou PACS : deux façons de s'engager (et une fête dans les deux cas) | Organisation | image 2 (couple gâteau bougies Paris) |
 
-## 2. Sticky menu du bas — visible sur landing page
+## Étapes techniques
 
-Actuellement le sticky bottom menu (mobile, utilisateur connecté) n'apparaît pas sur `/`. Vérifier la condition de rendu dans le composant sticky (probablement `MobileStickyNav` ou équivalent) et retirer l'exclusion de la route `/` pour qu'il s'affiche partout quand l'utilisateur est loggé.
+1. **Upload des 5 photos de couverture** via `lovable-assets create` depuis `/mnt/user-uploads/` — pointers stockés dans `src/assets/blog/` (mais on utilise directement l'URL CDN dans `background_image_url` de la table `blog_posts`).
+2. **Insert SQL dans `blog_posts`** (via `supabase--insert`) pour chaque article :
+   - `slug`, `title`, `subtitle`, `category`, `meta_title`, `meta_description`, `background_image_url`, `content` (HTML enrichi avec `<h2>`, `<h3>`, `<table>`, `<ul>`, FAQ), `status='published'`, `published_at=now()`, `order_index`, `language='fr'`.
+   - Contenu HTML basé sur les textes fournis, formaté avec la structure éditoriale existante (comme les articles précédents `belle-famille-mariage`, etc.).
+   - Meta descriptions ~155 caractères, meta titles ~55 caractères.
+3. **Maillage interne** : ajouter les liens internes indiqués (articles frères, guides existants) dans le HTML de chaque article.
+4. **Régénération du sitemap** : `bunx tsx scripts/generate-sitemap.ts` → mise à jour de `public/sitemap.xml` avec les 5 nouveaux slugs.
 
-## 3. Ajout de 3 articles de blog
+## Détails éditoriaux
 
-Upload des 3 images de couverture via `lovable-assets` (source `/mnt/user-uploads/`), puis insertion des articles dans la table `blog_posts` via migration Supabase :
+- Aucun refactoring de code, aucune modification de composants — pure data + assets.
+- Chaque article suit la structure : intro chapô, H2 sections, tableau comparatif (si pertinent), section « Ce que Mariable recommande », FAQ H3, « En résumé », maillage interne en fin.
+- Aucune traduction EN (langue = FR uniquement, conforme aux articles récents).
 
-| # | Slug | Image |
-|---|------|-------|
-| A | `belle-famille-mariage-guide-survie` | image 1 (couple + wedding planner) |
-| B | `demande-en-mariage-guide-homme` | image 2 (demande sur plage) |
-| C | `creer-site-web-mariage` | image 3 (couple devant laptop) |
+## Livrables
 
-Pour chaque article : `title`, `subtitle`, `slug`, `category` (Conseils / Fiançailles / Organisation), `content` (HTML converti depuis markdown fourni), `meta_description`, `background_image_url` (URL CDN Lovable), `status: 'published'`, `published_at: now()`, `order_index` incrémenté, `featured: false`.
-
-## 4. Sitemap
-
-Ajouter les 3 nouvelles URLs `/blog/<slug>` dans `scripts/generate-sitemap.ts` (section blog dynamique si elle existe déjà — sinon ajout en dur).
-
-## Détails techniques
-
-- Fichier édité : `src/components/home/PremiumHeader.tsx` + composant sticky bottom mobile.
-- Migration Supabase pour l'INSERT des 3 articles (rollback facile si besoin).
-- Le contenu markdown est converti en HTML sémantique (h2/h3/p/ul/table) pour respecter le format éditorial existant du blog.
-
-## Hors périmètre
-
-- Pas de modification du design des cartes de blog ni de la page article.
-- Pas de refonte du menu hamburger — juste ajout du lien Dashboard.
+- 5 lignes ajoutées dans `blog_posts` (visibles sur `/conseilsmariage` et `/conseilsmariage/<slug>`).
+- 5 pointers `.asset.json` dans `src/assets/blog/`.
+- `public/sitemap.xml` mis à jour (42 articles blog au total).
