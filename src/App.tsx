@@ -40,6 +40,7 @@ const Callback = lazy(() => import("./pages/auth/Callback"));
 // Lazy load all other pages
 const Index = lazy(() => import("./pages/Index"));
 const VersionJuin26 = lazy(() => import("./pages/VersionJuin26"));
+const RefonteJuillet = lazy(() => import("./pages/RefonteJuillet"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
 const GuidesShop = lazy(() => import("./pages/GuidesShop"));
 const MesGuides = lazy(() => import("./pages/MesGuides"));
@@ -183,6 +184,7 @@ function App() {
                   <Routes>
                   <Route path="/" element={<VersionJuin26 />} />
                   <Route path="/accueil" element={<LandingCouple />} />
+                  <Route path="/refontejuillet" element={<RefonteJuillet />} />
                   <Route path="/versionjuin26" element={<Navigate to="/" replace />} />
                   <Route path="/guides" element={<GuidesShop />} />
                   <Route path="/mes-guides/pending" element={<MesGuidesPending />} />
@@ -250,7 +252,7 @@ function App() {
 
                   {/* Auth routes */}
                    <Route path="/login" element={<Login />} />
-                   <Route path="/register" element={<Paiement />} />
+                   <Route path="/register" element={<Navigate to="/register-gratuit" replace />} />
                    <Route path="/register-gratuit" element={<Register />} />
                    <Route path="/inscription-gratuite" element={<Navigate to="/register-gratuit" replace />} />
                    <Route path="/auth" element={<Login />} />
