@@ -252,7 +252,7 @@ function App() {
 
                   {/* Auth routes */}
                    <Route path="/login" element={<Login />} />
-                   <Route path="/register" element={<Paiement />} />
+                   <Route path="/register" element={<Navigate to="/register-gratuit" replace />} />
                    <Route path="/register-gratuit" element={<Register />} />
                    <Route path="/inscription-gratuite" element={<Navigate to="/register-gratuit" replace />} />
                    <Route path="/auth" element={<Login />} />

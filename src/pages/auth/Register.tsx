@@ -139,7 +139,10 @@ const Register = () => {
         )}
 
         <Card className="w-full">
-          <CardHeader className="space-y-1">
+          <CardHeader className="space-y-3">
+            <div className="mx-auto inline-flex items-center gap-2 rounded-full bg-wedding-olive/10 text-wedding-olive px-4 py-1.5 text-xs font-medium tracking-wide">
+              ✨ 100% gratuit — Sans carte bancaire
+            </div>
             <CardTitle className="text-2xl font-serif text-center">{t('register.title')}</CardTitle>
             <CardDescription className="text-center">{t('register.subtitle')}</CardDescription>
             <div className="flex items-start gap-2 p-3 bg-wedding-olive/5 rounded-lg border border-wedding-olive/15 text-sm text-muted-foreground">
