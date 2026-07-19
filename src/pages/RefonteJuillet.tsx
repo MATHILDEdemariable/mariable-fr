@@ -24,7 +24,6 @@ const RefonteJuillet: React.FC = () => {
         title="Mariable — sélection de lieux de mariage & Wedding planner en ligne"
         description="La sélection éditoriale Mariable : lieux et pros triés à la main, sans sponsoring. Et l'appli qui vous accompagne jusqu'au Jour J."
         canonical="/refontejuillet"
-        canonical="/refontejuillet"
       />
 
       <div className="min-h-screen bg-editorial-beige text-editorial-noir">
