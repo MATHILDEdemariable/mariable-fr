@@ -293,11 +293,17 @@ const Register = () => {
               </Button>
             </form>
           </CardContent>
-          <CardFooter className="flex flex-col gap-2">
+          <CardFooter className="flex flex-col gap-3">
             <div className="text-center text-sm">
               {t('register.alreadyAccount')}{" "}
               <Link to="/login" className="text-wedding-olive hover:underline font-medium">
                 {t('register.signIn')}
+              </Link>
+            </div>
+            <div className="text-center text-xs text-muted-foreground border-t pt-3 w-full">
+              Envie d'aller plus loin ?{" "}
+              <Link to="/paiement" className="text-wedding-olive hover:underline">
+                Découvrir Premium — 29€ à vie
               </Link>
             </div>
           </CardFooter>
