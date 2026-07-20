@@ -36,10 +36,10 @@ const EditorialHeader: React.FC = () => {
         <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-16">
           <Link
             to="/refontejuillet"
-            className="font-serif text-2xl lowercase text-editorial-noir tracking-tight"
-            aria-label="mariable — accueil"
+            className="flex items-center"
+            aria-label="Mariable — accueil"
           >
-            mariable
+            <Logo />
           </Link>
 
           <nav className="flex items-center gap-4 md:gap-6">
