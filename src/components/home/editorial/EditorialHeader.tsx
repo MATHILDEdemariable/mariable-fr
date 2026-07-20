@@ -79,7 +79,7 @@ const EditorialHeader: React.FC = () => {
       >
         <div className="container mx-auto px-4 md:px-8 h-full flex flex-col">
           <div className="flex items-center justify-between h-16 border-b border-editorial-noir/10">
-            <span className="font-serif text-2xl lowercase text-editorial-noir">mariable</span>
+            <Logo />
             <button
               onClick={() => setOpen(false)}
               className="w-10 h-10 flex items-center justify-center hover:opacity-70"
