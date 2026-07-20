@@ -168,14 +168,10 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
 
 const EditorialCarousels: React.FC = () => {
   const region = useQuery({ queryKey: ['editorial-vendors', 'region'], queryFn: () => fetchVendors('region'), staleTime: 5 * 60 * 1000 });
-  const envie = useQuery({ queryKey: ['editorial-vendors', 'envie'], queryFn: () => fetchVendors('envie'), staleTime: 5 * 60 * 1000 });
-  const categorie = useQuery({ queryKey: ['editorial-vendors', 'categorie'], queryFn: () => fetchVendors('categorie'), staleTime: 5 * 60 * 1000 });
 
   return (
     <section className="bg-editorial-beige pt-4 pb-8">
-      <Carousel label={CAROUSEL_CATEGORIES[0].label} items={region.data ?? []} loading={region.isLoading} />
-      <Carousel label={CAROUSEL_CATEGORIES[1].label} items={envie.data ?? []} loading={envie.isLoading} />
-      <Carousel label={CAROUSEL_CATEGORIES[2].label} items={categorie.data ?? []} loading={categorie.isLoading} />
+      <Carousel label="Lieux de réception sélectionnés" items={region.data ?? []} loading={region.isLoading} />
     </section>
   );
 };
