@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Instagram } from 'lucide-react';
 import LanguageToggle from '@/components/LanguageToggle';
+import { Logo } from '@/components/Logo';
 
 const OVERLAY_LINKS = [
   { label: 'NOS RECOMMANDATIONS', to: '/professionnelsmariable' },
   { label: "L'APPLI", to: '/register-gratuit' },
   { label: 'EBOOKS', to: '/guides' },
-  { label: 'À PROPOS', to: '/about/approche' },
+  { label: 'ESPACE PROFESSIONNELS', to: '/partenariat' },
   { label: 'CONTACT', to: '/contact' },
 ];
 
