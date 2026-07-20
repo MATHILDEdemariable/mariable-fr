@@ -5,7 +5,7 @@ import { useTranslation, Trans } from 'react-i18next';
 export default function PricingHighlight() {
   const { t } = useTranslation('homeV2');
   return (
-    <section className="bg-editorial-beige py-24 md:py-32">
+    <section className="bg-[#F8F5EF] py-24 md:py-32">
       <div className="container mx-auto px-6">
         <div className="max-w-2xl mx-auto text-center">
           <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">

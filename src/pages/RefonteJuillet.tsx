@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import SEO from '@/components/SEO';
 import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import HeroEditorial from '@/components/home/editorial/HeroEditorial';
-import ManifestoBand from '@/components/home/editorial/ManifestoBand';
 import EditorialCarousels from '@/components/home/editorial/EditorialCarousels';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
 import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEditorial';
@@ -12,6 +11,7 @@ import BlogSection from '@/components/home/BlogSection';
 import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 import PricingHighlight from '@/components/home/v2/PricingHighlight';
 import V2FAQSection from '@/components/home/v2/FAQSection';
+import Footer from '@/components/Footer';
 import { SelectionLockProvider } from '@/components/home/editorial/SelectionLockModal';
 
 const RefonteJuillet: React.FC = () => {
@@ -28,12 +28,14 @@ const RefonteJuillet: React.FC = () => {
         keywords="organisation mariage, wedding planner digital, sélection lieux mariage, prestataires mariage premium, ebooks mariage, application mariage"
       />
 
-      <div className="min-h-screen bg-editorial-beige text-editorial-noir">
-        <EditorialHeader />
+      <div className="min-h-screen bg-white text-editorial-noir">
+        <EditorialHeader transparent />
         <main>
+          {/* 1. Hero */}
           <HeroEditorial />
-          <ManifestoBand />
-          <section id="selection" className="bg-editorial-beige">
+
+          {/* 2. Coups de cœur */}
+          <section id="selection" className="bg-white">
             <InstagramHighlightsGrid
               context="homepage"
               eyebrow="Coups de cœur"
@@ -41,15 +43,34 @@ const RefonteJuillet: React.FC = () => {
               limit={10}
             />
           </section>
+
+          {/* 3. Carrousel lieux sélectionnés */}
           <EditorialCarousels />
+
+          {/* 4. Espace Mariable */}
           <PremiumToolsCoordinationSection />
-          <EditorialEShop />
+
+          {/* 5. Prix */}
           <PricingHighlight />
+
+          {/* 6. E-books */}
+          <EditorialEShop />
+
+          {/* 7. Témoignages */}
           <TestimonialsEditorial />
+
+          {/* 8. Conseils & inspirations */}
           <BlogSection />
+
+          {/* 9. FAQ */}
           <V2FAQSection />
+
+          {/* 10. CTA final */}
           <FinalEditorialCTA />
         </main>
+
+        {/* 11. Footer */}
+        <Footer />
       </div>
     </SelectionLockProvider>
   );
