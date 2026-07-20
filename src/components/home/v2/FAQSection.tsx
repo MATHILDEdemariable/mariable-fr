@@ -13,7 +13,7 @@ export default function FAQSection() {
   const faqs = t('faq.items', { returnObjects: true }) as FaqItem[];
 
   return (
-    <section className="bg-editorial-cream py-24 md:py-32">
+    <section className="bg-white py-24 md:py-32">
       <div className="container mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
