@@ -1,101 +1,73 @@
-## 1. Refonte page /register — Gratuit en avant, Premium en second onglet
 
-**Fichier:** `src/pages/auth/Register.tsx`
+# Refonte `/refontejuillet` — alignement DA & structure
 
-- Ajouter `Tabs` shadcn en haut du formulaire :
-  - **"Compte gratuit"** (défaut, actif) → formulaire email/password/nom, CTA "Créer mon compte gratuit"
-  - **"Premium 29€ à vie"** → même formulaire + redirection Stripe checkout après création
-- Retirer toutes les mentions prix/Premium/comparatifs de l'onglet gratuit
-- Sous l'onglet gratuit : texte discret "Vous pourrez passer Premium plus tard depuis votre dashboard"
-- Conserver la logique auth Supabase existante (signUp, emailRedirectTo, redirections)
+## 1. Header éditorial (`EditorialHeader.tsx`)
+- Remplacer le texte "mariable" en haut à gauche par le **logo `<Logo />`** (composant existant `cachet_M.webp`, h-12).
+- Menu déroulant droite : remplacer l'entrée **"À propos"** par **"Espace professionnels"** (lien `/professionnels`).
+- Conserver le toggle FR/EN et le CTA login.
 
-## 2. Nouvelle page /refontejuillet — refonte éditoriale (sans toucher à la home actuelle)
+## 2. Hero (`HeroEditorial.tsx`)
+- Garder le grand titre serif mais **réintroduire un sous-titre descriptif** sous le titre (2 lignes max, style `text-lg md:text-xl text-editorial-noir/70`), calqué sur le pattern `PremiumHeroSection` de la homepage.
+- Conserver le CTA principal existant.
 
-**Nouveau fichier :** `src/pages/RefonteJuillet.tsx`  
-**Nouvelle route** dans `src/App.tsx` : `/refontejuillet` → `<RefonteJuillet />`
+## 3. Palette / DA
+- Rebasculer la page sur **sage green (`wedding-olive` #7F9474) comme couleur principale** + **beige très clair** (celui utilisé sur `/professionnels-mariable`, ~`#F8F5EF`) pour les fonds de section.
+- Retirer les fonds beige foncé actuels (`editorial-beige` saturé) au profit du beige clair uniforme.
+- Accents (liens "DÉCOUVRIR →", underlines, CTAs) en `wedding-olive`.
 
-La page `Index.tsx` / `Mariable.tsx` actuelle reste inchangée. Aucune migration BDD.
+## 4. Sélection éditoriale
+- **Supprimer** `EditorialFeatured` ("L'adresse de la semaine" + "Zoom sur").
+- **Remplacer par la section "Coups de cœur"** telle qu'affichée sur `/professionnels-mariable` (réutiliser le composant existant `LieuxPartenairesSection` ou équivalent — à identifier lors du build).
 
-**D.A. conservée :** tokens existants (`--editorial-noir`, `--editorial-beige` #F8F5EF, `--wedding-olive`, Playfair Display, `rounded-none`). Aucune nouvelle couleur.
+## 5. Carrousels
+- **Supprimer** les sections "Par envie", "Par région", etc. dans `EditorialCarousels.tsx`.
+- **Garder un seul carrousel horizontal** (le plus pertinent — sélection de lieux/prestataires).
 
-### Structure de RefonteJuillet.tsx
+## 6. Section outils
+- **Remplacer** `PremiumToolsCoordinationSection` par la section **"Ton espace Mariable — le service en détail"** de la homepage (composant existant `PremiumToolsSection` + visuels associés).
 
-```
-EditorialHeader                     ← nouveau (utilisé UNIQUEMENT sur cette page)
-HeroEditorial (vidéo actuelle)
-ManifestoBand
-EditorialFeatured        id="selection"
-EditorialCarousels       (BDD prestataires)
-PremiumToolsCoordinationSection  ← composant existant réutilisé
-TestimonialsEditorial    (verbatims fournis)
-BlogSection              ← existant réutilisé
-EditorialRendezVous
-FAQSection               ← existant réutilisé
-FinalEditorialCTA
-Footer                   ← existant
-```
+## 7. Section E-shop (remplace "Conseils & inspirations")
+- Nouvelle section **"E-SHOP"** présentant les **e-books & guides digitaux**.
+- Layout 3 colonnes éditorial (lignes hairline, serif titres) reprenant le style visuel de la capture actuelle, mais avec contenu = e-books (source : `src/data/guides.ts` ou table `ebooks`).
+- Chaque carte : catégorie / titre / description courte / lien "DÉCOUVRIR →" vers `/ebooks` ou fiche produit.
 
-### Nouveaux composants (dossier `src/components/home/editorial/`)
+## 8. Section Prix
+- Ajouter la section **"Gratuit pour commencer. Premium pour aller plus loin."** telle qu'affichée sur la homepage (composant existant à repérer, probablement dans `PremiumFinalCTASection` ou dédié).
 
-**`EditorialHeader.tsx`**
-- Sticky, fond `bg-editorial-beige`, hairline `border-b border-editorial-noir/10`
-- Gauche : wordmark **mariable** minuscules Playfair (text-2xl)
-- Droite : `INSTAGRAM` (tracking-widest text-xs) · toggle FR|EN · burger (3 traits)
-- Burger → overlay plein écran, slide-in droite 300ms, Échap + croix pour fermer :
-  - Liens majuscules alignés droite : `NOS RECOMMANDATIONS` (/professionnelsmariable), `L'APPLI` (/register-gratuit), `EBOOKS` (/guides), `À PROPOS` (/about), `CONTACT` (/contact/nous-contacter)
-  - Pied overlay : "Se connecter" (/login) + "Espace professionnels" (/partenariat) + INSTAGRAM + toggle FR|EN
+## 9. FAQ
+- Ajouter la **FAQ de la homepage** (`FAQSection` de `Mariable.tsx`) juste avant le CTA final.
 
-**`HeroEditorial.tsx`**
-- Reprend la vidéo background actuelle + overlay sombre
-- Centré : "mariable" petit tracking-widest ; titre serif *Les plus beaux lieux & pros,* ***sélectionnés*** *— et l'appli qui vous accompagne jusqu'au Jour J.*
-- UN SEUL CTA outline blanc "Découvrir Mariable" → ancre `#selection`
+## 10. Refonte `/about/histoire`
+- Aligner sur la charte actuelle (Playfair, sage green, beige clair, `rounded-none`).
+- Contenus conservés :
+  - **Mission** : "Célébrer l'amour — simplement."
+  - **Vision** : "Transformer l'organisation des mariages en une expérience simple et agréable."
+- **Supprimer** la section "Notre approche".
+- **Supprimer** le footer sur cette page.
+- Rendre la mise en page plus dynamique : hero avec photo Mathilde, alternance texte/image, animations `framer-motion` légères, citations en pull-quote serif.
+- Conserver `<SEO />` et la structure sémantique (h1 unique, h2/h3).
 
-**`ManifestoBand.tsx`** — filets hairline haut/bas ; label `NOTRE ENGAGEMENT` ; titre *Une sélection, pas un annuaire.* (italique sur "pas un annuaire") ; paragraphe manifesto complet.
-
-**`EditorialFeatured.tsx`** — grille 2/3 – 1/3
-- Gauche : L'ADRESSE DE LA SEMAINE (image + titre serif overlay + tag localisation) — contenu statique éditable en tête de fichier
-- Droite : ZOOM SUR (image verticale + légende 2 lignes) — statique
-- Clic → modale verrou (voir plus bas)
-
-**`EditorialCarousels.tsx`** — 3 carrousels **dynamiques** (React Query, staleTime 5min, select explicite : `nom, ville, region, categorie, photo_principale, slug`)
-- **PAR RÉGION** (Provence, Bretagne, Paris & IDF)
-- **PAR ENVIE** (petit comité, château, bord de mer, campagne chic — filtre sur tags/description)
-- **PAR CATÉGORIE** (Photographes, Traiteurs, DJ)
-- Chaque carrousel : label petites capitales + flèches ← → ; scroll horizontal `snap-x` + `scrollBy({ left: ±320 })` ; cartes image ratio fixe + légende serif 2 lignes + "Découvrir" souligné
-- Mobile : swipe tactile natif
-- Sous chaque : lien "Voir toute la Sélection →" (verrou)
-
-**`SelectionLockModal.tsx`** — règle de verrou partagée
-- Cartes non-cliquables vers détail public
-- Pastille "Détail réservé aux membres" en overlay bas
-- Clic → shadcn Dialog : "Créez votre compte gratuit pour accéder aux adresses de la Sélection" + bouton "Créer mon compte gratuit" (`/register-gratuit`)
-- Bypass modale si `useAuth()` retourne un user connecté (redirection vers fiche prestataire)
-
-**`TestimonialsEditorial.tsx`** — titre *Ils ont célébré leur histoire avec Mariable* ; 3 cartes sobres avec filet hairline ; **verbatims exacts fournis** (Julie & Thomas Paris, Emma & Lucas Bretagne, Sophie & Marc Provence).
-
-**`EditorialRendezVous.tsx`** — label `CONSEILS & INSPIRATIONS` ; 3 blocs filet supérieur épais + label petites capitales : ebooks → `/guides`, conseils → `/conseilsmariage`, faq → `/faq`.
-
-**`FinalEditorialCTA.tsx`** — titre *Votre histoire mérite d'être bien célébrée.* ; bouton "Créer mon compte Mariable" → `/register-gratuit` ; micro-texte "Gratuit · Sans engagement · En 2 minutes".
-
-### SEO
-
-Sur RefonteJuillet : `<SEO>` avec title "Mariable — sélection de lieux de mariage & Wedding planner en ligne", `noindex` tant que non validée (pour ne pas dupliquer avec la home actuelle).
-
-### Interdits respectés
-
-Aucun de ces mots : "magazine", "réserver", "disponibilités", "dates", "prix" (contexte prestataires), "demande de devis", "sponsoring".
+## 11. SEO / GEO
+- Conserver `<SEO />` sur `/refontejuillet` (title, description, canonical, keywords) — la page étant destinée à remplacer la home.
+- Garder les schémas JSON-LD `WebSite` + `ItemList` de la homepage actuelle (à porter depuis `Index.tsx`).
+- H1 unique dans le hero, hiérarchie h2/h3 propre par section.
 
 ## Détails techniques
 
-- **Modale** : shadcn Dialog partagé, contexte simple ou prop `onLockedClick`
-- **Auth** : `useAuth()` pour bypass
-- **Images** : `loading="lazy"` + `aspect-[4/5]` ou `aspect-square`
-- **Micro-interactions** : `transition-colors duration-200`, `hover:underline underline-offset-4`
-- **i18n** : nouvelles clés `home.editorial.*` dans `src/i18n/locales/{fr,en}/home.json`
-- **Rien de modifié** sur : PremiumHeader, MobileBottomNav, Index.tsx/Mariable.tsx actuelle, autres pages, design tokens
+Fichiers modifiés :
+- `src/components/home/editorial/EditorialHeader.tsx` (logo + menu)
+- `src/components/home/editorial/HeroEditorial.tsx` (sous-titre)
+- `src/components/home/editorial/EditorialCarousels.tsx` (réduire à 1 carrousel)
+- `src/pages/RefonteJuillet.tsx` (remplacer sections, palette, ajouter FAQ/Prix/E-shop)
+- `src/pages/about/Histoire.tsx` (refonte + suppression footer)
+- `src/index.css` uniquement si un token beige-clair manque
 
-## Questions ouvertes (bloquantes pour build)
+Fichiers créés :
+- `src/components/home/editorial/EshopSection.tsx` (nouvelle section e-books)
 
-1. **Handle Instagram** exact ? (défaut `https://instagram.com/mariable.fr` sinon)
-2. **"L'adresse de la semaine" + "Zoom sur"** : photos + textes à fournir maintenant, ou placeholders éditoriaux (à remplacer plus tard) ?
-3. **3ème carrousel** = "PAR CATÉGORIE" (Photo/Traiteur/DJ) — OK ou autre thème (ex "PAR SAISON") ?
+Aucun changement de logique métier — uniquement présentation & structure.
+
+## Points à confirmer avant build
+1. Pour "Coups de cœur", tu confirmes que je réutilise **exactement** le composant `LieuxPartenairesSection` de `/professionnels-mariable` (ou tu veux une version adaptée éditoriale) ?
+2. Pour la section E-shop, la source des e-books doit être **statique** (contenus curés) ou **dynamique** (fetch table Supabase `ebooks`) ?
+3. Pour `/about/histoire`, tu as une nouvelle photo à intégrer ou on garde `mathilde-portrait-v2.jpg` ?
