@@ -1,25 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { ArrowRight } from 'lucide-react';
 
 const FinalEditorialCTA: React.FC = () => {
   return (
-    <section className="bg-editorial-beige py-20 md:py-28">
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="border-t border-b border-editorial-noir/15 py-16 md:py-20 text-center">
-          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight max-w-3xl mx-auto">
+    <section className="bg-wedding-olive py-24 md:py-32">
+      <div className="container mx-auto px-4 md:px-8 text-center">
+        <div className="max-w-3xl mx-auto">
+          <h2 className="font-serif text-4xl md:text-6xl text-white leading-[1.1]">
             Votre histoire mérite <em className="italic">d'être bien célébrée.</em>
           </h2>
-          <div className="mt-8">
-            <Link
-              to="/register-gratuit"
-              className="inline-block bg-wedding-olive text-white text-xs tracking-[0.25em] uppercase px-10 py-5 hover:bg-wedding-olive/90 transition-colors"
-            >
-              Créer mon compte Mariable
-            </Link>
-          </div>
-          <p className="mt-6 text-xs tracking-[0.2em] uppercase text-editorial-noir/50">
-            Gratuit · Sans engagement · En 2 minutes
+          <p className="mt-6 text-white/85 text-base md:text-lg">
+            Rejoignez les milliers de couples qui font confiance à Mariable.
           </p>
+          <Link
+            to="/register-gratuit"
+            className="mt-10 inline-flex items-center gap-3 bg-white text-editorial-noir px-10 py-5 hover:bg-white/90 transition-colors"
+          >
+            <span className="font-sans">Créer un compte gratuit</span>
+            <ArrowRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
     </section>

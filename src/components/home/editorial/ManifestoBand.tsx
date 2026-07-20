@@ -2,7 +2,7 @@ import React from 'react';
 
 const ManifestoBand: React.FC = () => {
   return (
-    <section className="bg-editorial-beige py-16 md:py-24">
+    <section className="bg-white py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
         <div className="border-t border-b border-editorial-noir/15 py-12 md:py-16 text-center max-w-3xl mx-auto">
           <p className="text-xs tracking-[0.25em] uppercase text-editorial-noir/60 mb-6">

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Menu, X, Instagram } from 'lucide-react';
+import { X, Instagram } from 'lucide-react';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
 
@@ -12,8 +12,21 @@ const OVERLAY_LINKS = [
   { label: 'CONTACT', to: '/contact' },
 ];
 
-const EditorialHeader: React.FC = () => {
+interface Props {
+  transparent?: boolean;
+}
+
+const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    if (!transparent) return;
+    const onScroll = () => setScrolled(window.scrollY > 80);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [transparent]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -30,9 +43,17 @@ const EditorialHeader: React.FC = () => {
     };
   }, [open]);
 
+  const isOverlay = transparent && !scrolled;
+  const headerBg = isOverlay
+    ? 'bg-transparent border-transparent'
+    : 'bg-white/95 backdrop-blur-sm border-editorial-noir/10';
+  const textClr = isOverlay ? 'text-white' : 'text-editorial-noir';
+
   return (
     <>
-      <header className="sticky top-0 z-40 bg-editorial-beige border-b border-editorial-noir/10">
+      <header
+        className={`${transparent ? 'fixed' : 'sticky'} top-0 left-0 right-0 z-40 border-b transition-colors duration-300 ${headerBg}`}
+      >
         <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-16">
           <Link
             to="/refontejuillet"
@@ -42,16 +63,16 @@ const EditorialHeader: React.FC = () => {
             <Logo />
           </Link>
 
-          <nav className="flex items-center gap-4 md:gap-6">
+          <nav className={`flex items-center gap-4 md:gap-6 ${textClr}`}>
             <a
               href="https://www.instagram.com/mariable.fr/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hidden sm:inline text-xs tracking-[0.2em] uppercase text-editorial-noir hover:opacity-70 transition-opacity"
+              className="hidden sm:inline text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
             >
               Instagram
             </a>
-            <span className="hidden sm:inline text-editorial-noir/30" aria-hidden="true">|</span>
+            <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
             <div className="hidden sm:block">
               <LanguageToggle />
             </div>
@@ -60,9 +81,9 @@ const EditorialHeader: React.FC = () => {
               className="flex flex-col justify-center items-end gap-[5px] w-8 h-8 group"
               aria-label="Ouvrir le menu"
             >
-              <span className="block h-px w-6 bg-editorial-noir transition-all group-hover:w-8" />
-              <span className="block h-px w-8 bg-editorial-noir" />
-              <span className="block h-px w-5 bg-editorial-noir transition-all group-hover:w-8" />
+              <span className={`block h-px w-6 transition-all group-hover:w-8 ${isOverlay ? 'bg-white' : 'bg-editorial-noir'}`} />
+              <span className={`block h-px w-8 ${isOverlay ? 'bg-white' : 'bg-editorial-noir'}`} />
+              <span className={`block h-px w-5 transition-all group-hover:w-8 ${isOverlay ? 'bg-white' : 'bg-editorial-noir'}`} />
             </button>
           </nav>
         </div>
@@ -70,7 +91,7 @@ const EditorialHeader: React.FC = () => {
 
       {/* Overlay menu */}
       <div
-        className={`fixed inset-0 z-50 bg-editorial-beige transition-transform duration-300 ease-out ${
+        className={`fixed inset-0 z-50 bg-[#F8F5EF] transition-transform duration-300 ease-out ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         role="dialog"
@@ -95,7 +116,7 @@ const EditorialHeader: React.FC = () => {
                 key={l.to}
                 to={l.to}
                 onClick={() => setOpen(false)}
-                className="font-serif text-3xl md:text-5xl uppercase text-editorial-noir hover:italic transition-all tracking-tight"
+                className="font-serif text-3xl md:text-5xl uppercase text-editorial-noir hover:italic hover:text-wedding-olive transition-all tracking-tight"
               >
                 {l.label}
               </Link>

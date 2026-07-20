@@ -11,7 +11,7 @@ const EditorialEShop: React.FC = () => {
     .filter(Boolean) as typeof GUIDES;
 
   return (
-    <section className="bg-editorial-beige py-16 md:py-24">
+    <section className="bg-[#F8F5EF] py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
         <header className="flex items-end justify-between mb-10 md:mb-14 flex-wrap gap-4">
           <div>
