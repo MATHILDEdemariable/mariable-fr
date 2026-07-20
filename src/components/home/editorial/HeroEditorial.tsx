@@ -20,13 +20,17 @@ const HeroEditorial: React.FC = () => {
       </div>
 
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <p className="text-xs md:text-sm tracking-[0.3em] lowercase text-white/85 mb-6">
-          mariable
+        <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/85 mb-6">
+          Mariable
         </p>
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
           Les plus beaux lieux &amp; pros, <em className="italic font-serif">sélectionnés</em>
           <br className="hidden md:block" /> — et l'appli qui vous accompagne jusqu'au Jour J.
         </h1>
+        <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed">
+          Le média & la boîte à outils pour organiser sereinement votre mariage.<br className="hidden md:block" />
+          Une sélection éditoriale premium, sans sponsoring — et tout ce qu'il faut pour tout gérer vous-même.
+        </p>
         <a
           href="#selection"
           className="mt-10 inline-block border border-white/70 text-white text-xs tracking-[0.25em] uppercase px-8 py-4 hover:bg-white hover:text-editorial-noir transition-colors duration-200"

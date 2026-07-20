@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X, Instagram } from 'lucide-react';
 import LanguageToggle from '@/components/LanguageToggle';
+import { Logo } from '@/components/Logo';
 
 const OVERLAY_LINKS = [
   { label: 'NOS RECOMMANDATIONS', to: '/professionnelsmariable' },
   { label: "L'APPLI", to: '/register-gratuit' },
   { label: 'EBOOKS', to: '/guides' },
-  { label: 'À PROPOS', to: '/about/approche' },
+  { label: 'ESPACE PROFESSIONNELS', to: '/partenariat' },
   { label: 'CONTACT', to: '/contact' },
 ];
 
@@ -35,10 +36,10 @@ const EditorialHeader: React.FC = () => {
         <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-16">
           <Link
             to="/refontejuillet"
-            className="font-serif text-2xl lowercase text-editorial-noir tracking-tight"
-            aria-label="mariable — accueil"
+            className="flex items-center"
+            aria-label="Mariable — accueil"
           >
-            mariable
+            <Logo />
           </Link>
 
           <nav className="flex items-center gap-4 md:gap-6">
@@ -78,7 +79,7 @@ const EditorialHeader: React.FC = () => {
       >
         <div className="container mx-auto px-4 md:px-8 h-full flex flex-col">
           <div className="flex items-center justify-between h-16 border-b border-editorial-noir/10">
-            <span className="font-serif text-2xl lowercase text-editorial-noir">mariable</span>
+            <Logo />
             <button
               onClick={() => setOpen(false)}
               className="w-10 h-10 flex items-center justify-center hover:opacity-70"
