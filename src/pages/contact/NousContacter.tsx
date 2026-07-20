@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import PremiumHeader from '@/components/home/PremiumHeader';
+import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import Footer from '@/components/Footer';
-import { Mail, Phone, Send, User, Building, Briefcase, Heart } from 'lucide-react';
+import { Mail, Send, User, Building, Briefcase, Heart, Phone, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -29,43 +29,24 @@ const NousContacter = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!formData.type || !formData.email || !formData.message) {
-      toast({
-        title: "Formulaire incomplet",
-        description: "Veuillez remplir tous les champs obligatoires",
-        variant: "destructive"
-      });
+      toast({ title: "Formulaire incomplet", description: "Veuillez remplir tous les champs obligatoires", variant: "destructive" });
       return;
     }
-
     setIsSubmitting(true);
-
     try {
-      const { error } = await supabase
-        .from('contact_requests')
-        .insert({
-          type: formData.type,
-          email: formData.email.trim(),
-          phone: formData.phone?.trim() || null,
-          message: formData.message.trim()
-        });
-
-      if (error) throw error;
-
-      toast({
-        title: "Message envoyé !",
-        description: "Nous vous répondrons dans les plus brefs délais."
+      const { error } = await supabase.from('contact_requests').insert({
+        type: formData.type,
+        email: formData.email.trim(),
+        phone: formData.phone?.trim() || null,
+        message: formData.message.trim()
       });
-
+      if (error) throw error;
+      toast({ title: "Message envoyé !", description: "Nous vous répondrons dans les plus brefs délais." });
       setFormData({ type: '', email: '', phone: '', message: '' });
     } catch (error) {
       console.error('Error submitting contact form:', error);
-      toast({
-        title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
-        variant: "destructive"
-      });
+      toast({ title: "Erreur", description: "Une erreur est survenue. Veuillez réessayer.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
@@ -74,136 +55,207 @@ const NousContacter = () => {
   return (
     <>
       <Helmet>
-        <title>Contactez Mariable | Couples, Lieux & Prestataires</title>
-        <meta name="description" content="Contactez l'équipe Mariable pour toute question sur l'organisation de votre mariage, un partenariat ou un référencement. Réponse rapide garantie." />
+        <title>Contact & Notre Histoire | Mariable</title>
+        <meta name="description" content="Découvrez l'histoire de Mariable, fondée par Mathilde, et contactez notre équipe pour toute question sur l'organisation de votre mariage." />
         <link rel="canonical" href="https://www.mariable.fr/contact" />
       </Helmet>
-    <div className="min-h-screen flex flex-col bg-[#efeee9]">
-      <PremiumHeader />
-      
-      <main className="flex-grow pb-16 container page-content pt-4 md:pt-8">
-        <div className="max-w-2xl mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-serif mb-4 text-center">Contactez-nous</h1>
-          <p className="text-xl text-muted-foreground mb-8 text-center">
-            Au plaisir d'échanger avec vous
-          </p>
-          
-          <form onSubmit={handleSubmit} className="space-y-6 bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-            {/* Type selection */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Vous êtes <span className="text-red-500">*</span>
-              </label>
-              <Select
-                value={formData.type}
-                onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Sélectionnez votre profil" />
-                </SelectTrigger>
-                <SelectContent>
-                  {typeOptions.map((option) => (
-                    <SelectItem key={option.value} value={option.value}>
-                      <div className="flex items-center gap-2">
-                        <option.icon className="w-4 h-4" />
-                        {option.label}
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
 
-            {/* Email */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Email <span className="text-red-500">*</span>
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
-                  placeholder="votre@email.com"
-                  className="pl-10"
-                  required
-                />
+      <div className="min-h-screen bg-white text-editorial-noir">
+        <EditorialHeader />
+
+        <main>
+          {/* Hero éditorial */}
+          <section className="pt-16 md:pt-24 pb-12 md:pb-16 bg-white">
+            <div className="container mx-auto px-4 md:px-8 max-w-4xl text-center">
+              <p className="text-xs tracking-[0.3em] uppercase text-wedding-olive mb-6">
+                Notre histoire &amp; contact
+              </p>
+              <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] mb-6">
+                Faisons connaissance — <em className="italic">et échangeons.</em>
+              </h1>
+              <p className="text-editorial-noir/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
+                L'histoire d'une jeune mariée qui a décidé de tout changer,
+                et une équipe à votre écoute.
+              </p>
+            </div>
+          </section>
+
+          {/* Portrait fondatrice */}
+          <section className="py-12 md:py-20 bg-[#F8F5EF]">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-16 items-center max-w-6xl mx-auto">
+                <div className="aspect-[4/5] overflow-hidden">
+                  <img
+                    src="https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/photomathilde.png"
+                    alt="Mathilde, fondatrice de Mariable"
+                    className="w-full h-full object-cover"
+                    loading="lazy"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs tracking-[0.25em] uppercase text-wedding-olive mb-4">Rencontre</p>
+                  <h2 className="font-serif text-3xl md:text-4xl mb-6 leading-tight">
+                    Mathilde, <em className="italic">fondatrice.</em>
+                  </h2>
+                  <div className="space-y-4 text-editorial-noir/80 leading-relaxed">
+                    <p>
+                      L'histoire de Mariable commence avec Mathilde, jeune mariée diplômée
+                      d'école de commerce, qui décide de se lancer dans l'entrepreneuriat
+                      après son expérience personnelle.
+                    </p>
+                    <p>
+                      Une conviction simple : l'organisation d'un mariage devrait être
+                      un moment de joie, pas une charge mentale. Mariable est né de ce constat —
+                      pour digitaliser, alléger, et rendre le processus enfin agréable.
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
+          </section>
 
-            {/* Phone */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Téléphone
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <Input
-                  type="tel"
-                  value={formData.phone}
-                  onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                  placeholder="06 12 34 56 78"
-                  className="pl-10"
-                />
+          {/* Mission / Vision */}
+          <section className="py-16 md:py-24 bg-white">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-5xl mx-auto">
+                <div className="border-t-2 border-wedding-olive pt-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Heart className="w-5 h-5 text-wedding-olive" strokeWidth={1.5} />
+                    <p className="text-xs tracking-[0.25em] uppercase text-wedding-olive">Notre mission</p>
+                  </div>
+                  <h3 className="font-serif text-2xl md:text-3xl leading-tight mb-4">
+                    Célébrer l'amour — <em className="italic">simplement.</em>
+                  </h3>
+                  <p className="text-editorial-noir/75 leading-relaxed">
+                    Apporter de la joie et transformer l'organisation des mariages
+                    en une expérience simple et agréable, pour tous les couples.
+                  </p>
+                </div>
+                <div className="border-t-2 border-wedding-olive pt-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <Sparkles className="w-5 h-5 text-wedding-olive" strokeWidth={1.5} />
+                    <p className="text-xs tracking-[0.25em] uppercase text-wedding-olive">Notre vision</p>
+                  </div>
+                  <h3 className="font-serif text-2xl md:text-3xl leading-tight mb-4">
+                    Faciliter <em className="italic">le plus beau jour de votre vie.</em>
+                  </h3>
+                  <p className="text-editorial-noir/75 leading-relaxed">
+                    Transformer l'organisation des mariages en une expérience
+                    simple, moderne et accessible à tous.
+                  </p>
+                </div>
               </div>
             </div>
+          </section>
 
-            {/* Message */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
-                Message <span className="text-red-500">*</span>
-              </label>
-              <Textarea
-                value={formData.message}
-                onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                placeholder="Comment pouvons-nous vous aider ?"
-                rows={5}
-                required
-              />
+          {/* Chiffres-clés */}
+          <section className="py-16 md:py-20 bg-[#F8F5EF]">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-5xl mx-auto text-center">
+                {[
+                  { n: '2000+', l: 'Couples accompagnés' },
+                  { n: '500+', l: 'Prestataires sélectionnés' },
+                  { n: '100%', l: 'Sans sponsoring' },
+                  { n: '29€', l: 'Premium à vie' },
+                ].map((k) => (
+                  <div key={k.l}>
+                    <p className="font-serif text-4xl md:text-5xl text-editorial-noir mb-2">{k.n}</p>
+                    <p className="text-xs tracking-[0.2em] uppercase text-editorial-noir/60">{k.l}</p>
+                  </div>
+                ))}
+              </div>
             </div>
+          </section>
 
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full bg-editorial-olive hover:bg-editorial-noir text-white rounded-none"
-            >
-              {isSubmitting ? (
-                <>Envoi en cours...</>
-              ) : (
-                <>
-                  <Send className="w-4 h-4 mr-2" />
-                  Envoyer le message
-                </>
-              )}
-            </Button>
-          </form>
+          {/* Formulaire de contact */}
+          <section className="py-16 md:py-24 bg-white">
+            <div className="container mx-auto px-4 md:px-8">
+              <div className="max-w-2xl mx-auto">
+                <div className="text-center mb-10">
+                  <p className="text-xs tracking-[0.25em] uppercase text-wedding-olive mb-4">Contact</p>
+                  <h2 className="font-serif text-3xl md:text-5xl mb-4">
+                    Au plaisir <em className="italic">d'échanger avec vous.</em>
+                  </h2>
+                  <p className="text-editorial-noir/70">
+                    Une question, un projet, un partenariat ? Écrivez-nous.
+                  </p>
+                </div>
 
-          {/* Contact info */}
-          <div className="mt-8 text-center text-muted-foreground">
-            <p className="mb-4">Vous pouvez aussi nous contacter directement :</p>
-            <div className="flex flex-col items-center gap-3">
-              <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">
-                mathilde@mariable.fr
-              </a>
-              <a 
-                href="https://www.instagram.com/mariable.fr/" 
-                target="_blank" 
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-wedding-olive hover:underline"
-              >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
-                </svg>
-                @mariable.fr
-              </a>
+                <form onSubmit={handleSubmit} className="space-y-6 bg-[#F8F5EF] border border-editorial-noir/10 p-8">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-editorial-noir">
+                      Vous êtes <span className="text-wedding-olive">*</span>
+                    </label>
+                    <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
+                      <SelectTrigger className="w-full rounded-none bg-white">
+                        <SelectValue placeholder="Sélectionnez votre profil" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {typeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            <div className="flex items-center gap-2">
+                              <option.icon className="w-4 h-4" />
+                              {option.label}
+                            </div>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-editorial-noir">
+                      Email <span className="text-wedding-olive">*</span>
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-editorial-noir/40" />
+                      <Input type="email" value={formData.email}
+                        onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                        placeholder="votre@email.com" className="pl-10 rounded-none bg-white" required />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-editorial-noir">Téléphone</label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-editorial-noir/40" />
+                      <Input type="tel" value={formData.phone}
+                        onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                        placeholder="06 12 34 56 78" className="pl-10 rounded-none bg-white" />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium text-editorial-noir">
+                      Message <span className="text-wedding-olive">*</span>
+                    </label>
+                    <Textarea value={formData.message}
+                      onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                      placeholder="Comment pouvons-nous vous aider ?" rows={5}
+                      className="rounded-none bg-white" required />
+                  </div>
+
+                  <Button type="submit" disabled={isSubmitting}
+                    className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white rounded-none py-6">
+                    {isSubmitting ? 'Envoi en cours...' : (
+                      <><Send className="w-4 h-4 mr-2" /> Envoyer le message</>
+                    )}
+                  </Button>
+                </form>
+
+                <div className="mt-8 text-center text-editorial-noir/70">
+                  <p className="mb-4 text-sm">Ou directement :</p>
+                  <a href="mailto:mathilde@mariable.fr" className="text-wedding-olive hover:underline">
+                    mathilde@mariable.fr
+                  </a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-      </main>
-      
-      <Footer />
-    </div>
+          </section>
+        </main>
+
+        <Footer />
+      </div>
     </>
   );
 };
