@@ -187,63 +187,7 @@ export default function EspaceApercu() {
           </div>
         </div>
 
-        {/* Sous-section : Carnet d'adresses */}
-        <div className="mt-24 md:mt-32 grid lg:grid-cols-2 gap-12 items-center max-w-6xl mx-auto">
-          <div className="order-2 lg:order-1">
-            <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
-              {t('apercu.carnet.eyebrow')}
-            </p>
-            <h3 className="font-serif text-3xl md:text-4xl text-editorial-noir mb-5 leading-tight">
-              {t('apercu.carnet.title')}
-            </h3>
-            <p className="text-editorial-gray text-base leading-relaxed mb-6">
-              {t('apercu.carnet.desc')}
-            </p>
-            <ul className="space-y-3">
-              {carnetItems.map((item) => (
-                <li key={item} className="flex items-start gap-3 text-editorial-noir text-sm">
-                  <Check className="w-4 h-4 text-editorial-olive flex-shrink-0 mt-1" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            {/* Régions — liens compacts 3 colonnes */}
-            <div className="mt-8 pt-6 border-t border-editorial-noir/10">
-              <p className="uppercase tracking-[0.25em] text-[10px] mb-3 text-editorial-olive">
-                {i18n.language?.startsWith('en') ? 'By region' : 'Par région'}
-              </p>
-              <ul className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-1.5">
-                {REGIONS.map(({ path, key }) => (
-                  <li key={path}>
-                    <Link
-                      to={path}
-                      className="text-xs text-editorial-noir/70 hover:text-editorial-olive transition-colors"
-                    >
-                      {tCommon(`footer.links.${key}`)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-          <div className="order-1 lg:order-2">
-            <div className="rounded-lg border border-editorial-noir/15 bg-white shadow-2xl overflow-hidden">
-              <img
-                src={carnetMockup.url}
-                alt={t('apercu.carnet.imageAlt')}
-                loading="lazy"
-                decoding="async"
-                className="w-full h-auto block"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Note multi-device */}
-        <p className="text-center text-xs md:text-sm text-editorial-noir/55 italic mt-16 max-w-2xl mx-auto leading-relaxed">
-          {t('apercu.note')}
-        </p>
+      </div>
       </div>
     </section>
   );
