@@ -54,11 +54,6 @@ const RefonteJuillet: React.FC = () => {
           {/* 5. Le service en détail */}
           <IncludedSection />
 
-          {/* 6. Gratuit / Premium */}
-          <FreemiumSection />
-
-          {/* 7. E-books */}
-          <EditorialEShop />
 
           {/* 8. Témoignages */}
           <TestimonialsEditorial />
