@@ -2,14 +2,19 @@ import { Link } from 'react-router-dom';
 import { Check, Lock, ArrowRight, BookOpen } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 
-export default function FreemiumSection() {
+interface FreemiumSectionProps {
+  hideEshopCard?: boolean;
+  bgClassName?: string;
+}
+
+export default function FreemiumSection({ hideEshopCard = false, bgClassName = 'bg-editorial-cream' }: FreemiumSectionProps = {}) {
   const { t } = useTranslation('homeV2');
   const freeFeatures = t('freemium.free.features', { returnObjects: true }) as string[];
   const freeLimits = t('freemium.free.limits', { returnObjects: true }) as string[];
   const premiumFeatures = t('freemium.premium.features', { returnObjects: true }) as string[];
 
   return (
-    <section className="bg-editorial-cream py-24 md:py-32">
+    <section className={`${bgClassName} py-24 md:py-32`}>
       <div className="container mx-auto px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
