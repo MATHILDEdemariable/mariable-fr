@@ -2,14 +2,19 @@ import { Link } from 'react-router-dom';
 import { Check, Lock, ArrowRight, BookOpen } from 'lucide-react';
 import { useTranslation, Trans } from 'react-i18next';
 
-export default function FreemiumSection() {
+interface FreemiumSectionProps {
+  hideEshopCard?: boolean;
+  bgClassName?: string;
+}
+
+export default function FreemiumSection({ hideEshopCard = false, bgClassName = 'bg-editorial-cream' }: FreemiumSectionProps = {}) {
   const { t } = useTranslation('homeV2');
   const freeFeatures = t('freemium.free.features', { returnObjects: true }) as string[];
   const freeLimits = t('freemium.free.limits', { returnObjects: true }) as string[];
   const premiumFeatures = t('freemium.premium.features', { returnObjects: true }) as string[];
 
   return (
-    <section className="bg-editorial-cream py-24 md:py-32">
+    <section className={`${bgClassName} py-24 md:py-32`}>
       <div className="container mx-auto px-6">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
@@ -108,35 +113,36 @@ export default function FreemiumSection() {
             </div>
           </div>
 
-          {/* Carte e-shop guides à l'unité */}
-          <div className="mt-8 bg-editorial-beige border border-editorial-noir/10 p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
-            <div className="flex items-start gap-4 flex-1">
-              <div className="bg-white border border-editorial-noir/10 p-3 flex-shrink-0">
-                <BookOpen className="w-6 h-6 text-editorial-olive" />
+          {!hideEshopCard && (
+            <div className="mt-8 bg-editorial-beige border border-editorial-noir/10 p-8 md:p-10 flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="bg-white border border-editorial-noir/10 p-3 flex-shrink-0">
+                  <BookOpen className="w-6 h-6 text-editorial-olive" />
+                </div>
+                <div>
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">
+                    {t('freemium.eshop.eyebrow')}
+                  </p>
+                  <h3 className="font-serif text-2xl text-editorial-noir mb-1">
+                    {t('freemium.eshop.title')}
+                  </h3>
+                  <p className="text-sm text-editorial-noir/70">
+                    <Trans i18nKey="freemium.eshop.desc" ns="homeV2" components={{ strong: <strong /> }} />
+                    <span className="block text-xs italic mt-1 text-editorial-noir/55">
+                      {t('freemium.eshop.subnote')}
+                    </span>
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">
-                  {t('freemium.eshop.eyebrow')}
-                </p>
-                <h3 className="font-serif text-2xl text-editorial-noir mb-1">
-                  {t('freemium.eshop.title')}
-                </h3>
-                <p className="text-sm text-editorial-noir/70">
-                  <Trans i18nKey="freemium.eshop.desc" ns="homeV2" components={{ strong: <strong /> }} />
-                  <span className="block text-xs italic mt-1 text-editorial-noir/55">
-                    {t('freemium.eshop.subnote')}
-                  </span>
-                </p>
-              </div>
+              <Link
+                to="/guides"
+                className="inline-flex items-center justify-center gap-2 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 rounded-none font-medium transition-colors whitespace-nowrap"
+              >
+                {t('freemium.eshop.cta')}
+                <ArrowRight className="w-4 h-4" />
+              </Link>
             </div>
-            <Link
-              to="/guides"
-              className="inline-flex items-center justify-center gap-2 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-3 rounded-none font-medium transition-colors whitespace-nowrap"
-            >
-              {t('freemium.eshop.cta')}
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
+          )}
 
           <p className="text-center text-xs text-editorial-noir/50 mt-10 italic">
             {t('freemium.footnote')}

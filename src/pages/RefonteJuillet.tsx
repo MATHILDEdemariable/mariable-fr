@@ -4,12 +4,11 @@ import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import HeroEditorial from '@/components/home/editorial/HeroEditorial';
 import EditorialCarousels from '@/components/home/editorial/EditorialCarousels';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
+import EspaceFusionSection from '@/components/home/editorial/EspaceFusionSection';
+import BlogCarouselEditorial from '@/components/home/editorial/BlogCarouselEditorial';
 import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEditorial';
 import FinalEditorialCTA from '@/components/home/editorial/FinalEditorialCTA';
-import EspaceApercu from '@/components/home/v2/EspaceApercu';
-import IncludedSection from '@/components/home/v2/IncludedSection';
 import FreemiumSection from '@/components/home/v2/FreemiumSection';
-import BlogSection from '@/components/home/BlogSection';
 import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 import V2FAQSection from '@/components/home/v2/FAQSection';
 import Footer from '@/components/Footer';
@@ -35,7 +34,7 @@ const RefonteJuillet: React.FC = () => {
           {/* 1. Hero */}
           <HeroEditorial />
 
-          {/* 2. Coups de cœur */}
+          {/* 2. Coups de cœur — blanc */}
           <section id="selection" className="bg-white">
             <InstagramHighlightsGrid
               context="homepage"
@@ -45,30 +44,32 @@ const RefonteJuillet: React.FC = () => {
             />
           </section>
 
-          {/* 3. Carrousel lieux sélectionnés — fond sauge */}
+          {/* 3. Lieux sélectionnés — vert sauge */}
           <EditorialCarousels />
 
-          {/* 4. Ton espace Mariable */}
-          <EspaceApercu />
+          {/* 4. Ton espace Mariable (fusion aperçu + service en détail + CTA) — blanc */}
+          <EspaceFusionSection />
 
-          {/* 5. Le service en détail */}
-          <IncludedSection />
+          {/* 5. E-books / E-shop — beige clair */}
+          <EditorialEShop />
 
+          {/* 6. Gratuit / Premium — blanc (tous les guides inclus dans Premium) */}
+          <FreemiumSection hideEshopCard bgClassName="bg-white" />
 
-          {/* 8. Témoignages */}
+          {/* 7. Conseils & inspirations — vert sauge (format carrousel) */}
+          <BlogCarouselEditorial />
+
+          {/* 8. Témoignages — blanc */}
           <TestimonialsEditorial />
 
-          {/* 9. Conseils & inspirations */}
-          <BlogSection />
-
-          {/* 10. FAQ */}
+          {/* 9. FAQ — blanc */}
           <V2FAQSection />
 
-          {/* 11. CTA final */}
+          {/* 10. CTA final — vert sauge */}
           <FinalEditorialCTA />
         </main>
 
-        {/* 12. Footer */}
+        {/* 11. Footer */}
         <Footer />
       </div>
     </SelectionLockProvider>
