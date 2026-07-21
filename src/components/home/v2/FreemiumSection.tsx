@@ -68,9 +68,9 @@ export default function FreemiumSection() {
             </div>
 
             {/* Premium */}
-            <div className="bg-editorial-noir text-white p-8 md:p-10 flex flex-col relative">
+            <div className="bg-wedding-olive text-white p-8 md:p-10 flex flex-col relative">
               <div className="absolute -top-3 left-8">
-                <span className="bg-editorial-olive text-white px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
+                <span className="bg-white text-wedding-olive px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
                   {t('freemium.premium.badge')}
                 </span>
               </div>
@@ -100,7 +100,7 @@ export default function FreemiumSection() {
 
               <Link
                 to="/paiement"
-                className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3.5 rounded-none font-medium transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full bg-white hover:bg-white/90 text-wedding-olive px-6 py-3.5 rounded-none font-medium transition-colors"
               >
                 {t('freemium.premium.cta')}
                 <ArrowRight className="w-4 h-4" />
