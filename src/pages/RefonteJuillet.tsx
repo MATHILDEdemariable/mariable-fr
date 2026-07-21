@@ -6,10 +6,11 @@ import EditorialCarousels from '@/components/home/editorial/EditorialCarousels';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
 import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEditorial';
 import FinalEditorialCTA from '@/components/home/editorial/FinalEditorialCTA';
-import PremiumToolsCoordinationSection from '@/components/home/PremiumToolsCoordinationSection';
+import EspaceApercu from '@/components/home/v2/EspaceApercu';
+import IncludedSection from '@/components/home/v2/IncludedSection';
+import FreemiumSection from '@/components/home/v2/FreemiumSection';
 import BlogSection from '@/components/home/BlogSection';
 import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
-import PricingHighlight from '@/components/home/v2/PricingHighlight';
 import V2FAQSection from '@/components/home/v2/FAQSection';
 import Footer from '@/components/Footer';
 import { SelectionLockProvider } from '@/components/home/editorial/SelectionLockModal';
@@ -44,32 +45,35 @@ const RefonteJuillet: React.FC = () => {
             />
           </section>
 
-          {/* 3. Carrousel lieux sélectionnés */}
+          {/* 3. Carrousel lieux sélectionnés — fond sauge */}
           <EditorialCarousels />
 
-          {/* 4. Espace Mariable */}
-          <PremiumToolsCoordinationSection />
+          {/* 4. Ton espace Mariable */}
+          <EspaceApercu />
 
-          {/* 5. Prix */}
-          <PricingHighlight />
+          {/* 5. Le service en détail */}
+          <IncludedSection />
 
-          {/* 6. E-books */}
+          {/* 6. Gratuit / Premium */}
+          <FreemiumSection />
+
+          {/* 7. E-books */}
           <EditorialEShop />
 
-          {/* 7. Témoignages */}
+          {/* 8. Témoignages */}
           <TestimonialsEditorial />
 
-          {/* 8. Conseils & inspirations */}
+          {/* 9. Conseils & inspirations */}
           <BlogSection />
 
-          {/* 9. FAQ */}
+          {/* 10. FAQ */}
           <V2FAQSection />
 
-          {/* 10. CTA final */}
+          {/* 11. CTA final */}
           <FinalEditorialCTA />
         </main>
 
-        {/* 11. Footer */}
+        {/* 12. Footer */}
         <Footer />
       </div>
     </SelectionLockProvider>

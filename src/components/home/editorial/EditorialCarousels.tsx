@@ -80,19 +80,19 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
   return (
     <div className="mb-16 md:mb-20">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between mb-6 border-t border-editorial-noir/15 pt-6">
-          <p className="text-xs tracking-[0.25em] uppercase text-editorial-noir/70">{label}</p>
+        <div className="flex items-center justify-between mb-6 border-t border-white/25 pt-6">
+          <p className="text-xs tracking-[0.25em] uppercase text-white/80">{label}</p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll('left')}
-              className="w-9 h-9 border border-editorial-noir/20 hover:border-editorial-noir hover:bg-editorial-noir hover:text-white text-editorial-noir transition-colors flex items-center justify-center"
+              className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
               aria-label="Précédent"
             >
               <ChevronLeft className="w-4 h-4" strokeWidth={1.25} />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="w-9 h-9 border border-editorial-noir/20 hover:border-editorial-noir hover:bg-editorial-noir hover:text-white text-editorial-noir transition-colors flex items-center justify-center"
+              className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
               aria-label="Suivant"
             >
               <ChevronRight className="w-4 h-4" strokeWidth={1.25} />
@@ -109,8 +109,8 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
         {loading &&
           Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="flex-none w-[260px] md:w-[300px] snap-start">
-              <div className="aspect-[4/5] w-full bg-editorial-noir/5 animate-pulse" />
-              <div className="h-4 w-3/4 bg-editorial-noir/5 mt-3" />
+              <div className="aspect-[4/5] w-full bg-white/10 animate-pulse" />
+              <div className="h-4 w-3/4 bg-white/10 mt-3" />
             </div>
           ))}
 
@@ -121,7 +121,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
               onClick={() => requestAccess()}
               className="flex-none w-[260px] md:w-[300px] snap-start text-left group"
             >
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-editorial-noir/5">
+              <div className="relative aspect-[4/5] w-full overflow-hidden bg-white/10">
                 {item.photo ? (
                   <img
                     src={item.photo}
@@ -130,7 +130,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                 ) : (
-                  <div className="w-full h-full flex items-center justify-center text-editorial-noir/30 text-xs uppercase tracking-widest">
+                  <div className="w-full h-full flex items-center justify-center text-white/50 text-xs uppercase tracking-widest">
                     Sans image
                   </div>
                 )}
@@ -139,14 +139,14 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                 </span>
               </div>
               <div className="mt-3">
-                <p className="text-[10px] tracking-[0.2em] uppercase text-editorial-noir/50">
+                <p className="text-[10px] tracking-[0.2em] uppercase text-white/60">
                   {item.categorie ?? '—'}
                   {item.ville ? ` · ${item.ville}` : ''}
                 </p>
-                <p className="font-serif text-lg text-editorial-noir mt-1 leading-snug group-hover:italic transition-all">
+                <p className="font-serif text-lg text-white mt-1 leading-snug group-hover:italic transition-all">
                   {item.nom}
                 </p>
-                <span className="inline-block mt-2 text-xs uppercase tracking-widest text-editorial-noir/70 underline underline-offset-4 group-hover:text-editorial-noir">
+                <span className="inline-block mt-2 text-xs uppercase tracking-widest text-white/85 underline underline-offset-4 group-hover:text-white">
                   Découvrir
                 </span>
               </div>
@@ -157,7 +157,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
       <div className="container mx-auto px-4 md:px-8 mt-6 text-right">
         <button
           onClick={() => requestAccess('/professionnelsmariable')}
-          className="text-xs tracking-[0.2em] uppercase text-editorial-noir hover:opacity-70 underline underline-offset-4"
+          className="text-xs tracking-[0.2em] uppercase text-white hover:opacity-80 underline underline-offset-4"
         >
           Voir toute la Sélection →
         </button>
@@ -170,7 +170,7 @@ const EditorialCarousels: React.FC = () => {
   const region = useQuery({ queryKey: ['editorial-vendors', 'region'], queryFn: () => fetchVendors('region'), staleTime: 5 * 60 * 1000 });
 
   return (
-    <section className="bg-editorial-beige pt-4 pb-8">
+    <section className="bg-wedding-olive pt-16 pb-8">
       <Carousel label="Lieux de réception sélectionnés" items={region.data ?? []} loading={region.isLoading} />
     </section>
   );
