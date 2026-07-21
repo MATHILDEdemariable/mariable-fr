@@ -24,12 +24,11 @@ const HeroEditorial: React.FC = () => {
           Mariable
         </p>
         <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
-          Les plus beaux lieux &amp; pros, <em className="italic font-serif">sélectionnés</em>
-          <br className="hidden md:block" /> — et l'appli qui vous accompagne jusqu'au Jour J.
+          Célébrer l'amour
         </h1>
-        <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed">
-          Le média & la boîte à outils pour organiser sereinement votre mariage.<br className="hidden md:block" />
-          Une sélection éditoriale premium, sans sponsoring — et tout ce qu'il faut pour tout gérer vous-même.
+        <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed whitespace-pre-line">
+          grâce aux plus beaux lieux & prestataires&nbsp;
+          {"\n"}- et l'appli qui vous accompagne jusqu'au jour-J
         </p>
         <a
           href="#selection"
