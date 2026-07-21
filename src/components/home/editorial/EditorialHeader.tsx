@@ -74,7 +74,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
             </a>
             <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
             <div className="hidden sm:block">
-              <LanguageToggle />
+              <LanguageToggle variant={isOverlay ? 'light' : 'dark'} />
             </div>
             <button
               onClick={() => setOpen(true)}
