@@ -70,7 +70,7 @@ export default function FreemiumSection() {
             {/* Premium */}
             <div className="bg-wedding-olive text-white p-8 md:p-10 flex flex-col relative">
               <div className="absolute -top-3 left-8">
-                <span className="bg-editorial-olive text-white px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
+                <span className="bg-white text-wedding-olive px-3 py-1 text-[10px] uppercase tracking-[0.2em] font-medium">
                   {t('freemium.premium.badge')}
                 </span>
               </div>
