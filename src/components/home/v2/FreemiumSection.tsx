@@ -100,7 +100,7 @@ export default function FreemiumSection() {
 
               <Link
                 to="/paiement"
-                className="inline-flex items-center justify-center gap-2 w-full bg-editorial-olive hover:bg-editorial-olive/90 text-white px-6 py-3.5 rounded-none font-medium transition-colors"
+                className="inline-flex items-center justify-center gap-2 w-full bg-white hover:bg-white/90 text-wedding-olive px-6 py-3.5 rounded-none font-medium transition-colors"
               >
                 {t('freemium.premium.cta')}
                 <ArrowRight className="w-4 h-4" />
