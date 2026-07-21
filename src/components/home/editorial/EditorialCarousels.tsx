@@ -80,19 +80,19 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
   return (
     <div className="mb-16 md:mb-20">
       <div className="container mx-auto px-4 md:px-8">
-        <div className="flex items-center justify-between mb-6 border-t border-editorial-noir/15 pt-6">
-          <p className="text-xs tracking-[0.25em] uppercase text-editorial-noir/70">{label}</p>
+        <div className="flex items-center justify-between mb-6 border-t border-white/25 pt-6">
+          <p className="text-xs tracking-[0.25em] uppercase text-white/80">{label}</p>
           <div className="flex items-center gap-2">
             <button
               onClick={() => scroll('left')}
-              className="w-9 h-9 border border-editorial-noir/20 hover:border-editorial-noir hover:bg-editorial-noir hover:text-white text-editorial-noir transition-colors flex items-center justify-center"
+              className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
               aria-label="Précédent"
             >
               <ChevronLeft className="w-4 h-4" strokeWidth={1.25} />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="w-9 h-9 border border-editorial-noir/20 hover:border-editorial-noir hover:bg-editorial-noir hover:text-white text-editorial-noir transition-colors flex items-center justify-center"
+              className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
               aria-label="Suivant"
             >
               <ChevronRight className="w-4 h-4" strokeWidth={1.25} />
