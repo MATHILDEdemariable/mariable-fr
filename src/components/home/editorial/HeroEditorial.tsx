@@ -27,8 +27,8 @@ const HeroEditorial: React.FC = () => {
           Célébrer l'amour
         </h1>
         <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed whitespace-pre-line">
-          grâce aux plus beaux lieux & prestataires&nbsp;
-          {"\n"}- et l'appli qui vous accompagne jusqu'au jour-J
+          Les plus beaux lieux et prestataires
+          {"\n"}&nbsp;& l'appli qui vous accompagne jusqu'au jour-J
         </p>
         <a
           href="#selection"
