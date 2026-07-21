@@ -44,7 +44,7 @@ export default function IncludedSection() {
         </div>
 
         {/* Bonus */}
-        <div className="mt-px bg-editorial-olive/10 p-8 md:p-12 border-l-4 border-editorial-olive">
+        <div className="mt-px bg-editorial-beige p-8 md:p-12 border-l-4 border-editorial-olive">
           <span className="text-[10px] uppercase tracking-widest text-editorial-olive block mb-3">
             {t('included.bonus.label')}
           </span>
