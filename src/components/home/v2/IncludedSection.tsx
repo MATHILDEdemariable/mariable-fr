@@ -44,14 +44,14 @@ export default function IncludedSection() {
         </div>
 
         {/* Bonus */}
-        <div className="mt-px bg-editorial-beige p-8 md:p-12 border-l-4 border-editorial-olive">
-          <span className="text-[10px] uppercase tracking-widest text-editorial-olive block mb-3">
+        <div className="mt-px bg-wedding-olive p-8 md:p-12 border-l-4 border-white/40">
+          <span className="text-[10px] uppercase tracking-widest text-white/80 block mb-3">
             {t('included.bonus.label')}
           </span>
-          <h3 className="font-serif text-2xl md:text-3xl text-editorial-noir mb-3">
+          <h3 className="font-serif text-2xl md:text-3xl text-white mb-3">
             {t('included.bonus.title')}
           </h3>
-          <p className="text-editorial-noir/75 max-w-2xl">
+          <p className="text-white/85 max-w-2xl">
             {t('included.bonus.desc')}
           </p>
         </div>
