@@ -22,11 +22,11 @@ const InstagramHighlightsGrid = ({
   if (isLoading || highlights.length === 0) return null;
 
   return (
-    <section className="py-16 px-4 bg-editorial-beige/30 overflow-hidden">
+    <section className="py-16 md:py-24 px-4 bg-[#F8F5EF] overflow-hidden">
       <div className="container mx-auto max-w-7xl">
-        <div className="text-center mb-10">
-          <p className="text-xs uppercase tracking-[0.3em] text-premium-sage mb-3">{eyebrow}</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-editorial-noir">{title}</h2>
+        <div className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
+          <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">{eyebrow}</p>
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight">{title}</h2>
           <p className="mt-3 text-sm text-editorial-noir/60 italic">
             Cliquez sur une image pour découvrir le post Instagram
           </p>
