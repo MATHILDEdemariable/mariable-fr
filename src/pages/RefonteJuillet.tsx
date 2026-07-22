@@ -53,11 +53,11 @@ const RefonteJuillet: React.FC = () => {
           {/* 4. Ton espace Mariable (fusion aperçu + service en détail + CTA) — blanc */}
           <EspaceFusionSection />
 
-          {/* 5. E-books / E-shop — beige clair */}
-          <EditorialEShop />
-
-          {/* 6. Comment ça marche — Gratuit / Premium — blanc */}
+          {/* 5. Comment ça marche — Gratuit / Premium — blanc */}
           <PricingEditorial />
+
+          {/* 6. E-books / E-shop — beige clair */}
+          <EditorialEShop />
 
           {/* 7. Conseils & inspirations — vert sauge (carrousel) */}
           <BlogCarouselEditorial />
