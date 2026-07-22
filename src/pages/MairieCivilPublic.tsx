@@ -170,19 +170,29 @@ const MairieCivilPublic: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-white" style={{ paddingTop: 'var(--header-h-standard)' }}>
+      <main className="min-h-screen bg-editorial-beige" style={{ paddingTop: 'var(--header-h-standard)' }}>
         <div className="container max-w-4xl mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 rounded-full bg-primary">
+              <div className="p-3 rounded-full bg-wedding-olive">
                 <Building2 className="h-6 w-6 text-white" />
               </div>
             </div>
-            <h1 className="text-3xl md:text-4xl font-serif text-foreground mb-4">Guide du Mariage Civil</h1>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <h1 className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4">Guide du Mariage Civil</h1>
+            <p className="text-editorial-noir/70 max-w-2xl mx-auto">
               Tout ce que vous devez savoir pour préparer votre mariage à la mairie
             </p>
+
+            {/* CTAs */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
+              <a href="/register-gratuit" className="inline-flex items-center justify-center px-6 py-3 bg-wedding-olive text-white uppercase tracking-wide text-sm font-medium hover:bg-wedding-olive/90 transition-colors">
+                Créer un compte Mariable
+              </a>
+              <a href="/" className="inline-flex items-center justify-center px-6 py-3 border border-editorial-noir text-editorial-noir uppercase tracking-wide text-sm font-medium hover:bg-editorial-noir hover:text-white transition-colors">
+                Explorer la sélection de lieux & professionnels
+              </a>
+            </div>
           </div>
 
           <div className="space-y-8">

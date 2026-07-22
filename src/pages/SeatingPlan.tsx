@@ -260,12 +260,16 @@ const SeatingPlan = () => {
       </Helmet>
 
       <div className="container mx-auto py-8 px-4">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
           <div>
             <h1 className="text-3xl font-serif text-foreground">{t('page.title')}</h1>
-            <p className="text-muted-foreground mt-1">
-              {t('page.subtitle')} <Badge variant="secondary" className="ml-2">BETA</Badge>
-            </p>
+            <p className="text-muted-foreground mt-1">{t('page.subtitle')}</p>
+          </div>
+          <div className="hidden md:flex items-center gap-2">
+            <Button onClick={() => setShowTutorial(true)} variant="outline">
+              <Play className="h-4 w-4 mr-2" />{t('actions.tutorial')}
+            </Button>
+            <ExportPDFButton plan={plan} tables={tables} guests={guests} />
           </div>
         </div>
 
@@ -287,9 +291,11 @@ const SeatingPlan = () => {
                 {/* Colonne 1: Outils et Stats (20%) */}
                 <div className="col-span-12 lg:col-span-3 space-y-4">
                   <div className="space-y-2">
-                    <Button onClick={handleAddTable} className="w-full">
-                      <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
-                    </Button>
+                    <div className="flex justify-center">
+                      <Button onClick={handleAddTable} className="w-full max-w-xs">
+                        <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
+                      </Button>
+                    </div>
                     <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
                       <Users className="h-4 w-4 mr-2" />{t('actions.importRsvp')}
                     </Button>
@@ -299,10 +305,12 @@ const SeatingPlan = () => {
                     <Button onClick={() => executeAction(() => setShowImportExcel(true))} variant="outline" className="w-full">
                       <FileSpreadsheet className="h-4 w-4 mr-2" />{t('actions.importCsv')}
                     </Button>
-                    <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
-                      <Play className="h-4 w-4 mr-2" />{t('actions.tutorial')}
-                    </Button>
-                    <ExportPDFButton plan={plan} tables={tables} guests={guests} />
+                    <div className="md:hidden space-y-2">
+                      <Button onClick={() => setShowTutorial(true)} variant="outline" className="w-full">
+                        <Play className="h-4 w-4 mr-2" />{t('actions.tutorial')}
+                      </Button>
+                      <ExportPDFButton plan={plan} tables={tables} guests={guests} />
+                    </div>
                   </div>
 
                   <SeatingPlanStats 
