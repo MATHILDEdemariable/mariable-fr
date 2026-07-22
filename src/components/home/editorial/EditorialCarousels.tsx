@@ -171,7 +171,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
 
 const EditorialCarousels: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
-  const region = useQuery({ queryKey: ['editorial-vendors', 'region'], queryFn: () => fetchVendors('region'), staleTime: 5 * 60 * 1000 });
+  const region = useQuery({ queryKey: ['editorial-vendors', 'mixed'], queryFn: fetchMixedSelection, staleTime: 5 * 60 * 1000 });
 
   return (
     <section className="bg-wedding-olive pt-16 pb-8">
