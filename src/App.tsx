@@ -182,7 +182,9 @@ function App() {
                   <PaymentSuccessHandler />
                   <Suspense fallback={<PageLoader />}>
                   <Routes>
-                  <Route path="/" element={<VersionJuin26 />} />
+                 <Route path="/" element={<RefonteJuillet />} />
+                 <Route path="/refontejuillet" element={<Navigate to="/" replace />} />
+                 <Route path="/versionjuin26" element={<VersionJuin26 />} />
                   <Route path="/accueil" element={<LandingCouple />} />
                   <Route path="/refontejuillet" element={<RefonteJuillet />} />
                   <Route path="/versionjuin26" element={<Navigate to="/" replace />} />

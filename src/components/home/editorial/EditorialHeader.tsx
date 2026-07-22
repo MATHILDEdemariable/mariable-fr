@@ -58,7 +58,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
       >
         <div className="container mx-auto px-4 md:px-8 flex items-center justify-between h-16">
           <Link
-            to="/refontejuillet"
+            to="/"
             className="flex items-center"
             aria-label="Mariable"
           >
