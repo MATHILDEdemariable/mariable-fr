@@ -34,7 +34,7 @@
   "espace": {
     "eyebrow": "APPLICATION D'ORGANISATION MARIAGE BOOSTEE A L'IA",
     "title": "Votre mariage, votre organisation.",
-    "subtitle": "grâce à l'appli accessible depuis téléphone, tablette ou ordinateur.\nSans téléchargement, sans engagement.",
+    "subtitle": "grâce à l'appli accessible depuis téléphone, tablette ou ordinateur.\nSans téléchargement",
     "features": {
       "planning": { "title": "Rétroplanning intelligent", "desc": "Une timeline selon ta date et ton style." },
       "budget": { "title": "Budget réel", "desc": "Tes dépenses suivies, prestataire par prestataire." },
