@@ -25,16 +25,14 @@ const CAROUSEL_CATEGORIES: { key: string; label: string; category?: string; regi
 async function fetchVendors(filter: 'region' | 'envie' | 'categorie'): Promise<VendorCard[]> {
   let query = supabase
     .from('prestataires_rows')
-    .select('id, nom, ville, regions, categorie, slug, description, prestataires_photos_preprod(url, principale, is_cover, ordre)')
+    .select('id, nom, ville, regions, categorie, slug, description, partner, featured, prestataires_photos_preprod(url, principale, is_cover, ordre)')
     .eq('visible', true)
     .neq('categorie', 'Coordination')
     .limit(12);
 
   if (filter === 'region') {
-    // rien de spécial, on prend un mix de régions phares
     query = query.eq('categorie', 'Lieu de réception');
   } else if (filter === 'envie') {
-    // Prestataires featured pour proxy d'univers "envie"
     query = query.eq('featured', true);
   } else if (filter === 'categorie') {
     query = query.in('categorie', ['Photographe', 'Traiteur', 'DJ']);
@@ -46,7 +44,7 @@ async function fetchVendors(filter: 'region' | 'envie' | 'categorie'): Promise<V
     return [];
   }
 
-  return (data ?? []).map((row: any) => {
+  const mapped = (data ?? []).map((row: any) => {
     const photos = row.prestataires_photos_preprod ?? [];
     const cover =
       photos.find((p: any) => p.is_cover)?.url ||
@@ -61,8 +59,11 @@ async function fetchVendors(filter: 'region' | 'envie' | 'categorie'): Promise<V
       slug: row.slug,
       description: row.description,
       photo: cover,
+      _priority: row.partner ? 2 : row.featured ? 1 : 0,
     };
   });
+
+  return mapped.sort((a: any, b: any) => b._priority - a._priority);
 }
 
 const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean }> = ({
