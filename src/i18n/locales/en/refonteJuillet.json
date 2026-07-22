@@ -1,0 +1,122 @@
+{
+  "header": {
+    "menu": {
+      "selection": "OUR SELECTION",
+      "app": "THE APP",
+      "ebooks": "EBOOKS",
+      "pros": "FOR PROFESSIONALS",
+      "contact": "CONTACT"
+    },
+    "instagram": "Instagram",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "login": "Sign in",
+    "prosFooter": "For professionals"
+  },
+  "hero": {
+    "eyebrow": "Mariable",
+    "title": "Celebrate love",
+    "subtitle": "The most beautiful venues and vendors\n & the app that guides you to the big day",
+    "cta": "Discover Mariable"
+  },
+  "selection": {
+    "eyebrow": "Favorites",
+    "title": "Mariable Instagram picks"
+  },
+  "carousels": {
+    "label": "Curated wedding venues",
+    "viewAll": "See the full selection →",
+    "prev": "Previous",
+    "next": "Next",
+    "discover": "Discover",
+    "membersBadge": "Members"
+  },
+  "espace": {
+    "eyebrow": "Your Mariable space",
+    "title": "Your whole wedding, in one place.",
+    "subtitle": "A complete web platform, available on phone, tablet or desktop. No download, no commitment.",
+    "features": {
+      "planning": { "title": "Smart planning", "desc": "A timeline tailored to your date and style." },
+      "budget": { "title": "Real budget", "desc": "Track spending, vendor by vendor." },
+      "guests": { "title": "Guests & RSVPs", "desc": "200 guests, no spreadsheet. Allergies, lodging." },
+      "seating": { "title": "Interactive seating plan", "desc": "Drag & drop, print in one click." },
+      "jourJ": { "title": "Wedding day coordination", "desc": "The schedule, shared with your team." },
+      "drinks": { "title": "Drinks calculator", "desc": "The right quantities, zero waste." }
+    },
+    "bonus": {
+      "label": "Included",
+      "text": "The Mariable address book — outstanding venues and vetted pros."
+    },
+    "ctaPrimary": "Create a free account",
+    "ctaSecondary": "I already have an account"
+  },
+  "pricing": {
+    "eyebrow": "How it works",
+    "title": "Free to start. Premium to go further.",
+    "free": {
+      "name": "Mariable Free",
+      "price": "€0",
+      "period": "forever",
+      "tagline": "Get started, no commitment.",
+      "features": [
+        "All planning tools online",
+        "Recommended vendors + blog access"
+      ],
+      "limits": "Limits: AI generation, storage & PDF exports capped",
+      "cta": "Create a free account"
+    },
+    "premium": {
+      "badge": "Recommended",
+      "name": "Mariable Premium",
+      "price": "€29",
+      "priceStrike": "€59",
+      "period": "for life",
+      "tagline": "One payment. No subscription. Updates included.",
+      "features": [
+        "Everything, unlimited: AI, storage & exports",
+        "Entire library of guides & ebooks included",
+        "Priority support"
+      ],
+      "cta": "Go Premium — €29"
+    },
+    "benchmark": "vs a wedding planner from €2,000 — ≈ 70× cheaper."
+  },
+  "eshop": {
+    "eyebrow": "E-shop",
+    "title": "Not ready to create an account? Start with a guide.",
+    "note": "Already included in Premium.",
+    "viewAll": "See all guides →",
+    "discover": "Discover →",
+    "priceLabel": "Ebook",
+    "items": {
+      "guide-jour-j": {
+        "title": "Ultimate Wedding-Day Guide",
+        "desc": "Orchestrate everything from M-1 to the big day."
+      },
+      "guide-debutants-mariage": {
+        "title": "Ultimate Beginner's Guide",
+        "desc": "Plan your wedding from scratch."
+      },
+      "guide-discours-mariage": {
+        "title": "Wedding Speech Do's & Don'ts",
+        "desc": "Structure and examples for a great speech."
+      }
+    }
+  },
+  "blog": {
+    "eyebrow": "Tips & inspiration",
+    "title": "The Mariable magazine",
+    "discover": "Read more →"
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "title": "They celebrated their story",
+    "titleEm": "with Mariable."
+  },
+  "finalCta": {
+    "title": "Your love story deserves",
+    "titleEm": "to be beautifully celebrated.",
+    "subtitle": "Join the thousands of couples who trust Mariable.",
+    "cta": "Create a free account"
+  }
+}
