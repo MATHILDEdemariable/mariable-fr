@@ -31,7 +31,7 @@ const EditorialEShop: React.FC = () => {
           {items.map((item) => (
             <Link
               key={item.slug}
-              to={`/guides/${item.slug}`}
+              to="/guides"
               className="group border-t-2 border-editorial-noir pt-6 flex flex-col hover:opacity-80 transition-opacity"
             >
               <p className="text-[11px] tracking-[0.25em] uppercase text-editorial-noir/60 mb-3">

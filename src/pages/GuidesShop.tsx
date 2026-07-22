@@ -312,19 +312,19 @@ export default function GuidesShop() {
           {/* 3. Bloc conversion Premium */}
           <section className="pb-20">
             <div className="container mx-auto px-6">
-              <div className="max-w-3xl mx-auto text-center bg-editorial-noir text-white p-10 md:p-12">
-                <p className="uppercase tracking-[0.3em] text-xs text-editorial-olive-light mb-4">
+              <div className="max-w-3xl mx-auto text-center bg-wedding-olive text-white p-10 md:p-14 border border-white/10">
+                <p className="uppercase tracking-[0.3em] text-xs text-white/70 mb-4">
                   PLUS RENTABLE&nbsp;
                 </p>
                 <h2 className="font-serif text-3xl md:text-4xl mb-6">
                   Tout débloquer pour <span className="italic">29€</span>
                 </h2>
-                <p className="text-editorial-cream/80 text-sm md:text-base mb-8 max-w-xl mx-auto">
+                <p className="text-white/85 text-sm md:text-base mb-8 max-w-xl mx-auto leading-relaxed">
                   Avec Mariable Premium, vous accédez à <strong>toute la bibliothèque</strong> + tous les outils sans limite + exports PDF illimités. Un seul paiement, à vie.
                 </p>
                 <Link
                   to="/paiement"
-                  className="inline-flex items-center justify-center gap-2 bg-editorial-olive hover:bg-editorial-olive/90 text-white px-8 py-4 font-medium transition-colors"
+                  className="inline-flex items-center justify-center gap-2 bg-white text-wedding-olive hover:bg-white/90 px-8 py-4 text-xs uppercase tracking-widest font-medium transition-colors"
                 >
                   Passer Premium — 29€
                   <ArrowRight className="w-4 h-4" />

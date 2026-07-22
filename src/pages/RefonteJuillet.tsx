@@ -31,14 +31,14 @@ const RefonteJuillet: React.FC = () => {
         keywords="organisation mariage, wedding planner digital, sélection lieux mariage, prestataires mariage premium, ebooks mariage, application mariage"
       />
 
-      <div className="min-h-screen bg-white text-editorial-noir">
+      <div className="min-h-screen bg-[#F8F5EF] text-editorial-noir">
         <EditorialHeader transparent />
         <main>
           {/* 1. Hero */}
           <HeroEditorial />
 
-          {/* 2. Coups de cœur — blanc */}
-          <section id="selection" className="bg-white">
+          {/* 2. Coups de cœur — beige clair */}
+          <section id="selection" className="bg-[#F8F5EF]">
             <InstagramHighlightsGrid
               context="homepage"
               eyebrow={t('selection.eyebrow')}

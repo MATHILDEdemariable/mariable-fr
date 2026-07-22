@@ -9,10 +9,10 @@ const PricingEditorial: React.FC = () => {
   const premiumFeatures = t('pricing.premium.features', { returnObjects: true }) as string[];
 
   return (
-    <section className="bg-white py-16 md:py-24">
+    <section className="bg-[#F8F5EF] py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
         <header className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          <p className="text-xs tracking-[0.3em] uppercase text-wedding-olive mb-4">
+          <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">
             {t('pricing.eyebrow')}
           </p>
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight">
