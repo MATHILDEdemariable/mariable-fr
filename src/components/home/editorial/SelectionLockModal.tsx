@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface LockContextType {
@@ -29,7 +28,7 @@ export const SelectionLockProvider: React.FC<{ children: React.ReactNode }> = ({
     <LockContext.Provider value={{ requestAccess }}>
       {children}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="rounded-none border border-editorial-noir/20 bg-editorial-beige max-w-md">
+        <DialogContent className="rounded-none border border-editorial-noir/20 bg-[#F8F5EF] max-w-md">
           <DialogHeader>
             <p className="text-xs tracking-[0.2em] uppercase text-editorial-noir/60 mb-2">La Sélection</p>
             <DialogTitle className="font-serif text-2xl text-editorial-noir">
@@ -46,15 +45,13 @@ export const SelectionLockProvider: React.FC<{ children: React.ReactNode }> = ({
             >
               Continuer à explorer
             </button>
-            <Button
-              onClick={() => {
-                setOpen(false);
-                navigate('/register-gratuit');
-              }}
-              className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            <Link
+              to="/register-gratuit"
+              onClick={() => setOpen(false)}
+              className="inline-flex items-center justify-center gap-2 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 text-xs uppercase tracking-widest rounded-none transition-colors"
             >
               Créer mon compte gratuit
-            </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>

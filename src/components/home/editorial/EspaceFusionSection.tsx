@@ -85,7 +85,7 @@ export default function EspaceFusionSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             to="/register-gratuit"
-            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-4 rounded-none font-medium transition-colors uppercase tracking-widest text-xs"
+            className="inline-flex items-center justify-center gap-2 w-full sm:w-auto bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 rounded-none transition-colors uppercase tracking-widest text-xs"
           >
             {t('espace.ctaPrimary')}
             <ArrowRight className="w-4 h-4" />

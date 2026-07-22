@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Instagram } from 'lucide-react';
+import { X, Instagram, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
@@ -74,6 +74,15 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
             >
               {t('header.instagram')}
             </a>
+            <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
+            <Link
+              to="/login"
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
+              aria-label={t('header.login')}
+            >
+              <User className="w-4 h-4" strokeWidth={1.25} />
+              <span>{t('header.login')}</span>
+            </Link>
             <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
             <div className="hidden sm:block">
               <LanguageToggle variant={isOverlay ? 'light' : 'dark'} />
