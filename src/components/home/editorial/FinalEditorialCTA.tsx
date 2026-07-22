@@ -17,9 +17,9 @@ const FinalEditorialCTA: React.FC = () => {
           </p>
           <Link
             to="/register-gratuit"
-            className="mt-10 inline-flex items-center gap-3 bg-white text-editorial-noir px-10 py-5 hover:bg-white/90 transition-colors"
+            className="mt-10 inline-flex items-center justify-center gap-3 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-10 py-5 uppercase tracking-widest text-xs rounded-none transition-colors"
           >
-            <span className="font-sans">{t('finalCta.cta')}</span>
+            <span>{t('finalCta.cta')}</span>
             <ArrowRight className="w-4 h-4" />
           </Link>
         </div>

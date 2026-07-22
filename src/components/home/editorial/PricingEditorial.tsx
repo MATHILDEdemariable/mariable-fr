@@ -80,7 +80,7 @@ const PricingEditorial: React.FC = () => {
             </ul>
 
             <Link
-              to="/register?premium=1"
+              to="/paiement"
               className="w-full inline-flex items-center justify-center gap-2 bg-white text-wedding-olive hover:bg-white/90 px-6 py-4 text-xs uppercase tracking-widest font-medium transition-colors"
             >
               {t('pricing.premium.cta')}
