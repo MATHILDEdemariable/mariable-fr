@@ -32,9 +32,9 @@
     "membersBadge": "Membres"
   },
   "espace": {
-    "eyebrow": "VOTRE ESPACE MARIABLE",
-    "title": "Votre mariage, votre organisation. ",
-    "subtitle": "Accessible depuis téléphone, tablette ou ordinateur.\nSans téléchargement, sans engagement.",
+    "eyebrow": "APPLICATION D'ORGANISATION MARIAGE BOOSTEE A L'IA",
+    "title": "Votre mariage, votre espace d'organisation.",
+    "subtitle": "Appli accessible depuis téléphone, tablette ou ordinateur.\nSans téléchargement, sans engagement.",
     "features": {
       "planning": { "title": "Rétroplanning intelligent", "desc": "Une timeline selon ta date et ton style." },
       "budget": { "title": "Budget réel", "desc": "Tes dépenses suivies, prestataire par prestataire." },
