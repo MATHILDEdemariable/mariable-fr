@@ -76,8 +76,6 @@ const Agence = lazy(() => import("./pages/Agence"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
 const Approche = lazy(() => import("./pages/about/Approche"));
-const Histoire = lazy(() => import("./pages/about/Histoire"));
-const Charte = lazy(() => import("./pages/about/Charte"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
 const FAQ = lazy(() => import("./pages/contact/FAQ"));
@@ -302,8 +300,6 @@ function App() {
 
                     {/* À propos routes - Fixed */}
                    <Route path="/about/approche" element={<Approche />} />
-                   <Route path="/about/histoire" element={<Histoire />} />
-                   <Route path="/about/charte" element={<Charte />} />
                    <Route path="/about/temoignages" element={<Temoignages />} />
                    <Route path="/comparatif" element={<Comparatif />} />
 

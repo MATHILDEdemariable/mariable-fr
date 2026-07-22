@@ -35,8 +35,8 @@ const Footer = () => {
               <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.findVendor')}</Link></li>
               <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.selection')}</Link></li>
               <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.coordination')}</Link></li>
-              <li><Link to="/guide-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideJourJ')}</Link></li>
-              <li><Link to="/guide-debutant" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideBeginner')}</Link></li>
+              <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideJourJ')}</Link></li>
+              <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideBeginner')}</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.budget')}</Link></li>
             </ul>
           </div>
@@ -79,8 +79,6 @@ const Footer = () => {
           <div>
             <h3 className="font-serif text-base mb-3">{t('footer.section.about')}</h3>
             <ul className="space-y-1 text-sm">
-              <li><Link to="/about/histoire" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.history')}</Link></li>
-              <li><Link to="/about/charte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.charter')}</Link></li>
               <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.contact')}</Link></li>
               <li><Link to="/contact/faq" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.faq')}</Link></li>
               <li><Link to="/comparatif" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.compare')}</Link></li>
