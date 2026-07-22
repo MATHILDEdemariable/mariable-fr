@@ -13,13 +13,13 @@ export default function FAQSection() {
   const faqs = t('faq.items', { returnObjects: true }) as FaqItem[];
 
   return (
-    <section className="bg-white py-24 md:py-32">
+    <section className="bg-[#F8F5EF] py-24 md:py-32">
       <div className="container mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <p className="uppercase tracking-[0.3em] text-xs mb-6 text-editorial-olive">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">
             {t('faq.eyebrow')}
           </p>
-          <h2 className="font-serif text-4xl md:text-5xl text-editorial-noir">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight">
             {t('faq.title')}
           </h2>
         </div>

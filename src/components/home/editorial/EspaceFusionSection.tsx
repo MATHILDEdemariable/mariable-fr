@@ -27,16 +27,16 @@ export default function EspaceFusionSection() {
   ] as const;
 
   return (
-    <section id="ton-espace-mariable" className="bg-white py-16 md:py-24">
+    <section id="ton-espace-mariable" className="bg-[#F8F5EF] py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
         <header className="text-center max-w-3xl mx-auto mb-10 md:mb-14">
-          <p className="text-xs tracking-[0.3em] uppercase text-wedding-olive mb-4">
+          <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">
             {t('espace.eyebrow')}
           </p>
-          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight mb-5">
+          <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight mb-4">
             {t('espace.title')}
           </h2>
-          <p className="text-editorial-noir/70 text-base md:text-lg leading-relaxed whitespace-pre-line">
+          <p className="text-editorial-noir/60 text-base md:text-lg leading-relaxed italic whitespace-pre-line">
             {t('espace.subtitle')}
           </p>
         </header>
