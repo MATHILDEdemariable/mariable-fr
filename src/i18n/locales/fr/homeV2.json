@@ -187,7 +187,7 @@
       { "q": "Et si je ne suis pas satisfait·e&nbsp;?", "a": "Remboursement sans condition pendant 14 jours. On veut que tu sois serein·e, pas coincé·e." },
       { "q": "Mon/ma partenaire peut aussi y accéder&nbsp;?", "a": "Bien sûr. Vous partagez le même espace, vous éditez à deux, en temps réel." },
       { "q": "Je peux partager avec mes témoins ou ma famille&nbsp;?", "a": "Oui. Le planning Jour J et certaines vues sont partageables via un simple lien." },
-      { "q": "Il faut télécharger une app&nbsp;?", "a": "Non. Mariable fonctionne directement dans ton navigateur — ordinateur, tablette ou mobile. Aucun téléchargement." }
+      { "q": "Il faut télécharger une app&nbsp;?", "a": "Non. Mariable fonctionne directement dans ton navigateur — ordinateur, tablette ou mobile. Aucun téléchargement via Apple ou Google Store mais un tuto pour afficher l'appli en raccourci sur votre écran de téléphone est disponible sur votre espace!" }
     ]
   },
   "finalCta": {
