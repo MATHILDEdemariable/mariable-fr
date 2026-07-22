@@ -1,60 +1,35 @@
-# Plan
+## Modifications sur `/refontejuillet`
 
-## 1. `/refontejuillet` — cohérence typo & fond beige clair
+### 1. Bouton "Connexion / Créer compte" dans le header (hors menu déroulant)
+Dans `src/components/home/editorial/EditorialHeader.tsx`, ajouter — à côté du `LanguageToggle` et avant le bouton burger — un lien visible en desktop (et mobile si l'espace le permet) :
+- `Se connecter` → `/login` (icône user + label court en tracking-widest uppercase)
+- Style adaptatif : blanc quand header transparent, noir sinon (comme le LanguageToggle actuel).
 
-Référence visuelle (image 1) = section "La sélection exclusive Mariable" :
-- **Eyebrow** : `text-xs tracking-[0.3em] uppercase text-editorial-noir/60` mb-3
-- **Titre H2** : `font-serif text-4xl md:text-5xl text-editorial-noir leading-tight`
-- **Sous-titre** : `italic text-editorial-noir/60` (optionnel)
-- Header bloc centré, `max-w-3xl mx-auto text-center mb-10 md:mb-14`
+### 2. Priorité VIP dans le carrousel des lieux
+La table `prestataires_rows` n'a pas de champ `vip`, mais a `partner` (booléen) et `featured`. Dans `src/components/home/editorial/EditorialCarousels.tsx > fetchVendors('region')` :
+- Ajouter `partner` au SELECT.
+- Trier côté client : `partner=true` d'abord, puis `featured=true`, puis le reste.
+- Garder la limite à 12.
 
-Appliquer ce header type à toutes les sections de la page pour uniformiser :
-- `EspaceFusionSection` (eyebrow + titre + sous-titre)
-- `PricingEditorial` (eyebrow + titre)
-- `EditorialEShop` (déjà conforme, garder)
-- `BlogCarouselEditorial` (eyebrow + titre)
-- `TestimonialsEditorial` (eyebrow + titre)
-- `V2FAQSection` (wrapper : ajouter eyebrow + réharmoniser titre en `font-serif text-4xl md:text-5xl`)
-- `FinalEditorialCTA` (garder inversé blanc sur vert sauge, mêmes tailles)
+### 3. Modal "Créez votre compte gratuit" en beige clair
+Dans `src/components/home/editorial/SelectionLockModal.tsx`, remplacer `bg-editorial-beige` par `bg-[#F8F5EF]` sur le `DialogContent` pour matcher exactement le beige clair des sections de la page.
 
-Remplacer les fonds `bg-white` par `bg-[#F8F5EF]` (beige clair) sur :
-- Section Coups de cœur (`InstagramHighlightsGrid` wrapper dans `RefonteJuillet.tsx`)
-- `EspaceFusionSection`
-- `PricingEditorial`
-- `TestimonialsEditorial`
-- `V2FAQSection` (wrapper)
-- Page root `bg-white` → `bg-[#F8F5EF]`
+### 4. CTA "Passer Premium — 29€" → `/paiement`
+Dans `src/components/home/editorial/PricingEditorial.tsx`, changer le `<Link to="/register?premium=1">` en `<Link to="/paiement">`.
 
-Conserver en **vert sauge** (`bg-wedding-olive`) : `EditorialCarousels`, `BlogCarouselEditorial`, `FinalEditorialCTA`, bande bonus dans `EspaceFusionSection`.
+### 5. Uniformisation des boutons "Créer un compte gratuit"
+Style cible (identique partout) : **fond blanc, bordure noire fine, texte noir en majuscules, tracking widest, police sans-serif, rounded-none**.
 
-Rythme chromatique final : Hero (vidéo) → Beige → Sauge → Beige → Beige → Beige (E-shop) → Sauge → Beige → Beige → Sauge → Footer.
+Composants à aligner sur ce style commun :
+- `EspaceFusionSection.tsx` — bouton principal (actuellement fond vert sauge / texte blanc)
+- `PricingEditorial.tsx` — bouton carte Gratuit (déjà noir/blanc, à harmoniser exact)
+- `FinalEditorialCTA.tsx` — CTA final
+- `SelectionLockModal.tsx` — bouton "Créer mon compte gratuit" (actuellement fond vert sauge)
 
-## 2. E-shop — liens "Découvrir"
+Tous : `to="/register-gratuit"`, label via i18n existant, classes communes :
+`inline-flex items-center justify-center gap-2 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 text-xs uppercase tracking-widest rounded-none transition-colors`.
 
-Dans `src/components/home/editorial/EditorialEShop.tsx` :
-- Remplacer `to={`/guides/${item.slug}`}` par `to="/guides"` sur chaque carte.
-- Le lien "Voir toute la collection" en bas reste `/guides`.
-
-## 3. `/guides` — bloc "Tout débloquer" en vert sauge
-
-Dans `src/pages/GuidesShop.tsx` (lignes ~312-334), redesigner le bloc conversion Premium :
-- Fond : `bg-wedding-olive` (au lieu de `bg-editorial-noir`)
-- Texte principal : blanc
-- Eyebrow "PLUS RENTABLE" : `text-white/70`
-- Corps : `text-white/85`
-- CTA bouton : fond blanc, texte vert sauge (`bg-white text-wedding-olive hover:bg-white/90`) pour un contraste fort et cohérent avec les autres CTA inversés du site (ex: `FinalEditorialCTA`)
-- Padding et typographie inchangés
-- Ajouter une fine bordure blanche/10 optionnelle pour renforcer la carte
-
-## Fichiers modifiés
-
-- `src/pages/RefonteJuillet.tsx` (fonds)
-- `src/components/home/editorial/EditorialEShop.tsx` (liens)
-- `src/components/home/editorial/EspaceFusionSection.tsx` (fond + typo header)
-- `src/components/home/editorial/PricingEditorial.tsx` (fond + typo header)
-- `src/components/home/editorial/BlogCarouselEditorial.tsx` (typo header)
-- `src/components/home/editorial/TestimonialsEditorial.tsx` (fond + typo header)
-- Wrapper autour de `V2FAQSection` dans `RefonteJuillet.tsx` (fond beige + ajout eyebrow/titre uniforme si nécessaire, sinon override via className parent)
-- `src/pages/GuidesShop.tsx` (bloc Premium 312-334)
-
-Aucun changement sur le contenu textuel ni les traductions FR/EN.
+### Notes
+- Aucune modification de logique métier ni de schéma.
+- Traductions FR/EN inchangées (les labels existent déjà).
+- Sur mobile, le bouton connexion header restera compact (icône seule si nécessaire) pour ne pas rivaliser avec le burger.
