@@ -1,20 +1,23 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import SEO from '@/components/SEO';
 import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import HeroEditorial from '@/components/home/editorial/HeroEditorial';
 import EditorialCarousels from '@/components/home/editorial/EditorialCarousels';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
 import EspaceFusionSection from '@/components/home/editorial/EspaceFusionSection';
+import PricingEditorial from '@/components/home/editorial/PricingEditorial';
 import BlogCarouselEditorial from '@/components/home/editorial/BlogCarouselEditorial';
 import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEditorial';
 import FinalEditorialCTA from '@/components/home/editorial/FinalEditorialCTA';
-import FreemiumSection from '@/components/home/v2/FreemiumSection';
 import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
 import V2FAQSection from '@/components/home/v2/FAQSection';
 import Footer from '@/components/Footer';
 import { SelectionLockProvider } from '@/components/home/editorial/SelectionLockModal';
 
 const RefonteJuillet: React.FC = () => {
+  const { t } = useTranslation('refonteJuillet');
+
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
@@ -38,8 +41,8 @@ const RefonteJuillet: React.FC = () => {
           <section id="selection" className="bg-white">
             <InstagramHighlightsGrid
               context="homepage"
-              eyebrow="Coups de cœur"
-              title="Sélection Instagram Mariable"
+              eyebrow={t('selection.eyebrow')}
+              title={t('selection.title')}
               limit={10}
             />
           </section>
@@ -53,10 +56,10 @@ const RefonteJuillet: React.FC = () => {
           {/* 5. E-books / E-shop — beige clair */}
           <EditorialEShop />
 
-          {/* 6. Gratuit / Premium — blanc (tous les guides inclus dans Premium) */}
-          <FreemiumSection hideEshopCard bgClassName="bg-white" />
+          {/* 6. Comment ça marche — Gratuit / Premium — blanc */}
+          <PricingEditorial />
 
-          {/* 7. Conseils & inspirations — vert sauge (format carrousel) */}
+          {/* 7. Conseils & inspirations — vert sauge (carrousel) */}
           <BlogCarouselEditorial />
 
           {/* 8. Témoignages — blanc */}
