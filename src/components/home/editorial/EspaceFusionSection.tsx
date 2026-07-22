@@ -36,7 +36,7 @@ export default function EspaceFusionSection() {
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight mb-5">
             {t('espace.title')}
           </h2>
-          <p className="text-editorial-noir/70 text-base md:text-lg leading-relaxed">
+          <p className="text-editorial-noir/70 text-base md:text-lg leading-relaxed whitespace-pre-line">
             {t('espace.subtitle')}
           </p>
         </header>
