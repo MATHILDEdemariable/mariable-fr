@@ -47,7 +47,7 @@ const PricingEditorial: React.FC = () => {
 
             <Link
               to="/register-gratuit"
-              className="w-full inline-flex items-center justify-center gap-2 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-4 text-xs uppercase tracking-widest transition-colors"
+              className="w-full inline-flex items-center justify-center gap-2 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 text-xs uppercase tracking-widest rounded-none transition-colors"
             >
               {t('pricing.free.cta')}
             </Link>
