@@ -140,9 +140,6 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                     Sans image
                   </div>
                 )}
-                <span className="absolute top-3 left-3 bg-editorial-beige/95 text-editorial-noir text-[9px] tracking-[0.2em] uppercase px-2 py-1">
-                  {t('carousels.membersBadge')}
-                </span>
               </div>
               <div className="mt-3">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-white/60">
