@@ -433,11 +433,6 @@ const MairieCivilPublic: React.FC = () => {
                 </ul>
               </CardContent>
             </Card>
-          </div>
-        </div>
-      </main>
-
-      <Footer />
 
             {/* CTA bottom */}
             <div className="text-center bg-wedding-olive p-8 mt-8">
@@ -460,6 +455,7 @@ const MairieCivilPublic: React.FC = () => {
 
       <Footer />
     </>
+
   );
 };
 
