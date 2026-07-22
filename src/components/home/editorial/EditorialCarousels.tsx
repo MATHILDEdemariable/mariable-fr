@@ -70,6 +70,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
   items,
   loading,
 }) => {
+  const { t } = useTranslation('refonteJuillet');
   const scrollRef = useRef<HTMLDivElement>(null);
   const { requestAccess } = useSelectionLock();
 
@@ -87,14 +88,14 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
             <button
               onClick={() => scroll('left')}
               className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
-              aria-label="Précédent"
+              aria-label={t('carousels.prev')}
             >
               <ChevronLeft className="w-4 h-4" strokeWidth={1.25} />
             </button>
             <button
               onClick={() => scroll('right')}
               className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
-              aria-label="Suivant"
+              aria-label={t('carousels.next')}
             >
               <ChevronRight className="w-4 h-4" strokeWidth={1.25} />
             </button>
@@ -136,7 +137,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                   </div>
                 )}
                 <span className="absolute top-3 left-3 bg-editorial-beige/95 text-editorial-noir text-[9px] tracking-[0.2em] uppercase px-2 py-1">
-                  Membres
+                  {t('carousels.membersBadge')}
                 </span>
               </div>
               <div className="mt-3">
@@ -148,7 +149,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                   {item.nom}
                 </p>
                 <span className="inline-block mt-2 text-xs uppercase tracking-widest text-white/85 underline underline-offset-4 group-hover:text-white">
-                  Découvrir
+                  {t('carousels.discover')}
                 </span>
               </div>
             </button>
@@ -160,7 +161,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
           onClick={() => requestAccess('/professionnelsmariable')}
           className="text-xs tracking-[0.2em] uppercase text-white hover:opacity-80 underline underline-offset-4"
         >
-          Voir toute la Sélection →
+          {t('carousels.viewAll')}
         </button>
       </div>
     </div>
@@ -168,11 +169,12 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
 };
 
 const EditorialCarousels: React.FC = () => {
+  const { t } = useTranslation('refonteJuillet');
   const region = useQuery({ queryKey: ['editorial-vendors', 'region'], queryFn: () => fetchVendors('region'), staleTime: 5 * 60 * 1000 });
 
   return (
     <section className="bg-wedding-olive pt-16 pb-8">
-      <Carousel label="Lieux de réception sélectionnés" items={region.data ?? []} loading={region.isLoading} />
+      <Carousel label={t('carousels.label')} items={region.data ?? []} loading={region.isLoading} />
     </section>
   );
 };
