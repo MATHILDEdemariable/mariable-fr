@@ -1,0 +1,122 @@
+{
+  "header": {
+    "menu": {
+      "selection": "NOS RECOMMANDATIONS",
+      "app": "L'APPLI",
+      "ebooks": "EBOOKS",
+      "pros": "ESPACE PROFESSIONNELS",
+      "contact": "CONTACT"
+    },
+    "instagram": "Instagram",
+    "openMenu": "Ouvrir le menu",
+    "closeMenu": "Fermer le menu",
+    "login": "Se connecter",
+    "prosFooter": "Espace professionnels"
+  },
+  "hero": {
+    "eyebrow": "Mariable",
+    "title": "Célébrer l'amour",
+    "subtitle": "Les plus beaux lieux et prestataires\n & l'appli qui vous accompagne jusqu'au jour-J",
+    "cta": "Découvrir Mariable"
+  },
+  "selection": {
+    "eyebrow": "Coups de cœur",
+    "title": "Sélection Instagram Mariable"
+  },
+  "carousels": {
+    "label": "Lieux de réception sélectionnés",
+    "viewAll": "Voir toute la Sélection →",
+    "prev": "Précédent",
+    "next": "Suivant",
+    "discover": "Découvrir",
+    "membersBadge": "Membres"
+  },
+  "espace": {
+    "eyebrow": "Ton espace Mariable",
+    "title": "Tout ton mariage, dans un seul espace.",
+    "subtitle": "Une plateforme web complète, accessible depuis ton téléphone, ta tablette ou ton ordi. Sans téléchargement, sans engagement.",
+    "features": {
+      "planning": { "title": "Rétroplanning intelligent", "desc": "Une timeline selon ta date et ton style." },
+      "budget": { "title": "Budget réel", "desc": "Tes dépenses suivies, prestataire par prestataire." },
+      "guests": { "title": "Liste invités & RSVP", "desc": "200 invités sans Excel. Allergies, hébergement." },
+      "seating": { "title": "Plan de table interactif", "desc": "Drag & drop, imprime en un clic." },
+      "jourJ": { "title": "Coordination Jour J", "desc": "Le déroulé partagé avec ton équipe." },
+      "drinks": { "title": "Calculateur de boissons", "desc": "Les bonnes quantités, sans gaspillage." }
+    },
+    "bonus": {
+      "label": "Inclus",
+      "text": "Le Carnet d'adresses Mariable — lieux d'exception et pros vérifiés."
+    },
+    "ctaPrimary": "Créer un compte gratuit",
+    "ctaSecondary": "J'ai déjà un compte"
+  },
+  "pricing": {
+    "eyebrow": "Comment ça marche",
+    "title": "Gratuit pour commencer. Premium pour aller plus loin.",
+    "free": {
+      "name": "Mariable Gratuit",
+      "price": "0€",
+      "period": "pour toujours",
+      "tagline": "Pour démarrer sans engagement.",
+      "features": [
+        "Tous les outils de planification en ligne",
+        "Prestataires recommandés + accès au blog"
+      ],
+      "limits": "Limites : génération IA, stockage & exports PDF plafonnés",
+      "cta": "Créer un compte gratuit"
+    },
+    "premium": {
+      "badge": "Recommandé",
+      "name": "Mariable Premium",
+      "price": "29€",
+      "priceStrike": "59€",
+      "period": "à vie",
+      "tagline": "Un seul paiement. Aucun abonnement. Mises à jour incluses.",
+      "features": [
+        "Tout, sans limite : IA, stockage & exports illimités",
+        "Toute la bibliothèque de guides & ebooks incluse",
+        "Support prioritaire"
+      ],
+      "cta": "Passer Premium — 29€"
+    },
+    "benchmark": "vs un wedding planner à partir de 2 000€ — ≈ 70× moins cher."
+  },
+  "eshop": {
+    "eyebrow": "E-shop",
+    "title": "Pas encore prêt·e à créer ton compte ? Commence par un guide.",
+    "note": "Déjà inclus dans Premium.",
+    "viewAll": "Voir tous les guides →",
+    "discover": "Découvrir →",
+    "priceLabel": "Ebook",
+    "items": {
+      "guide-jour-j": {
+        "title": "Guide Ultime Jour-J",
+        "desc": "Tout orchestrer de M-1 au Jour J."
+      },
+      "guide-debutants-mariage": {
+        "title": "Guide Ultime Débutants",
+        "desc": "Organiser ton mariage à partir de zéro."
+      },
+      "guide-discours-mariage": {
+        "title": "Do & Don't du Discours",
+        "desc": "Structure et exemples pour un discours réussi."
+      }
+    }
+  },
+  "blog": {
+    "eyebrow": "Conseils & inspirations",
+    "title": "Le média Mariable",
+    "discover": "Découvrir →"
+  },
+  "testimonials": {
+    "eyebrow": "Témoignages",
+    "title": "Ils ont célébré leur histoire",
+    "titleEm": "avec Mariable."
+  },
+  "finalCta": {
+    "title": "Votre histoire mérite",
+    "titleEm": "d'être bien célébrée.",
+    "subtitle": "Rejoignez les milliers de couples qui font confiance à Mariable.",
+    "cta": "Créer un compte gratuit"
+  }
+}

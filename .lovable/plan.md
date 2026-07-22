@@ -1,67 +1,112 @@
+## Objectif
 
-# Plan d'optimisation `/refontejuillet` (validé)
+1. Refondre la zone milieu de `/refontejuillet` selon la structure demandée (3 sections resserrées).
+2. Rendre le toggle FR/EN opérationnel sur toute la page (hero, header/menu, sections milieu, blog, témoignages, FAQ, CTA final, footer).
 
-## Nouvel ordre des sections
+---
 
-1. **Hero** (vidéo)
-2. **Coups de cœur** (Instagram) — blanc
-3. **Lieux sélectionnés** (carrousel) — vert sauge
-4. **Ton espace Mariable — fusion 2-en-1** — blanc
-   - Aperçu du dashboard (`EspaceApercu`) + « Le service en détail » (`IncludedSection`) réunis sous un même chapeau éditorial
-   - CTA explicite : « Créer un compte gratuit » → `/register-gratuit` + lien « J'ai déjà un compte » → `/login`
-   - Message clé : « Ton wedding planner de poche — crée ton compte pour tout organiser où que tu sois »
-5. **E-books / E-shop** (`EditorialEShop`) — beige clair (réintégré)
-6. **Gratuit / Premium** (`FreemiumSection`) — blanc (réintégré, fond de la section forcé en blanc)
-   - Ajouter mention explicite dans la carte Premium : « Tous les guides & ebooks Mariable inclus »
-   - Retirer / masquer la carte e-shop redondante en bas de `FreemiumSection` sur `/refontejuillet` (l'e-shop a déjà sa section 5)
-7. **Conseils & inspirations** — vert sauge, format carrousel identique aux « Lieux sélectionnés »
-   - Nouveau composant `BlogCarouselEditorial` : eyebrow gauche + flèches ‹ ›, cards scrollables snap-x, image large, catégorie olive uppercase, titre serif, extrait, lien « Découvrir »
-   - Réutilise le pattern visuel de `EditorialCarousels` (textes blancs sur fond sauge)
-8. **Témoignages** (`TestimonialsEditorial`) — blanc
-9. **FAQ** (`V2FAQSection`) — blanc
-10. **CTA final** (`FinalEditorialCTA`) — vert sauge
-11. **Footer**
+## 1. Nouvelle zone milieu (entre Coups de cœur/Lieux et Blog)
 
-## Rythme chromatique
+Ordre final de la page :
+
+```text
+1. Hero (vidéo)
+2. Coups de cœur — blanc
+3. Lieux sélectionnés (carrousel) — vert sauge
+── ZONE MILIEU ──
+4. TON ESPACE MARIABLE — blanc (fusion aperçu + service en détail)
+5. COMMENT ÇA MARCHE — blanc (pricing 2 cartes)
+6. LES GUIDES / E-shop — beige clair (déplacé APRÈS pricing)
+── /ZONE MILIEU ──
+7. Conseils & inspirations (blog carrousel) — vert sauge
+8. Témoignages — blanc
+9. FAQ — blanc
+10. CTA final — vert sauge
+11. Footer
 ```
-Hero → blanc → sauge → blanc → beige → blanc → sauge → blanc → blanc → sauge → footer
-```
-Alternance respectée, sauge comme accents forts (lieux, blog, CTA final).
 
-## Modifications par fichier
+### Section 4 — TON ESPACE MARIABLE (refonte de `EspaceFusionSection`)
 
-### `src/pages/RefonteJuillet.tsx`
-- Réintégrer `EditorialEShop` (après section 4) et `FreemiumSection` (après E-shop)
-- Remplacer `<BlogSection />` par `<BlogCarouselEditorial />`
-- Retirer `IncludedSection` en tant que section séparée (fusionnée dans `EspaceApercu`)
-- Wrapper `FreemiumSection` avec override fond blanc si nécessaire
+Un seul bloc au lieu de deux :
 
-### `src/components/home/v2/EspaceApercu.tsx` (fusion 2-en-1)
-- Conserver le mockup dashboard existant
-- Injecter en dessous le contenu de `IncludedSection` (grille 6 fonctionnalités « Le service en détail »)
-- Ajouter bloc CTA final : titre « Ton wedding planner de poche », sous-texte, bouton `Créer un compte gratuit` + lien secondaire connexion
-- Une seule section blanche cohérente
+- Suptitle : `TON ESPACE MARIABLE`
+- Titre : `Tout ton mariage, dans un seul espace.`
+- Sous-titre : `Une plateforme web complète, accessible depuis ton téléphone, ta tablette ou ton ordi. Sans téléchargement, sans engagement.`
+- Capture dashboard pleine largeur (visuel existant repris de `EspaceApercu`).
+- Grille 3×2 (mobile : 1 col) — 1 ligne courte par item, icône discrète :
+  - Rétroplanning intelligent — Une timeline selon ta date et ton style.
+  - Budget réel — Tes dépenses suivies, prestataire par prestataire.
+  - Liste invités & RSVP — 200 invités sans Excel. Allergies, hébergement.
+  - Plan de table interactif — Drag & drop, imprime en un clic.
+  - Coordination Jour J — Le déroulé partagé avec ton équipe.
+  - Calculateur de boissons — Les bonnes quantités, sans gaspillage.
+- Bande bonus fond vert sauge, texte blanc : `INCLUS · Le Carnet d'adresses Mariable — lieux d'exception et pros vérifiés.`
+- CTA bas de section : `Créer un compte gratuit` (`/register-gratuit`) + lien secondaire `J'ai déjà un compte` (`/login`).
 
-### `src/components/home/v2/FreemiumSection.tsx`
-- Ajouter dans la liste `premiumFeatures` (via i18n `fr/homeV2.json` + `en/homeV2.json`) : « Tous les guides & ebooks Mariable inclus »
-- Masquer conditionnellement la carte e-shop du bas sur `/refontejuillet` (prop `hideEshopCard` ou détection route)
-- Fond section : passer de `bg-editorial-cream` → `bg-white` (ou wrapper override) uniquement pour `/refontejuillet` pour ne pas casser la home
+### Section 5 — COMMENT ÇA MARCHE (pricing resserré)
 
-### `src/components/home/editorial/BlogCarouselEditorial.tsx` (nouveau)
-- Clone visuel de `EditorialCarousels` (fond sauge, textes blancs, flèches, snap-x)
-- Récupère les 6 derniers articles publiés depuis `blog_posts`
-- Card : image (h-64 md:h-80), catégorie uppercase, titre serif, extrait 2 lignes, lien « Découvrir »
-- CTA final : « Voir tous les articles → » vers `/blog`
+Nouveau composant `PricingEditorial` (ne modifie pas `FreemiumSection` utilisé ailleurs) :
 
-## Mobile responsive (audit ciblé)
-- Hero : titre `text-4xl md:text-6xl lg:text-7xl`, CTA pleine largeur mobile
-- Carrousels (Lieux + Blog) : snap-x mandatory, ~85vw / card mobile, flèches masquées `<md`, swipe natif
-- Espace Mariable fusionné : mockup `w-full object-contain`, grille service en détail 1 col mobile / 2 tablette / 3 desktop, CTA empilés
-- FreemiumSection : cartes empilées mobile, badge « Recommandé » lisible, padding réduit
-- FAQ : accordéons pleine largeur, texte min 16px
-- Vérifier absence de `min-w` desktop cassant scroll mobile
+- Suptitle : `COMMENT ÇA MARCHE`
+- Titre : `Gratuit pour commencer. Premium pour aller plus loin.`
+- 2 cartes côte à côte (empilées mobile) :
+  - **Gauche — MARIABLE GRATUIT**, `0€ / pour toujours`, sous-titre `Pour démarrer sans engagement.`, 2 ✓ (outils / prestataires + blog), ligne limites (IA, stockage & exports plafonnés), CTA `Créer un compte gratuit`.
+  - **Droite — MARIABLE PREMIUM** (fond vert sauge, badge blanc `RECOMMANDÉ`), prix `29€` avec `59€` barré, mention `à vie · un seul paiement · aucun abonnement · mises à jour incluses`, 3 ✓ (tout sans limite / bibliothèque de guides & ebooks incluse / support prioritaire), CTA blanc `Passer Premium — 29€`.
+- Ligne de repère centrée sous les cartes : `vs un wedding planner à partir de 2 000€ — ≈ 70× moins cher.`
 
-## Notes
-- Aucune modif business logic — uniquement présentation et réagencement
-- Homepage `/` intacte (composants partagés protégés par props/wrapper)
-- SEO conservé
+`FreemiumSection` retiré de cette page (reste utilisé sur `/` et autres).
+
+### Section 6 — LES GUIDES / E-shop (déplacé après pricing, `EditorialEShop`)
+
+- Suptitle : `E-SHOP`
+- Titre : `Pas encore prêt·e à créer ton compte ? Commence par un guide.`
+- Grille 3 colonnes :
+  - Guide Ultime Jour-J — 4,90€ · Tout orchestrer de M-1 au Jour J.
+  - Guide Ultime Débutants — 4,90€ · Organiser ton mariage à partir de zéro.
+  - Do & Don't du Discours — 4,90€ · Structure et exemples pour un discours réussi.
+- Lien bas : `VOIR TOUS LES GUIDES →` (vers `/ebooks`).
+- Note discrète : `Déjà inclus dans Premium.`
+
+---
+
+## 2. Toggle FR/EN fonctionnel sur `/refontejuillet`
+
+Utiliser l'infra i18n existante (`react-i18next`, namespaces déjà en place). Créer un namespace dédié **`refonteJuillet`** (fr + en) pour éviter d'impacter les autres pages.
+
+Éléments à traduire :
+
+- **Header éditorial** (`EditorialHeader`) : liens menu (Sélection, Espace, Guides, Espace pros, Contact), CTA `Créer un compte`, labels du menu mobile.
+- **Hero** (`HeroEditorial`) : eyebrow, H1 `Célébrer l'amour`, paragraphe, CTA.
+- **Coups de cœur** (`InstagramHighlightsGrid` context homepage) : eyebrow + titre passés en props traduites depuis la page.
+- **Lieux sélectionnés** (`EditorialCarousels`) : eyebrow, titre, chevrons/aria, libellés catégories.
+- **Ton espace Mariable** (nouvelle section) : suptitle, titre, sous-titre, 6 items grille, bande bonus, CTAs.
+- **Pricing** (nouvelle section) : suptitle, titre, cartes complètes, ligne de repère.
+- **E-shop** (`EditorialEShop`) : suptitle, titre, 3 cartes, lien "voir tous les guides".
+- **Blog carrousel** (`BlogCarouselEditorial`) : eyebrow, titre, libellé `Découvrir`, fallback catégories. Les articles restent en FR (contenu DB non traduit) — noté dans la limite ci-dessous.
+- **Témoignages** (`TestimonialsEditorial`) : eyebrow, titre, éventuels labels.
+- **FAQ** (`V2FAQSection`) : réutilise clés `homeV2` si déjà traduites ; sinon ajoute les manquantes.
+- **CTA final** (`FinalEditorialCTA`) : titre, sous-titre, CTA.
+- **Footer** : déjà i18n dans `common` — vérifier couverture, compléter au besoin.
+
+`LanguageToggle` déjà présent dans le header : rendre `changeLanguage` effectif partout via `useTranslation('refonteJuillet')` dans chaque composant concerné.
+
+### Limite explicite
+
+Les données dynamiques (articles de blog, fiches lieux/pros, Instagram) restent dans leur langue d'origine (FR). Seuls les libellés statiques UI de la page sont traduits. Documenté dans le composant pour éviter les faux bugs.
+
+---
+
+## Détails techniques
+
+- Nouveaux fichiers :
+  - `src/components/home/editorial/PricingEditorial.tsx`
+  - `src/i18n/locales/fr/refonteJuillet.json`
+  - `src/i18n/locales/en/refonteJuillet.json`
+- Modifiés :
+  - `src/pages/RefonteJuillet.tsx` (ordre + remplacement `FreemiumSection` → `PricingEditorial`)
+  - `src/components/home/editorial/EspaceFusionSection.tsx` (contenu resserré selon le brief)
+  - `src/components/home/editorial/EditorialEShop.tsx` (3 guides fixes + lien global)
+  - `src/components/home/editorial/HeroEditorial.tsx`, `EditorialHeader.tsx`, `EditorialCarousels.tsx`, `BlogCarouselEditorial.tsx`, `TestimonialsEditorial.tsx`, `FinalEditorialCTA.tsx` (branchement `useTranslation`)
+  - `src/i18n/index.ts` (enregistrement du namespace `refonteJuillet`)
+- Aucune modif base de données, aucune modif d'auth, aucune modif hors page `/refontejuillet` (les composants partagés reçoivent des props traduites depuis la page pour ne pas casser la home actuelle).
+- Responsive mobile : grilles `grid-cols-1 md:grid-cols-3` (services / e-shop), cartes pricing empilées < md, bande bonus pleine largeur.
