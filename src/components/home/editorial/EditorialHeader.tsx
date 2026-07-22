@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Instagram } from 'lucide-react';
+import { X, Instagram, User } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
