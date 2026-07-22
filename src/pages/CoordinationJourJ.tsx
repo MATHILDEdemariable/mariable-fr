@@ -142,10 +142,10 @@ const CoordinationJourJ: React.FC = () => {
   };
   return <>
       <Helmet>
-        <title>Coordination Jour J | Service Mon Jour J Mariable</title>
-        <meta name="description" content="Service de coordination complète pour votre jour de mariage. Planning détaillé, gestion d'équipe, documents centralisés. Vivez votre mariage en toute sérénité avec Mon Jour J." />
-        <meta name="keywords" content="coordination jour j, planning mariage, organisation jour mariage, coordination mariage france, mon jour j mariable, wedding planner jour j" />
-        <meta property="og:title" content="Coordination Jour J | Service Mon Jour J Mariable" />
+        <title>Coordination jour J mariage : planning, témoins & wedding planner digital | Mariable</title>
+        <meta name="description" content="Coordination mariage jour J : exemple de planning jour j mariage, aide témoins, wedding planner jour j digital. Créez et partagez votre déroulé avec l'appli Mariable." />
+        <meta name="keywords" content="coordination mariage, wedding planner jour j, aide témoins mariage, planning jour j mariage, exemple de planning jour j mariage, exemple de planning mariage, inspiration organisation journée mariage" />
+        <meta property="og:title" content="Coordination Jour J | Mon Jour J Mariable" />
         <meta property="og:description" content="Vivez votre mariage en toute sérénité avec notre service de coordination complète Mon Jour J." />
         <link rel="canonical" href="https://www.mariable.fr/coordination-jour-j" />
         <script type="application/ld+json">
@@ -161,20 +161,17 @@ const CoordinationJourJ: React.FC = () => {
 
       <PremiumHeader />
 
-      <main className="min-h-screen bg-gradient-to-b from-white to-wedding-cream/20 page-content">
-        {/* Back to home button and price badge */}
+      <main className="min-h-screen bg-editorial-beige page-content">
+        {/* Back to home button */}
         <section className="pb-4">
           <div className="container mx-auto px-4">
             <div className="flex justify-between items-start mb-4">
               <Link to="/">
-                <Button variant="outline">
+                <Button variant="outline" className="rounded-none">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Retour à l'accueil
                 </Button>
               </Link>
-              <Badge variant="secondary" className="bg-wedding-olive text-white text-lg px-4 py-2">
-                39€
-              </Badge>
             </div>
           </div>
         </section>
@@ -185,14 +182,19 @@ const CoordinationJourJ: React.FC = () => {
             <div className="text-center mb-8">
               <h2 style={{
               fontFamily: 'Playfair Display, serif'
-            }} className="text-3xl md:text-4xl font-serif text-black mb-4 max-w-4xl mx-auto">
+            }} className="text-3xl md:text-4xl font-serif text-editorial-noir mb-4 max-w-4xl mx-auto">
                 La première appli de coordination jour-J
                 <span className="block text-lg font-normal text-wedding-olive mt-2">
                   sans téléchargement - directement en ligne
                 </span>
               </h2>
               <p className="text-xl md:text-2xl text-wedding-olive font-medium mt-4">
-                Plus rapide, plus simple, moins cher
+                Wedding planner digital : plus rapide, plus simple, moins cher
+              </p>
+              <p className="mt-6 max-w-3xl mx-auto text-editorial-noir/70">
+                Mariable est l'outil de <strong>coordination mariage</strong> pensé pour les couples autonomes.
+                Créez votre <strong>planning jour J mariage</strong>, partagez un exemple de planning
+                à vos témoins et prestataires, et pilotez l'organisation de votre journée sans wedding planner.
               </p>
             </div>
           </div>
@@ -297,6 +299,25 @@ const CoordinationJourJ: React.FC = () => {
           </div>
         </section>
 
+        {/* SEO content block */}
+        <section className="py-12 px-4 bg-editorial-beige">
+          <div className="container mx-auto max-w-4xl prose prose-editorial">
+            <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-6 text-center">
+              Aide témoins mariage & inspiration organisation journée mariage
+            </h2>
+            <p className="text-editorial-noir/80">
+              Un <strong>exemple de planning jour J mariage</strong> aide vos témoins et prestataires à savoir
+              exactement quoi faire et quand. Avec Mariable, générez votre déroulé complet, ajoutez vos
+              documents (plan de table, moodboard, contrats) et partagez le tout via un simple lien.
+            </p>
+            <p className="text-editorial-noir/80 mt-4">
+              Idéal pour puiser de l'<strong>inspiration d'organisation de journée de mariage</strong> et
+              remplacer un wedding planner traditionnel par un <strong>wedding planner digital</strong>
+              accessible depuis tous vos appareils.
+            </p>
+          </div>
+        </section>
+
         {/* CTA Section */}
         <section className="py-12 px-4 bg-wedding-olive text-white">
           <div className="container mx-auto max-w-4xl text-center">
@@ -307,8 +328,8 @@ const CoordinationJourJ: React.FC = () => {
               Mariable vous donne tous les outils pour coordonner votre mariage comme un pro, sans wedding planner.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button onClick={() => navigate('/register')} className="bg-white text-wedding-olive hover:bg-gray-100 px-8 py-3">
-                Créer un compte
+              <Button onClick={() => navigate('/register-gratuit')} className="bg-white text-wedding-olive hover:bg-gray-100 px-8 py-3 rounded-none uppercase tracking-wide">
+                Créer un compte gratuit
               </Button>
             </div>
           </div>
