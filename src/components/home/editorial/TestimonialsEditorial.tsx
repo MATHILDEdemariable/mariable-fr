@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const TESTIMONIALS = [
   {
@@ -22,31 +23,32 @@ const TESTIMONIALS = [
 ];
 
 const TestimonialsEditorial: React.FC = () => {
+  const { t } = useTranslation('refonteJuillet');
   return (
     <section className="bg-white py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
         <header className="text-center mb-12 md:mb-16">
           <p className="text-xs tracking-[0.25em] uppercase text-editorial-noir/60 mb-4">
-            Témoignages
+            {t('testimonials.eyebrow')}
           </p>
           <h2 className="font-serif text-3xl md:text-5xl text-editorial-noir leading-tight">
-            Ils ont célébré leur histoire <em className="italic">avec Mariable</em>.
+            {t('testimonials.title')} <em className="italic">{t('testimonials.titleEm')}</em>
           </h2>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {TESTIMONIALS.map((t, i) => (
+          {TESTIMONIALS.map((tt, i) => (
             <article
               key={i}
               className="border-t border-editorial-noir/20 pt-8 flex flex-col"
             >
               <blockquote className="font-serif text-base md:text-lg text-editorial-noir/90 leading-relaxed italic flex-1">
-                « {t.quote} »
+                « {tt.quote} »
               </blockquote>
               <footer className="mt-6">
-                <p className="font-serif text-editorial-noir text-lg">{t.author}</p>
+                <p className="font-serif text-editorial-noir text-lg">{tt.author}</p>
                 <p className="text-[11px] tracking-[0.2em] uppercase text-editorial-noir/50 mt-1">
-                  {t.location}
+                  {tt.location}
                 </p>
               </footer>
             </article>

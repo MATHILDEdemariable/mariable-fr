@@ -1,24 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { X, Instagram } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
-
-const OVERLAY_LINKS = [
-  { label: 'NOS RECOMMANDATIONS', to: '/professionnelsmariable' },
-  { label: "L'APPLI", to: '/register-gratuit' },
-  { label: 'EBOOKS', to: '/guides' },
-  { label: 'ESPACE PROFESSIONNELS', to: '/partenariat' },
-  { label: 'CONTACT', to: '/contact' },
-];
 
 interface Props {
   transparent?: boolean;
 }
 
 const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
+  const { t } = useTranslation('refonteJuillet');
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const OVERLAY_LINKS = [
+    { label: t('header.menu.selection'), to: '/professionnelsmariable' },
+    { label: t('header.menu.app'), to: '/register-gratuit' },
+    { label: t('header.menu.ebooks'), to: '/guides' },
+    { label: t('header.menu.pros'), to: '/partenariat' },
+    { label: t('header.menu.contact'), to: '/contact' },
+  ];
 
   useEffect(() => {
     if (!transparent) return;
@@ -58,7 +60,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
           <Link
             to="/refontejuillet"
             className="flex items-center"
-            aria-label="Mariable — accueil"
+            aria-label="Mariable"
           >
             <Logo />
           </Link>
@@ -70,7 +72,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
               rel="noopener noreferrer"
               className="hidden sm:inline text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
             >
-              Instagram
+              {t('header.instagram')}
             </a>
             <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
             <div className="hidden sm:block">
@@ -79,7 +81,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
             <button
               onClick={() => setOpen(true)}
               className="flex flex-col justify-center items-end gap-[5px] w-8 h-8 group"
-              aria-label="Ouvrir le menu"
+              aria-label={t('header.openMenu')}
             >
               <span className={`block h-px w-6 transition-all group-hover:w-8 ${isOverlay ? 'bg-white' : 'bg-editorial-noir'}`} />
               <span className={`block h-px w-8 ${isOverlay ? 'bg-white' : 'bg-editorial-noir'}`} />
@@ -104,7 +106,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
             <button
               onClick={() => setOpen(false)}
               className="w-10 h-10 flex items-center justify-center hover:opacity-70"
-              aria-label="Fermer le menu"
+              aria-label={t('header.closeMenu')}
             >
               <X className="w-6 h-6 text-editorial-noir" strokeWidth={1.25} />
             </button>
@@ -126,10 +128,10 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
           <div className="border-t border-editorial-noir/10 py-6 flex flex-col md:flex-row items-end md:items-center justify-between gap-4">
             <div className="flex gap-6 text-xs tracking-[0.2em] uppercase text-editorial-noir/70">
               <Link to="/login" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
-                Se connecter
+                {t('header.login')}
               </Link>
               <Link to="/partenariat" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
-                Espace professionnels
+                {t('header.prosFooter')}
               </Link>
             </div>
             <div className="flex items-center gap-4">
