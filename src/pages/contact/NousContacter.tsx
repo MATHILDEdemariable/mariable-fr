@@ -73,9 +73,8 @@ const NousContacter = () => {
               <h1 className="font-serif text-4xl md:text-6xl leading-[1.05] mb-6">
                 Faisons connaissance — <em className="italic">et échangeons.</em>
               </h1>
-              <p className="text-editorial-noir/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed">
-                L'histoire d'une jeune mariée qui a décidé de tout changer,
-                et une équipe à votre écoute.
+              <p className="text-editorial-noir/75 text-lg md:text-xl max-w-2xl mx-auto leading-relaxed whitespace-pre-line">
+                {"\n"}
               </p>
             </div>
           </section>
