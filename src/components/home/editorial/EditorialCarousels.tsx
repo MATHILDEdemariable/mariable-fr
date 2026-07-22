@@ -22,7 +22,7 @@ const CAROUSEL_CATEGORIES: { key: string; label: string; category?: string; regi
   { key: 'categorie', label: 'Par catégorie' },
 ];
 
-async function fetchVendorsByCategory(category: string, limit: number): Promise<VendorCard[]> {
+async function fetchVendorsByCategory(category: 'Lieu de réception' | 'Traiteur' | 'Photographe', limit: number): Promise<VendorCard[]> {
   const { data, error } = await supabase
     .from('prestataires_rows')
     .select('id, nom, ville, regions, categorie, slug, description, partner, featured, prestataires_photos_preprod(url, principale, is_cover, ordre)')
