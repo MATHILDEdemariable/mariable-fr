@@ -22,25 +22,16 @@ const CAROUSEL_CATEGORIES: { key: string; label: string; category?: string; regi
   { key: 'categorie', label: 'Par catégorie' },
 ];
 
-async function fetchVendors(filter: 'region' | 'envie' | 'categorie'): Promise<VendorCard[]> {
-  let query = supabase
+async function fetchVendorsByCategory(category: 'Lieu de réception' | 'Traiteur' | 'Photographe', limit: number): Promise<VendorCard[]> {
+  const { data, error } = await supabase
     .from('prestataires_rows')
     .select('id, nom, ville, regions, categorie, slug, description, partner, featured, prestataires_photos_preprod(url, principale, is_cover, ordre)')
     .eq('visible', true)
-    .neq('categorie', 'Coordination')
-    .limit(12);
+    .eq('categorie', category)
+    .limit(24);
 
-  if (filter === 'region') {
-    query = query.eq('categorie', 'Lieu de réception');
-  } else if (filter === 'envie') {
-    query = query.eq('featured', true);
-  } else if (filter === 'categorie') {
-    query = query.in('categorie', ['Photographe', 'Traiteur', 'DJ']);
-  }
-
-  const { data, error } = await query;
   if (error) {
-    console.error('[EditorialCarousels] fetch error', filter, error);
+    console.error('[EditorialCarousels] fetch error', category, error);
     return [];
   }
 
@@ -63,8 +54,20 @@ async function fetchVendors(filter: 'region' | 'envie' | 'categorie'): Promise<V
     };
   });
 
-  return mapped.sort((a: any, b: any) => b._priority - a._priority);
+  return mapped
+    .sort((a: any, b: any) => b._priority - a._priority)
+    .slice(0, limit);
 }
+
+async function fetchMixedSelection(): Promise<VendorCard[]> {
+  const [lieux, traiteurs, photographes] = await Promise.all([
+    fetchVendorsByCategory('Lieu de réception', 6),
+    fetchVendorsByCategory('Traiteur', 3),
+    fetchVendorsByCategory('Photographe', 3),
+  ]);
+  return [...lieux, ...traiteurs, ...photographes];
+}
+
 
 const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean }> = ({
   label,
@@ -137,9 +140,6 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                     Sans image
                   </div>
                 )}
-                <span className="absolute top-3 left-3 bg-editorial-beige/95 text-editorial-noir text-[9px] tracking-[0.2em] uppercase px-2 py-1">
-                  {t('carousels.membersBadge')}
-                </span>
               </div>
               <div className="mt-3">
                 <p className="text-[10px] tracking-[0.2em] uppercase text-white/60">
@@ -171,7 +171,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
 
 const EditorialCarousels: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
-  const region = useQuery({ queryKey: ['editorial-vendors', 'region'], queryFn: () => fetchVendors('region'), staleTime: 5 * 60 * 1000 });
+  const region = useQuery({ queryKey: ['editorial-vendors', 'mixed'], queryFn: fetchMixedSelection, staleTime: 5 * 60 * 1000 });
 
   return (
     <section className="bg-wedding-olive pt-16 pb-8">
