@@ -438,6 +438,27 @@ const MairieCivilPublic: React.FC = () => {
       </main>
 
       <Footer />
+
+            {/* CTA bottom */}
+            <div className="text-center bg-wedding-olive p-8 mt-8">
+              <h2 className="font-serif text-2xl text-white mb-4">Organisez votre mariage avec Mariable</h2>
+              <p className="text-white/90 mb-6 max-w-2xl mx-auto">
+                Créez un compte gratuit pour accéder à nos outils d'organisation ou explorez notre sélection de lieux & professionnels.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a href="/register-gratuit" className="inline-flex items-center justify-center px-6 py-3 bg-white text-editorial-noir uppercase tracking-wide text-sm font-medium hover:bg-white/90 transition-colors">
+                  Créer un compte gratuit
+                </a>
+                <a href="/professionnelsmariable" className="inline-flex items-center justify-center px-6 py-3 border border-white text-white uppercase tracking-wide text-sm font-medium hover:bg-white hover:text-editorial-noir transition-colors">
+                  Voir lieux & professionnels
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <Footer />
     </>
   );
 };
