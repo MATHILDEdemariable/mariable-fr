@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 
 interface BlogItem {
@@ -15,6 +16,7 @@ interface BlogItem {
 }
 
 const BlogCarouselEditorial: React.FC = () => {
+  const { t } = useTranslation('refonteJuillet');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { data: posts, isLoading } = useQuery({
@@ -42,20 +44,20 @@ const BlogCarouselEditorial: React.FC = () => {
         <div className="container mx-auto px-4 md:px-8">
           <div className="flex items-center justify-between mb-6 border-t border-white/25 pt-6">
             <p className="text-xs tracking-[0.25em] uppercase text-white/80">
-              Conseils & inspirations
+              {t('blog.eyebrow')}
             </p>
             <div className="hidden md:flex items-center gap-2">
               <button
                 onClick={() => scroll('left')}
                 className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
-                aria-label="Précédent"
+                aria-label={t('carousels.prev')}
               >
                 <ChevronLeft className="w-4 h-4" strokeWidth={1.25} />
               </button>
               <button
                 onClick={() => scroll('right')}
                 className="w-9 h-9 border border-white/40 hover:border-white hover:bg-white hover:text-wedding-olive text-white transition-colors flex items-center justify-center"
-                aria-label="Suivant"
+                aria-label={t('carousels.next')}
               >
                 <ChevronRight className="w-4 h-4" strokeWidth={1.25} />
               </button>
@@ -110,7 +112,7 @@ const BlogCarouselEditorial: React.FC = () => {
                     {post.meta_description || post.subtitle}
                   </p>
                   <span className="inline-block mt-3 text-xs uppercase tracking-widest text-white/85 underline underline-offset-4 group-hover:text-white">
-                    Découvrir
+                    {t('blog.discover')}
                   </span>
                 </div>
               </Link>
@@ -122,7 +124,7 @@ const BlogCarouselEditorial: React.FC = () => {
             to="/conseilsmariage"
             className="text-xs tracking-[0.2em] uppercase text-white hover:opacity-80 underline underline-offset-4"
           >
-            Voir tous les articles →
+            {t('eshop.viewAll').replace('guides', 'articles')}
           </Link>
         </div>
       </div>
