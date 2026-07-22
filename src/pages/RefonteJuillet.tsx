@@ -27,7 +27,7 @@ const RefonteJuillet: React.FC = () => {
       <SEO
         title="Mariable — sélection de lieux de mariage & Wedding planner en ligne"
         description="La sélection éditoriale Mariable : lieux et pros triés à la main, sans sponsoring. Et l'appli qui vous accompagne jusqu'au Jour J."
-        canonical="/refontejuillet"
+        canonical="/"
         keywords="organisation mariage, wedding planner digital, sélection lieux mariage, prestataires mariage premium, ebooks mariage, application mariage"
       />
 
