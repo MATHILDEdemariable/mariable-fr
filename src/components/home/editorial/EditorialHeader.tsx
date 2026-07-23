@@ -14,8 +14,17 @@ interface Props {
 
 const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
   const { t } = useTranslation('refonteJuillet');
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setOpen(false);
+    navigate('/');
+  };
+
 
   const OVERLAY_LINKS = [
     { label: t('header.menu.selection'), to: '/professionnelsmariable' },
