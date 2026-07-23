@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { X, Instagram, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, Instagram, User, LayoutDashboard, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+
 
 interface Props {
   transparent?: boolean;
