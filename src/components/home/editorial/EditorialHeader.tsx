@@ -160,13 +160,27 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
 
           <div className="border-t border-editorial-noir/10 py-6 flex flex-col md:flex-row items-end md:items-center justify-between gap-4">
             <div className="flex gap-6 text-xs tracking-[0.2em] uppercase text-editorial-noir/70">
-              <Link to="/login" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
-                {t('header.login')}
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setOpen(false)} className="hover:text-editorial-noir inline-flex items-center gap-1.5">
+                    <LayoutDashboard className="w-4 h-4" strokeWidth={1.25} />
+                    Mon compte
+                  </Link>
+                  <button onClick={handleSignOut} className="hover:text-editorial-noir inline-flex items-center gap-1.5 uppercase tracking-[0.2em]">
+                    <LogOut className="w-4 h-4" strokeWidth={1.25} />
+                    Déconnexion
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
+                  {t('header.login')}
+                </Link>
+              )}
               <Link to="/partenariat" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
                 {t('header.prosFooter')}
               </Link>
             </div>
+
             <div className="flex items-center gap-4">
               <a
                 href="https://www.instagram.com/mariable.fr/"
