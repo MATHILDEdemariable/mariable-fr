@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { X, Instagram, User } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { X, Instagram, User, LayoutDashboard, LogOut } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from '@/components/LanguageToggle';
 import { Logo } from '@/components/Logo';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
+
 
 interface Props {
   transparent?: boolean;
@@ -11,8 +14,17 @@ interface Props {
 
 const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
   const { t } = useTranslation('refonteJuillet');
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setOpen(false);
+    navigate('/');
+  };
+
 
   const OVERLAY_LINKS = [
     { label: t('header.menu.selection'), to: '/professionnelsmariable' },
@@ -75,14 +87,26 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
               {t('header.instagram')}
             </a>
             <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
-            <Link
-              to="/login"
-              className="hidden sm:inline-flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
-              aria-label={t('header.login')}
-            >
-              <User className="w-4 h-4" strokeWidth={1.25} />
-              <span>{t('header.login')}</span>
-            </Link>
+            {isAuthenticated ? (
+              <Link
+                to="/dashboard"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
+                aria-label="Mon compte"
+              >
+                <LayoutDashboard className="w-4 h-4" strokeWidth={1.25} />
+                <span>Mon compte</span>
+              </Link>
+            ) : (
+              <Link
+                to="/login"
+                className="hidden sm:inline-flex items-center gap-1.5 text-xs tracking-[0.2em] uppercase hover:opacity-70 transition-opacity"
+                aria-label={t('header.login')}
+              >
+                <User className="w-4 h-4" strokeWidth={1.25} />
+                <span>{t('header.login')}</span>
+              </Link>
+            )}
+
             <span className="hidden sm:inline opacity-30" aria-hidden="true">|</span>
             <div className="hidden sm:block">
               <LanguageToggle variant={isOverlay ? 'light' : 'dark'} />
@@ -136,13 +160,27 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
 
           <div className="border-t border-editorial-noir/10 py-6 flex flex-col md:flex-row items-end md:items-center justify-between gap-4">
             <div className="flex gap-6 text-xs tracking-[0.2em] uppercase text-editorial-noir/70">
-              <Link to="/login" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
-                {t('header.login')}
-              </Link>
+              {isAuthenticated ? (
+                <>
+                  <Link to="/dashboard" onClick={() => setOpen(false)} className="hover:text-editorial-noir inline-flex items-center gap-1.5">
+                    <LayoutDashboard className="w-4 h-4" strokeWidth={1.25} />
+                    Mon compte
+                  </Link>
+                  <button onClick={handleSignOut} className="hover:text-editorial-noir inline-flex items-center gap-1.5 uppercase tracking-[0.2em]">
+                    <LogOut className="w-4 h-4" strokeWidth={1.25} />
+                    Déconnexion
+                  </button>
+                </>
+              ) : (
+                <Link to="/login" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
+                  {t('header.login')}
+                </Link>
+              )}
               <Link to="/partenariat" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
                 {t('header.prosFooter')}
               </Link>
             </div>
+
             <div className="flex items-center gap-4">
               <a
                 href="https://www.instagram.com/mariable.fr/"
