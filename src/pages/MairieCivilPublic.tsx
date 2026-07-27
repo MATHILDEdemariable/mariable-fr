@@ -175,7 +175,7 @@ const MairieCivilPublic: React.FC = () => {
           {/* Header */}
           <div className="text-center mb-12">
             <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="p-3 rounded-full bg-wedding-olive">
+              <div className="p-3 rounded-none bg-wedding-olive">
                 <Building2 className="h-6 w-6 text-white" />
               </div>
             </div>
@@ -197,34 +197,32 @@ const MairieCivilPublic: React.FC = () => {
 
           <div className="space-y-8">
             {/* Alerte importante */}
-            <Card className="border-amber-200 bg-amber-50">
-              <CardContent className="flex items-start gap-3 py-4">
-                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium text-amber-800">Important</p>
-                  <p className="text-sm text-amber-700">
-                    Le mariage civil doit obligatoirement précéder le mariage religieux. 
-                    Les documents et délais peuvent varier selon les mairies - vérifiez toujours sur le site officiel de votre mairie.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="bg-white border border-editorial-noir/10 rounded-none flex items-start gap-3 p-5">
+              <AlertCircle className="h-5 w-5 text-wedding-olive mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium text-editorial-noir">Important</p>
+                <p className="text-sm text-editorial-noir/70">
+                  Le mariage civil doit obligatoirement précéder le mariage religieux.
+                  Les documents et délais peuvent varier selon les mairies — vérifiez toujours sur le site officiel de votre mairie.
+                </p>
+              </div>
+            </div>
 
             {/* Conditions pour se marier */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Scale className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <Scale className="h-5 w-5 text-wedding-olive" />
                   Conditions pour se marier
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="grid gap-3">
                   {conditions.map((condition, index) => {
                     const Icon = condition.icon;
                     return (
-                      <div key={index} className="flex items-start gap-3 p-3 bg-muted/50 rounded-lg">
-                        <Icon className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
+                      <div key={index} className="flex items-start gap-3 p-3 bg-editorial-beige rounded-none">
+                        <Icon className="h-5 w-5 text-wedding-olive mt-0.5 flex-shrink-0" />
                         <span className="text-sm">{condition.text}</span>
                       </div>
                     );
@@ -233,25 +231,25 @@ const MairieCivilPublic: React.FC = () => {
                 <p className="text-xs text-muted-foreground mt-4 italic">
                   Note : Dans certains cas exceptionnels, une dispense pour lien de parenté peut être accordée par le Président de la République.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Où peut-on se marier */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <MapPin className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <MapPin className="h-5 w-5 text-wedding-olive" />
                   Où peut-on se marier ?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="grid md:grid-cols-2 gap-4 mb-4">
                   {lieuxMariage.map((lieu, index) => {
                     const Icon = lieu.icon;
                     return (
-                      <div key={index} className="p-4 border rounded-lg bg-white">
+                      <div key={index} className="p-4 border rounded-none bg-white">
                         <div className="flex items-center gap-2 mb-2">
-                          <Icon className="h-5 w-5 text-primary" />
+                          <Icon className="h-5 w-5 text-wedding-olive" />
                           <h4 className="font-medium text-sm">{lieu.titre}</h4>
                         </div>
                         <p className="text-xs text-muted-foreground">{lieu.description}</p>
@@ -259,7 +257,7 @@ const MairieCivilPublic: React.FC = () => {
                     );
                   })}
                 </div>
-                <div className="space-y-2 text-xs text-muted-foreground bg-muted/50 p-4 rounded-lg">
+                <div className="space-y-2 text-xs text-muted-foreground bg-editorial-beige p-4 rounded-none">
                   <p>
                     <strong>À Paris :</strong> Le mariage est célébré dans l'arrondissement correspondant au domicile ou à la résidence.
                   </p>
@@ -271,71 +269,71 @@ const MairieCivilPublic: React.FC = () => {
                     des adjoints habilités à célébrer les mariages et des locaux.
                   </p>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Documents indispensables */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <FileCheck className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <FileCheck className="h-5 w-5 text-wedding-olive" />
                   Documents indispensables
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="grid gap-4 md:grid-cols-2">
                   {documentsIndispensables.map((doc, index) => {
                     const Icon = doc.icon;
                     return (
                       <div 
                         key={index} 
-                        className="flex items-start gap-3 p-4 rounded-lg bg-gray-50 border border-gray-100"
+                        className="flex items-start gap-3 p-4 rounded-none bg-editorial-beige border border-editorial-noir/10"
                       >
-                        <div className="p-2 rounded-full bg-primary/10">
-                          <Icon className="h-4 w-4 text-primary" />
+                        <div className="p-2 rounded-none bg-wedding-olive/10">
+                          <Icon className="h-4 w-4 text-wedding-olive" />
                         </div>
                         <div className="flex-1">
                           <h3 className="font-medium text-foreground">{doc.title}</h3>
                           <p className="text-sm text-muted-foreground mt-1">{doc.description}</p>
-                          <p className="text-xs text-primary mt-1">{doc.detail}</p>
+                          <p className="text-xs text-wedding-olive mt-1">{doc.detail}</p>
                         </div>
                       </div>
                     );
                   })}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Délais de publication des bans */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Clock className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <Clock className="h-5 w-5 text-wedding-olive" />
                   Délais de publication des bans
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="grid md:grid-cols-3 gap-4">
                   {delaisBans.map((delai, index) => (
-                    <div key={index} className="text-center p-4 border rounded-lg bg-white">
-                      <div className="text-3xl font-bold text-primary mb-1">{delai.semaines}</div>
+                    <div key={index} className="text-center p-4 border rounded-none bg-white">
+                      <div className="text-3xl font-bold text-wedding-olive mb-1">{delai.semaines}</div>
                       <div className="text-sm font-medium mb-2">semaines minimum</div>
                       <p className="text-xs text-muted-foreground">{delai.condition}</p>
                     </div>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Situations particulières */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Globe className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <Globe className="h-5 w-5 text-wedding-olive" />
                   Situations particulières
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <Accordion type="single" collapsible className="w-full">
                   {situationsParticulieres.map((situation, index) => (
                     <AccordionItem key={index} value={`item-${index}`}>
@@ -346,7 +344,7 @@ const MairieCivilPublic: React.FC = () => {
                         <ul className="space-y-2">
                           {situation.documents.map((doc, docIndex) => (
                             <li key={docIndex} className="flex items-start gap-2 text-sm text-muted-foreground">
-                              <CheckCircle2 className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                              <CheckCircle2 className="h-4 w-4 text-wedding-olive mt-0.5 flex-shrink-0" />
                               {doc}
                             </li>
                           ))}
@@ -355,31 +353,31 @@ const MairieCivilPublic: React.FC = () => {
                     </AccordionItem>
                   ))}
                 </Accordion>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Comment ça marche */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <CheckCircle2 className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <CheckCircle2 className="h-5 w-5 text-wedding-olive" />
                   Comment ça marche ?
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="relative">
-                  <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-primary/20" />
+                  <div className="absolute left-6 top-8 bottom-8 w-0.5 bg-wedding-olive/20" />
                   
                   <div className="space-y-4">
                     {etapes.map((etape, index) => (
                       <div key={index} className="relative flex items-start gap-4">
-                        <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-full bg-primary text-white font-bold shrink-0 text-sm">
+                        <div className="relative z-10 flex items-center justify-center w-12 h-12 rounded-none bg-wedding-olive text-white font-bold shrink-0 text-sm">
                           {etape.numero}
                         </div>
                         <div className="flex-1 pb-2">
                           <div className="flex items-center gap-2 mb-1">
                             <h3 className="font-medium text-foreground">{etape.title}</h3>
-                            <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">
+                            <span className="text-xs text-wedding-olive bg-wedding-olive/10 px-2 py-0.5 rounded">
                               {etape.delai}
                             </span>
                           </div>
@@ -389,18 +387,18 @@ const MairieCivilPublic: React.FC = () => {
                     ))}
                   </div>
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Liens utiles */}
-            <Card className="border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <ExternalLink className="h-5 w-5 text-primary" />
+            <div className="bg-white border border-editorial-noir/10 rounded-none">
+              <div className="px-6 pt-6 pb-3">
+                <h2 className="flex items-center gap-2 font-serif text-xl text-editorial-noir">
+                  <ExternalLink className="h-5 w-5 text-wedding-olive" />
                   Liens utiles
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+                </h2>
+              </div>
+              <div className="px-6 pb-6">
                 <div className="grid md:grid-cols-3 gap-4">
                   {liensUtiles.map((lien, index) => (
                     <a 
@@ -408,21 +406,21 @@ const MairieCivilPublic: React.FC = () => {
                       href={lien.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-2 p-4 border rounded-lg hover:border-primary hover:bg-primary/5 transition-colors"
+                      className="flex items-center gap-2 p-4 border rounded-none hover:border-wedding-olive hover:bg-wedding-olive/5 transition-colors"
                     >
-                      <ExternalLink className="h-4 w-4 text-primary" />
+                      <ExternalLink className="h-4 w-4 text-wedding-olive" />
                       <span className="text-sm font-medium">{lien.titre}</span>
                     </a>
                   ))}
                 </div>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* Bon à savoir */}
-            <Card className="border-primary/20 bg-primary/5">
-              <CardContent className="py-6">
+            <div className="border border-wedding-olive/20 bg-wedding-olive/5 rounded-none">
+              <div className="p-6">
                 <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
-                  <AlertCircle className="h-5 w-5 text-primary" />
+                  <AlertCircle className="h-5 w-5 text-wedding-olive" />
                   Bon à savoir
                 </h3>
                 <ul className="space-y-2 text-sm text-muted-foreground">
@@ -431,8 +429,8 @@ const MairieCivilPublic: React.FC = () => {
                   <li>• Vous pouvez personnaliser votre cérémonie avec des lectures, de la musique...</li>
                   <li>• Le livret de famille vous est remis à l'issue de la cérémonie</li>
                 </ul>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
             {/* CTA bottom */}
             <div className="text-center bg-wedding-olive p-8 mt-8">
