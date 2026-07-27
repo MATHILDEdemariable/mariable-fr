@@ -1,25 +1,31 @@
-## Objectif
 
-Ajouter un nouvel article de blog "Bague de fiançailles : faire ta demande en mariage l'été, c'est encore jouable" avec la photo fournie en image de couverture, et mettre à jour le sitemap.
+## 1. Page `/mariage-civil` — alignement CSS home
 
-## Étapes
+- Repasser `src/pages/MairieCivilPublic.tsx` (hero + sections) sur le fond `#F8F5EF` (beige clair éditorial) et cartes blanches à bord fin (`border border-editorial-beige/60 rounded-none`).
+- Remplacer les zones actuelles trop colorées / arrondies par les encadrés rectangulaires éditoriaux (comme sur la home et `/guides`).
+- Titres en `font-serif` (Playfair) noir éditorial, accents `wedding-olive` (sage green), CTA `bg-wedding-olive text-white rounded-none uppercase tracking-widest`.
+- Conserver le contenu SEO et les CTA existants (créer un compte / explorer les prestataires).
 
-1. **Upload de l'image de couverture** via `lovable-assets` depuis `/mnt/user-uploads/engagement_aesthetic🤍.jpeg` → pointeur `src/assets/blog/bague-fiancailles-ete.jpg.asset.json`.
+## 2. Dashboard — fond beige clair
 
-2. **Insert dans `blog_posts`** (via `supabase--insert`) avec :
-   - `slug`: `bague-de-fiancailles-demande-en-mariage-ete` (aligné sur le format existant `/conseilsmariage/:slug` — pas `/blog/…`, qui n'est pas la route utilisée sur le projet)
-   - `title` / `h1_title`: "Bague de fiançailles : faire ta demande en mariage l'été, c'est encore jouable"
-   - `meta_title`: "Bague de fiançailles : faire sa demande cet été"
-   - `meta_description`: version 156 caractères fournie
-   - `subtitle`: accroche courte
-   - `category`: "Conseils"
-   - `background_image_url`: URL CDN retournée par lovable-assets
-   - `content`: HTML complet structuré (h2/h3, tableaux `<table>` pour les 5 grilles maisons/gammes, listes, FAQ, encart "point de vue Mariable")
-   - `status`: `published`, `published_at`: now, `language`: `fr`
-   - JSON-LD `FAQPage` intégré via `custom_styles` non nécessaire — la page article gère déjà le schema BlogPosting
+- Dans `src/components/dashboard/DashboardLayout.tsx`, s'assurer que le fond utilise bien `#F8F5EF` (ivory) et pas un beige plus foncé.
+- Vérifier qu'aucune surcharge locale ne réintroduit un ton plus sombre (`bg-editorial-beige` sans variante claire, ou classe globale).
+- Harmoniser cartes/sections internes sur blanc pur pour retrouver le contraste doux de la homepage.
 
-3. **Régénérer `public/sitemap.xml`** en ajoutant l'URL `/conseilsmariage/bague-de-fiancailles-demande-en-mariage-ete` avec `lastmod` du jour.
+## 3. Nouvel article de blog
+
+- Upload image de couverture (`user-uploads://30.jpeg`) via `lovable-assets` → `src/assets/blog/demarches-administratives-mariage.jpg.asset.json`.
+- `INSERT` dans `blog_posts` :
+  - `slug`: `demarches-administratives-apres-mariage-5-erreurs`
+  - `title` / `h1_title`: "Démarches administratives après le mariage : les 5 erreurs que font (presque) tous les jeunes mariés"
+  - `meta_title`: "Démarches après mariage : 5 erreurs à éviter"
+  - `meta_description`: ~155 car., axée SEO (démarches administratives, nom d'usage, impôts, régime matrimonial)
+  - `category`: "Conseils"
+  - `background_image_url`: URL CDN
+  - `content`: HTML complet (h2/h3, tableau des 4 régimes matrimoniaux, listes ordonnées de priorité, encart "Point de vue Mariable", FAQ)
+  - `status`: `published`, `published_at`: now, `language`: `fr`
+- Ajouter l'URL `/conseilsmariage/demarches-administratives-apres-mariage-5-erreurs` dans `public/sitemap.xml` (sans `lastmod`, en cohérence avec les entrées existantes bulk).
 
 ## Point à confirmer
 
-Le slug demandé commence par `/blog/…`, mais toutes les URLs d'articles du site sont sous `/conseilsmariage/:slug` (voir `BlogArticle.tsx`, `BlogPostCard.tsx`, sitemap existant). Je pars sur `/conseilsmariage/bague-de-fiancailles-demande-en-mariage-ete` pour rester cohérent et éviter un 404 — dis-moi si tu veux vraiment créer une route séparée `/blog/:slug`.
+Le slug reste sous `/conseilsmariage/...` (route existante `BlogArticle`), pas `/blog/...`, comme pour les précédents articles. Dis-moi si tu veux le contraire.
