@@ -73,7 +73,7 @@ export default {
 					'noir-editorial': '#1a1a18'
 				},
 				editorial: {
-					beige: '#E1DACA',
+					beige: '#F8F5EF',
 					olive: '#63745a',
 					'olive-light': '#A8B89B',
 					noir: '#0F0F0F',
