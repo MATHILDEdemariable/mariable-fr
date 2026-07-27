@@ -417,7 +417,7 @@ const MairieCivilPublic: React.FC = () => {
             </div>
 
             {/* Bon à savoir */}
-            <Card className="border-wedding-olive/20 bg-wedding-olive/5">
+            <div className="border border-wedding-olive/20 bg-wedding-olive/5 rounded-none">
               <div className="p-6">
                 <h3 className="font-medium text-foreground mb-3 flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-wedding-olive" />
