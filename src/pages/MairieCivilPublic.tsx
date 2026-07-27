@@ -197,18 +197,16 @@ const MairieCivilPublic: React.FC = () => {
 
           <div className="space-y-8">
             {/* Alerte importante */}
-            <Card className="border-amber-200 bg-amber-50">
-              <CardContent className="flex items-start gap-3 py-4">
-                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
-                <div>
-                  <p className="font-medium text-amber-800">Important</p>
-                  <p className="text-sm text-amber-700">
-                    Le mariage civil doit obligatoirement précéder le mariage religieux. 
-                    Les documents et délais peuvent varier selon les mairies - vérifiez toujours sur le site officiel de votre mairie.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+            <div className="bg-white border border-editorial-noir/10 rounded-none flex items-start gap-3 p-5">
+              <AlertCircle className="h-5 w-5 text-wedding-olive mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium text-editorial-noir">Important</p>
+                <p className="text-sm text-editorial-noir/70">
+                  Le mariage civil doit obligatoirement précéder le mariage religieux.
+                  Les documents et délais peuvent varier selon les mairies — vérifiez toujours sur le site officiel de votre mairie.
+                </p>
+              </div>
+            </div>
 
             {/* Conditions pour se marier */}
             <Card className="border-border">
