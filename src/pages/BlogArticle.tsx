@@ -195,30 +195,11 @@ const BlogArticlePage = () => {
         canonical={`/conseilsmariage/${post.slug}`}
         ogType="article"
       >
-        <script type="application/ld+json">{`
-            {
-              "@context": "https://schema.org",
-              "@type": "BlogPosting",
-              "headline": "${h1Title}",
-              "name": "${metaTitle}",
-              "description": "${metaDescription || ''}",
-              "image": "${post.background_image_url || ''}",
-              "datePublished": "${post.published_at || new Date().toISOString()}",
-              "dateModified": "${post.updated_at || new Date().toISOString()}",
-              "author": {
-                "@type": "Organization",
-                "name": "Mariable"
-              },
-               "publisher": {
-                "@type": "Organization",
-                "name": "Mariable",
-                "logo": {
-                  "@type": "ImageObject",
-                  "url": "https://www.mariable.fr/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png"
-                }
-              }
-            }
-        `}</script>
+        <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        {faqSchema && (
+          <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+        )}
       </SEO>
       <PremiumHeader />
       <main className="flex-grow bg-gray-50/50 page-content">
