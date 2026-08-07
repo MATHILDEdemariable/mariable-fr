@@ -15,7 +15,7 @@ const SUPABASE_ANON_KEY =
   process.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
   "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnaWRmY3FrdHN0dHpsd2x1bXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0MjM1MTYsImV4cCI6MjA1ODk5OTUxNn0.ij6dWi7LiWNk9mh3SknY1N8-upp9l20R7CZZDeAMEys";
 
-const TODAY = new Date().toISOString().split("T")[0];
+
 
 interface StaticPage {
   url: string;
@@ -60,8 +60,6 @@ const staticPages: StaticPage[] = [
   { url: "/mariage-bourgogne-franche-comte", priority: "0.8", changefreq: "monthly" },
   { url: "/mariage-grand-est", priority: "0.8", changefreq: "monthly" },
   { url: "/mariage-corse", priority: "0.8", changefreq: "monthly" },
-  { url: "/about/histoire", priority: "0.8", changefreq: "yearly" },
-  { url: "/about/charte", priority: "0.8", changefreq: "yearly" },
   { url: "/about/approche", priority: "0.8", changefreq: "yearly" },
   { url: "/about/temoignages", priority: "0.8", changefreq: "yearly" },
   { url: "/contact", priority: "0.8", changefreq: "yearly" },
@@ -100,28 +98,34 @@ async function fetchAll(table: string, query: string): Promise<Row[]> {
   return (await res.json()) as Row[];
 }
 
-function formatDate(d: string | null): string {
-  if (!d) return TODAY;
+function formatDate(d: string | null): string | null {
+  if (!d) return null;
   try {
     return new Date(d).toISOString().split("T")[0];
   } catch {
-    return TODAY;
+    return null;
   }
+}
+
+function lastmodTag(d: string | null): string {
+  // <lastmod> uniquement quand une date de modification réelle existe.
+  // Pas de repli sur la date de build : une date fabriquée n'est pas fiable.
+  return d ? `\n    <lastmod>${d}</lastmod>` : "";
 }
 
 function buildXml(prestataires: Row[], blogPosts: Row[]): string {
   const urls = [
     ...staticPages.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}${p.url}</loc>\n    <lastmod>${p.lastmod ?? TODAY}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}${p.url}</loc>${lastmodTag(p.lastmod ?? null)}\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`,
     ),
     ...prestataires.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}/prestataire/${p.slug}</loc>\n    <lastmod>${formatDate(p.updated_at)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}/prestataire/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`,
     ),
     ...blogPosts.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}/conseilsmariage/${p.slug}</loc>\n    <lastmod>${formatDate(p.updated_at)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}/conseilsmariage/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
     ),
   ];
 

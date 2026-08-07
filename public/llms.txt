@@ -4,25 +4,40 @@
 
 Mariable aide les couples à organiser leur mariage de A à Z grâce à des outils digitaux (checklist IA, budget, plan de table, RSVP, moodboard, coordination jour J), une marketplace de prestataires (lieux, traiteurs, photographes, fleuristes, DJ, wedding planners) et des guides éditoriaux. Le cœur des outils est gratuit ; un Premium en achat unique à 29€ déverrouille IA et exports illimités.
 
+Site officiel : https://www.mariable.fr — Contact : contact@mariable.fr — Zone couverte : France entière.
+
 ## Pages
 
 - [Accueil](/): Présentation de la plateforme et accès aux outils.
 - [Sélection de prestataires](/selection): Marketplace de prestataires de mariage en France.
 - [Tarifs](/prix): Détail des offres gratuit et Premium 29€ à vie.
-- [Comparatif](/comparatif): Mariable comparé aux solutions traditionnelles.
+- [Comparatif](/comparatif): Mariable comparé au wedding planner et à l'organisation seule.
 - [Notre approche](/about/approche): Méthode d'accompagnement personnalisée.
-- [Notre histoire](/about/histoire): Origine et mission de Mariable.
 - [Témoignages](/about/temoignages): Avis de jeunes mariés.
 - [FAQ](/contact/faq): Réponses aux questions fréquentes.
-- [Contact](/contact): Nous joindre.
-- [Conseils mariage (blog)](/conseilsmariage): Articles éditoriaux et guides SEO.
-- [Checklist mariage](/checklist-mariage): Rétroplanning intelligent.
-- [Coordination jour J](/coordination-jour-j): Outil de coordination du jour J.
+- [Contact](/contact): Nous joindre et découvrir l'histoire de Mariable.
+- [Conseils mariage (blog)](/conseilsmariage): Articles éditoriaux et guides pratiques.
+- [Checklist mariage](/checklist-mariage): Rétroplanning intelligent, tâche par tâche.
+- [Calculateur de budget](/services/budget): Estimation et suivi du budget mariage par poste.
+- [Coordination jour J](/coordination-jour-j): Outil de coordination du déroulé du jour J.
 - [Guide du jour J](/guide-jour-j): Guide pratique pour le déroulé.
 - [Guide débutant](/guide-debutant): Premiers pas dans l'organisation.
 - [Jeunes mariés](/jeunes-maries): Témoignages et inscriptions.
 - [Partenariat agences/prestataires](/partenariat): Offres B2B Mariable Studio.
 - [Professionnels Mariable](/professionnelsmariable): Espace dédié aux pros.
+
+## Articles de référence
+
+- [Renouvellement de vœux : le guide complet](/conseilsmariage/renouvellement-voeux-guide-complet): Déroulé, lieu, mairie, budget et textes pour renouveler ses vœux de mariage.
+- [Mariage petit budget : la réception n'est pas obligatoire](/conseilsmariage/mariage-petit-budget-reception-non-obligatoire): Comment se marier à petit budget en repensant le format de la journée.
+- [Anniversaire de mariage : refaire un nouveau mariage](/conseilsmariage/anniversaire-mariage-nouveau-mariage): Célébrer un anniversaire de mariage comme une vraie fête, année par année.
+- [Créer un site web de mariage](/conseilsmariage/creer-site-web-mariage): Pourquoi et comment créer un mini-site de mariage pour ses invités.
+- [Mariage ou PACS : deux façons de s'engager](/conseilsmariage/mariage-ou-pacs-deux-facons-sengager): Comparatif juridique, fiscal et symbolique entre mariage et PACS.
+- [Mariage en petit comité : qualité plutôt que quantité](/conseilsmariage/mariage-petit-comite-qualite-quantite): Organiser un mariage intimiste réussi.
+- [Prix d'un wedding planner en 2026](/conseilsmariage/prix-wedding-planner-2026-le-guide-complet-pour-votre-mariage): Tarifs réels, formules et alternatives.
+- [Bague de fiançailles et demande en mariage l'été](/conseilsmariage/bague-de-fiancailles-demande-en-mariage-ete): Budget, boutiques et critères de choix d'une bague.
+- [Démarches administratives après le mariage](/conseilsmariage/demarches-administratives-apres-mariage-5-erreurs): Les erreurs fréquentes après la cérémonie civile.
+- [Meilleurs wedding content creators en France](/conseilsmariage/best-wedding-content-creator-france): Le rôle du content creator le jour du mariage.
 
 ## Régions
 
@@ -42,7 +57,7 @@ Mariable aide les couples à organiser leur mariage de A à Z grâce à des outi
 
 ## Cérémonies
 
-- [Mariage civil](/mariage-civil): Guide du mariage civil.
+- [Mariage civil](/mariage-civil): Guide du mariage civil et des démarches en mairie.
 - [Cérémonie laïque](/ceremonie-laique): Guide de la cérémonie laïque.
 - [Cérémonie catholique](/ceremonie-catholique): Guide du mariage religieux catholique.
 
