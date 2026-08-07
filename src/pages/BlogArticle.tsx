@@ -11,6 +11,54 @@ import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
+/**
+ * Construit un schema FAQPage à partir du HTML de l'article.
+ * On récupère chaque titre (h2/h3) qui se termine par « ? » et le texte
+ * qui le suit jusqu'au titre suivant. Retourne null si moins de 2 paires.
+ */
+const buildFaqSchema = (html: string | null | undefined) => {
+  if (!html || typeof window === 'undefined') return null;
+  try {
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const headings = Array.from(doc.querySelectorAll('h2, h3'));
+    const entries: Array<{ question: string; answer: string }> = [];
+
+    headings.forEach((heading) => {
+      const question = (heading.textContent || '').trim();
+      if (!question.endsWith('?') || question.length < 10) return;
+
+      const answerParts: string[] = [];
+      let node = heading.nextElementSibling;
+      while (node && !/^H[1-3]$/.test(node.tagName)) {
+        const text = (node.textContent || '').trim();
+        if (text) answerParts.push(text);
+        node = node.nextElementSibling;
+      }
+
+      const answer = answerParts.join(' ').replace(/\s+/g, ' ').trim();
+      if (answer.length > 40) {
+        entries.push({ question, answer: answer.slice(0, 900) });
+      }
+    });
+
+    if (entries.length < 2) return null;
+
+    return {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: entries.map((entry) => ({
+        "@type": "Question",
+        name: entry.question,
+        acceptedAnswer: { "@type": "Answer", text: entry.answer },
+      })),
+    };
+  } catch (error) {
+    console.error('❌ buildFaqSchema failed:', error);
+    return null;
+  }
+};
+
+
 const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   const { data, error } = await supabase
     .from('blog_posts')
