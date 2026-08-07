@@ -238,6 +238,36 @@ const BlogArticlePage = () => {
                 />
             </div>
 
+            {/* CTA contextuel : convertit le trafic éditorial vers l'outil correspondant */}
+            <aside className="mt-10 bg-editorial-beige border border-wedding-olive/20 p-8 text-center">
+                <p className="text-sm uppercase tracking-widest text-wedding-olive mb-3">
+                    Passez à l'action
+                </p>
+                <h2 className="text-2xl font-serif text-editorial-noir mb-3">
+                    {contextualCta.title}
+                </h2>
+                <p className="text-editorial-noir/70 max-w-xl mx-auto mb-6">
+                    {contextualCta.description}
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link to={contextualCta.href}>
+                        <Button className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white uppercase tracking-wide">
+                            {contextualCta.label}
+                        </Button>
+                    </Link>
+                    <Link to="/register-gratuit">
+                        <Button
+                            variant="outline"
+                            className="rounded-none border-editorial-noir text-editorial-noir uppercase tracking-wide"
+                        >
+                            Créer un compte gratuit
+                        </Button>
+                    </Link>
+                </div>
+            </aside>
+
+
+
             {relatedPosts.length > 0 && (
                 <div className="mt-12 bg-white p-8 rounded-lg shadow-sm">
                     <h2 className="text-2xl font-bold text-gray-900 mb-6">Autres articles qui pourraient vous intéresser</h2>
