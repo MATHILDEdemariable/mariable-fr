@@ -92,6 +92,45 @@ const BlogArticlePage = () => {
   const articleLang = (post as any).language || 'fr';
   const isEnglish = articleLang === 'en';
 
+  const canonicalUrl = `https://www.mariable.fr/conseilsmariage/${post.slug}`;
+
+  // Schema Article complet (JSON.stringify évite toute casse liée aux guillemets du contenu)
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: h1Title,
+    name: metaTitle,
+    description: metaDescription || '',
+    image: post.background_image_url || undefined,
+    datePublished: post.published_at || undefined,
+    dateModified: post.updated_at || post.published_at || undefined,
+    inLanguage: isEnglish ? 'en' : 'fr-FR',
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    author: { "@type": "Organization", name: "Mariable", url: "https://www.mariable.fr" },
+    publisher: {
+      "@type": "Organization",
+      name: "Mariable",
+      logo: {
+        "@type": "ImageObject",
+        url: "https://www.mariable.fr/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png",
+      },
+    },
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.mariable.fr" },
+      { "@type": "ListItem", position: 2, name: "Conseils mariage", item: "https://www.mariable.fr/conseilsmariage" },
+      { "@type": "ListItem", position: 3, name: h1Title, item: canonicalUrl },
+    ],
+  };
+
+  // FAQPage généré depuis les titres interrogatifs de l'article (h2/h3 finissant par « ? »)
+  const faqSchema = buildFaqSchema(post.content);
+
+
   return (
     <>
       {isEnglish && (
