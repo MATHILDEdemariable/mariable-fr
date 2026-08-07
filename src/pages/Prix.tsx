@@ -64,7 +64,33 @@ const Prix = () => {
         canonical="/prix"
         keywords="tarif mariage, prix wedding planner en ligne, outil organisation mariage gratuit, planificateur mariage prix, Mariable premium"
         schemas={faqSchemas}
-      />
+      >
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "Mariable",
+            applicationCategory: "LifestyleApplication",
+            operatingSystem: "Web, iOS, Android",
+            url: "https://www.mariable.fr",
+            inLanguage: "fr-FR",
+            description:
+              "Application d'organisation de mariage : outils gratuits (budget, checklist, plan de table, RSVP) et Premium 29€ en achat unique.",
+            offers: [
+              { "@type": "Offer", name: "Gratuit", price: "0", priceCurrency: "EUR" },
+              {
+                "@type": "Offer",
+                name: "Premium à vie",
+                price: "29",
+                priceCurrency: "EUR",
+                url: "https://www.mariable.fr/prix",
+              },
+            ],
+            publisher: { "@type": "Organization", name: "Mariable", url: "https://www.mariable.fr" },
+          })}
+        </script>
+      </SEO>
+
       
       <PremiumHeader />
       
