@@ -86,7 +86,47 @@ const FeaturesInteractive = () => {
       <Helmet>
         <title>Fonctionnalités - Découvrez tous les outils de Mon Mariage</title>
         <meta name="description" content="Explorez toutes les fonctionnalités de notre plateforme de planning mariage : budget, checklist, coordination Jour J, gestion prestataires et plus encore." />
+        <link rel="canonical" href="https://www.mariable.fr/fonctionnalites" />
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "SoftwareApplication",
+            name: "Mariable",
+            applicationCategory: "LifestyleApplication",
+            operatingSystem: "Web, iOS, Android",
+            url: "https://www.mariable.fr",
+            description:
+              "Application d'organisation de mariage : budget, checklist, plan de table, RSVP, moodboard et coordination du jour J.",
+            inLanguage: "fr-FR",
+            featureList: [
+              "Calculateur de budget mariage",
+              "Checklist et rétroplanning",
+              "Plan de table",
+              "Gestion des invités et RSVP",
+              "Moodboard",
+              "Coordination du jour J",
+              "Sélection de prestataires",
+            ],
+            offers: [
+              {
+                "@type": "Offer",
+                name: "Gratuit",
+                price: "0",
+                priceCurrency: "EUR",
+              },
+              {
+                "@type": "Offer",
+                name: "Premium à vie",
+                price: "29",
+                priceCurrency: "EUR",
+                url: "https://www.mariable.fr/prix",
+              },
+            ],
+            publisher: { "@type": "Organization", name: "Mariable", url: "https://www.mariable.fr" },
+          })}
+        </script>
       </Helmet>
+
 
       <div className="min-h-screen flex flex-col">
         <PremiumHeader />
