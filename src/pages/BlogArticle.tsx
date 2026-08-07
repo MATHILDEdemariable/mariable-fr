@@ -178,6 +178,42 @@ const BlogArticlePage = () => {
   // FAQPage généré depuis les titres interrogatifs de l'article (h2/h3 finissant par « ? »)
   const faqSchema = buildFaqSchema(post.content);
 
+  // CTA contextuel choisi selon le sujet de l'article
+  const contextualCta = (() => {
+    const haystack = `${post.slug} ${post.title}`.toLowerCase();
+    if (haystack.includes('budget') || haystack.includes('prix') || haystack.includes('coût')) {
+      return {
+        title: 'Estimez le budget de votre mariage',
+        description: 'Utilisez le calculateur de budget Mariable pour répartir vos postes de dépenses et suivre vos devis.',
+        label: 'Ouvrir le calculateur',
+        href: '/services/budget',
+      };
+    }
+    if (haystack.includes('checklist') || haystack.includes('planning') || haystack.includes('retroplanning') || haystack.includes('organiser')) {
+      return {
+        title: 'Votre checklist de mariage personnalisée',
+        description: 'Générez un rétroplanning adapté à votre date et cochez vos préparatifs étape par étape.',
+        label: 'Voir la checklist',
+        href: '/checklist-mariage',
+      };
+    }
+    if (haystack.includes('jour-j') || haystack.includes('jour j') || haystack.includes('coordination') || haystack.includes('témoin')) {
+      return {
+        title: 'Préparez le déroulé de votre jour J',
+        description: 'Construisez votre planning heure par heure et partagez-le avec vos témoins et prestataires.',
+        label: 'Créer mon planning jour J',
+        href: '/coordination-jour-j',
+      };
+    }
+    return {
+      title: 'Trouvez vos prestataires de mariage',
+      description: 'Lieux de réception, traiteurs, photographes : découvrez la sélection éditoriale de Mariable.',
+      label: 'Explorer la sélection',
+      href: '/selection',
+    };
+  })();
+
+
 
   return (
     <>
