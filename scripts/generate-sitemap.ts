@@ -121,11 +121,11 @@ function buildXml(prestataires: Row[], blogPosts: Row[]): string {
     ),
     ...prestataires.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}/prestataire/${p.slug}</loc>\n    <lastmod>${formatDate(p.updated_at)}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}/prestataire/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`,
     ),
     ...blogPosts.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}/conseilsmariage/${p.slug}</loc>\n    <lastmod>${formatDate(p.updated_at)}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}/conseilsmariage/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
     ),
   ];
 
