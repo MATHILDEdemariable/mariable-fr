@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Palette, Globe, BarChart3
+  ShoppingCart, Building2, Smartphone, Palette, Globe, BarChart3, Images
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -205,6 +205,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <CheckSquare className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.afterDay')}</span>
         </Link>
+
+        <Link to={isReaderMode ? '#' : '/dashboard/album'} onClick={preventReader} className={linkClass(isActive('/dashboard/album'))}>
+          <Images className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Album invités</span>
+        </Link>
+
 
         {/* ADMIN */}
         <SectionLabel label={t('sidebar.sections.admin')} />
