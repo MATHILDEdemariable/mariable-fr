@@ -34,7 +34,7 @@ const MariageBourgogne = lazy(() => import("./pages/MariageBourgogne"));
 const MariageGrandEst = lazy(() => import("./pages/MariageGrandEst"));
 const MariageCorse = lazy(() => import("./pages/MariageCorse"));
 const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
-const AlbumPhotoPartage = lazyWithRetry(() => import("./pages/AlbumPhotoPartage"));
+const AlbumPhotoPartage = lazy(() => import("./pages/AlbumPhotoPartage"));
 const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
 
 const Callback = lazy(() => import("./pages/auth/Callback"));
