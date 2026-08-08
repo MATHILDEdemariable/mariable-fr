@@ -100,6 +100,8 @@ const UserDashboard: React.FC = () => {
           <Route path="documents" element={<DocumentsPage />} />
           <Route path="avant-jour-j" element={<AvantJourJPage />} />
           <Route path="apres-jour-j" element={<ApresJourJPage />} />
+          <Route path="album" element={<AlbumPage />} />
+
           <Route path="checklist-mariage" element={<ChecklistMariagePage />} />
           <Route path="rsvp" element={<RSVPTabs />} />
           <Route path="rsvp/:eventId/responses" element={<RSVPResponses />} />
