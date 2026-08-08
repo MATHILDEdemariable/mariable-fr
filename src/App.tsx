@@ -238,6 +238,10 @@ function App() {
                   <Route path="/planning-public/project/:token" element={<PlanningPublicProject />} />
           <Route path="/avant-jour-j-public/:token" element={<AvantJourJPublic />} />
           <Route path="/apres-jour-j-public/:token" element={<ApresJourJPublic />} />
+
+          {/* Album photo des invités (public, sans compte) */}
+          <Route path="/album/:token" element={<GuestAlbumPublic />} />
+
           
           {/* Route publique RSVP */}
           <Route path="/rsvp/:slug" element={<RSVPPublicForm />} />
