@@ -24,6 +24,7 @@ export default function EspaceFusionSection() {
     { key: 'seating', Icon: LayoutGrid },
     { key: 'jourJ', Icon: ClipboardList },
     { key: 'drinks', Icon: Wine },
+    { key: 'album', Icon: Camera },
   ] as const;
 
   return (
