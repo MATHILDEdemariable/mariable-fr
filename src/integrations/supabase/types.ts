@@ -1090,6 +1090,127 @@ export type Database = {
         }
         Relationships: []
       }
+      guest_album_media: {
+        Row: {
+          album_id: string
+          created_at: string
+          duration_seconds: number | null
+          file_size: number
+          id: string
+          is_hidden: boolean
+          kind: string
+          mime_type: string
+          storage_path: string
+          thumb_path: string | null
+          uploader_name: string | null
+        }
+        Insert: {
+          album_id: string
+          created_at?: string
+          duration_seconds?: number | null
+          file_size?: number
+          id?: string
+          is_hidden?: boolean
+          kind?: string
+          mime_type: string
+          storage_path: string
+          thumb_path?: string | null
+          uploader_name?: string | null
+        }
+        Update: {
+          album_id?: string
+          created_at?: string
+          duration_seconds?: number | null
+          file_size?: number
+          id?: string
+          is_hidden?: boolean
+          kind?: string
+          mime_type?: string
+          storage_path?: string
+          thumb_path?: string | null
+          uploader_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_album_media_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "guest_albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_album_upload_events: {
+        Row: {
+          album_id: string
+          created_at: string
+          fingerprint: string
+          id: string
+        }
+        Insert: {
+          album_id: string
+          created_at?: string
+          fingerprint: string
+          id?: string
+        }
+        Update: {
+          album_id?: string
+          created_at?: string
+          fingerprint?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_album_upload_events_album_id_fkey"
+            columns: ["album_id"]
+            isOneToOne: false
+            referencedRelation: "guest_albums"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_albums: {
+        Row: {
+          bytes_limit: number
+          created_at: string
+          expires_at: string
+          id: string
+          is_active: boolean
+          media_limit: number
+          share_token: string
+          title: string
+          updated_at: string
+          user_id: string
+          welcome_message: string | null
+        }
+        Insert: {
+          bytes_limit?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          media_limit?: number
+          share_token: string
+          title?: string
+          updated_at?: string
+          user_id: string
+          welcome_message?: string | null
+        }
+        Update: {
+          bytes_limit?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          is_active?: boolean
+          media_limit?: number
+          share_token?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+          welcome_message?: string | null
+        }
+        Relationships: []
+      }
       instagram_highlights: {
         Row: {
           active: boolean
@@ -3781,6 +3902,13 @@ export type Database = {
         Returns: {
           is_valid: boolean
           user_id: string
+        }[]
+      }
+      validate_guest_album_token: {
+        Args: { token_value: string }
+        Returns: {
+          album_id: string
+          is_valid: boolean
         }[]
       }
       validate_planning_share_token: {
