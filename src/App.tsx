@@ -110,6 +110,7 @@ const CustomPage = lazy(() => import("./pages/CustomPage"));
 const PropositionPage = lazy(() => import("./pages/PropositionPage"));
 const AvantJourJPublic = lazy(() => import("./pages/AvantJourJPublic"));
 const ApresJourJPublic = lazy(() => import("./pages/ApresJourJPublic"));
+const GuestAlbumPublic = lazy(() => import("./pages/GuestAlbumPublic"));
 const ProtectedRoute = lazy(() => import("./components/auth/ProtectedRoute"));
 const MobileBottomNav = lazy(() => import("./components/layout/MobileBottomNav"));
 const ContentCreatorMariage = lazy(() => import("./pages/ContentCreatorMariage"));
