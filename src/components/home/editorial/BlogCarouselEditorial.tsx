@@ -72,8 +72,8 @@ const BlogCarouselEditorial: React.FC = () => {
         >
           {isLoading &&
             Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="flex-none w-[85vw] md:w-[300px] snap-start">
-                <div className="aspect-[4/5] w-full bg-white/10 animate-pulse" />
+              <div key={i} className="flex-none w-[62vw] max-w-[240px] md:max-w-none md:w-[300px] snap-start">
+                <div className="aspect-[3/4] md:aspect-[4/5] w-full bg-white/10 animate-pulse" />
                 <div className="h-4 w-3/4 bg-white/10 mt-3" />
               </div>
             ))}
@@ -83,9 +83,9 @@ const BlogCarouselEditorial: React.FC = () => {
               <Link
                 key={post.id}
                 to={`/conseilsmariage/${post.slug}`}
-                className="flex-none w-[85vw] md:w-[300px] snap-start text-left group"
+                className="flex-none w-[62vw] max-w-[240px] md:max-w-none md:w-[300px] snap-start text-left group"
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-white/10">
+                <div className="relative aspect-[3/4] md:aspect-[4/5] w-full overflow-hidden bg-white/10">
                   {post.background_image_url ? (
                     <img
                       src={post.background_image_url}
@@ -105,10 +105,10 @@ const BlogCarouselEditorial: React.FC = () => {
                       {post.category}
                     </p>
                   )}
-                  <p className="font-serif text-lg text-white mt-1 leading-snug group-hover:italic transition-all line-clamp-2">
+                  <p className="font-serif text-base md:text-lg text-white mt-1 leading-snug group-hover:italic transition-all line-clamp-2">
                     {post.title}
                   </p>
-                  <p className="text-sm text-white/75 mt-2 line-clamp-2">
+                  <p className="text-xs md:text-sm text-white/75 mt-2 line-clamp-2">
                     {post.meta_description || post.subtitle}
                   </p>
                   <span className="inline-block mt-3 text-xs uppercase tracking-widest text-white/85 underline underline-offset-4 group-hover:text-white">

@@ -36,12 +36,34 @@
     "title": "Your wedding, your organization.",
     "subtitle": "thanks to the app accessible from phone, tablet or computer.\nNo download",
     "features": {
-      "planning": { "title": "Smart planning", "desc": "A timeline tailored to your date and style." },
-      "budget": { "title": "Real budget", "desc": "Track spending, vendor by vendor." },
-      "guests": { "title": "Guests & RSVPs", "desc": "200 guests, no spreadsheet. Allergies, lodging." },
-      "seating": { "title": "Interactive seating plan", "desc": "Drag & drop, print in one click." },
-      "jourJ": { "title": "Wedding day coordination", "desc": "The schedule, shared with your team." },
-      "drinks": { "title": "Drinks calculator", "desc": "The right quantities, zero waste." }
+      "planning": {
+        "title": "Smart planning",
+        "desc": "A timeline tailored to your date and style."
+      },
+      "budget": {
+        "title": "Real budget",
+        "desc": "Track spending, vendor by vendor."
+      },
+      "guests": {
+        "title": "Guests & RSVPs",
+        "desc": "200 guests, no spreadsheet. Allergies, lodging."
+      },
+      "seating": {
+        "title": "Interactive seating plan",
+        "desc": "Drag & drop, print in one click."
+      },
+      "jourJ": {
+        "title": "Wedding day coordination",
+        "desc": "The schedule, shared with your team."
+      },
+      "drinks": {
+        "title": "Drinks calculator",
+        "desc": "The right quantities, zero waste."
+      },
+      "album": {
+        "title": "Shared photo album",
+        "desc": "Collect your guests' photos easily with a QR code."
+      }
     },
     "bonus": {
       "label": "Included",

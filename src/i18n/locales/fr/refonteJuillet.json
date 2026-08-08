@@ -36,12 +36,34 @@
     "title": "Votre mariage, votre organisation.",
     "subtitle": "grâce à l'appli accessible depuis téléphone, tablette ou ordinateur.\nSans téléchargement",
     "features": {
-      "planning": { "title": "Rétroplanning intelligent", "desc": "Une timeline selon ta date et ton style." },
-      "budget": { "title": "Budget réel", "desc": "Tes dépenses suivies, prestataire par prestataire." },
-      "guests": { "title": "Liste invités & RSVP", "desc": "200 invités sans Excel. Allergies, hébergement." },
-      "seating": { "title": "Plan de table interactif", "desc": "Drag & drop, imprime en un clic." },
-      "jourJ": { "title": "Coordination Jour J", "desc": "Le déroulé partagé avec ton équipe." },
-      "drinks": { "title": "Calculateur de boissons", "desc": "Les bonnes quantités, sans gaspillage." }
+      "planning": {
+        "title": "Rétroplanning intelligent",
+        "desc": "Une timeline selon ta date et ton style."
+      },
+      "budget": {
+        "title": "Budget réel",
+        "desc": "Tes dépenses suivies, prestataire par prestataire."
+      },
+      "guests": {
+        "title": "Liste invités & RSVP",
+        "desc": "200 invités sans Excel. Allergies, hébergement."
+      },
+      "seating": {
+        "title": "Plan de table interactif",
+        "desc": "Drag & drop, imprime en un clic."
+      },
+      "jourJ": {
+        "title": "Coordination Jour J",
+        "desc": "Le déroulé partagé avec ton équipe."
+      },
+      "drinks": {
+        "title": "Calculateur de boissons",
+        "desc": "Les bonnes quantités, sans gaspillage."
+      },
+      "album": {
+        "title": "Album photo partagé",
+        "desc": "Récupérez les photos de vos invités facilement grâce à un QR code."
+      }
     },
     "bonus": {
       "label": "Inclus",

@@ -114,8 +114,8 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
       >
         {loading &&
           Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex-none w-[260px] md:w-[300px] snap-start">
-              <div className="aspect-[4/5] w-full bg-white/10 animate-pulse" />
+            <div key={i} className="flex-none w-[62vw] max-w-[240px] md:max-w-none md:w-[300px] snap-start">
+              <div className="aspect-[3/4] md:aspect-[4/5] w-full bg-white/10 animate-pulse" />
               <div className="h-4 w-3/4 bg-white/10 mt-3" />
             </div>
           ))}
@@ -125,9 +125,9 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
             <button
               key={item.id}
               onClick={() => requestAccess()}
-              className="flex-none w-[260px] md:w-[300px] snap-start text-left group"
+              className="flex-none w-[62vw] max-w-[240px] md:max-w-none md:w-[300px] snap-start text-left group"
             >
-              <div className="relative aspect-[4/5] w-full overflow-hidden bg-white/10">
+              <div className="relative aspect-[3/4] md:aspect-[4/5] w-full overflow-hidden bg-white/10">
                 {item.photo ? (
                   <img
                     src={item.photo}
@@ -146,7 +146,7 @@ const Carousel: React.FC<{ label: string; items: VendorCard[]; loading: boolean 
                   {item.categorie ?? '—'}
                   {item.ville ? ` · ${item.ville}` : ''}
                 </p>
-                <p className="font-serif text-lg text-white mt-1 leading-snug group-hover:italic transition-all">
+                <p className="font-serif text-base md:text-lg text-white mt-1 leading-snug group-hover:italic transition-all">
                   {item.nom}
                 </p>
                 <span className="inline-block mt-2 text-xs uppercase tracking-widest text-white/85 underline underline-offset-4 group-hover:text-white">

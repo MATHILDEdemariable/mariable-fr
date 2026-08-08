@@ -34,6 +34,7 @@ const MariageBourgogne = lazy(() => import("./pages/MariageBourgogne"));
 const MariageGrandEst = lazy(() => import("./pages/MariageGrandEst"));
 const MariageCorse = lazy(() => import("./pages/MariageCorse"));
 const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
+const AlbumPhotoPartage = lazy(() => import("./pages/AlbumPhotoPartage"));
 const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
 
 const Callback = lazy(() => import("./pages/auth/Callback"));
@@ -295,6 +296,7 @@ function App() {
                   
                   <Route path="/contact/faq" element={<FAQ />} />
                    <Route path="/checklist-mariage" element={<ChecklistMariage />} />
+                  <Route path="/album-photo-partage-mariage" element={<AlbumPhotoPartage />} />
                    <Route path="/checklist-public/:userId" element={<ChecklistPublic />} />
                    <Route path="/to-do-list-mariage" element={<ToDoListMariage />} />
                   <Route path="/liste-preparatif-mariage" element={<ListePreparatifMariage />} />
