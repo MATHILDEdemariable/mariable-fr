@@ -70,3 +70,15 @@ verify_jwt = false
 [functions.get-ebook-download-url]
 verify_jwt = false
 
+
+[functions.album-public-info]
+verify_jwt = false
+
+[functions.album-request-upload]
+verify_jwt = false
+
+[functions.album-confirm-upload]
+verify_jwt = false
+
+[functions.album-media-url]
+verify_jwt = false
