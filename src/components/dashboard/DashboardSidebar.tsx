@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Palette, Globe, BarChart3
+  ShoppingCart, Building2, Smartphone, Palette, Globe, BarChart3, Images
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
