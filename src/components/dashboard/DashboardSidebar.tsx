@@ -206,6 +206,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.afterDay')}</span>
         </Link>
 
+        <Link to={isReaderMode ? '#' : '/dashboard/album'} onClick={preventReader} className={linkClass(isActive('/dashboard/album'))}>
+          <Images className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">Album invités</span>
+        </Link>
+
+
         {/* ADMIN */}
         <SectionLabel label={t('sidebar.sections.admin')} />
 
