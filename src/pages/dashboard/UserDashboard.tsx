@@ -43,6 +43,7 @@ import MairieCivilPage from './MairieCivilPage';
 import CeremoniePage from './CeremoniePage';
 import InstallAppPage from './InstallAppPage';
 import MoodboardPage from './MoodboardPage';
+import AlbumPage from './AlbumPage';
 
 const UserDashboard: React.FC = () => {
   const navigate = useNavigate();
