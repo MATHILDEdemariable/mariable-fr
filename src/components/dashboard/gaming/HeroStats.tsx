@@ -36,20 +36,8 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const dateLocale = i18n.language?.startsWith('en') ? enUS : fr;
 
-  const handlePremiumClick = async () => {
-    try {
-      setCheckoutLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
-      if (error || !data?.url) {
-        toast({ title: t('hero.errorTitle'), description: t('hero.errorCheckout'), variant: "destructive" });
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      toast({ title: t('hero.errorTitle'), description: t('hero.errorGeneric'), variant: "destructive" });
-    } finally {
-      setCheckoutLoading(false);
-    }
+  const handlePremiumClick = () => {
+    navigate('/paiement');
   };
 
   const greeting = firstName ? t('hero.welcomeWithName', { name: firstName }) : t('hero.welcomeGeneric');

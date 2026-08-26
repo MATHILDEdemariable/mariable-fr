@@ -14,24 +14,12 @@ const PricingContent = () => {
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  const handlePremiumClick = async () => {
+  const handlePremiumClick = () => {
     if (!isAuthenticated) {
-      navigate('/login?redirect=premium');
+      navigate('/register-gratuit?redirect=paiement');
       return;
     }
-    try {
-      setCheckoutLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
-      if (error || !data?.url) {
-        toast({ title: "Erreur", description: "Impossible de créer la session de paiement.", variant: "destructive" });
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      toast({ title: "Erreur", description: "Une erreur est survenue.", variant: "destructive" });
-    } finally {
-      setCheckoutLoading(false);
-    }
+    navigate('/paiement');
   };
 
   const faqItems = [
