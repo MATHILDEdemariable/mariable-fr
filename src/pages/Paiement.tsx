@@ -341,11 +341,13 @@ const Paiement = () => {
                       </div>
                       
       <Button 
-        onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')}
+        onClick={handlePremiumCheckout}
+        disabled={checkoutLoading}
         className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
       >
-        Acheter maintenant
+        {checkoutLoading ? "Redirection vers le paiement..." : "Acheter maintenant"}
       </Button>
+
 
       <Link to="/register-gratuit" className="block mt-3">
         <Button
