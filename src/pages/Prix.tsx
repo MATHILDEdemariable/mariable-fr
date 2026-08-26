@@ -28,24 +28,12 @@ const Prix = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const handlePremiumClick = async () => {
+  const handlePremiumClick = () => {
     if (!isAuthenticated) {
-      navigate('/login?redirect=premium');
+      navigate('/register-gratuit?redirect=paiement');
       return;
     }
-    try {
-      setCheckoutLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
-      if (error || !data?.url) {
-        toast({ title: t('errors.title'), description: t('errors.checkout'), variant: "destructive" });
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      toast({ title: t('errors.title'), description: t('errors.generic'), variant: "destructive" });
-    } finally {
-      setCheckoutLoading(false);
-    }
+    navigate('/paiement');
   };
 
   const comparisonRows = t('comparison.rows', { returnObjects: true }) as ComparisonRow[];

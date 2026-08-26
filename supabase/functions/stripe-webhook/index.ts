@@ -221,8 +221,20 @@ async function handleCheckoutCompleted(event: Stripe.Event, supabaseClient: any)
     throw new Error(`Payment not completed. Status: ${session.payment_status}`);
   }
 
-  // Trouver l'utilisateur par email avec pagination pour gérer une grande base d'utilisateurs
+  // Priorité : identifiant utilisateur transmis dans les métadonnées du checkout
   let user = null;
+  const metadataUserId = session.metadata?.userId || session.client_reference_id;
+  if (metadataUserId) {
+    const { data: userById, error: userByIdError } = await supabaseClient.auth.admin.getUserById(metadataUserId);
+    if (userByIdError) {
+      logStep("WARN: getUserById failed, fallback to email lookup", { error: userByIdError.message });
+    } else if (userById?.user) {
+      user = userById.user;
+      logStep("User resolved from metadata", { userId: user.id });
+    }
+  }
+
+  // Fallback : recherche par email avec pagination
   let page = 1;
   const perPage = 1000; // Maximum par page
   

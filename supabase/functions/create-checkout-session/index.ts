@@ -44,23 +44,25 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    // Create checkout session for one-time payment (29€)
+    // Create checkout session for one-time payment (29€ - prod_TwRgLqCqV0pMdh)
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ['card'],
       mode: 'payment',
       customer_email: user.email,
+      client_reference_id: user.id,
       line_items: [{
         price: 'price_1SyYn8KHghqBzkgj249P8325',
         quantity: 1,
       }],
       allow_promotion_codes: true,
       success_url: `https://www.mariable.fr/dashboard?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `https://www.mariable.fr/dashboard?payment=cancelled`,
+      cancel_url: `https://www.mariable.fr/paiement?payment=cancelled`,
       metadata: {
         userId: user.id,
         userEmail: user.email
       }
     });
+
 
     console.log('✅ Checkout session created:', session.id);
     console.log('✅ Session URL:', session.url);

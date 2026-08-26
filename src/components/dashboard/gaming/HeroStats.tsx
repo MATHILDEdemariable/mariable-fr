@@ -8,8 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface HeroStatsProps {
   firstName?: string | null;
@@ -32,24 +31,12 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
   const { isPremium } = useUserProfile();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const dateLocale = i18n.language?.startsWith('en') ? enUS : fr;
 
-  const handlePremiumClick = async () => {
-    try {
-      setCheckoutLoading(true);
-      const { data, error } = await supabase.functions.invoke('create-checkout-session');
-      if (error || !data?.url) {
-        toast({ title: t('hero.errorTitle'), description: t('hero.errorCheckout'), variant: "destructive" });
-        return;
-      }
-      window.location.href = data.url;
-    } catch {
-      toast({ title: t('hero.errorTitle'), description: t('hero.errorGeneric'), variant: "destructive" });
-    } finally {
-      setCheckoutLoading(false);
-    }
+  const handlePremiumClick = () => {
+    navigate('/paiement');
   };
 
   const greeting = firstName ? t('hero.welcomeWithName', { name: firstName }) : t('hero.welcomeGeneric');

@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { Button } from '@/components/ui/button';
@@ -13,7 +13,42 @@ import { useToast } from '@/hooks/use-toast';
 const Paiement = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const navigate = useNavigate();
   const { toast } = useToast();
+
+  const handlePremiumCheckout = async () => {
+    if (checkoutLoading) return;
+    try {
+      setCheckoutLoading(true);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        navigate('/register-gratuit?redirect=paiement');
+        return;
+      }
+      const { data, error } = await supabase.functions.invoke('create-checkout-session');
+      if (error || !data?.url) {
+        console.error('❌ Erreur création session Stripe:', error);
+        toast({
+          title: "Erreur",
+          description: "Impossible de créer la session de paiement. Veuillez réessayer.",
+          variant: "destructive",
+        });
+        return;
+      }
+      window.location.href = data.url;
+    } catch (error) {
+      console.error('❌ handlePremiumCheckout failed:', error);
+      toast({
+        title: "Erreur",
+        description: "Une erreur est survenue. Veuillez réessayer.",
+        variant: "destructive",
+      });
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -306,11 +341,13 @@ const Paiement = () => {
                       </div>
                       
       <Button 
-        onClick={() => window.open('https://buy.stripe.com/7sY00ka2m3xwcMt8Au8bS03', '_blank')}
+        onClick={handlePremiumCheckout}
+        disabled={checkoutLoading}
         className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white py-3 text-lg"
       >
-        Acheter maintenant
+        {checkoutLoading ? "Redirection vers le paiement..." : "Acheter maintenant"}
       </Button>
+
 
       <Link to="/register-gratuit" className="block mt-3">
         <Button
