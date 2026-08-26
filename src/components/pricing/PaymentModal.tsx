@@ -21,21 +21,21 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           </div>
           
           <DialogTitle className="text-center">
-            Abonnement Premium - 9,9€/mois
+            Compte Premium - 29 € à vie
           </DialogTitle>
           
           <DialogDescription className="text-center">
-            Sans engagement • Annulation en 2 clics
+            Paiement unique • Accès permanent
           </DialogDescription>
         </DialogHeader>
         
         <div className="space-y-4">
           <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Inclus dans l'abonnement :</h4>
+            <h4 className="font-medium mb-2">Inclus dans le Premium :</h4>
             <ul className="text-sm text-gray-600 space-y-1">
               <li>• Toutes les fonctionnalités débloquées dont celles avec IA</li>
               <li>• Notre appli spéciale jour j pour créer facilement votre déroulé planning et votre équipe (proches, prestataires impliqués)</li>
-              <li>• Support client whatsapp illimité</li>
+              <li>• Album photo partagé avec vos invités (QR code)</li>
               <li>• Guide PDF inclus</li>
               <li>• Code promo à saisir dans l'étape suivante</li>
             </ul>
