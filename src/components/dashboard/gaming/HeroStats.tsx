@@ -8,8 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useUserProfile } from '@/hooks/useUserProfile';
-import { supabase } from '@/integrations/supabase/client';
-import { useToast } from '@/hooks/use-toast';
+import { useNavigate } from 'react-router-dom';
 
 interface HeroStatsProps {
   firstName?: string | null;
@@ -32,7 +31,7 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
   const { isPremium } = useUserProfile();
-  const { toast } = useToast();
+  const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const dateLocale = i18n.language?.startsWith('en') ? enUS : fr;
 
