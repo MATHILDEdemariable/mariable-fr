@@ -112,8 +112,20 @@ serve(async (req) => {
       { auth: { persistSession: false } }
     );
 
-    // Find user by email with pagination to handle large user base
+    // Priorité : identifiant utilisateur transmis dans les métadonnées du checkout
     let user = null;
+    const metadataUserId = (session.metadata as Record<string, string> | null)?.userId || session.client_reference_id;
+    if (metadataUserId) {
+      const { data: userById, error: userByIdError } = await supabaseService.auth.admin.getUserById(metadataUserId);
+      if (userByIdError) {
+        console.warn('⚠️ getUserById failed, fallback email:', userByIdError.message);
+      } else if (userById?.user) {
+        user = userById.user;
+        console.log('✅ User resolved from metadata:', user.id);
+      }
+    }
+
+    // Fallback : recherche par email avec pagination
     let page = 1;
     const perPage = 1000; // Maximum per page
     
