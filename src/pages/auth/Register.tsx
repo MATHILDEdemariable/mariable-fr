@@ -111,7 +111,7 @@ const Register = () => {
       setShowEmailAlert(true);
 
       setTimeout(() => {
-        navigate('/auth/email-confirmation');
+        navigate(redirectPath ? `/auth/email-confirmation?redirect=${encodeURIComponent(redirectPath)}` : '/auth/email-confirmation');
       }, 3000);
 
     } catch (error: any) {
