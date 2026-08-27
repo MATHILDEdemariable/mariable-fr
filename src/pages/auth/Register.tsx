@@ -1,7 +1,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -31,13 +32,24 @@ const Register = () => {
   const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  // Support ?redirect=paiement (ou tout chemin relatif) pour ramener l'utilisateur
+  // vers le tunnel de paiement après inscription / confirmation d'email.
+  const redirectParam = new URLSearchParams(location.search).get('redirect');
+  const redirectPath = redirectParam
+    ? (redirectParam.startsWith('/') && !redirectParam.startsWith('//')
+        ? redirectParam
+        : `/${redirectParam}`)
+    : null;
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(redirectPath || '/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, navigate, redirectPath]);
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,7 +75,7 @@ const Register = () => {
     try {
       setIsLoading(true);
       const origin = window.location.origin;
-      const redirectTo = `${origin}/`;
+      const redirectTo = `${origin}${redirectPath || '/'}`;
 
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -99,7 +111,7 @@ const Register = () => {
       setShowEmailAlert(true);
 
       setTimeout(() => {
-        navigate('/auth/email-confirmation');
+        navigate(redirectPath ? `/auth/email-confirmation?redirect=${encodeURIComponent(redirectPath)}` : '/auth/email-confirmation');
       }, 3000);
 
     } catch (error: any) {
@@ -296,7 +308,7 @@ const Register = () => {
           <CardFooter className="flex flex-col gap-3">
             <div className="text-center text-sm">
               {t('register.alreadyAccount')}{" "}
-              <Link to="/login" className="text-wedding-olive hover:underline font-medium">
+              <Link to={redirectPath ? `/login?next=${encodeURIComponent(redirectPath)}` : '/login'} className="text-wedding-olive hover:underline font-medium">
                 {t('register.signIn')}
               </Link>
             </div>
