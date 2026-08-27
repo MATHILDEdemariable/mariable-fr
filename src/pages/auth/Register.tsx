@@ -308,7 +308,7 @@ const Register = () => {
           <CardFooter className="flex flex-col gap-3">
             <div className="text-center text-sm">
               {t('register.alreadyAccount')}{" "}
-              <Link to="/login" className="text-wedding-olive hover:underline font-medium">
+              <Link to={redirectPath ? `/login?next=${encodeURIComponent(redirectPath)}` : '/login'} className="text-wedding-olive hover:underline font-medium">
                 {t('register.signIn')}
               </Link>
             </div>
