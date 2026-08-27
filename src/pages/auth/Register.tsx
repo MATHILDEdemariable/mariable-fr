@@ -32,13 +32,24 @@ const Register = () => {
   const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
   const { user } = useAuth();
+
+  // Support ?redirect=paiement (ou tout chemin relatif) pour ramener l'utilisateur
+  // vers le tunnel de paiement après inscription / confirmation d'email.
+  const redirectParam = new URLSearchParams(location.search).get('redirect');
+  const redirectPath = redirectParam
+    ? (redirectParam.startsWith('/') && !redirectParam.startsWith('//')
+        ? redirectParam
+        : `/${redirectParam}`)
+    : null;
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard');
+      navigate(redirectPath || '/dashboard');
     }
-  }, [user, navigate]);
+  }, [user, navigate, redirectPath]);
+
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
