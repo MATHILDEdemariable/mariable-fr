@@ -75,7 +75,7 @@ const Register = () => {
     try {
       setIsLoading(true);
       const origin = window.location.origin;
-      const redirectTo = `${origin}/`;
+      const redirectTo = `${origin}${redirectPath || '/'}`;
 
       const { data, error } = await supabase.auth.signUp({
         email,
