@@ -38,23 +38,23 @@
     "features": {
       "planning": {
         "title": "Rétroplanning intelligent",
-        "desc": "Une timeline selon ta date et ton style."
+        "desc": "Une timeline selon ta date et votre style et une to-do liste personnalisable pour ne rien oublier."
       },
       "budget": {
         "title": "Budget réel",
-        "desc": "Tes dépenses suivies, prestataire par prestataire."
+        "desc": "Calculez votre budget grâce à notre calculatrice intelligente et suivez vos dépenses prestataire par prestataire grâce à un tableur en ligne. "
       },
       "guests": {
-        "title": "Liste invités & RSVP",
-        "desc": "200 invités sans Excel. Allergies, hébergement."
+        "title": "Liste invités & RSVP digital",
+        "desc": "Envoyez un lien de formulaire à vos invités pour qu'ils répondent et récupérez les réponses en ligne tout simplement."
       },
       "seating": {
         "title": "Plan de table interactif",
-        "desc": "Drag & drop, imprime en un clic."
+        "desc": "Relié à votre liste d'invités. Ajout manuel. Drag & drop, imprimez en un clic."
       },
       "jourJ": {
         "title": "Coordination Jour J",
-        "desc": "Le déroulé partagé avec ton équipe."
+        "desc": "Générez le déroulé de votre événement facilement grâce à l'IA et des conseils avisés. Partagez les informations avec votre équipe."
       },
       "drinks": {
         "title": "Calculateur de boissons",
