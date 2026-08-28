@@ -216,39 +216,21 @@ const Paiement = () => {
                   <CardContent className="space-y-4">
                     <h3 className="font-semibold text-lg mb-4">Inclus dans votre application :</h3>
                     <div className="space-y-3">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Application personnalisée pour votre mariage</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Planning intelligent et personnalisable</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Partage avec vos proches et prestataires</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Documents partagés et centralisés</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Gestion d'équipe simplifiée</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Timeline interactive du jour J</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Mode collaboratif en temps réel</p>
-                      </div>
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <p className="text-sm text-gray-700">Accès vie entière à votre planning</p>
-                      </div>
+                      {[
+                        "Application personnalisée pour votre mariage sans téléchargement (disponible ordinateur, tablette, smartphone)",
+                        "8 guides inclus",
+                        "Toutes les fonctionnalités sans limite et avec IA illimitée",
+                        "Planning du jour J intelligent, personnalisable, partageable facilement avec vos proches et prestataires en temps réel",
+                        "Plan de table en ligne",
+                        "Album photo partageable",
+                      ].map((feature) => (
+                        <div key={feature} className="flex items-start gap-3">
+                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                          <p className="text-sm text-gray-700">{feature}</p>
+                        </div>
+                      ))}
                     </div>
+
 
                     <div className="pt-4 border-t">
                       <div className="flex items-center gap-2 mb-4">
