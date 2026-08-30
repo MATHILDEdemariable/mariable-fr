@@ -597,8 +597,14 @@ const PlanningPublic: React.FC = () => {
                                          </span>
                                        )}
                                      </div>
+                                     {task.duration > 0 && (
+                                       <span className="text-xs text-wedding-olive/70">
+                                         {task.duration} min
+                                       </span>
+                                     )}
                                    </div>
                                  )}
+
                                 
                                 {/* Membres assignés */}
                                 {task.assigned_to && Array.isArray(task.assigned_to) && task.assigned_to.length > 0 && (
