@@ -555,8 +555,14 @@ const PlanningPublic: React.FC = () => {
                                            </span>
                                          )}
                                        </div>
+                                       {task.duration > 0 && (
+                                         <span className="text-xs text-wedding-olive/70">
+                                           {task.duration} min
+                                         </span>
+                                       )}
                                      </div>
                                    )}
+
                                   
                                   {/* Description - cachée par défaut sur mobile */}
                                   {hasDescription && (
