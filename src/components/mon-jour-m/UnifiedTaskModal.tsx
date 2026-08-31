@@ -239,11 +239,12 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         onClose();
       } catch (error: any) {
         console.error('❌ Error adding manual event:', error);
+        const isDuplicateTitle = error?.code === '23505';
         toast({
-          title: "Erreur",
-          description: error?.message
-            ? `Impossible d'ajouter l'étape : ${error.message}`
-            : "Impossible d'ajouter l'étape.",
+          title: isDuplicateTitle ? "Titre déjà utilisé" : "Erreur",
+          description: isDuplicateTitle
+            ? "Une étape porte déjà ce titre dans votre planning. Modifiez le titre pour l'ajouter."
+            : "Impossible d'ajouter l'étape. Veuillez réessayer.",
           variant: "destructive"
         });
 
