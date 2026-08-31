@@ -180,6 +180,12 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         const startDateTime = new Date(referenceTime);
         startDateTime.setHours(hours, minutes, 0, 0);
 
+        // Vérifier que la session est toujours valide (sinon RLS bloque l'insertion)
+        const { data: sessionData } = await supabase.auth.getSession();
+        if (!sessionData.session) {
+          throw new Error('Session expirée, reconnectez-vous pour ajouter une étape.');
+        }
+
         const { data, error } = await supabase
           .from('coordination_planning')
           .insert({
@@ -197,6 +203,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           .single();
 
         if (error) throw error;
+
+
 
         const newEvent: PlanningEvent = {
           id: data.id,
@@ -229,13 +237,16 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         });
         
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Error adding manual event:', error);
         toast({
           title: "Erreur",
-          description: "Impossible d'ajouter l'étape.",
+          description: error?.message
+            ? `Impossible d'ajouter l'étape : ${error.message}`
+            : "Impossible d'ajouter l'étape.",
           variant: "destructive"
         });
+
       } finally {
         setIsLoading(false);
       }
