@@ -279,13 +279,31 @@ const PlanningPublic: React.FC = () => {
     
     setIsExporting(true);
     try {
+      const tasksToExport = filteredTasks.length > 0 ? filteredTasks : coordinationData.tasks;
+
       const exportData = {
         coordination: coordinationData.coordination,
-        tasks: filteredTasks.length > 0 ? filteredTasks : coordinationData.tasks,
-        teamMembers: coordinationData.teamMembers,
+        tasks: tasksToExport.map((task: any) => ({
+          title: task.title,
+          start_time: task.start_time,
+          end_time: task.end_time,
+          duration: task.duration,
+          description: task.description,
+          status: task.status,
+          priority: task.priority,
+          assigned_to: task.assigned_to
+        })),
+        teamMembers: coordinationData.teamMembers.map((member: any) => ({
+          name: member.name,
+          role: member.role,
+          type: member.type,
+          phone: member.phone,
+          email: member.email
+        })),
         documents: coordinationData.documents,
         pinterestLinks: pinterestLinks
       };
+
 
       const success = await exportPublicPlanningBrandedToPDF(exportData);
       
