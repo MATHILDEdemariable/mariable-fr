@@ -237,13 +237,16 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         });
         
         onClose();
-      } catch (error) {
+      } catch (error: any) {
         console.error('❌ Error adding manual event:', error);
         toast({
           title: "Erreur",
-          description: "Impossible d'ajouter l'étape.",
+          description: error?.message
+            ? `Impossible d'ajouter l'étape : ${error.message}`
+            : "Impossible d'ajouter l'étape.",
           variant: "destructive"
         });
+
       } finally {
         setIsLoading(false);
       }
