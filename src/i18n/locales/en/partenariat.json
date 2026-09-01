@@ -67,7 +67,18 @@
     "price": "€149/year",
     "priceNote": "that is €12.40/month — no automatic renewal commitment",
     "cta": "Join Mariable Pro",
-    "contactSubject": "Mariable Pro — €149/year"
+    "contactSubject": "Mariable Pro — €149/year",
+    "included": [
+      "Listing on Mariable.fr",
+      "Dedicated Instagram carousel",
+      "Partnership announcement story",
+      "Article on Mariable.fr",
+      "LinkedIn feature",
+      "Price updates all year long",
+      "Your news shared in stories on request :-)",
+      "🎁 5 Mariable Premium accesses to gift your couples (a premium service to support them in coordinating their big day)"
+    ],
+    "ctaConditions": "See admission requirements"
   },
   "conditions": {
     "sectionTitle": "Admission requirements",
@@ -89,12 +100,30 @@
       "body": "Not just \"Wedding photographer — from €1,800\", but a readable price list:",
       "exampleTitle": "Wedding photography",
       "example": [
-        { "label": "Essential package", "price": "€1,800" },
-        { "label": "Complete package", "price": "€2,400" },
-        { "label": "Premium package", "price": "€3,200" },
-        { "label": "Extra hours", "price": "€150/h" },
-        { "label": "Album", "price": "€450" },
-        { "label": "Second photographer", "price": "€500" }
+        {
+          "label": "Essential package",
+          "price": "€1,800"
+        },
+        {
+          "label": "Complete package",
+          "price": "€2,400"
+        },
+        {
+          "label": "Premium package",
+          "price": "€3,200"
+        },
+        {
+          "label": "Extra hours",
+          "price": "€150/h"
+        },
+        {
+          "label": "Album",
+          "price": "€450"
+        },
+        {
+          "label": "Second photographer",
+          "price": "€500"
+        }
       ],
       "howTitle": "How does it work?",
       "how": "Email us your information sheet, your brochure or the link to your website where the information is listed: we analyse it and write it up for you. Your brochure is never published nor accessible without a request, but your prices are public.",
