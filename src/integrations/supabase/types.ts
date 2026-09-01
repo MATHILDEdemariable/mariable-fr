@@ -908,6 +908,36 @@ export type Database = {
         }
         Relationships: []
       }
+      devis_analyses: {
+        Row: {
+          categorie: string
+          commentaire: string | null
+          created_at: string
+          email: string
+          file_path: string | null
+          id: string
+          statut: string
+        }
+        Insert: {
+          categorie: string
+          commentaire?: string | null
+          created_at?: string
+          email: string
+          file_path?: string | null
+          id?: string
+          statut?: string
+        }
+        Update: {
+          categorie?: string
+          commentaire?: string | null
+          created_at?: string
+          email?: string
+          file_path?: string | null
+          id?: string
+          statut?: string
+        }
+        Relationships: []
+      }
       devis_professionnels: {
         Row: {
           created_at: string

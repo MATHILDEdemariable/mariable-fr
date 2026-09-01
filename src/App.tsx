@@ -80,6 +80,7 @@ const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
 const Approche = lazy(() => import("./pages/about/Approche"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
+const BudgetMariage = lazy(() => import("./pages/BudgetMariage"));
 const FAQ = lazy(() => import("./pages/contact/FAQ"));
 const ChecklistPublic = lazy(() => import("./pages/ChecklistPublic"));
 const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
@@ -310,6 +311,7 @@ function App() {
                    <Route path="/about/approche" element={<Approche />} />
                    <Route path="/about/temoignages" element={<Temoignages />} />
                    <Route path="/comparatif" element={<Comparatif />} />
+                   <Route path="/budget-mariage" element={<BudgetMariage />} />
 
 
                   {/* Prestataires routes */}

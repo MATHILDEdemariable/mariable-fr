@@ -105,6 +105,32 @@ const Register = () => {
 
       localStorage.setItem('pending_verification_email', email);
 
+      // Lead "je veux découvrir les prestataires" issu de /budget-mariage
+      try {
+        const budgetLead = sessionStorage.getItem('mariable_budget_lead');
+        if (budgetLead) {
+          sessionStorage.removeItem('mariable_budget_lead');
+          await supabase.from('contact_requests').insert({
+            type: 'prestataire',
+            email,
+            phone: phone || null,
+            message: `Demande de prestataires adaptés au budget (source : /budget-mariage)\n${budgetLead}`,
+          });
+          supabase.functions
+            .invoke('notify-partenariat-contact', {
+              body: {
+                email,
+                phone: phone || null,
+                subject: 'Lead budget mariage',
+                message: `Nouvelle inscription depuis /budget-mariage souhaitant recevoir des prestataires adaptés à son budget.\n${budgetLead}`,
+              },
+            })
+            .catch((notifyError) => console.error('❌ notify budget lead failed:', notifyError));
+        }
+      } catch (leadError) {
+        console.error('❌ Budget lead capture failed:', leadError);
+      }
+
       trackMetaRegistration();
       trackUserRegistration('email');
 
