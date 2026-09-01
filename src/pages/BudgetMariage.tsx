@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { ArrowRight, Calculator, FileSearch, Users } from 'lucide-react';
+import { Calculator, FileSearch, Users } from 'lucide-react';
 import SEO from '@/components/SEO';
 import { useAuth } from '@/contexts/AuthContext';
 import EditorialHeader from '@/components/home/editorial/EditorialHeader';
@@ -50,6 +50,7 @@ const FAQ_ITEMS = [
 ];
 
 const BudgetMariage: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const [isSimulatorOpen, setIsSimulatorOpen] = useState(false);
 
   useEffect(() => {
