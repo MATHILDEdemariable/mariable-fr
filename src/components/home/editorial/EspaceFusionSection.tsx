@@ -44,16 +44,21 @@ export default function EspaceFusionSection() {
 
         {/* Capture dashboard pleine largeur */}
         <div className="max-w-5xl mx-auto mb-14 md:mb-20">
-          <img
-            src={DASHBOARD_IMAGE}
-            alt="Mariable dashboard"
-            loading="lazy"
-            className="w-full h-auto shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]"
-            onError={(e) => {
-              (e.currentTarget as HTMLImageElement).style.display = 'none';
-            }}
-          />
+          <div className="w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
+            <img
+              src={DASHBOARD_IMAGE}
+              alt="Mariable dashboard"
+              loading="lazy"
+              width={1600}
+              height={1000}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                (e.currentTarget as HTMLImageElement).style.display = 'none';
+              }}
+            />
+          </div>
         </div>
+
 
         {/* Grille 3×2 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-8 max-w-5xl mx-auto mb-14 md:mb-16">
