@@ -225,7 +225,7 @@ const Register = () => {
           </Card>
 
           {/* Colonne droite : formulaire */}
-          <Card className="w-full shadow-lg">
+          <Card className="w-full shadow-lg order-1 lg:order-2">
           <CardHeader className="space-y-2">
             <CardTitle className="text-2xl font-serif text-center">{t('register.title')}</CardTitle>
             <CardDescription className="text-center">{t('register.subtitle')}</CardDescription>
