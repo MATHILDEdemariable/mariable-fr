@@ -1,17 +1,109 @@
 {
   "seo": {
-    "title": "Digital marketing agency — Event professionals | Mariable",
-    "description": "Digital marketing agency for event pros: organic social media growth, Meta Ads, TikTok Ads, content creation, community management and websites. On quote."
+    "title": "Mariable Pro & Studio — Listing and marketing for wedding pros",
+    "description": "Mariable Pro: get listed and reach qualified couples for €149/year. Mariable Studio: digital marketing agency for event professionals, on quote."
   },
   "backHome": "Back to home",
   "hero": {
-    "eyebrow": "Digital marketing agency · Event professionals",
-    "title": "The digital marketing agency for event professionals",
-    "subtitle": "Communication strategy and management to attract clients who look like you.",
-    "cta": "See the services"
+    "eyebrow": "Event professionals",
+    "tagline": "Your style. Your prices. Clients who match you.",
+    "subtitle": "Join a curated selection of professionals chosen for their world and their craft, and get introduced to couples whose project matches your offer.",
+    "proCard": {
+      "label": "Main offer",
+      "title": "Mariable Pro",
+      "subtitle": "Presence, visibility and quality listing in front of couples ready to contact you.",
+      "badge": "🎁 Back-to-season offer",
+      "priceOld": "€200/year",
+      "price": "€149/year",
+      "priceNote": "that is €12.40/month",
+      "cta": "Join Mariable Pro"
+    },
+    "studioCard": {
+      "label": "Add-on offer",
+      "title": "Mariable Studio",
+      "subtitle": "The digital marketing agency for event professionals: social media, Meta & TikTok Ads, websites.",
+      "price": "On quote",
+      "cta": "Discover Studio"
+    }
+  },
+  "central": {
+    "title": "The transparency that saves you time.",
+    "body": "Couples know exactly what you offer and what it costs before they contact you.",
+    "resultLabel": "Result",
+    "points": [
+      "Better qualified enquiries",
+      "Couples aligned with your positioning",
+      "Less time lost on out-of-budget requests",
+      "Visibility with a targeted audience"
+    ]
+  },
+  "pro": {
+    "sectionTitle": "Mariable Pro — what your membership includes",
+    "intro": "Mariable helps couples find professionals matching their style, their wishes and their budget. As a Mariable Pro professional, you are listed on our platform and featured to our community.",
+    "features": [
+      {
+        "title": "Dedicated professional profile on Mariable",
+        "body": "Introduction, photos, services, detailed pricing, contact details and links."
+      },
+      {
+        "title": "Listing inside the platform",
+        "body": "Visible in searches by service, location, style and budget."
+      },
+      {
+        "title": "Editorial feature",
+        "body": "Dedicated communication on Mariable's social channels following the editorial calendar: dedicated Instagram post or carousel, with the possibility of joining themed selections."
+      },
+      {
+        "title": "Editorial & SEO visibility",
+        "body": "Presence in relevant Mariable articles and selections. Example: \"10 elegant wedding photographers in Provence\"."
+      },
+      {
+        "title": "Access to the Mariable Pro network",
+        "body": "Priority on upcoming qualified introductions."
+      }
+    ],
+    "priceBadge": "🎁 Back-to-season offer",
+    "priceOld": "€200/year",
+    "price": "€149/year",
+    "priceNote": "that is €12.40/month — no automatic renewal commitment",
+    "cta": "Join Mariable Pro",
+    "contactSubject": "Mariable Pro — €149/year"
+  },
+  "conditions": {
+    "sectionTitle": "Admission requirements",
+    "sectionSubtitle": "For professionals who love beautiful projects.",
+    "one": {
+      "label": "Requirement 1",
+      "title": "Work in one of these fields",
+      "items": [
+        "Wedding venue",
+        "Caterer",
+        "Photographer / videographer",
+        "Wedding planner or coordinator",
+        "Dress, suit or bridal accessories designer"
+      ]
+    },
+    "two": {
+      "label": "Requirement 2",
+      "title": "Share your pricing in detail",
+      "body": "Not just \"Wedding photographer — from €1,800\", but a readable price list:",
+      "exampleTitle": "Wedding photography",
+      "example": [
+        { "label": "Essential package", "price": "€1,800" },
+        { "label": "Complete package", "price": "€2,400" },
+        { "label": "Premium package", "price": "€3,200" },
+        { "label": "Extra hours", "price": "€150/h" },
+        { "label": "Album", "price": "€450" },
+        { "label": "Second photographer", "price": "€500" }
+      ],
+      "howTitle": "How does it work?",
+      "how": "Email us your information sheet, your brochure or the link to your website where the information is listed: we analyse it and write it up for you. Your brochure is never published nor accessible without a request, but your prices are public.",
+      "note": "You of course keep the ability to adapt your quotes and offer bespoke work on top of your base prices. Mariable simply lets couples immediately understand the real price range."
+    }
   },
   "services": {
-    "sectionTitle": "Our services",
+    "sectionLabel": "Mariable Studio",
+    "sectionTitle": "The digital marketing agency for event professionals",
     "sectionSubtitle": "Three levers to build your brand, your client acquisition and your digital presence — à la carte or as a full retainer.",
     "pricingLabel": "Pricing",
     "pricingValue": "On quote",
@@ -60,36 +152,36 @@
     "title": "Frequently asked questions",
     "items": [
       {
+        "question": "What exactly does the €149/year Mariable Pro offer include?",
+        "answer": "A dedicated professional profile (introduction, photos, services, detailed pricing, contact details), listing in the platform searches by service, location, style and budget, an editorial feature on Mariable's social channels (dedicated Instagram post or carousel, themed selections), presence in relevant SEO articles and selections, and access to the Mariable Pro network with priority on qualified introductions."
+      },
+      {
+        "question": "Why do I need to publish my prices to join Mariable Pro?",
+        "answer": "Because it saves you time: couples know what you offer and what it costs before contacting you. The result is better qualified enquiries, couples aligned with your positioning, and far fewer out-of-budget conversations. You of course keep control of your quotes and bespoke work; published prices simply give the real price range."
+      },
+      {
+        "question": "What is the difference between Mariable Pro and Mariable Studio?",
+        "answer": "Mariable Pro is a listing and visibility offer on the Mariable platform, at €149/year. Mariable Studio is digital marketing support on quote: social media strategy, content creation, community management, Meta Ads and TikTok Ads, websites and conversion tools. Both are complementary and can be combined."
+      },
+      {
+        "question": "How do I send my pricing?",
+        "answer": "Email your information sheet, your brochure or the link to your website where the information is listed. We analyse it and write your packages up on your profile. Your brochure is not published nor accessible without a request; only your prices are made public."
+      },
+      {
         "question": "Which event professionals do you work with?",
-        "answer": "I work with all wedding event professionals: venues (estates, châteaux, mas, manors), caterers, photographers, videographers, florists, DJs, wedding planners and brands looking to professionalise their image, client acquisition and digital communication."
+        "answer": "Venues (estates, châteaux, mas, manors), caterers, photographers and videographers, wedding planners and coordinators, dress, suit and bridal accessories designers. For Mariable Studio, I work more broadly with every event brand looking to professionalise its image and client acquisition."
       },
       {
         "question": "Organic growth or paid advertising — which to choose?",
         "answer": "Both are complementary. Organic (Instagram, TikTok, SEO) builds your brand and credibility long term. Paid (Meta Ads, TikTok Ads) generates qualified leads quickly and lets you test angles. I build a hybrid acquisition strategy based on your digital maturity, your budget and your booking goals."
       },
       {
-        "question": "How much does a digital marketing agency specialised in events cost?",
-        "answer": "My services start at €400 and are then on quote, because every event professional has specific needs (content volume, posting frequency, Meta / TikTok Ads budget, web project). I build à la carte support or a monthly retainer matched to your acquisition strategy."
-      },
-      {
-        "question": "How do you grow visibility as an event pro?",
-        "answer": "Three complementary levers: cohesive, desirable visual content (Reels, photos), consistent social presence run by a community manager specialised in events, and paid campaigns targeted at your future clients. The Mariable editorial feature — included in every plan — amplifies it all with a highly qualified audience."
-      },
-      {
-        "question": "Why hand Meta Ads and TikTok Ads to a specialised agency?",
-        "answer": "The events market has its own codes: strong seasonality, high purchase intent, multi-month decision journeys, look-alike audiences on engaged couples or event organisers. A generalist agency often burns budget without these specifics. I optimise your campaigns to generate qualified leads at the right cost."
+        "question": "How much does a Mariable Studio engagement cost?",
+        "answer": "Studio services start at €400 and are then on quote, because every professional has specific needs (content volume, posting frequency, Meta / TikTok Ads budget, web project). I build à la carte support or a monthly retainer matched to your acquisition strategy."
       },
       {
         "question": "Can you build the website for my business?",
         "answer": "Yes. I design custom showcase and booking websites for event pros: editorial design, SEO, contact forms, photo galleries, availability calendar integration. I also handle redesigns of existing websites."
-      },
-      {
-        "question": "What is a digital guide?",
-        "answer": "A digital guide replaces the classic PDFs sent by email: welcome guide for signed clients, interactive brochure to showcase your commercial offer, practical booklet for your guests. More engaging, updated in real time and mobile-friendly."
-      },
-      {
-        "question": "Is the Mariable feature included in your services?",
-        "answer": "Yes: the Mariable editorial feature is included by default in every plan. It gives you a dedicated editorial publication and visibility within my community of engaged couples."
       },
       {
         "question": "Do you work everywhere in France?",
@@ -99,7 +191,7 @@
   },
   "contact": {
     "title": "Let's talk about your project",
-    "body": "Quote, partnership, simple question — we'll talk directly and I'll get back to you within 48h.",
+    "body": "Quote, Mariable Pro application, simple question — we'll talk directly and I'll get back to you within 48h.",
     "cta": "Contact"
   },
   "modal": {
