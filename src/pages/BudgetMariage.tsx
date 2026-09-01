@@ -116,30 +116,30 @@ const BudgetMariage: React.FC = () => {
                 Budget mariage
               </p>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
-                Combien coûte vraiment votre mariage ?
+                Le mariage dont vous rêvez, au budget que vous choisissez.
               </h1>
               <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed">
-                Mariable vous aide à comprendre votre budget, décrypter vos devis et trouver des
-                prestataires adaptés à votre projet.
+                Passez de l'inspiration à la réalité : estimez votre budget, décryptez vos devis et
+                découvrez des prestataires adaptés à votre projet.
               </p>
 
-              <div className="mt-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full max-w-2xl">
+              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl">
                 <button
                   type="button"
                   onClick={() => setIsSimulatorOpen(true)}
-                  className="flex-1 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px]"
+                  className="w-full h-14 flex items-center justify-center text-center bg-white/10 backdrop-blur-sm border border-white/70 text-white hover:bg-white hover:text-editorial-noir px-4 uppercase tracking-widest text-xs rounded-none transition-colors"
                 >
                   Estimer mon budget
                 </button>
                 <a
                   href="#analyser-mon-devis"
-                  className="flex-1 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px] flex items-center justify-center"
+                  className="w-full h-14 flex items-center justify-center text-center bg-white/10 backdrop-blur-sm border border-white/70 text-white hover:bg-white hover:text-editorial-noir px-4 uppercase tracking-widest text-xs rounded-none transition-colors"
                 >
                   Analyser mon devis
                 </a>
                 <a
                   href="#trouver-mes-prestataires"
-                  className="flex-1 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-6 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px] flex items-center justify-center"
+                  className="w-full h-14 flex items-center justify-center text-center bg-white/10 backdrop-blur-sm border border-white/70 text-white hover:bg-white hover:text-editorial-noir px-4 uppercase tracking-widest text-xs rounded-none transition-colors"
                 >
                   Trouver mes prestataires
                 </a>
