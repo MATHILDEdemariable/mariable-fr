@@ -1,17 +1,109 @@
 {
   "seo": {
-    "title": "Agence marketing digital — Professionnels de l'événementiel | Mariable",
-    "description": "Agence marketing digital pour pros de l'événementiel : croissance organique réseaux sociaux, Meta Ads, TikTok Ads, contenu, community management et sites web. Sur devis."
+    "title": "Mariable Pro & Studio — Référencement et marketing pour pros du mariage",
+    "description": "Mariable Pro : référencement de votre activité auprès de couples qualifiés, 149€/an. Mariable Studio : agence marketing digital pour professionnels de l'événementiel, sur devis."
   },
   "backHome": "Retour à l'accueil",
   "hero": {
-    "eyebrow": "Agence marketing digital · Professionnels de l'événementiel",
-    "title": "L'agence marketing digital des professionnels de l'événementiel",
-    "subtitle": "Stratégie et gestion de communication pour attirer des clients qui vous ressemblent.",
-    "cta": "Voir les offres"
+    "eyebrow": "Professionnels de l'événementiel",
+    "tagline": "Votre style. Vos tarifs. Des clients qui vous correspondent.",
+    "subtitle": "Rejoignez une sélection de professionnels choisis pour leur univers et leur savoir-faire, et soyez mis en relation avec des couples dont le projet correspond à votre offre.",
+    "proCard": {
+      "label": "Offre principale",
+      "title": "Mariable Pro",
+      "subtitle": "Une présence, de la visibilité et un référencement qualitatif auprès de couples prêts à vous contacter.",
+      "badge": "🎁 Offre de rentrée",
+      "priceOld": "200 €/an",
+      "price": "149 €/an",
+      "priceNote": "soit 12,40 €/mois",
+      "cta": "Rejoindre Mariable Pro"
+    },
+    "studioCard": {
+      "label": "Offre complémentaire",
+      "title": "Mariable Studio",
+      "subtitle": "L'agence marketing digital des professionnels de l'événementiel : réseaux sociaux, Meta & TikTok Ads, sites web.",
+      "price": "Sur devis",
+      "cta": "Découvrir Studio"
+    }
+  },
+  "central": {
+    "title": "La transparence qui vous fait gagner du temps.",
+    "body": "Les couples savent exactement ce que vous proposez et combien cela coûte avant de vous contacter.",
+    "resultLabel": "Résultat",
+    "points": [
+      "Des demandes mieux qualifiées",
+      "Des couples correspondant à votre positionnement",
+      "Moins de temps perdu sur les demandes hors budget",
+      "Une visibilité auprès d'une audience ciblée"
+    ]
+  },
+  "pro": {
+    "sectionTitle": "Mariable Pro — ce que comprend votre abonnement",
+    "intro": "Mariable aide les futurs mariés à trouver des professionnels qui correspondent à leur style, leurs envies et leur budget. En tant que professionnel Mariable Pro, vous êtes référencé sur notre plateforme et bénéficiez de mises en avant auprès de notre communauté.",
+    "features": [
+      {
+        "title": "Profil professionnel dédié sur Mariable",
+        "body": "Présentation, photos, prestations, tarifs détaillés, coordonnées et liens."
+      },
+      {
+        "title": "Référencement dans la plateforme",
+        "body": "Visible dans les recherches par prestation, localisation, style et budget."
+      },
+      {
+        "title": "Mise en avant éditoriale",
+        "body": "Une communication dédiée sur les réseaux Mariable selon le calendrier éditorial : post ou carrousel Instagram dédié, avec possibilité d'être intégré à des sélections thématiques."
+      },
+      {
+        "title": "Visibilité éditoriale & SEO",
+        "body": "Présence dans les articles et sélections Mariable pertinents. Exemple : « 10 photographes de mariage élégants en Provence »."
+      },
+      {
+        "title": "Accès au réseau Mariable Pro",
+        "body": "Priorité aux futures mises en relation qualifiées."
+      }
+    ],
+    "priceBadge": "🎁 Offre de rentrée",
+    "priceOld": "200 €/an",
+    "price": "149 €/an",
+    "priceNote": "soit 12,40 €/mois — sans engagement de reconduction",
+    "cta": "Rejoindre Mariable Pro",
+    "contactSubject": "Mariable Pro — 149€/an"
+  },
+  "conditions": {
+    "sectionTitle": "Les conditions d'admission",
+    "sectionSubtitle": "Pour les professionnels qui aiment les beaux projets.",
+    "one": {
+      "label": "Condition 1",
+      "title": "Exercer l'un de ces métiers",
+      "items": [
+        "Lieu de mariage",
+        "Traiteur",
+        "Photographe / vidéaste",
+        "Wedding planner ou coordinateur",
+        "Créateur de robe, de costume ou d'accessoires de mariés"
+      ]
+    },
+    "two": {
+      "label": "Condition 2",
+      "title": "Renseigner vos tarifs en détail",
+      "body": "Pas seulement « Photographe mariage — à partir de 1 800 € », mais une grille lisible :",
+      "exampleTitle": "Photographie mariage",
+      "example": [
+        { "label": "Formule Essentielle", "price": "1 800 €" },
+        { "label": "Formule Complète", "price": "2 400 €" },
+        { "label": "Formule Premium", "price": "3 200 €" },
+        { "label": "Heures supplémentaires", "price": "150 €/h" },
+        { "label": "Album", "price": "450 €" },
+        { "label": "Second photographe", "price": "500 €" }
+      ],
+      "howTitle": "Comment faire ?",
+      "how": "Envoyez par mail votre plaquette d'information, votre brochure ou le lien de votre site où les informations figurent : elles seront analysées et retranscrites par nos soins. Votre plaquette n'est ni publiée ni accessible sans demande, mais vos prix sont publics.",
+      "note": "Vous gardez évidemment la possibilité d'adapter votre devis et de faire du sur-mesure en plus des prix de base. Mariable permet simplement au couple de comprendre immédiatement l'ordre de grandeur réel."
+    }
   },
   "services": {
-    "sectionTitle": "Les services proposés",
+    "sectionLabel": "Mariable Studio",
+    "sectionTitle": "L'agence marketing digital des professionnels de l'événementiel",
     "sectionSubtitle": "Trois leviers pour construire votre marque, votre acquisition clients et votre présence digitale, à la carte ou en accompagnement complet.",
     "pricingLabel": "Tarif",
     "pricingValue": "Sur devis",
@@ -60,36 +152,36 @@
     "title": "Questions fréquentes",
     "items": [
       {
+        "question": "Que comprend exactement l'offre Mariable Pro à 149 €/an ?",
+        "answer": "Un profil professionnel dédié (présentation, photos, prestations, tarifs détaillés, coordonnées), le référencement dans les recherches de la plateforme par prestation, localisation, style et budget, une mise en avant éditoriale sur les réseaux Mariable (post ou carrousel Instagram dédié, sélections thématiques), une présence dans les articles et sélections SEO pertinents, et l'accès au réseau Mariable Pro avec priorité sur les mises en relation qualifiées."
+      },
+      {
+        "question": "Pourquoi faut-il publier ses tarifs pour rejoindre Mariable Pro ?",
+        "answer": "Parce que c'est ce qui vous fait gagner du temps : les couples savent ce que vous proposez et combien cela coûte avant de vous contacter. Résultat : des demandes mieux qualifiées, des couples alignés avec votre positionnement et beaucoup moins d'échanges hors budget. Vous gardez évidemment la main sur vos devis et sur le sur-mesure ; les prix affichés donnent simplement l'ordre de grandeur réel."
+      },
+      {
+        "question": "Quelle différence entre Mariable Pro et Mariable Studio ?",
+        "answer": "Mariable Pro est une offre de référencement et de visibilité sur la plateforme Mariable, à 149 €/an. Mariable Studio est un accompagnement marketing digital sur devis : stratégie réseaux sociaux, création de contenu, community management, Meta Ads et TikTok Ads, sites web et outils de conversion. Les deux sont complémentaires et peuvent être cumulées."
+      },
+      {
+        "question": "Comment envoyer mes tarifs ?",
+        "answer": "Envoyez par mail votre plaquette d'information, votre brochure ou le lien de votre site où figurent les informations. Nous analysons et retranscrivons vos formules sur votre profil. Votre plaquette n'est pas publiée ni accessible sans demande, seuls vos prix sont rendus publics."
+      },
+      {
         "question": "Quels professionnels de l'événementiel accompagnez-vous ?",
-        "answer": "J'accompagne tous les professionnels de l'événementiel mariage : lieux de réception (domaines, châteaux, mas, manoirs), traiteurs, photographes, vidéastes, fleuristes, DJ, wedding planners et marques qui souhaitent professionnaliser leur image, leur acquisition clients et leur communication digitale."
+        "answer": "Lieux de réception (domaines, châteaux, mas, manoirs), traiteurs, photographes et vidéastes, wedding planners et coordinateurs, créateurs de robes, costumes et accessoires de mariés. Pour Mariable Studio, j'accompagne plus largement toutes les marques de l'événementiel qui souhaitent professionnaliser leur image et leur acquisition clients."
       },
       {
         "question": "Croissance organique ou publicité payante : que choisir ?",
         "answer": "Les deux sont complémentaires. L'organique (Instagram, TikTok, SEO) construit votre marque et votre crédibilité sur le long terme. Le paid (Meta Ads, TikTok Ads) génère des leads qualifiés rapidement et permet de tester des angles. Je construis une stratégie d'acquisition mixte selon votre maturité digitale, votre budget et vos objectifs de remplissage."
       },
       {
-        "question": "Combien coûte une agence marketing digital spécialisée événementiel ?",
-        "answer": "Mes prestations démarrent à partir de 400€ et sont ensuite sur devis, car chaque professionnel de l'événementiel a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads / TikTok Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre stratégie d'acquisition."
-      },
-      {
-        "question": "Comment gagner en visibilité quand on est un pro de l'événementiel ?",
-        "answer": "Trois leviers complémentaires : un contenu visuel cohérent et désirable (Reels, photos), une présence régulière sur les réseaux pilotée par un community manager spécialisé événementiel, et des campagnes payantes ciblées sur vos futurs clients. La mise en avant éditoriale Mariable, incluse dans chaque formule, amplifie le tout auprès d'une audience ultra-qualifiée."
-      },
-      {
-        "question": "Pourquoi confier ses Meta Ads et TikTok Ads à une agence spécialisée ?",
-        "answer": "Le marché de l'événementiel a ses propres codes : saisonnalité forte, intention d'achat élevée, parcours décisionnel à plusieurs mois, audiences look-alike sur les couples engagés ou les organisateurs d'événements. Une agence généraliste brûle souvent du budget faute de connaître ces spécificités. J'optimise vos campagnes pour générer des leads qualifiés au coût le plus juste."
+        "question": "Combien coûte une prestation Mariable Studio ?",
+        "answer": "Les prestations Studio démarrent à partir de 400€ et sont ensuite sur devis, car chaque professionnel a des besoins spécifiques (volume de contenu, fréquence de publication, budget Meta Ads / TikTok Ads, projet web). Je construis un accompagnement à la carte ou un forfait mensuel selon votre stratégie d'acquisition."
       },
       {
         "question": "Pouvez-vous créer le site web de mon activité ?",
         "answer": "Oui. Je conçois des sites vitrine et des sites de réservation sur-mesure pour pros de l'événementiel : design éditorial, optimisation SEO, formulaires de contact, galeries photos, intégration calendrier de disponibilités. Je prends aussi en charge la refonte de sites existants."
-      },
-      {
-        "question": "Qu'est-ce qu'un guide digital ?",
-        "answer": "Un guide digital remplace les classiques PDF envoyés par mail : welcome guide pour les clients qui ont signé, brochure interactive pour valoriser votre offre commerciale, livret pratique pour vos invités. Plus engageant, mis à jour en temps réel et consultable depuis n'importe quel mobile."
-      },
-      {
-        "question": "La mise en avant Mariable est-elle incluse dans vos prestations ?",
-        "answer": "Oui : la mise en avant éditoriale Mariable est systématiquement incluse dans toutes mes formules. Elle vous fait bénéficier d'une publication éditoriale dédiée et d'une visibilité auprès de ma communauté de futurs mariés."
       },
       {
         "question": "Travaillez-vous partout en France ?",
@@ -99,7 +191,7 @@
   },
   "contact": {
     "title": "Parlons de votre projet",
-    "body": "Devis, partenariat, simple question — on échange directement et je reviens vers vous sous 48h.",
+    "body": "Devis, candidature Mariable Pro, simple question — on échange directement et je reviens vers vous sous 48h.",
     "cta": "Contact"
   },
   "modal": {
