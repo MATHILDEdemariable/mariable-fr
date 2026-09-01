@@ -57,6 +57,37 @@ Deno.serve(async (req) => {
       }
     }
 
+    // Téléchargement du fichier pour l'envoyer en pièce jointe (limite Resend ~10 Mo)
+    let attachment: { filename: string; content: string } | null = null;
+    if (filePath && SUPABASE_URL && SERVICE_ROLE_KEY) {
+      try {
+        const fileRes = await fetch(
+          `${SUPABASE_URL}/storage/v1/object/devis-analyses/${filePath}`,
+          { headers: { Authorization: `Bearer ${SERVICE_ROLE_KEY}` } },
+        );
+        if (fileRes.ok) {
+          const buffer = new Uint8Array(await fileRes.arrayBuffer());
+          if (buffer.byteLength <= 9 * 1024 * 1024) {
+            let binary = "";
+            const chunkSize = 8192;
+            for (let i = 0; i < buffer.length; i += chunkSize) {
+              binary += String.fromCharCode(...buffer.subarray(i, i + chunkSize));
+            }
+            attachment = {
+              filename: filePath.split("/").pop() || "devis.pdf",
+              content: btoa(binary),
+            };
+          } else {
+            console.warn("Fichier trop lourd pour la pièce jointe, lien signé uniquement");
+          }
+        } else {
+          console.error("Download error:", fileRes.status, await fileRes.text());
+        }
+      } catch (downloadError) {
+        console.error("Attachment build failed:", downloadError);
+      }
+    }
+
     const html = `
       <div style="font-family: Inter, Arial, sans-serif; max-width:600px; margin:0 auto; background:#fff; padding:32px; color:#1a1a1a;">
         <h2 style="font-family:'Playfair Display', Georgia, serif; color:#63745A; margin:0 0 16px;">Nouvelle demande d'analyse de devis</h2>
@@ -79,6 +110,7 @@ Deno.serve(async (req) => {
         reply_to: email,
         subject: `Analyse de devis — ${categorie}`,
         html,
+        ...(attachment ? { attachments: [attachment] } : {}),
       }),
     });
 
