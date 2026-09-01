@@ -118,7 +118,7 @@ const BudgetMariage: React.FC = () => {
 
               </p>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
-                Le mariage dont vous rêvez, 
+                Le mariage dont vous rêvez, {"\n"}
                 au budget que vous choisissez.
               </h1>
               <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed">
