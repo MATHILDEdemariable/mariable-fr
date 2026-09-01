@@ -115,7 +115,7 @@ const BudgetMariage: React.FC = () => {
 
             <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
               <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/85 mb-6">
-                Budget mariage
+
               </p>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
                 Le mariage dont vous rêvez, au budget que vous choisissez.
