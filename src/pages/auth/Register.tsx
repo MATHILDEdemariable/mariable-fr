@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Mail, Lock, User, Smartphone } from 'lucide-react';
+import { Loader2, Mail, Lock, User, Smartphone, CheckCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import { supabase } from '@/integrations/supabase/client';
