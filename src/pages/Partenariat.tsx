@@ -125,7 +125,7 @@ const Partenariat = () => {
         >
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
-              <span className="inline-block px-4 py-1 bg-premium-sage/10 text-premium-sage text-sm mb-6 uppercase tracking-widest">
+              <span className="inline-block px-4 py-1 bg-editorial-olive/10 text-editorial-olive text-sm mb-6 uppercase tracking-widest">
                 {t("hero.eyebrow")}
               </span>
               <h1 className="text-3xl md:text-5xl font-serif text-editorial-noir mb-6">
@@ -142,9 +142,9 @@ const Partenariat = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="flex flex-col p-8 bg-premium-sage/5 border-2 border-premium-sage"
+                className="flex flex-col p-8 bg-editorial-olive/5 border-2 border-editorial-olive"
               >
-                <span className="text-xs uppercase tracking-widest text-premium-sage mb-3">
+                <span className="text-xs uppercase tracking-widest text-editorial-olive mb-3">
                   {t("hero.proCard.label")}
                 </span>
                 <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-3">
@@ -153,7 +153,7 @@ const Partenariat = () => {
                 <p className="text-sm text-editorial-noir/70 mb-6 flex-grow">
                   {t("hero.proCard.subtitle")}
                 </p>
-                <span className="inline-block self-start text-xs bg-premium-sage text-white px-3 py-1 mb-3">
+                <span className="inline-block self-start text-xs bg-editorial-olive text-white px-3 py-1 mb-3">
                   {t("hero.proCard.badge")}
                 </span>
                 <div className="flex items-baseline gap-3 mb-1">
@@ -210,7 +210,7 @@ const Partenariat = () => {
         </motion.section>
 
         {/* Message central */}
-        <section className="py-16 px-4 bg-premium-sage/10 border-y border-premium-sage/20">
+        <section className="py-16 px-4 bg-editorial-olive/10 border-y border-editorial-olive/20">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -223,13 +223,13 @@ const Partenariat = () => {
             <p className="text-editorial-noir/70 max-w-2xl mx-auto mb-8">
               {t("central.body")}
             </p>
-            <p className="text-xs uppercase tracking-widest text-premium-sage mb-5">
+            <p className="text-xs uppercase tracking-widest text-editorial-olive mb-5">
               {t("central.resultLabel")}
             </p>
             <ul className="grid sm:grid-cols-2 gap-3 text-left max-w-3xl mx-auto">
               {centralPoints.map((point) => (
                 <li key={point} className="flex items-start gap-3 bg-white p-4">
-                  <CheckCircle className="w-5 h-5 text-premium-sage shrink-0 mt-0.5" />
+                  <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
                   <span className="text-sm text-editorial-noir/80">{point}</span>
                 </li>
               ))}
@@ -260,9 +260,9 @@ const Partenariat = () => {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.05 }}
-                  className="flex items-start gap-3 p-6 bg-editorial-beige/20 border-l-2 border-premium-sage"
+                  className="flex items-start gap-3 p-6 bg-editorial-beige/20 border-l-2 border-editorial-olive"
                 >
-                  <CheckCircle className="w-5 h-5 text-premium-sage shrink-0 mt-1" />
+                  <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-1" />
                   <div>
                     <h3 className="font-serif text-lg text-editorial-noir mb-1">
                       {feature.title}
@@ -277,9 +277,9 @@ const Partenariat = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="bg-premium-sage/5 border-2 border-premium-sage p-8 text-center"
+              className="bg-editorial-olive/5 border-2 border-editorial-olive p-8 text-center"
             >
-              <span className="inline-block text-xs bg-premium-sage text-white px-3 py-1 mb-4">
+              <span className="inline-block text-xs bg-editorial-olive text-white px-3 py-1 mb-4">
                 {t("pro.priceBadge")}
               </span>
               <div className="flex items-baseline justify-center gap-3 mb-1">
@@ -319,9 +319,9 @@ const Partenariat = () => {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-white p-8 border-t-4 border-premium-sage h-full"
+                className="bg-white p-8 border-t-4 border-editorial-olive h-full"
               >
-                <span className="text-xs uppercase tracking-widest text-premium-sage">
+                <span className="text-xs uppercase tracking-widest text-editorial-olive">
                   {t("conditions.one.label")}
                 </span>
                 <h3 className="text-xl font-serif text-editorial-noir mt-2 mb-5">
@@ -330,7 +330,7 @@ const Partenariat = () => {
                 <ul className="space-y-2">
                   {eligibleItems.map((item) => (
                     <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                      <CheckCircle className="w-4 h-4 text-editorial-olive shrink-0 mt-0.5" />
                       <span className="text-editorial-noir/80">{item}</span>
                     </li>
                   ))}
@@ -342,9 +342,9 @@ const Partenariat = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.1 }}
-                className="bg-white p-8 border-t-4 border-premium-sage h-full"
+                className="bg-white p-8 border-t-4 border-editorial-olive h-full"
               >
-                <span className="text-xs uppercase tracking-widest text-premium-sage">
+                <span className="text-xs uppercase tracking-widest text-editorial-olive">
                   {t("conditions.two.label")}
                 </span>
                 <h3 className="text-xl font-serif text-editorial-noir mt-2 mb-3">
@@ -372,7 +372,7 @@ const Partenariat = () => {
                 </div>
 
                 <div className="flex items-start gap-3 mb-4">
-                  <Mail className="w-5 h-5 text-premium-sage shrink-0 mt-0.5" />
+                  <Mail className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
                   <div>
                     <p className="font-medium text-editorial-noir text-sm mb-1">
                       {t("conditions.two.howTitle")}
@@ -381,7 +381,7 @@ const Partenariat = () => {
                   </div>
                 </div>
 
-                <p className="text-sm text-editorial-noir/60 italic border-l-2 border-premium-sage pl-4">
+                <p className="text-sm text-editorial-noir/60 italic border-l-2 border-editorial-olive pl-4">
                   {t("conditions.two.note")}
                 </p>
               </motion.article>
@@ -419,15 +419,15 @@ const Partenariat = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-8 bg-editorial-beige/20 border-t-4 border-premium-sage flex flex-col"
+                    className="p-8 bg-editorial-beige/20 border-t-4 border-editorial-olive flex flex-col"
                   >
-                    <Icon className="w-8 h-8 text-premium-sage mb-4" />
+                    <Icon className="w-8 h-8 text-editorial-olive mb-4" />
                     <h3 className="text-xl font-serif text-editorial-noir mb-3">{p.title}</h3>
                     <p className="text-sm text-editorial-noir/70 mb-5">{p.description}</p>
                     <ul className="space-y-2 mb-6 flex-grow">
                       {p.points.map((pt, i) => (
                         <li key={i} className="flex items-start gap-2 text-sm">
-                          <CheckCircle className="w-4 h-4 text-premium-sage shrink-0 mt-0.5" />
+                          <CheckCircle className="w-4 h-4 text-editorial-olive shrink-0 mt-0.5" />
                           <span className="text-editorial-noir/80">{pt}</span>
                         </li>
                       ))}
@@ -454,9 +454,9 @@ const Partenariat = () => {
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mt-8 bg-premium-sage/10 border-l-4 border-premium-sage p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-4"
+              className="mt-8 bg-editorial-olive/10 border-l-4 border-editorial-olive p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center gap-4"
             >
-              <Sparkles className="w-8 h-8 text-premium-sage shrink-0" />
+              <Sparkles className="w-8 h-8 text-editorial-olive shrink-0" />
               <div>
                 <h3 className="text-lg md:text-xl font-serif text-editorial-noir mb-1">
                   {t("services.banner.title")}
