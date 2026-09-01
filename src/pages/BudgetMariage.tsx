@@ -118,7 +118,8 @@ const BudgetMariage: React.FC = () => {
 
               </p>
               <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
-                Le mariage dont vous rêvez, au budget que vous choisissez.
+                Le mariage dont vous rêvez, 
+                au budget que vous choisissez.
               </h1>
               <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed">
                 Passez de l'inspiration à la réalité : estimez votre budget, décryptez vos devis et
