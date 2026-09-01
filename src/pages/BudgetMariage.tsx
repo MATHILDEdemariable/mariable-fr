@@ -126,7 +126,7 @@ const BudgetMariage: React.FC = () => {
                 découvrez des prestataires adaptés à votre projet.
               </p>
 
-              <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-3xl">
+              <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full max-w-4xl">
                 <button
                   type="button"
                   onClick={() => setIsSimulatorOpen(true)}
@@ -146,6 +146,12 @@ const BudgetMariage: React.FC = () => {
                 >
                   Trouver mes prestataires
                 </a>
+                <Link
+                  to="/register-gratuit"
+                  className="w-full h-14 flex items-center justify-center text-center bg-white/10 backdrop-blur-sm border border-white/70 text-white hover:bg-white hover:text-editorial-noir px-4 uppercase tracking-widest text-xs rounded-none transition-colors"
+                >
+                  Planifier le jour-J
+                </Link>
               </div>
             </div>
           </section>
