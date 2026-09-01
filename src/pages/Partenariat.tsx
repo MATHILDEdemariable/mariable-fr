@@ -53,7 +53,6 @@ const Partenariat = () => {
 
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
-  const proFeatures = t("pro.features", { returnObjects: true }) as ProFeature[];
   const proIncluded = t("pro.included", { returnObjects: true }) as string[];
   const centralPoints = t("central.points", { returnObjects: true }) as string[];
   const eligibleItems = t("conditions.one.items", { returnObjects: true }) as string[];
