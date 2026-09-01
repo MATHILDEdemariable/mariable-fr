@@ -311,6 +311,7 @@ function App() {
                    <Route path="/about/approche" element={<Approche />} />
                    <Route path="/about/temoignages" element={<Temoignages />} />
                    <Route path="/comparatif" element={<Comparatif />} />
+                   <Route path="/budget-mariage" element={<BudgetMariage />} />
 
 
                   {/* Prestataires routes */}
