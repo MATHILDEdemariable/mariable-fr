@@ -61,8 +61,8 @@
         "desc": "Les bonnes quantités, sans gaspillage."
       },
       "album": {
-        "title": "Album photo partagé",
-        "desc": "Récupérez les photos de vos invités facilement grâce à un QR code."
+        "title": "\n",
+        "desc": "\n"
       }
     },
     "bonus": {
