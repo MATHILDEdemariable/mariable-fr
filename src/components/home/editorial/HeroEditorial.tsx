@@ -7,19 +7,23 @@ const VIDEO_URL =
 const HeroEditorial: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
   return (
-    <section className="relative h-[90vh] min-h-[600px] w-full overflow-hidden">
+    <section className="relative h-[90vh] min-h-[600px] w-full overflow-hidden bg-editorial-noir">
       <div className="absolute inset-0">
         <video
           autoPlay
           muted
           loop
           playsInline
-          className="w-full h-full object-cover"
+          preload="metadata"
+          width={1920}
+          height={1080}
+          className="w-full h-full object-cover bg-editorial-noir"
         >
           <source src={VIDEO_URL} type="video/mp4" />
         </video>
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/45 to-black/60" />
       </div>
+
 
       <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
         <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/85 mb-6">

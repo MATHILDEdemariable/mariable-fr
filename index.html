@@ -16,10 +16,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!-- Google Fonts (parallel discovery, swap fallback) -->
+    <!-- Google Fonts (chargement direct pour éviter le décalage de mise en page / CLS) -->
     <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" media="print" onload="this.media='all'" />
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" /></noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" />
+
 
     <!-- Favicons & PWA -->
     <link rel="icon" type="image/png" href="/logo-mariable-clean.png" />
@@ -46,6 +46,24 @@
     
     <!-- Critical CSS inlined for faster First Contentful Paint -->
     <style>
+      /* Fallbacks à métriques ajustées : évitent le saut de mise en page (CLS)
+         lors de la substitution des polices web */
+      @font-face {
+        font-family: 'Inter Fallback';
+        src: local('Arial');
+        size-adjust: 107%;
+        ascent-override: 90%;
+        descent-override: 22.4%;
+        line-gap-override: 0%;
+      }
+      @font-face {
+        font-family: 'Playfair Fallback';
+        src: local('Times New Roman'), local('Georgia');
+        size-adjust: 111%;
+        ascent-override: 96%;
+        descent-override: 23%;
+        line-gap-override: 0%;
+      }
       :root {
         --background: 0 0% 100%;
         --foreground: 0 0% 3.9%;
@@ -54,8 +72,9 @@
         --premium-black: 0 0% 9%;
       }
       * { box-sizing: border-box; margin: 0; padding: 0; }
+
       body { 
-        font-family: system-ui, -apple-system, sans-serif; 
+        font-family: 'Inter', 'Inter Fallback', system-ui, -apple-system, sans-serif; 
         background: hsl(var(--background));
         color: hsl(var(--foreground));
         line-height: 1.5;

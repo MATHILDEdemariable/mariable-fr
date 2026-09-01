@@ -167,9 +167,10 @@ export default {
 				'float-delayed': 'float-delayed 4s ease-in-out infinite'
 			},
 			fontFamily: {
-				serif: ['Playfair Display', 'serif'],
-				sans: ['Inter', 'sans-serif']
+				serif: ['Playfair Display', 'Playfair Fallback', 'serif'],
+				sans: ['Inter', 'Inter Fallback', 'sans-serif']
 			}
+
 		}
 	},
 	plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
