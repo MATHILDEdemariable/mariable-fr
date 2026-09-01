@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { ArrowRight, Calculator, FileSearch, Users } from 'lucide-react';
 import SEO from '@/components/SEO';
+import { useAuth } from '@/contexts/AuthContext';
 import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
 import BlogCarouselEditorial from '@/components/home/editorial/BlogCarouselEditorial';
@@ -147,12 +148,12 @@ const BudgetMariage: React.FC = () => {
             </div>
           </section>
 
-          {/* Parcours 1 — Estimer mon budget */}
+          {/* Estimation */}
           <section id="estimer-mon-budget" className="bg-[#F8F5EF] py-16 md:py-24">
             <div className="container mx-auto px-4 md:px-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
                 <div>
-                  <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">Parcours 1</p>
+                  <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">Estimation</p>
                   <h2 className="font-serif text-3xl md:text-5xl leading-tight">
                     Estimer le budget de votre mariage
                   </h2>
@@ -184,12 +185,12 @@ const BudgetMariage: React.FC = () => {
             </div>
           </section>
 
-          {/* Parcours 2 — Analyser mon devis */}
+          {/* Analyse de devis */}
           <section id="analyser-mon-devis" className="bg-white py-16 md:py-24">
             <div className="container mx-auto px-4 md:px-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-start">
                 <div>
-                  <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">Parcours 2</p>
+                  <p className="text-xs tracking-[0.3em] uppercase text-editorial-noir/60 mb-3">Analyse de devis</p>
                   <h2 className="font-serif text-3xl md:text-5xl leading-tight">
                     Votre devis mariage est-il au juste prix ?
                   </h2>
@@ -213,10 +214,10 @@ const BudgetMariage: React.FC = () => {
             </div>
           </section>
 
-          {/* Parcours 3 — Trouver mes prestataires */}
+          {/* Sélection prestataires */}
           <section id="trouver-mes-prestataires" className="bg-wedding-olive py-16 md:py-24">
             <div className="container mx-auto px-4 md:px-8 max-w-4xl text-center">
-              <p className="text-xs tracking-[0.3em] uppercase text-white/70 mb-3">Parcours 3</p>
+              <p className="text-xs tracking-[0.3em] uppercase text-white/70 mb-3">Sélection</p>
               <h2 className="font-serif text-3xl md:text-5xl text-white leading-tight">
                 Trouver des prestataires adaptés à votre budget
               </h2>
@@ -225,20 +226,13 @@ const BudgetMariage: React.FC = () => {
                 photographes, DJ et fleuristes, avec des ordres de prix affichés pour que vous
                 sachiez tout de suite si un prestataire entre dans votre enveloppe.
               </p>
-              <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
+              <div className="mt-10 flex justify-center">
                 <Link
-                  to="/prestataires"
+                  to={isAuthenticated ? '/professionnelsmariable' : '/register-gratuit?redirect=/professionnelsmariable'}
                   className="inline-flex items-center justify-center gap-3 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px]"
                 >
                   <Users className="w-4 h-4" aria-hidden="true" />
                   <span>Voir la sélection</span>
-                </Link>
-                <Link
-                  to="/register-gratuit?source=budget&intent=prestataires"
-                  className="inline-flex items-center justify-center gap-3 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px]"
-                >
-                  <span>Créer un compte gratuit</span>
-                  <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 </Link>
               </div>
             </div>
