@@ -30,7 +30,6 @@ const ICONS = [Film, MessageSquare, Globe];
 
 type ServiceItem = { title: string; description: string; points: string[] };
 type FaqItem = { question: string; answer: string };
-type ProFeature = { title: string; body: string };
 type PriceLine = { label: string; price: string };
 
 const Partenariat = () => {
