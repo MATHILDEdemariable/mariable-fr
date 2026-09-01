@@ -198,7 +198,7 @@ const Register = () => {
             </CardHeader>
             <CardContent className="space-y-5">
               <div className="space-y-4">
-                {Array.isArray(sideFeatures) && sideFeatures.map((feature) => (
+                {Array.isArray(sideFeatures) && sideFeatures.filter((feature) => (feature.title || '').trim() || (feature.description || '').trim()).map((feature) => (
                   <div key={feature.title} className="flex items-start gap-3">
                     <CheckCircle className="h-5 w-5 text-wedding-olive mt-0.5 flex-shrink-0" />
                     <div>
