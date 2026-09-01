@@ -180,7 +180,7 @@ const Register = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           {/* Colonne gauche : descriptif */}
-          <Card className="shadow-lg">
+          <Card className="shadow-lg order-2 lg:order-1">
             <CardHeader className="space-y-3">
               <div className="inline-flex w-fit items-center gap-2 rounded-full bg-wedding-olive/10 text-wedding-olive px-4 py-1.5 text-xs font-medium tracking-wide">
                 ✨ 100% gratuit — Sans carte bancaire
