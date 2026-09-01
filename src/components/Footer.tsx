@@ -38,6 +38,7 @@ const Footer = () => {
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideJourJ')}</Link></li>
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideBeginner')}</Link></li>
               <li><Link to="/services/budget" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.budget')}</Link></li>
+              <li><Link to="/budget-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">Combien coûte un mariage ?</Link></li>
             </ul>
           </div>
 
