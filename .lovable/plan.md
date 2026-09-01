@@ -1,56 +1,66 @@
-# Refonte de /register-gratuit en page 2 colonnes
+# Refonte de /partenariat : deux offres — Mariable Pro & Mariable Studio
 
-Objectif : aligner la page d'inscription gratuite sur la mise en page de `/paiement` — colonne gauche descriptive (les fonctionnalités de l'application), colonne droite le formulaire d'inscription. Aucune brique Stripe/paiement dans le parcours.
+La page devient une page à deux offres, avec **Mariable Pro (référencement, 149 €/an)** en premier plan et **Mariable Studio (agence marketing digital, sur devis)** en second plan.
 
-## Structure de la page
+## Nouvelle structure de la page
 
 ```text
-[ Header ]  [ ← Retour ]
+1. HERO — deux encadrés côte à côte
+   Tagline : « Votre style. Vos tarifs. Des clients qui vous correspondent. »
+   Sous-titre : rejoignez une sélection de professionnels choisis pour
+   leur univers et leur savoir-faire.
 
-  H1  Créez votre compte gratuit
-  Sous-titre : votre application pour organiser le jour-J
+   ┌──── MARIABLE PRO ────────────┐  ┌──── MARIABLE STUDIO ─────────┐
+   │ Référencement & visibilité   │  │ Agence marketing digital     │
+   │ 🎁 200€/an  →  149 €/an      │  │ Sur devis                    │
+   │ (12,40 €/mois)               │  │ Réseaux, Ads, sites web      │
+   │ [ Rejoindre Mariable Pro ]   │  │ [ Découvrir Studio ]         │
+   └──────────────────────────────┘  └──────────────────────────────┘
 
-  ┌───────────── colonne gauche ─────────────┐  ┌──── colonne droite ────┐
-  │ UNE APPLICATION POUR ORGANISER LE JOUR-J │  │  Formulaire            │
-  │ Votre mariage, votre organisation.       │  │  (existant, inchangé)  │
-  │ Accessible tel/tablette/ordi             │  │  Prénom / Nom          │
-  │ Sans téléchargement                      │  │  Email / Téléphone     │
-  │                                          │  │  Source / Objectif     │
-  │ • Rétroplanning intelligent              │  │  Mot de passe          │
-  │ • Budget réel                            │  │  CGV                   │
-  │ • Liste invités & RSVP digital           │  │  [ Créer mon compte ]  │
-  │ • Plan de table interactif               │  │  Déjà un compte ?      │
-  │ • Coordination Jour J                    │  └────────────────────────┘
-  │ • Calculateur de boissons                │
-  │ • Album photo invités (QR code)          │
-  │                                          │
-  │ Inclus : le Carnet d'adresses Mariable   │
-  │ Limites du gratuit → Premium 29€ (59€)   │
-  └──────────────────────────────────────────┘
+2. LE MESSAGE CENTRAL (bande vert sauge)
+   « La transparence qui vous fait gagner du temps. »
+   4 bénéfices : demandes mieux qualifiées · couples alignés ·
+   moins de temps perdu hors budget · audience ciblée.
+
+3. MARIABLE PRO — ce que comprend l'offre (5 blocs ✓)
+   Profil dédié · Référencement plateforme · Mise en avant éditoriale ·
+   Visibilité éditoriale & SEO · Accès au réseau Mariable Pro.
+   Encadré prix 149 €/an + CTA candidature.
+
+4. MARIABLE PRO — conditions d'admission (2 conditions)
+   a) Catégories éligibles (lieu, traiteur, photo/vidéo, planner/
+      coordinateur, créateur robe/costume/accessoires)
+   b) Tarifs renseignés en détail — exemple de grille photographe,
+      envoi de plaquette par mail analysée par Mariable,
+      mention « la plaquette reste privée, les prix sont publics »
+      et « le sur-mesure reste possible ».
+
+5. MARIABLE STUDIO (second plan, fond beige)
+   Les 3 services actuels inchangés (contenu / community & ads /
+   développement digital), tarifs sur devis, CTA contact.
+   Bandeau « mise en avant Mariable incluse » conservé.
+
+6. FAQ (existante, complétée par 3 questions Mariable Pro)
+
+7. CONTACT (bloc existant conservé)
 ```
 
-Sur mobile : colonne descriptive au-dessus du formulaire (ou repliée sous le formulaire pour garder le CTA visible — proposition retenue : formulaire en premier sur mobile, descriptif en dessous).
+## Contenus
 
-## Contenus (colonne gauche)
+- **Tagline hero** et argumentaire Mariable Pro repris mot pour mot de la demande.
+- **Prix** : 200 €/an barré, 149 €/an mis en avant, mention « soit 12,40 €/mois » et badge « Offre de rentrée ».
+- **Exemple de grille tarifaire** photographe affiché sous forme de mini-tableau pour illustrer le niveau de détail attendu.
+- **Nouvelles FAQ** : Que comprend Mariable Pro ? · Pourquoi faut-il publier ses tarifs ? · Quelle différence entre Mariable Pro et Mariable Studio ?
 
-Reprise fidèle de la section home « Une application pour organiser le jour-J » :
-- **Rétroplanning intelligent** — timeline selon votre date et votre style + to-do liste personnalisable.
-- **Budget réel** — calculatrice intelligente et suivi des dépenses prestataire par prestataire.
-- **Liste invités & RSVP digital** — lien de formulaire envoyé aux invités, réponses centralisées en ligne.
-- **Plan de table interactif** — relié à la liste d'invités, drag & drop, impression en un clic.
-- **Coordination Jour J** — déroulé généré par IA, partage avec l'équipe.
-- **Calculateur de boissons** — les bonnes quantités, sans gaspillage.
-- **Album photo invités** — récupération des photos via QR code.
+## Parcours de conversion
 
-Bloc « Inclus » : le Carnet d'adresses Mariable — lieux d'exception et pros vérifiés.
-
-Bloc « Limites de la version gratuite » : génération IA, stockage et exports PDF plafonnés, pas de guides PDF ni d'album partagé avec les invités → lien discret « Passer Premium — 29€ (59€ barré) » vers `/paiement`.
+- CTA « Rejoindre Mariable Pro » et « Contact » ouvrent le modal `ContactProModal` existant, avec un sujet pré-rempli différent (`Mariable Pro — 149€/an` vs le nom du service Studio) pour distinguer les leads côté back-office.
+- Ancres internes : le bouton Studio du hero scrolle vers la section Studio, le bouton Pro vers la section Pro.
 
 ## Détails techniques
 
-- Fichier modifié : `src/pages/auth/Register.tsx` uniquement (aucun changement de logique d'inscription, de validation, de tracking ni de gestion du `?redirect=`).
-- Passage du conteneur `max-w-md` à une grille `grid lg:grid-cols-2 gap-8 max-w-5xl`, formulaire conservé tel quel dans sa `Card`.
-- Colonne gauche construite avec les mêmes composants Card + icônes `lucide-react` que `/paiement` pour une cohérence visuelle.
-- Fond de page conservé (`bg-[#efeee9]`) ; accents vert sauge `wedding-olive`.
-- Textes ajoutés en dur en français dans un premier temps (la page utilise i18n `auth` pour le formulaire ; la colonne descriptive pourra être ajoutée aux locales dans un second temps si souhaité).
-- Aucune référence Stripe, aucun champ paiement.
+- Fichiers modifiés : `src/pages/Partenariat.tsx`, `src/i18n/locales/fr/partenariat.json`, `src/i18n/locales/en/partenariat.json` (tous les nouveaux textes passent par i18n, FR + EN, comme aujourd'hui).
+- Aucun changement de backend : réutilisation de `ContactProModal` et de la fonction `notify-partenariat-contact` déjà en place.
+- DA conservée : `editorial-noir`, `premium-sage`, beige clair, typographie serif, `rounded-none`, animations framer-motion existantes.
+- SEO : titre et meta description mis à jour pour couvrir les deux offres ; ajout d'un JSON-LD `Offer` (149 €/an) à côté des schémas `Service` et `FAQPage` existants ; H1 unique, H2 par section.
+- Responsive mobile-first : les deux encadrés du hero passent en pile verticale, Pro en premier.
