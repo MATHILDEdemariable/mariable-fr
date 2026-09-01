@@ -70,7 +70,7 @@ const BudgetMariage: React.FC = () => {
     '@type': 'BreadcrumbList',
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Accueil', item: 'https://www.mariable.fr/' },
-      { '@type': 'ListItem', position: 2, name: 'Budget mariage', item: 'https://www.mariable.fr/budget-mariage' },
+      { '@type': 'ListItem', position: 2, name: 'CELEBRER VOTRE MARIAGE', item: 'https://www.mariable.fr/budget-mariage' },
     ],
   };
 
