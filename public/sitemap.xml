@@ -1893,6 +1893,16 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.mariable.fr/conseilsmariage/prix-mariage-2027</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mariable.fr/conseilsmariage/budget-mariage-20000-euros</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.mariable.fr/conseilsmariage/checklist-ultime-de-la-demoiselle-d-honneur-pour-un-mariage-memorable</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
