@@ -227,7 +227,7 @@ const BudgetMariage: React.FC = () => {
               </p>
               <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
                 <Link
-                  to="/professionnels"
+                  to="/prestataires"
                   className="inline-flex items-center justify-center gap-3 bg-white text-editorial-noir border border-editorial-noir hover:bg-editorial-noir hover:text-white px-8 py-4 uppercase tracking-widest text-xs rounded-none transition-colors min-h-[44px]"
                 >
                   <Users className="w-4 h-4" aria-hidden="true" />
