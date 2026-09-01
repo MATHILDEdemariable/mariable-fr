@@ -146,6 +146,12 @@ const BudgetMariage: React.FC = () => {
                 >
                   Trouver mes prestataires
                 </a>
+                <Link
+                  to="/register-gratuit"
+                  className="w-full h-14 flex items-center justify-center text-center bg-white/10 backdrop-blur-sm border border-white/70 text-white hover:bg-white hover:text-editorial-noir px-4 uppercase tracking-widest text-xs rounded-none transition-colors"
+                >
+                  Planifier le jour-J
+                </Link>
               </div>
             </div>
           </section>
