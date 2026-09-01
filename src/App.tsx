@@ -80,6 +80,7 @@ const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
 const Approche = lazy(() => import("./pages/about/Approche"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
+const BudgetMariage = lazy(() => import("./pages/BudgetMariage"));
 const FAQ = lazy(() => import("./pages/contact/FAQ"));
 const ChecklistPublic = lazy(() => import("./pages/ChecklistPublic"));
 const ToDoListMariage = lazy(() => import("./pages/ToDoListMariage"));
