@@ -18,6 +18,13 @@ import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import ContactProModal from "@/components/partenariat/ContactProModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const ICONS = [Film, MessageSquare, Globe];
 
@@ -30,6 +37,7 @@ const Partenariat = () => {
   const { t } = useTranslation("partenariat");
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const [conditionsOpen, setConditionsOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
 
   const openContact = (subject?: string) => {
@@ -46,6 +54,7 @@ const Partenariat = () => {
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
   const proFeatures = t("pro.features", { returnObjects: true }) as ProFeature[];
+  const proIncluded = t("pro.included", { returnObjects: true }) as string[];
   const centralPoints = t("central.points", { returnObjects: true }) as string[];
   const eligibleItems = t("conditions.one.items", { returnObjects: true }) as string[];
   const priceExample = t("conditions.two.example", { returnObjects: true }) as PriceLine[];
@@ -547,6 +556,84 @@ const Partenariat = () => {
       </main>
       <Footer />
 
+      <Dialog open={conditionsOpen} onOpenChange={setConditionsOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-[#F8F5EF] rounded-none border-editorial-olive">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl text-editorial-noir">
+              {t("conditions.sectionTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-editorial-noir/70">
+              {t("conditions.sectionSubtitle")}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-2">
+            <div className="bg-white p-6 border-t-4 border-editorial-olive">
+              <span className="text-xs uppercase tracking-widest text-editorial-olive">
+                {t("conditions.one.label")}
+              </span>
+              <h3 className="text-lg font-serif text-editorial-noir mt-2 mb-4">
+                {t("conditions.one.title")}
+              </h3>
+              <ul className="space-y-2">
+                {eligibleItems.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-editorial-olive shrink-0 mt-0.5" />
+                    <span className="text-editorial-noir/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-white p-6 border-t-4 border-editorial-olive">
+              <span className="text-xs uppercase tracking-widest text-editorial-olive">
+                {t("conditions.two.label")}
+              </span>
+              <h3 className="text-lg font-serif text-editorial-noir mt-2 mb-3">
+                {t("conditions.two.title")}
+              </h3>
+              <p className="text-sm text-editorial-noir/70 mb-4">{t("conditions.two.body")}</p>
+              <div className="bg-editorial-beige/30 p-5 mb-5">
+                <p className="font-serif text-editorial-noir mb-3">
+                  {t("conditions.two.exampleTitle")}
+                </p>
+                <ul className="space-y-2">
+                  {priceExample.map((line) => (
+                    <li
+                      key={line.label}
+                      className="flex items-baseline justify-between gap-4 text-sm border-b border-editorial-noir/10 pb-1.5 last:border-0"
+                    >
+                      <span className="text-editorial-noir/80">{line.label}</span>
+                      <span className="font-medium text-editorial-noir whitespace-nowrap">
+                        {line.price}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-sm text-editorial-noir/70 mb-3">
+                <span className="font-medium text-editorial-noir">
+                  {t("conditions.two.howTitle")}
+                </span>{" "}
+                {t("conditions.two.how")}
+              </p>
+              <p className="text-sm text-editorial-noir/60 italic border-l-2 border-editorial-olive pl-4">
+                {t("conditions.two.note")}
+              </p>
+            </div>
+
+            <Button
+              onClick={() => {
+                setConditionsOpen(false);
+                openContact(t("pro.contactSubject"));
+              }}
+              className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 py-6 rounded-none"
+            >
+              {t("pro.cta")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <ContactProModal
         open={contactOpen}
         onOpenChange={setContactOpen}
