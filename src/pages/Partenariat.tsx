@@ -18,18 +18,25 @@ import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import ContactProModal from "@/components/partenariat/ContactProModal";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 const ICONS = [Film, MessageSquare, Globe];
 
 type ServiceItem = { title: string; description: string; points: string[] };
 type FaqItem = { question: string; answer: string };
-type ProFeature = { title: string; body: string };
 type PriceLine = { label: string; price: string };
 
 const Partenariat = () => {
   const { t } = useTranslation("partenariat");
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
+  const [conditionsOpen, setConditionsOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
 
   const openContact = (subject?: string) => {
@@ -45,7 +52,7 @@ const Partenariat = () => {
 
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
-  const proFeatures = t("pro.features", { returnObjects: true }) as ProFeature[];
+  const proIncluded = t("pro.included", { returnObjects: true }) as string[];
   const centralPoints = t("central.points", { returnObjects: true }) as string[];
   const eligibleItems = t("conditions.one.items", { returnObjects: true }) as string[];
   const priceExample = t("conditions.two.example", { returnObjects: true }) as PriceLine[];
@@ -252,50 +259,56 @@ const Partenariat = () => {
               <p className="text-editorial-noir/70 max-w-3xl mx-auto">{t("pro.intro")}</p>
             </motion.div>
 
-            <div className="grid md:grid-cols-2 gap-5 mb-10">
-              {proFeatures.map((feature, index) => (
-                <motion.article
-                  key={feature.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.05 }}
-                  className="flex items-start gap-3 p-6 bg-editorial-beige/20 border-l-2 border-editorial-olive"
+            <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
+              {/* Gauche : ce qui est inclus */}
+              <motion.ul
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="bg-editorial-beige/20 border-l-2 border-editorial-olive p-6 md:p-8 space-y-4"
+              >
+                {proIncluded.map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                    <span className="text-editorial-noir/85">{item}</span>
+                  </li>
+                ))}
+              </motion.ul>
+
+              {/* Droite : prix + CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1 }}
+                className="bg-editorial-olive/5 border-2 border-editorial-olive p-8 text-center lg:sticky lg:top-28"
+              >
+                <span className="inline-block text-xs bg-editorial-olive text-white px-3 py-1 mb-4">
+                  {t("pro.priceBadge")}
+                </span>
+                <div className="flex items-baseline justify-center gap-3 mb-1">
+                  <span className="text-editorial-noir/40 line-through text-lg">
+                    {t("pro.priceOld")}
+                  </span>
+                  <span className="text-4xl font-serif text-editorial-noir">{t("pro.price")}</span>
+                </div>
+                <p className="text-sm text-editorial-noir/60 mb-6">{t("pro.priceNote")}</p>
+                <Button
+                  onClick={() => openContact(t("pro.contactSubject"))}
+                  className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 py-6 text-base rounded-none"
                 >
-                  <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-serif text-lg text-editorial-noir mb-1">
-                      {feature.title}
-                    </h3>
-                    <p className="text-sm text-editorial-noir/70">{feature.body}</p>
-                  </div>
-                </motion.article>
-              ))}
+                  {t("pro.cta")}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => setConditionsOpen(true)}
+                  className="w-full mt-3 border-editorial-olive text-editorial-noir hover:bg-editorial-olive/10 py-6 text-base rounded-none"
+                >
+                  {t("pro.ctaConditions")}
+                </Button>
+              </motion.div>
             </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-editorial-olive/5 border-2 border-editorial-olive p-8 text-center"
-            >
-              <span className="inline-block text-xs bg-editorial-olive text-white px-3 py-1 mb-4">
-                {t("pro.priceBadge")}
-              </span>
-              <div className="flex items-baseline justify-center gap-3 mb-1">
-                <span className="text-editorial-noir/40 line-through text-lg">
-                  {t("pro.priceOld")}
-                </span>
-                <span className="text-4xl font-serif text-editorial-noir">{t("pro.price")}</span>
-              </div>
-              <p className="text-sm text-editorial-noir/60 mb-6">{t("pro.priceNote")}</p>
-              <Button
-                onClick={() => openContact(t("pro.contactSubject"))}
-                className="bg-editorial-noir text-white hover:bg-editorial-noir/90 px-8 py-6 text-base rounded-none"
-              >
-                {t("pro.cta")}
-              </Button>
-            </motion.div>
           </div>
         </section>
 
@@ -541,6 +554,84 @@ const Partenariat = () => {
       </main>
       <Footer />
 
+      <Dialog open={conditionsOpen} onOpenChange={setConditionsOpen}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto bg-[#F8F5EF] rounded-none border-editorial-olive">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl text-editorial-noir">
+              {t("conditions.sectionTitle")}
+            </DialogTitle>
+            <DialogDescription className="text-editorial-noir/70">
+              {t("conditions.sectionSubtitle")}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-6 mt-2">
+            <div className="bg-white p-6 border-t-4 border-editorial-olive">
+              <span className="text-xs uppercase tracking-widest text-editorial-olive">
+                {t("conditions.one.label")}
+              </span>
+              <h3 className="text-lg font-serif text-editorial-noir mt-2 mb-4">
+                {t("conditions.one.title")}
+              </h3>
+              <ul className="space-y-2">
+                {eligibleItems.map((item) => (
+                  <li key={item} className="flex items-start gap-2 text-sm">
+                    <CheckCircle className="w-4 h-4 text-editorial-olive shrink-0 mt-0.5" />
+                    <span className="text-editorial-noir/80">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="bg-white p-6 border-t-4 border-editorial-olive">
+              <span className="text-xs uppercase tracking-widest text-editorial-olive">
+                {t("conditions.two.label")}
+              </span>
+              <h3 className="text-lg font-serif text-editorial-noir mt-2 mb-3">
+                {t("conditions.two.title")}
+              </h3>
+              <p className="text-sm text-editorial-noir/70 mb-4">{t("conditions.two.body")}</p>
+              <div className="bg-editorial-beige/30 p-5 mb-5">
+                <p className="font-serif text-editorial-noir mb-3">
+                  {t("conditions.two.exampleTitle")}
+                </p>
+                <ul className="space-y-2">
+                  {priceExample.map((line) => (
+                    <li
+                      key={line.label}
+                      className="flex items-baseline justify-between gap-4 text-sm border-b border-editorial-noir/10 pb-1.5 last:border-0"
+                    >
+                      <span className="text-editorial-noir/80">{line.label}</span>
+                      <span className="font-medium text-editorial-noir whitespace-nowrap">
+                        {line.price}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p className="text-sm text-editorial-noir/70 mb-3">
+                <span className="font-medium text-editorial-noir">
+                  {t("conditions.two.howTitle")}
+                </span>{" "}
+                {t("conditions.two.how")}
+              </p>
+              <p className="text-sm text-editorial-noir/60 italic border-l-2 border-editorial-olive pl-4">
+                {t("conditions.two.note")}
+              </p>
+            </div>
+
+            <Button
+              onClick={() => {
+                setConditionsOpen(false);
+                openContact(t("pro.contactSubject"));
+              }}
+              className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 py-6 rounded-none"
+            >
+              {t("pro.cta")}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
       <ContactProModal
         open={contactOpen}
         onOpenChange={setContactOpen}

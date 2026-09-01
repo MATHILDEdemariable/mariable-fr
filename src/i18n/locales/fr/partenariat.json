@@ -67,7 +67,18 @@
     "price": "149 €/an",
     "priceNote": "soit 12,40 €/mois — sans engagement de reconduction",
     "cta": "Rejoindre Mariable Pro",
-    "contactSubject": "Mariable Pro — 149€/an"
+    "contactSubject": "Mariable Pro — 149€/an",
+    "included": [
+      "Référencement sur Mariable.fr",
+      "Carrousel Instagram dédié",
+      "Story d'annonce du partenariat",
+      "Article sur Mariable.fr",
+      "Mise en avant LinkedIn",
+      "Actualisation des tarifs toute l'année",
+      "Relais de vos actualités en story à votre demande :-)",
+      "🎁 5 accès Mariable Premium à offrir à vos mariés (un service premium pour les accompagner dans la coordination de leur grand jour)"
+    ],
+    "ctaConditions": "Voir les conditions d'admission"
   },
   "conditions": {
     "sectionTitle": "Les conditions d'admission",
@@ -89,12 +100,30 @@
       "body": "Pas seulement « Photographe mariage — à partir de 1 800 € », mais une grille lisible :",
       "exampleTitle": "Photographie mariage",
       "example": [
-        { "label": "Formule Essentielle", "price": "1 800 €" },
-        { "label": "Formule Complète", "price": "2 400 €" },
-        { "label": "Formule Premium", "price": "3 200 €" },
-        { "label": "Heures supplémentaires", "price": "150 €/h" },
-        { "label": "Album", "price": "450 €" },
-        { "label": "Second photographe", "price": "500 €" }
+        {
+          "label": "Formule Essentielle",
+          "price": "1 800 €"
+        },
+        {
+          "label": "Formule Complète",
+          "price": "2 400 €"
+        },
+        {
+          "label": "Formule Premium",
+          "price": "3 200 €"
+        },
+        {
+          "label": "Heures supplémentaires",
+          "price": "150 €/h"
+        },
+        {
+          "label": "Album",
+          "price": "450 €"
+        },
+        {
+          "label": "Second photographe",
+          "price": "500 €"
+        }
       ],
       "howTitle": "Comment faire ?",
       "how": "Envoyez par mail votre plaquette d'information, votre brochure ou le lien de votre site où les informations figurent : elles seront analysées et retranscrites par nos soins. Votre plaquette n'est ni publiée ni accessible sans demande, mais vos prix sont publics.",
