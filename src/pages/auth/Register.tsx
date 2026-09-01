@@ -388,7 +388,8 @@ const Register = () => {
               </Link>
             </div>
           </CardFooter>
-        </Card>
+          </Card>
+        </div>
       </main>
     </div>
   );
