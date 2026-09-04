@@ -313,18 +313,18 @@ const JourMVue: React.FC = () => {
           <TabsContent value="planning">
             <Card>
               <CardHeader>
-                <div className="flex justify-between items-center">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3">
                   <CardTitle>Timeline du jour J</CardTitle>
                   
                   {/* Filtre par équipe */}
                   {teamMembers.length > 0 && (
-                    <div className="flex items-center gap-2">
-                      <Filter className="h-4 w-4 text-gray-500" />
+                    <div className="flex items-center gap-2 w-full sm:w-auto">
+                      <Filter className="h-4 w-4 text-gray-500 shrink-0" />
                       <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                        <SelectTrigger className="w-48">
+                        <SelectTrigger className="w-full sm:w-48">
                           <SelectValue placeholder="Filtrer par membre" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <SelectContent position="popper" sideOffset={4} className="max-h-[60vh] overflow-y-auto w-[var(--radix-select-trigger-width)]">
                           <SelectItem value="all">Voir toutes les tâches</SelectItem>
                           {teamMembers.map((member) => (
                             <SelectItem key={member.id} value={member.id}>
@@ -335,6 +335,7 @@ const JourMVue: React.FC = () => {
                       </Select>
                     </div>
                   )}
+
                 </div>
               </CardHeader>
               <CardContent>
