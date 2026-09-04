@@ -403,16 +403,16 @@ const PlanningPublicProject: React.FC = () => {
                   <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-3">
                     <CardTitle>TO DO List Mission Mariage</CardTitle>
 
-                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
                       {/* Filtre par jour */}
                       {availableDays.length > 1 && (
-                        <div className="flex items-center gap-2">
-                          <Calendar className="h-4 w-4 text-gray-500" />
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <Calendar className="h-4 w-4 text-gray-500 shrink-0" />
                           <Select value={selectedDay} onValueChange={setSelectedDay}>
-                            <SelectTrigger className="w-40">
+                            <SelectTrigger className="w-full sm:w-40">
                               <SelectValue placeholder="Choisir un jour" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent position="popper" sideOffset={4} className="max-h-[60vh] overflow-y-auto w-[var(--radix-select-trigger-width)]">
                               {availableDays.map((day) => (
                                 <SelectItem key={day} value={day}>{day}</SelectItem>
                               ))}
@@ -423,13 +423,13 @@ const PlanningPublicProject: React.FC = () => {
 
                       {/* Filtre par équipe */}
                       {teamMembers.length > 0 && (
-                        <div className="flex items-center gap-2">
-                          <Filter className="h-4 w-4 text-gray-500" />
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                          <Filter className="h-4 w-4 text-gray-500 shrink-0" />
                           <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
-                            <SelectTrigger className="w-48">
+                            <SelectTrigger className="w-full sm:w-48">
                               <SelectValue placeholder="Filtrer par membre" />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent position="popper" sideOffset={4} className="max-h-[60vh] overflow-y-auto w-[var(--radix-select-trigger-width)]">
                               <SelectItem value="all">Voir toutes les tâches</SelectItem>
                               {teamMembers.map((member) => (
                                 <SelectItem key={member.id} value={member.id}>
@@ -441,6 +441,7 @@ const PlanningPublicProject: React.FC = () => {
                         </div>
                       )}
                     </div>
+
                   </div>
                 </CardHeader>
                 <CardContent>
