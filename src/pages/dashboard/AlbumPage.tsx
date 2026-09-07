@@ -110,7 +110,7 @@ const AlbumPage: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [loadMedia]);
+  }, [loadMedia, weddingId]);
 
   useEffect(() => {
     loadAlbum();
