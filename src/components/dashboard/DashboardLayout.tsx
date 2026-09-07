@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet, useLocation, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import DashboardSidebar from './DashboardSidebar';
+import ProSidebar from '@/components/pro/ProSidebar';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
@@ -16,9 +17,12 @@ import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
 interface DashboardLayoutProps {
   children?: React.ReactNode;
+  /** 'pro' affiche la navigation de l'espace professionnel (pré-dashboard) */
+  variant?: 'wedding' | 'pro';
 }
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({
-  children
+  children,
+  variant = 'wedding'
 }) => {
   const isMobile = useIsMobile();
   const { t } = useTranslation('dashboard');
@@ -117,7 +121,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Sidebar - only visible on desktop */}
         {!isMobile && (
           <div className="flex-shrink-0 pt-32" style={{ width: '250px' }}>
-            <DashboardSidebar isReaderMode={isReaderMode} />
+            {variant === 'pro' ? <ProSidebar /> : <DashboardSidebar isReaderMode={isReaderMode} />}
           </div>
         )}
 
