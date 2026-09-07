@@ -13,6 +13,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
+import WeddingContextBar from '@/components/pro/WeddingContextBar';
 interface DashboardLayoutProps {
   children?: React.ReactNode;
 }
@@ -140,6 +141,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </button>
               </div>
             )}
+            <WeddingContextBar />
             {children || <Outlet />}
           </main>
         </div>

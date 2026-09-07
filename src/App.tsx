@@ -11,6 +11,7 @@ import { ReaderModeProvider } from '@/contexts/ReaderModeContext';
 import PaymentSuccessHandler from '@/components/premium/PaymentSuccessHandler';
 import { CartProvider } from '@/components/cart/CartProvider';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { WeddingProvider } from '@/contexts/WeddingContext';
 // Direct imports for SEO-critical pages (homepage only)
 import LandingCouple from "./pages/LandingCouple";
 import LandingGenerale from "./pages/LandingGenerale";
@@ -126,6 +127,7 @@ const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPa
 const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
+const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
@@ -174,6 +176,7 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
         <AuthProvider>
+          <WeddingProvider>
           <ReaderModeProvider>
             <CartProvider>
               <TooltipProvider>
@@ -292,6 +295,9 @@ function App() {
                   <Route path="/severine-et-olivier" element={<WeddingSeverineOlivier />} />
                   <Route path="/exemplesite" element={<ExempleSite />} />
                   
+                  {/* Espace professionnel : liste des mariages */}
+                  <Route path="/pro" element={<ProtectedRoute><MesMariages /></ProtectedRoute>} />
+
                   {/* Dashboard Professionnel Mockup */}
                   <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
                   
@@ -377,6 +383,7 @@ function App() {
           </TooltipProvider>
         </CartProvider>
       </ReaderModeProvider>
+      </WeddingProvider>
     </AuthProvider>
   </HelmetProvider>
 </QueryClientProvider>

@@ -1,5 +1,6 @@
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWedding } from '@/contexts/WeddingContext';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -7,6 +8,7 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   const { user, loading } = useAuth();
+  const { accountType, currentWeddingId, loading: weddingLoading } = useWedding();
   const location = useLocation();
 
   if (loading) {
@@ -21,8 +23,15 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
     return <Navigate to="/login" state={{ redirectAfterLogin: location.pathname }} replace />;
   }
 
+  // Un compte professionnel sans mariage sélectionné passe d'abord par sa liste
+  const isProSpace = location.pathname.startsWith('/pro');
+  if (!weddingLoading && accountType === 'b2b' && !currentWeddingId && !isProSpace) {
+    return <Navigate to="/pro" replace />;
+  }
+
   return <>{children}</>;
 };
+
 
 export default ProtectedRoute;
 

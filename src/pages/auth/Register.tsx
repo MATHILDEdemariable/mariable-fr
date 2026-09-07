@@ -27,6 +27,7 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [referralSource, setReferralSource] = useState('');
   const [registrationPurpose, setRegistrationPurpose] = useState('');
+  const [accountType, setAccountType] = useState<'b2c' | 'b2b'>('b2c');
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailAlert, setShowEmailAlert] = useState(false);
@@ -87,6 +88,7 @@ const Register = () => {
             phone: phone || null,
             referral_source: referralSource,
             registration_purpose: registrationPurpose,
+            account_type: accountType,
           },
           emailRedirectTo: redirectTo,
         },
@@ -233,6 +235,31 @@ const Register = () => {
           <CardContent className="space-y-4">
 
             <form onSubmit={handleRegister} className="space-y-4">
+              <div className="space-y-2">
+                <Label>Je suis</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  {([
+                    { value: 'b2c' as const, label: 'Particulier', hint: "J'organise mon mariage" },
+                    { value: 'b2b' as const, label: 'Professionnel', hint: "J'organise pour des couples" },
+                  ]).map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      onClick={() => setAccountType(option.value)}
+                      disabled={isLoading}
+                      className={`text-left border p-3 transition-colors ${
+                        accountType === option.value
+                          ? 'border-wedding-olive bg-wedding-olive/5'
+                          : 'border-border hover:border-wedding-olive/50'
+                      }`}
+                    >
+                      <span className="block text-sm font-medium">{option.label}</span>
+                      <span className="block text-xs text-muted-foreground mt-0.5">{option.hint}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="firstName">{t('register.firstName')} *</Label>
