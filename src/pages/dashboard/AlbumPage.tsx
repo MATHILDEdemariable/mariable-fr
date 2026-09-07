@@ -39,6 +39,7 @@ interface Media {
 const AlbumPage: React.FC = () => {
   const { toast } = useToast();
   const { isPremium, loading: profileLoading } = useUserProfile();
+  const { weddingId } = useWeddingScope();
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const [album, setAlbum] = useState<Album | null>(null);
   const [media, setMedia] = useState<Media[]>([]);
