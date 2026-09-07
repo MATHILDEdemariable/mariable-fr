@@ -28,12 +28,12 @@ export const useAccommodations = () => {
   return useQuery({
     queryKey: ['accommodations', weddingId],
     queryFn: async () => {
-      let query = supabase
+      let query: any = supabase
         .from('wedding_accommodations')
         .select('id, user_id, nom_logement, type_logement, nombre_chambres, capacite_totale, statut, prix_par_nuit, date_arrivee, date_depart, adresse, contact, commentaires, created_at, updated_at')
         .order('created_at', { ascending: false });
 
-      if (weddingId) query = query.eq('wedding_id', weddingId) as typeof query;
+      if (weddingId) query = query.eq('wedding_id', weddingId);
 
       const { data: accommodations, error } = await query;
 
