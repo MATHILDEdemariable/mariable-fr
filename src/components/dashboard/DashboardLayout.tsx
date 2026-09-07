@@ -103,7 +103,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {t('header.vendorSelection')}
             </Button>
           </Link>
-          {!isPremium && (
+          {variant !== 'pro' && !isPremium && (
             <Link to="/paiement">
               <Button
                 size="sm"
