@@ -215,7 +215,13 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
         setIsLoading(false);
       }
     }
-  }, [coordination, toast]);
+  }, [coordination, toast, weddingId]);
+
+  // Changement de mariage : on repart sur la coordination correspondante
+  useEffect(() => {
+    setCoordination(null);
+  }, [weddingId]);
+
 
   // Auto-initialisation avec cleanup
   useEffect(() => {
