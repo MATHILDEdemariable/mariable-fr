@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useTranslation } from 'react-i18next';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface DocumentUploaderProps {
   onUploadComplete: () => void;
