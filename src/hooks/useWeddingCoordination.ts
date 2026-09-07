@@ -60,13 +60,16 @@ export const useWeddingCoordination = () => {
       } else {
         // Créer une nouvelle coordination
         console.log('🆕 useWeddingCoordination: Creating new coordination...');
+        const insertPayload: any = {
+          user_id: user.id,
+          title: 'Mon Mariage',
+          description: 'Organisation de mon mariage'
+        };
+        if (weddingId) insertPayload.wedding_id = weddingId;
+
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage',
-            description: 'Organisation de mon mariage'
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
