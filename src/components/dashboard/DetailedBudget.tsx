@@ -108,15 +108,19 @@ const DetailedBudget: React.FC = () => {
   
   // Fetch detailed budget data from Supabase
   const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
-    queryKey: ['budgetDetails'],
+    queryKey: ['budgetDetails', weddingId],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
       
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('budgets_detail')
         .select('*')
         .eq('user_id', userData.user.id);
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query;
         
       if (error) throw error;
       return data as BudgetDetailDB[];
@@ -125,16 +129,19 @@ const DetailedBudget: React.FC = () => {
 
   // Fetch budget data from Supabase for fallback
   const { data: budgetData } = useQuery({
-    queryKey: ['budgetDashboard'],
+    queryKey: ['budgetDashboard', weddingId],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
       
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('budgets_dashboard')
         .select('*')
-        .eq('user_id', userData.user.id)
-        .single();
+        .eq('user_id', userData.user.id);
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query.maybeSingle();
         
       if (error && error.code !== 'PGRST116') {
         throw error;
@@ -150,7 +157,7 @@ const DetailedBudget: React.FC = () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
-      const itemData = {
+      const itemData: any = {
         user_id: userData.user.id,
         category_name: categoryName,
         item_id: item.id,
@@ -162,10 +169,12 @@ const DetailedBudget: React.FC = () => {
         payment_note: item.payment_note || ''
       };
 
+      if (weddingId) itemData.wedding_id = weddingId;
+
       const { data, error } = await supabase
         .from('budgets_detail')
         .upsert(itemData, {
-          onConflict: 'user_id,item_id'
+          onConflict: 'user_id,wedding_id,item_id'
         })
         .select();
 
