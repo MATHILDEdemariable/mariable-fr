@@ -81,19 +81,22 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
         .from('wedding-documents')
         .getPublicUrl(fileName);
 
+      const documentPayload: any = {
+        user_id: user.id,
+        file_name: file.name,
+        file_path: fileName,
+        file_url: publicUrl,
+        file_size: file.size,
+        mime_type: file.type,
+        document_type: documentType,
+        vendor_name: vendorName || null,
+        category: category || null
+      };
+      if (weddingId) documentPayload.wedding_id = weddingId;
+
       const { data: docData, error: insertError } = await supabase
         .from('wedding_documents')
-        .insert({
-          user_id: user.id,
-          file_name: file.name,
-          file_path: fileName,
-          file_url: publicUrl,
-          file_size: file.size,
-          mime_type: file.type,
-          document_type: documentType,
-          vendor_name: vendorName || null,
-          category: category || null
-        })
+        .insert(documentPayload)
         .select()
         .single();
 
