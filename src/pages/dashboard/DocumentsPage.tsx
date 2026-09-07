@@ -11,6 +11,7 @@ import DocumentViewerModal from '@/components/documents/DocumentViewerModal';
 import { FileText, Loader2 } from 'lucide-react';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 const DocumentsPage = () => {
   const { toast } = useToast();
