@@ -31,16 +31,20 @@ const DocumentsPage = () => {
   });
 
   const { data: documents, isLoading, refetch } = useQuery({
-    queryKey: ['wedding-documents'],
+    queryKey: ['wedding-documents', weddingId],
     queryFn: async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Non authentifié");
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('wedding_documents')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
