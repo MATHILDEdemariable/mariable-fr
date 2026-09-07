@@ -324,11 +324,14 @@ const DetailedBudget: React.FC = () => {
 
       try {
         // Check if record already exists
-        const { data: existingData, error: fetchError } = await supabase
+        let existingQuery: any = supabase
           .from('budgets_dashboard')
           .select('id')
-          .eq('user_id', userData.user.id)
-          .maybeSingle();
+          .eq('user_id', userData.user.id);
+
+        if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+
+        const { data: existingData, error: fetchError } = await existingQuery.maybeSingle();
 
         if (fetchError && fetchError.code !== 'PGRST116') {
           throw fetchError;
