@@ -26,6 +26,7 @@ interface Guest {
 }
 
 const GuestListManager: React.FC = () => {
+  const { weddingId } = useWeddingScope();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

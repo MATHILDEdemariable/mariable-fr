@@ -23,6 +23,7 @@ interface ImportGuestListDialogProps {
 }
 
 const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: ImportGuestListDialogProps) => {
+  const { weddingId } = useWeddingScope();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
@@ -52,8 +53,8 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
       if (error) throw error;
       setGuests(data || []);
       
-      const confirmed = new Set(
-        (data || [])
+      const confirmed = new Set<string>(
+        (data as any[] || [])
           .filter(g => g.rsvp_status === 'confirmed' || g.rsvp_status === 'oui')
           .map(g => g.id)
       );

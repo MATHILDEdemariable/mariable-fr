@@ -28,6 +28,7 @@ const guestSchema = z.object({
 });
 
 const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdded }) => {
+  const { weddingId } = useWeddingScope();
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');

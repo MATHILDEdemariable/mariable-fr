@@ -24,6 +24,7 @@ interface ParsedGuest {
 }
 
 const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, onImported }) => {
+  const { weddingId } = useWeddingScope();
   const [importing, setImporting] = useState(false);
   const [preview, setPreview] = useState<ParsedGuest[]>([]);
   const [fileType, setFileType] = useState<'excel' | 'txt' | null>(null);

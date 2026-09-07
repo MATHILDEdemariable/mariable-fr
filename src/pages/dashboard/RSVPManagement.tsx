@@ -38,6 +38,7 @@ interface RSVPEvent {
 }
 
 const RSVPManagement: React.FC = () => {
+  const { weddingId } = useWeddingScope();
   const { t } = useTranslation('weddingDay');
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [loading, setLoading] = useState(true);

@@ -47,6 +47,7 @@ interface ImportRSVPDialogProps {
 }
 
 const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVPDialogProps) => {
+  const { weddingId } = useWeddingScope();
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
   const [responses, setResponses] = useState<RSVPResponse[]>([]);
