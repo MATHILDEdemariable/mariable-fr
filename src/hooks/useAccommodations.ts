@@ -23,13 +23,19 @@ export interface Accommodation {
 }
 
 export const useAccommodations = () => {
+  const { weddingId } = useWeddingScope();
+
   return useQuery({
-    queryKey: ['accommodations'],
+    queryKey: ['accommodations', weddingId],
     queryFn: async () => {
-      const { data: accommodations, error } = await supabase
+      let query = supabase
         .from('wedding_accommodations')
         .select('id, user_id, nom_logement, type_logement, nombre_chambres, capacite_totale, statut, prix_par_nuit, date_arrivee, date_depart, adresse, contact, commentaires, created_at, updated_at')
         .order('created_at', { ascending: false });
+
+      if (weddingId) query = query.eq('wedding_id', weddingId) as typeof query;
+
+      const { data: accommodations, error } = await query;
 
       if (error) throw error;
 
