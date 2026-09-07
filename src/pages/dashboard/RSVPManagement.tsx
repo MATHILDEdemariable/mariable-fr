@@ -63,7 +63,8 @@ const RSVPManagement: React.FC = () => {
 
   useEffect(() => {
     loadEvents();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   const loadEvents = async () => {
     try {

@@ -38,7 +38,8 @@ const GuestListManager: React.FC = () => {
 
   useEffect(() => {
     loadGuests();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   const loadGuests = async () => {
     try {
