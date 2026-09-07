@@ -1,0 +1,40 @@
+<svg viewBox="0 0 640 240" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    text { font-family: var(--font-sans); fill: hsl(var(--foreground)); }
+    .lbl { font-size: 14px; font-weight: 480; }
+    .note { font-size: 12px; fill: hsl(var(--muted-foreground)); }
+    .box { fill: none; stroke: hsl(var(--muted-foreground)); stroke-width: 1; }
+    .wire { stroke: hsl(var(--muted-foreground)); stroke-width: 1; fill: none; }
+  </style>
+  <defs>
+    <marker id="a" viewBox="0 0 8 8" refX="6" refY="4" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0 0 L8 4 L0 8" fill="none" stroke="hsl(var(--muted-foreground))"/>
+    </marker>
+  </defs>
+
+  <rect class="box" x="10" y="40" width="140" height="56" rx="8"/>
+  <text class="lbl" x="80" y="66" text-anchor="middle">Inscription</text>
+  <text class="note" x="80" y="84" text-anchor="middle">choix Professionnel</text>
+
+  <line class="wire" x1="152" y1="68" x2="196" y2="68" marker-end="url(#a)"/>
+
+  <rect class="box" x="200" y="40" width="150" height="56" rx="8"/>
+  <text class="lbl" x="275" y="66" text-anchor="middle">Compte créé</text>
+  <text class="note" x="275" y="84" text-anchor="middle">« pro » bien enregistré</text>
+
+  <line class="wire" x1="352" y1="68" x2="396" y2="68" marker-end="url(#a)"/>
+
+  <rect class="box" x="400" y="30" width="228" height="76" rx="8"
+        stroke="hsl(var(--accent-foreground))" stroke-dasharray="4 3"/>
+  <text class="lbl" x="514" y="58" text-anchor="middle" fill="hsl(var(--accent-foreground))">Fiche utilisateur</text>
+  <text class="note" x="514" y="76" text-anchor="middle">champ « type de compte » absent</text>
+  <text class="note" x="514" y="94" text-anchor="middle">→ lu comme Particulier</text>
+
+  <line class="wire" x1="514" y1="112" x2="514" y2="150" marker-end="url(#a)"/>
+  <rect class="box" x="400" y="154" width="228" height="48" rx="8"/>
+  <text class="lbl" x="514" y="183" text-anchor="middle">Tableau de bord particulier</text>
+
+  <circle cx="24" cy="176" r="10" fill="hsl(var(--accent))"/>
+  <text class="note" x="24" y="180" text-anchor="middle" fill="hsl(var(--accent-foreground))">1</text>
+  <text class="note" x="42" y="180">Correctif : enregistrer le type de compte sur la fiche, dès l'inscription</text>
+</svg>
