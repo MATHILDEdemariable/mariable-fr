@@ -89,6 +89,7 @@ const DetailedBudget: React.FC = () => {
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
   const { items: cartItems } = useCart();
+  const { weddingId } = useWeddingScope();
   const { 
     executeAction, 
     showPremiumModal, 
