@@ -6,21 +6,27 @@ import { useCart } from '@/components/cart/CartProvider';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 const PanierPage: React.FC = () => {
   const { t } = useTranslation('weddingDay');
   const { items: cartItems, total } = useCart();
 
+  const { weddingId } = useWeddingScope();
+
   const { data: budgetData } = useQuery({
-    queryKey: ['budgetDashboard'],
+    queryKey: ['budgetDashboard', weddingId],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) return null;
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('budgets_dashboard')
         .select('total_budget, guests_count, service_level')
-        .eq('user_id', userData.user.id)
-        .maybeSingle();
+        .eq('user_id', userData.user.id);
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query.maybeSingle();
       if (error) return null;
       return data;
     }

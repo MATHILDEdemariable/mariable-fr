@@ -11,6 +11,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import jsPDF from 'jspdf';
 import { toast } from '@/hooks/use-toast';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 const VendorTrackingPage: React.FC = () => {
   const { t, i18n } = useTranslation('weddingDay');
@@ -22,13 +23,18 @@ const VendorTrackingPage: React.FC = () => {
     description: t('vendorTracking.premiumDescription')
   });
 
+  const { weddingId } = useWeddingScope();
+
   const { data: trackingData, isLoading } = useQuery({
-    queryKey: ['vendorTracking'],
+    queryKey: ['vendorTracking', weddingId],
     queryFn: async () => {
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('vendors_tracking')
-        .select('id, vendor_name, category, status, contact_date, response_date, notes, updated_at')
-        .order('updated_at', { ascending: false });
+        .select('id, vendor_name, category, status, contact_date, response_date, notes, updated_at');
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query.order('updated_at', { ascending: false });
       if (error) throw error;
       return data;
     }

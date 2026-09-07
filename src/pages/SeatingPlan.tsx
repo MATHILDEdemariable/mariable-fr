@@ -23,6 +23,7 @@ import SeatingPlanVisual from '@/components/seating-plan/SeatingPlanVisual';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 const SeatingPlan = () => {
   const { t } = useTranslation('seating');
@@ -48,9 +49,12 @@ const SeatingPlan = () => {
     description: t('premium.description')
   });
 
+  const { weddingId } = useWeddingScope();
+
   useEffect(() => {
     loadSeatingPlan();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   const loadSeatingPlan = async () => {
     try {
@@ -59,17 +63,21 @@ const SeatingPlan = () => {
       if (!user) return;
 
       // Charger ou créer le plan de table
-      let { data: plans } = await supabase
+      let plansQuery: any = supabase
         .from('seating_plans')
         .select('id, user_id, name, event_date, venue_name, notes, created_at, updated_at')
-        .eq('user_id', user.id)
+        .eq('user_id', user.id);
+
+      if (weddingId) plansQuery = plansQuery.eq('wedding_id', weddingId);
+
+      let { data: plans } = await plansQuery
         .order('created_at', { ascending: false })
         .limit(1);
 
       if (!plans || plans.length === 0) {
         const { data: newPlan } = await supabase
           .from('seating_plans')
-          .insert({ user_id: user.id, name: t('toast.defaultPlanName') })
+          .insert({ user_id: user.id, name: t('toast.defaultPlanName'), ...(weddingId ? { wedding_id: weddingId } : {}) } as any)
           .select()
           .single();
         setPlan(newPlan);

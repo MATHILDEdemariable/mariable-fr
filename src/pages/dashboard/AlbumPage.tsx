@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
 import { Badge } from '@/components/ui/badge';
 import { Copy, Download, Loader2, Trash2, EyeOff, Eye, Film, QrCode } from 'lucide-react';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Album {
   id: string;
@@ -84,10 +85,14 @@ const AlbumPage: React.FC = () => {
       const { data: session } = await supabase.auth.getUser();
       if (!session.user) return;
 
-      const { data, error } = await supabase
+      let albumQuery: any = supabase
         .from('guest_albums')
         .select('id, title, welcome_message, share_token, is_active, expires_at, media_limit')
-        .eq('user_id', session.user.id)
+        .eq('user_id', session.user.id);
+
+      if (weddingId) albumQuery = albumQuery.eq('wedding_id', weddingId);
+
+      const { data, error } = await albumQuery
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -135,7 +140,8 @@ const AlbumPage: React.FC = () => {
           title: title.trim() || 'Notre album de mariage',
           welcome_message: welcomeMessage.trim() || null,
           share_token: nanoid(10),
-        })
+          ...(weddingId ? { wedding_id: weddingId } : {}),
+        } as any)
         .select('id, title, welcome_message, share_token, is_active, expires_at, media_limit')
         .single();
 

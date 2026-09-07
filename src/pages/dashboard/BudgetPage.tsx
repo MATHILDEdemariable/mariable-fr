@@ -12,6 +12,7 @@ import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
@@ -34,17 +35,22 @@ const BudgetPage: React.FC = () => {
 
 
   // Fetch budget data for export
+  const { weddingId } = useWeddingScope();
+
   const { data: budgetData } = useQuery({
-    queryKey: ['budgetDashboard'],
+    queryKey: ['budgetDashboard', weddingId],
     queryFn: async () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
-      
-      const { data, error } = await supabase
+
+      let query: any = supabase
         .from('budgets_dashboard')
         .select('*')
-        .eq('user_id', userData.user.id)
-        .single();
+        .eq('user_id', userData.user.id);
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query.maybeSingle();
         
       if (error && error.code !== 'PGRST116') {
         throw error;
