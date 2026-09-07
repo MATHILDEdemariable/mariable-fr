@@ -59,21 +59,27 @@ const ChecklistMariageManuelle: React.FC = () => {
     responsible: '',
   });
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
 
   useEffect(() => {
     loadItems();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   const loadItems = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('checklist_mariage_manuel')
         .select('*')
         .eq('user_id', user.id)
         .order('position');
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setItems(data || []);
