@@ -36,6 +36,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const { weddingId } = useWeddingScope();
 
   // Ref pour éviter les setState sur composant démonté
   const mountedRef = useRef(true);
