@@ -13,6 +13,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ChecklistMariageExportButton from './ChecklistMariageExportButton';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface ChecklistItem {
   id: string;
