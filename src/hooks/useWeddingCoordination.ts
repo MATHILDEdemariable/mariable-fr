@@ -20,6 +20,7 @@ export const useWeddingCoordination = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isInitializing, setIsInitializing] = useState(false);
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
 
   const initializeCoordination = useCallback(async () => {
     if (isInitializing || coordination) return coordination;
