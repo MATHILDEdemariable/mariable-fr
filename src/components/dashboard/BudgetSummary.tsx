@@ -458,6 +458,7 @@ const BudgetSummary: React.FC = () => {
           .from('budgets_dashboard')
           .insert({
             user_id: user.id,
+            ...(weddingId ? { wedding_id: weddingId } : {}),
             project_id: projectId,
             region: region || 'France',
             season: season || 'basse',
@@ -525,10 +526,14 @@ const BudgetSummary: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          const { data: budgets } = await supabase
+          let budgetsQuery: any = supabase
             .from('budgets_dashboard')
             .select('*')
-            .eq('user_id', user.id)
+            .eq('user_id', user.id);
+
+          if (weddingId) budgetsQuery = budgetsQuery.eq('wedding_id', weddingId);
+
+          const { data: budgets } = await budgetsQuery
             .order('created_at', { ascending: false })
             .limit(1);
             

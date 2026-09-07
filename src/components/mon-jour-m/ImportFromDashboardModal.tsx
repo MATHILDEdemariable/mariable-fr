@@ -42,11 +42,14 @@ const ImportFromDashboardModal: React.FC<Props> = ({
       try {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
-        const { data, error } = await supabase
+        let docsQuery: any = supabase
           .from('wedding_documents')
           .select('id, file_name, file_url, file_path, mime_type, file_size, document_type, vendor_name')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
+          .eq('user_id', user.id);
+
+        if (weddingId) docsQuery = docsQuery.eq('wedding_id', weddingId);
+
+        const { data, error } = await docsQuery.order('created_at', { ascending: false });
         if (error) throw error;
         setDocs(data || []);
       } catch (e) {

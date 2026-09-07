@@ -52,10 +52,14 @@ const GuestManagement: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         
         if (user) {
-          const { data, error } = await supabase
+          let guestQuery: any = supabase
             .from('budgets_dashboard')
             .select('*')
-            .eq('user_id', user.id)
+            .eq('user_id', user.id);
+
+          if (weddingId) guestQuery = guestQuery.eq('wedding_id', weddingId);
+
+          const { data, error } = await guestQuery
             .order('updated_at', { ascending: false })
             .limit(1);
             
@@ -93,10 +97,14 @@ const GuestManagement: React.FC = () => {
       
       if (user) {
         // Get existing budgets data first
-        const { data: existingData, error: fetchError } = await supabase
+        let existingQuery: any = supabase
           .from('budgets_dashboard')
           .select('*')
-          .eq('user_id', user.id)
+          .eq('user_id', user.id);
+
+        if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+
+        const { data: existingData, error: fetchError } = await existingQuery
           .order('updated_at', { ascending: false })
           .limit(1);
         
@@ -138,6 +146,8 @@ const GuestManagement: React.FC = () => {
           };
         }
         
+        if (weddingId) budgetData.wedding_id = weddingId;
+
         const { error: updateError } = await supabase
           .from('budgets_dashboard')
           .upsert(budgetData);

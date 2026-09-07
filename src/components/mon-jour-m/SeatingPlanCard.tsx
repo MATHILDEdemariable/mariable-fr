@@ -29,11 +29,14 @@ const SeatingPlanCard: React.FC = () => {
       if (!user) return;
 
       // Récupérer le seating plan de l'utilisateur
-      const { data: plan } = await supabase
+      let statsPlanQuery: any = supabase
         .from('seating_plans')
         .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .eq('user_id', user.id);
+
+      if (weddingId) statsPlanQuery = statsPlanQuery.eq('wedding_id', weddingId);
+
+      const { data: plan } = await statsPlanQuery.maybeSingle();
 
       if (!plan) {
         setStats({ tablesCount: 0, seatedGuests: 0, totalCapacity: 0 });
@@ -73,11 +76,14 @@ const SeatingPlanCard: React.FC = () => {
       if (!user) return;
 
       // Récupérer le seating plan complet
-      const { data: plan } = await supabase
+      let exportPlanQuery: any = supabase
         .from('seating_plans')
         .select('id')
-        .eq('user_id', user.id)
-        .maybeSingle();
+        .eq('user_id', user.id);
+
+      if (weddingId) exportPlanQuery = exportPlanQuery.eq('wedding_id', weddingId);
+
+      const { data: plan } = await exportPlanQuery.maybeSingle();
 
       if (!plan) {
         throw new Error('Aucun plan de table trouvé');
