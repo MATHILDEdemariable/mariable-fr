@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface WeddingCoordination {
   id: string;
