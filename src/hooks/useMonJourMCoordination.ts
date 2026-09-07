@@ -195,7 +195,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       if (error) throw error;
       
       // Mettre à jour le cache
-      coordinationCache.set(data.user_id, data);
+      coordinationCache.set(`${data.user_id}:${weddingId ?? 'default'}`, data);
       
       setCoordination(data);
       console.log('🔄 useMonJourMCoordination: Coordination refreshed');
