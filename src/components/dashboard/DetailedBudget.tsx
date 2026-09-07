@@ -361,7 +361,7 @@ const DetailedBudget: React.FC = () => {
           totalRemaining
         };
 
-        const budgetPayload = {
+        const budgetPayload: any = {
           user_id: userData.user.id,
           total_budget: totalEstimated,
           guests_count: budgetData?.guests_count || 100,
@@ -371,6 +371,8 @@ const DetailedBudget: React.FC = () => {
           selected_vendors: budgetData?.selected_vendors || [],
           breakdown: breakdownData as any // Cast to any to satisfy Json type
         };
+
+        if (weddingId) budgetPayload.wedding_id = weddingId;
 
         if (existingData?.id) {
           // Update existing record
