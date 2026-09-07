@@ -40,7 +40,7 @@ export const useAccommodations = () => {
       if (error) throw error;
 
       const accommodationsWithGuests = await Promise.all(
-        accommodations.map(async (accommodation) => {
+        (accommodations as any[]).map(async (accommodation: any) => {
           const { data: assignments } = await supabase
             .from('accommodation_assignments')
             .select('guest_name')
