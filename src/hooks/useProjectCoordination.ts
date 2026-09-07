@@ -87,13 +87,16 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
       } else {
         // Créer une nouvelle coordination projet
         console.log('🆕 useProjectCoordination: Creating new project coordination...');
+        const insertPayload: any = {
+          user_id: user.id,
+          title: 'Mission Mariage - Préparation',
+          description: 'Gestion et organisation de la préparation du mariage'
+        };
+        if (weddingId) insertPayload.wedding_id = weddingId;
+
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mission Mariage - Préparation',
-            description: 'Gestion et organisation de la préparation du mariage'
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
