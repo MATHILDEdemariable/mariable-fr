@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface GuestManualAddProps {
   isOpen: boolean;
@@ -72,6 +73,7 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
         .from('wedding_guest_list')
         .insert({
           user_id: user.id,
+          ...(weddingId ? { wedding_id: weddingId } : {}),
           guest_first_name: firstName.trim(),
           guest_last_name: lastName.trim(),
           guest_email: email.trim() || null,

@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, CheckCircle } from 'lucide-react';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface RSVPEvent {
   id: string;
@@ -62,11 +63,14 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
 
-    const { data } = await supabase
+    let eventsQuery: any = supabase
       .from('wedding_rsvp_events')
       .select('id, event_name, event_date')
-      .eq('user_id', user.id)
-      .order('event_date', { ascending: false });
+      .eq('user_id', user.id);
+
+    if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+
+    const { data } = await eventsQuery.order('event_date', { ascending: false });
 
     setEvents(data || []);
   };

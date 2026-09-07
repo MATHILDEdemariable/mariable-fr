@@ -13,6 +13,7 @@ import { Plus, Loader2, Info, Trash2 } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface SubEvent {
   id?: string;
@@ -68,11 +69,14 @@ const RSVPManagement: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let eventsQuery: any = supabase
         .from('wedding_rsvp_events')
         .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .eq('user_id', user.id);
+
+      if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+
+      const { data, error } = await eventsQuery.order('created_at', { ascending: false });
 
       if (error) throw error;
 
@@ -164,6 +168,7 @@ const RSVPManagement: React.FC = () => {
           .from('wedding_rsvp_events')
           .insert({
             user_id: user.id,
+            ...(weddingId ? { wedding_id: weddingId } : {}),
             event_name: eventName,
             event_date: eventDate || null,
             event_location: eventLocation || null,

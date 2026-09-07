@@ -6,6 +6,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { Loader2, Users } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Guest {
   id: string;
@@ -39,10 +40,14 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let importQuery: any = supabase
         .from('wedding_guest_list')
         .select('id, guest_first_name, guest_last_name, rsvp_status')
         .eq('user_id', user.id);
+
+      if (weddingId) importQuery = importQuery.eq('wedding_id', weddingId);
+
+      const { data, error } = await importQuery;
 
       if (error) throw error;
       setGuests(data || []);

@@ -9,6 +9,7 @@ import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users } from '
 import GuestImportDialog from './GuestImportDialog';
 import GuestManualAdd from './GuestManualAdd';
 import GuestEditDialog from './GuestEditDialog';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Guest {
   id: string;
@@ -43,11 +44,14 @@ const GuestListManager: React.FC = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let guestsQuery: any = supabase
         .from('wedding_guest_list')
         .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
+        .eq('user_id', user.id);
+
+      if (weddingId) guestsQuery = guestsQuery.eq('wedding_id', weddingId);
+
+      const { data, error } = await guestsQuery.order('created_at', { ascending: false });
 
       if (error) throw error;
       setGuests((data || []) as Guest[]);

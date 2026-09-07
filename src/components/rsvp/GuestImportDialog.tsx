@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, Loader2, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 import Papa from 'papaparse';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface GuestImportDialogProps {
   isOpen: boolean;
@@ -139,7 +140,8 @@ const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, 
         guest_address: guest.address || null,
         guest_type: guest.type,
         source: fileType || 'manual',
-      }));
+        ...(weddingId ? { wedding_id: weddingId } : {}),
+      })) as any;
 
       const { error } = await supabase
         .from('wedding_guest_list')
