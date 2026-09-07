@@ -1,69 +1,63 @@
-# Extension B2B — V1
+# Extension B2B — V1 (version simplifiée)
 
-## Ce que l'audit a montré
+## Principe retenu
 
-Aujourd'hui, il n'existe pas d'entité « mariage » indépendante : chaque module range ses données directement sous l'identifiant du compte (budget, checklist, prestataires, invités, plan de table, documents, jour-J...). Un compte = un mariage, implicitement.
+Pas d'organisations, pas de liste de membres. Tout repose sur **le type de compte** :
 
-Pour qu'un professionnel gère plusieurs mariages sans mélange, il faut donc créer cette entité « mariage » et y rattacher les modules concernés — sans rien changer pour les particuliers, qui auront automatiquement un mariage unique créé à partir de leurs données actuelles.
+- Particulier / Particulier premium → parcours actuel, inchangé.
+- Professionnel / Professionnel premium → écran « Mes mariages » puis le même tableau de bord.
+- Toute autre personne (couple, prestataire) → mode consultation existant, par lien de partage.
 
-## Parcours cibles
+Le passage premium garde exactement la même logique qu'aujourd'hui, quel que soit le type de compte.
 
-Particulier : connexion → son tableau de bord (inchangé).
+## Migration sans risque
 
-Professionnel : connexion → « Mes mariages » → ouverture d'un mariage → exactement le même tableau de bord, mais dans le contexte du mariage choisi, avec un retour permanent vers la liste.
+Chaque compte existant reçoit un mariage par défaut qui **reprend son propre identifiant**. Toutes les données actuelles sont donc rattachées automatiquement, sans recalcul ni correspondance à construire : l'identifiant du compte devient l'identifiant de son mariage. Aucune donnée n'est déplacée ni supprimée, la colonne actuelle « utilisateur » reste en place partout.
 
-## Périmètre des modules (V1)
+## Modules concernés en V1
 
-Deviennent multi-mariages, avec le design B2C actuel conservé :
-budget et calculatrice de budget, checklist manuelle, suivi prestataires, RSVP / invités, planning du jour-J, plan de table, calculatrice boissons, gestion des logements, documents, liste de mariage / QR code, album invités.
+Budget et calculatrice de budget, checklist manuelle, suivi prestataires, RSVP / invités, planning du jour-J, plan de table, calculatrice boissons, logements, documents, liste de mariage / QR code, album invités. Design B2C conservé à l'identique.
 
-Restent liés au compte (hors périmètre V1) : profil, panier / e-shop, assistant IA, guides, messages, moodboard.
+Restent liés au compte : profil, panier / e-shop, assistant IA, guides, messages, moodboard.
 
-## Type de compte et accès
+## Écrans
 
-- À l'inscription, l'utilisateur choisit « Particulier » ou « Professionnel ».
-- Le type est stocké sur le profil ; le parcours après connexion en découle.
-- Professionnel : 1 mariage gratuit, puis mariages supplémentaires réservés aux comptes pro payants (illimité). En V1, aucune page de paiement pro n'est créée : la limite s'appuie sur le statut d'abonnement existant et affiche un message d'invitation à passer pro au-delà du premier mariage.
+1. **Mes mariages** (`/pro`) — liste des mariages du professionnel, bouton « Ouvrir », bouton « + Nouveau mariage ».
+2. **Nouveau mariage** — formulaire léger (couple, date, lieu, nombre d'invités), ouverture immédiate après création.
+3. **Bandeau de contexte** dans le tableau de bord pour un pro : mariage en cours, retour « ← Mes mariages », changement rapide.
 
-## Écrans à créer
+Aucun nouveau tableau de bord, aucune route de module dupliquée.
 
-1. **Mes mariages** (`/pro`) — liste des mariages du professionnel (couple, date, lieu), bouton « Ouvrir », bouton « + Nouveau mariage ».
-2. **Nouveau mariage** — formulaire léger réutilisant les champs existants (titre / couple, date, lieu, nombre d'invités). À la création, le mariage est ouvert directement.
-3. **Bandeau de contexte** dans le tableau de bord pour un pro : nom du mariage en cours + lien « ← Mes mariages » + changement rapide de mariage.
+## Limite
 
-Aucun nouveau tableau de bord, aucune nouvelle route de module : les routes existantes sont réutilisées telles quelles.
+1 mariage gratuit pour un compte professionnel ; au-delà, un message invite à passer premium (illimité). Aucune nouvelle page de paiement n'est créée : le statut d'abonnement existant sert de référence.
 
 ## Mode consultation
 
-Le système de partage par lien existant est conservé tel quel, sans nouveau mécanisme. Les jetons resteront valides ; ils pointeront simplement vers le mariage concerné. L'extension du partage à d'autres modules reste possible plus tard, mais n'est pas faite ici.
+Conservé tel quel. Les liens de partage existants restent valides et continuent de pointer vers les mêmes données.
 
 ## Détails techniques
 
-**Base de données**
+Base de données (une seule migration, strictement additive) :
 
-- Nouvelle table `weddings` (organisation propriétaire, titre, date, lieu, nombre d'invités, créateur) et table `wedding_members` (utilisateur, mariage, rôle) pour préparer le multi-utilisateurs sans l'exposer en V1.
-- Nouvelle table `organizations` + `organization_members` ; un compte pro crée son organisation à la première utilisation.
-- `profiles` : ajout de `account_type` (`b2c` / `b2b`).
-- Ajout d'une colonne `wedding_id` **nullable** sur les tables du périmètre : `budgets_dashboard`, `budgets_detail`, `checklist_mariage_manuel`, `vendors_tracking`, `wedding_guest_list`, `wedding_rsvp_events`, `wedding_coordination`, `seating_plans`, `wedding_accommodations`, `wedding_documents`, `qr_codes`, `guest_albums`. Les tables enfants (`coordination_planning`, `coordination_team`, `wedding_rsvp_sub_events`, `seating_tables`, etc.) héritent du contexte par leur parent — aucune modification.
-- Migration de données : pour chaque utilisateur existant, création d'un mariage « par défaut » et affectation de toutes ses lignes existantes. Aucune suppression, la colonne `user_id` est conservée telle quelle.
-- Sécurité : fonction `security definer` `has_wedding_access(user_id, wedding_id)` ; les règles d'accès actuelles sont complétées par « ou membre du mariage », jamais remplacées, pour garantir zéro régression B2C.
+- Table `weddings` (`id`, `owner_id`, titre, date, lieu, invités, `is_default`), règle d'accès `owner_id = auth.uid()`.
+- `profiles.account_type` (`b2c` / `b2b`) avec contrainte, rempli par `handle_new_user()` depuis le formulaire d'inscription ; rattrapage des comptes pro déjà créés.
+- Mariage par défaut créé avec `id = profiles.id` pour chaque compte existant, et à chaque nouvelle inscription.
+- Colonne `wedding_id` **nullable** ajoutée sur : `budgets_dashboard`, `budgets_detail`, `checklist_mariage_manuel`, `vendors_tracking`, `wedding_guest_list`, `wedding_rsvp_events`, `wedding_coordination`, `seating_plans`, `wedding_accommodations`, `wedding_documents`, `qr_codes`, `guest_albums` — backfill `wedding_id = user_id`. Les tables enfants héritent par leur parent.
+- Fonction `security definer` `has_wedding_access(user, wedding)` et policy additive par table ; les policies existantes ne sont pas touchées.
+- `wedding_tool_states` pour les outils dont l'état n'est pas encore persisté (calculatrice boissons, etc.).
+- Index unique `budgets_detail (user_id, wedding_id, item_id)` en remplacement de l'ancien.
 
-**Front**
+Front :
 
-- `WeddingContext` (nouveau) exposant `currentWeddingId`, résolu ainsi : B2C → mariage par défaut de l'utilisateur ; B2B → mariage sélectionné (persisté dans l'URL/`localStorage`).
-- Les hooks de données du périmètre filtrent sur `wedding_id` fourni par le contexte au lieu de `user_id` seul, et l'écrivent à l'insertion. Un utilitaire partagé évite de dupliquer cette logique hook par hook.
-- `ProtectedRoute` / redirection après connexion : un compte pro sans mariage sélectionné atterrit sur `/pro`.
-- Aucune refonte visuelle : les composants, layouts et styles existants sont réutilisés à l'identique.
+- `WeddingContext` exposant `currentWeddingId` : B2C → son mariage par défaut ; B2B → mariage sélectionné (persisté).
+- `useWeddingScope` : utilitaire partagé qui ajoute le filtre `wedding_id` en lecture et l'injecte en écriture, module par module.
+- Redirection après connexion selon `account_type` ; `/pro` pour les professionnels.
 
 ## Ordre de livraison
 
-1. Tables `organizations` / `weddings` / `wedding_members`, `account_type`, fonction d'accès, migration des données existantes.
-2. `WeddingContext` + bascule des hooks du périmètre sur `wedding_id` (B2C d'abord, comportement identique vérifié).
-3. Choix Particulier / Professionnel à l'inscription.
-4. Écran « Mes mariages », création de mariage, bandeau de contexte et retour à la liste.
-5. Limite 1 mariage gratuit, vérification qu'aucune donnée ne fuit entre deux mariages, contrôle du mode consultation.
-
-## Points de vigilance
-
-- La bascule des hooks est l'étape sensible : elle sera faite module par module, avec vérification que le parcours particulier reste identique avant de passer au suivant.
-- La calculatrice de boissons et certains calculs stockent des données localement : ils seront rattachés au mariage seulement s'ils persistent en base ; sinon ils restent tels quels.
+1. Migration base + mariage par défaut.
+2. `WeddingContext` + bascule des modules du périmètre, en vérifiant à chaque étape que le parcours particulier est identique.
+3. Choix Particulier / Professionnel à l'inscription et redirection.
+4. Écran « Mes mariages », création, bandeau de contexte.
+5. Limite gratuite et vérification de l'étanchéité entre deux mariages + contrôle du mode consultation.
