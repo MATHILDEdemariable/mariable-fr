@@ -234,3 +234,8 @@ BEGIN
   RETURN new;
 END;
 $function$;
+
+-- 10. Le budget détaillé devient unique par mariage --------------------------
+ALTER TABLE public.budgets_detail DROP CONSTRAINT IF EXISTS budgets_detail_user_id_item_id_key;
+CREATE UNIQUE INDEX IF NOT EXISTS budgets_detail_user_wedding_item_key
+  ON public.budgets_detail (user_id, wedding_id, item_id);
