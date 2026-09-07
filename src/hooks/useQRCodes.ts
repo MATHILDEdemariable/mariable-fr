@@ -14,17 +14,22 @@ interface QRCodeData {
 export const useQRCodes = () => {
   const [qrCodes, setQRCodes] = useState<QRCodeData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { weddingId } = useWeddingScope();
 
   const fetchQRCodes = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('qr_codes')
         .select('*')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false });
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setQRCodes(data || []);
@@ -34,6 +39,7 @@ export const useQRCodes = () => {
       setIsLoading(false);
     }
   };
+
 
   const createQRCode = async (title: string, url: string) => {
     const { data: { user } } = await supabase.auth.getUser();
