@@ -63,6 +63,7 @@ export const useAccommodations = () => {
 
 export const useCreateAccommodation = () => {
   const queryClient = useQueryClient();
+  const { weddingId } = useWeddingScope();
 
   return useMutation({
     mutationFn: async (data: Partial<Accommodation> & { guests?: string[] }) => {
@@ -79,6 +80,8 @@ export const useCreateAccommodation = () => {
         statut: rest.statut || 'non_reserve',
         user_id: user.user.id,
       };
+
+      if (weddingId) insertData.wedding_id = weddingId;
 
       if (rest.prix_par_nuit !== undefined) insertData.prix_par_nuit = rest.prix_par_nuit;
       if (rest.date_arrivee) insertData.date_arrivee = rest.date_arrivee;
