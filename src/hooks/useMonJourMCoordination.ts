@@ -175,7 +175,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
         setIsInitializing(false);
       }
     }
-  }, [coordination, isInitializing, toast]);
+  }, [coordination, isInitializing, toast, weddingId]);
 
   const refreshCoordination = useCallback(async () => {
     if (!coordination || !mountedRef.current) return;
