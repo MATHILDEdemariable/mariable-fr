@@ -29,6 +29,7 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
   const [isInitializing, setIsInitializing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
   
   // Ref pour éviter les setState sur composant démonté
   const mountedRef = useRef(true);
