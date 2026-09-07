@@ -197,11 +197,15 @@ const DetailedBudget: React.FC = () => {
       const { data: userData } = await supabase.auth.getUser();
       if (!userData.user) throw new Error("User not authenticated");
 
-      const { error } = await supabase
+      let query: any = supabase
         .from('budgets_detail')
         .delete()
         .eq('user_id', userData.user.id)
         .eq('item_id', itemId);
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { error } = await query;
 
       if (error) throw error;
     },
