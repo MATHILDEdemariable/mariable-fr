@@ -148,7 +148,13 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
         setIsInitializing(false);
       }
     }
-  }, [coordination, isInitializing, toast]);
+  }, [coordination, isInitializing, toast, weddingId]);
+
+  // Changement de mariage : on recharge la coordination correspondante
+  useEffect(() => {
+    setCoordination(null);
+  }, [weddingId]);
+
 
   const refreshCoordination = useCallback(async () => {
     if (!coordination || !mountedRef.current) return;
