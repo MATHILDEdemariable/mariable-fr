@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import QRCode from 'qrcode';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface QRCodeData {
   id: string;
