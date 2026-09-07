@@ -9,6 +9,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { useWedding } from '@/contexts/WeddingContext';
 import StripeButton from '@/components/premium/StripeButton';
 import PushNotificationToggle from '@/components/dashboard/PushNotificationToggle';
 
@@ -16,6 +17,8 @@ import PushNotificationToggle from '@/components/dashboard/PushNotificationToggl
 const UserProfile: React.FC = () => {
   const { t, i18n } = useTranslation('dashboard');
   const { profile, isPremium, loading } = useUserProfile();
+  const { accountType } = useWedding();
+  const isPro = accountType === 'b2b';
   const { toast } = useToast();
   const navigate = useNavigate();
   const [showStripeButton, setShowStripeButton] = useState(false);
@@ -125,6 +128,13 @@ const UserProfile: React.FC = () => {
           </div>
         ) : profile ? (
           <div className="space-y-4">
+            <div className="flex items-center justify-between border border-border bg-editorial-beige px-3 py-2">
+              <span className="text-sm text-gray-600">Type de compte</span>
+              <Badge className={isPro ? 'bg-wedding-olive text-white hover:bg-wedding-olive/90' : 'bg-gray-500 text-white hover:bg-gray-600'}>
+                {isPro ? 'Professionnel' : 'Particulier'}
+              </Badge>
+            </div>
+
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -172,7 +182,16 @@ const UserProfile: React.FC = () => {
                 </p>
               ) : (
                 <div className="pt-2 space-y-2">
-                  {showStripeButton ? (
+                  {isPro ? (
+                    <Button
+                      onClick={() => navigate('/partenariat#mariable-pro')}
+                      className="w-full bg-wedding-olive hover:bg-wedding-olive/80"
+                      size="sm"
+                    >
+                      <Crown className="w-4 h-4 mr-2" />
+                      Passer au compte pro
+                    </Button>
+                  ) : showStripeButton ? (
                     <StripeButton />
                   ) : (
                     <Button 

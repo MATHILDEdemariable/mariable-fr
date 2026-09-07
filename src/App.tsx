@@ -126,7 +126,6 @@ const RSVPPublicForm = lazy(() => import("./pages/rsvp/RSVPPublicForm"));
 const AccommodationsPage = lazy(() => import("./pages/dashboard/AccommodationsPage"));
 const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator"));
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
-const ProDashboardMockup = lazy(() => import("./pages/pro/ProDashboardMockup"));
 const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
@@ -299,7 +298,6 @@ function App() {
                   <Route path="/pro" element={<ProtectedRoute><MesMariages /></ProtectedRoute>} />
 
                   {/* Dashboard Professionnel Mockup */}
-                  <Route path="/pro/dashboard" element={<ProDashboardMockup />} />
                   
                   <Route path="/contact/faq" element={<FAQ />} />
                    <Route path="/checklist-mariage" element={<ChecklistMariage />} />
