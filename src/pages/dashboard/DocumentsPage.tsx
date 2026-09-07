@@ -16,6 +16,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 const DocumentsPage = () => {
   const { toast } = useToast();
   const { t } = useTranslation('weddingDay');
+  const { weddingId } = useWeddingScope();
   const [viewerOpen, setViewerOpen] = useState(false);
   const [viewedDocument, setViewedDocument] = useState<any>(null);
 
