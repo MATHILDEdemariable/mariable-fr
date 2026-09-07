@@ -14,6 +14,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useCart } from '@/components/cart/CartProvider';
 import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Type for budget category
 interface BudgetItem {
