@@ -111,17 +111,20 @@ const ChecklistMariageManuelle: React.FC = () => {
 
       const maxPosition = Math.max(...items.filter(item => item.category === newItem.category).map(item => item.position), -1);
 
+      const insertPayload: any = {
+        title: newItem.title,
+        description: newItem.description || null,
+        category: newItem.category,
+        user_id: user.id,
+        position: maxPosition + 1,
+        due_date: newItem.due_date || null,
+        responsible: newItem.responsible || null,
+      };
+      if (weddingId) insertPayload.wedding_id = weddingId;
+
       const { error } = await supabase
         .from('checklist_mariage_manuel')
-        .insert({
-          title: newItem.title,
-          description: newItem.description || null,
-          category: newItem.category,
-          user_id: user.id,
-          position: maxPosition + 1,
-          due_date: newItem.due_date || null,
-          responsible: newItem.responsible || null,
-        });
+        .insert(insertPayload);
 
       if (error) throw error;
 
