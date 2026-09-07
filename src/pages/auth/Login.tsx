@@ -37,11 +37,34 @@ const Login = () => {
   const redirectPath = safeNext || location.state?.redirectAfterLogin || '/professionnelsmariable';
 
 
+  const hasExplicitRedirect = Boolean(safeNext || location.state?.redirectAfterLogin);
+
   useEffect(() => {
-    if (user) {
-      navigate(redirectPath);
-    }
-  }, [user, navigate, redirectPath]);
+    if (!user) return;
+
+    // Un compte professionnel arrive sur son espace pro, pas sur un mariage
+    const resolveDestination = async () => {
+      if (hasExplicitRedirect) {
+        navigate(redirectPath);
+        return;
+      }
+
+      try {
+        const { data } = await (supabase as any)
+          .from('profiles')
+          .select('account_type')
+          .eq('id', user.id)
+          .maybeSingle();
+
+        navigate(data?.account_type === 'b2b' ? '/pro' : redirectPath);
+      } catch (error) {
+        console.error('❌ Login: type de compte illisible', error);
+        navigate(redirectPath);
+      }
+    };
+
+    resolveDestination();
+  }, [user, navigate, redirectPath, hasExplicitRedirect]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
