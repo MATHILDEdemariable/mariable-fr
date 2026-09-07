@@ -60,13 +60,17 @@ export const useProjectCoordination = (): UseProjectCoordinationReturn => {
       console.log('🚀 useProjectCoordination: Initializing project coordination for user:', user.id);
 
       // Vérifier si une coordination projet existe déjà - prendre la plus récente
-      const { data: existingCoordinations, error: fetchError } = await supabase
+      let fetchQuery: any = supabase
         .from('wedding_coordination')
         .select('*')
         .eq('user_id', user.id)
         .like('title', 'Mission Mariage%')
         .order('created_at', { ascending: false })
         .limit(1);
+
+      if (weddingId) fetchQuery = fetchQuery.eq('wedding_id', weddingId);
+
+      const { data: existingCoordinations, error: fetchError } = await fetchQuery;
 
       if (!mountedRef.current) return null;
       
