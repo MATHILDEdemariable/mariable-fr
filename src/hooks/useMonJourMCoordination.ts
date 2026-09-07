@@ -71,8 +71,10 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
 
       console.log('🚀 useMonJourMCoordination: Initializing coordination for user:', user.id);
 
+      const cacheKey = `${user.id}:${weddingId ?? 'default'}`;
+
       // Vérifier le cache d'abord
-      const cachedCoordination = coordinationCache.get(user.id);
+      const cachedCoordination = coordinationCache.get(cacheKey);
       if (cachedCoordination) {
         console.log('📦 useMonJourMCoordination: Using cached coordination');
         if (mountedRef.current) {
@@ -83,12 +85,16 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       }
 
       // Vérifier si une coordination existe déjà - prendre la plus récente
-      const { data: existingCoordinations, error: fetchError } = await supabase
+      let fetchQuery: any = supabase
         .from('wedding_coordination')
         .select('id, title, description, wedding_date, wedding_location, user_id, created_at, updated_at')
         .eq('user_id', user.id)
         .order('created_at', { ascending: false })
         .limit(1);
+
+      if (weddingId) fetchQuery = fetchQuery.eq('wedding_id', weddingId);
+
+      const { data: existingCoordinations, error: fetchError } = await fetchQuery;
 
       if (!mountedRef.current) return null;
       
@@ -105,13 +111,16 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       } else {
         // Créer une nouvelle coordination
         console.log('🆕 useMonJourMCoordination: Creating new coordination...');
+        const insertPayload: any = {
+          user_id: user.id,
+          title: 'Mon Mariage',
+          description: 'Organisation de mon mariage'
+        };
+        if (weddingId) insertPayload.wedding_id = weddingId;
+
         const { data: newCoordination, error: createError } = await supabase
           .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage',
-            description: 'Organisation de mon mariage'
-          })
+          .insert(insertPayload)
           .select()
           .single();
 
@@ -127,7 +136,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       }
 
       // Mettre en cache
-      coordinationCache.set(user.id, activeCoordination);
+      coordinationCache.set(cacheKey, activeCoordination);
 
       if (mountedRef.current) {
         setCoordination(activeCoordination);
