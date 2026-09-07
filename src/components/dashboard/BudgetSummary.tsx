@@ -24,6 +24,7 @@ import { Json } from '@/integrations/supabase/types';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
 import {
+import { useWeddingScope } from '@/hooks/useWeddingScope';
   Dialog,
   DialogContent,
   DialogHeader,
@@ -137,6 +138,7 @@ const INITIAL_BUDGET_DATA: BudgetCategory[] = [
 ];
 
 const BudgetSummary: React.FC = () => {
+  const { weddingId } = useWeddingScope();
   // État pour le résumé du budget
   const [budgetData, setBudgetData] = useState<BudgetCategory[]>(INITIAL_BUDGET_DATA);
   

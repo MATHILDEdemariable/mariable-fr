@@ -6,6 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, FileText } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface DashboardDoc {
   id: string;
@@ -30,6 +31,7 @@ const ImportFromDashboardModal: React.FC<Props> = ({
   open, onOpenChange, coordinationId, alreadyImportedSourceIds, onImported,
 }) => {
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
   const [docs, setDocs] = useState<DashboardDoc[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());

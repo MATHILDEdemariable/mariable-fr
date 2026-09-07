@@ -6,6 +6,7 @@ import { Users, ExternalLink, Download, Table2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import jsPDF from 'jspdf';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface SeatingPlanStats {
   tablesCount: number;
@@ -14,6 +15,7 @@ interface SeatingPlanStats {
 }
 
 const SeatingPlanCard: React.FC = () => {
+  const { weddingId } = useWeddingScope();
   const navigate = useNavigate();
   const [stats, setStats] = useState<SeatingPlanStats | null>(null);
   const [isLoading, setIsLoading] = useState(true);

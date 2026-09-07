@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Download, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface GuestCounts {
   adults: number;
@@ -29,6 +30,7 @@ interface BudgetBreakdown {
 }
 
 const GuestManagement: React.FC = () => {
+  const { weddingId } = useWeddingScope();
   const [guestCounts, setGuestCounts] = useState<GuestCounts>({
     adults: 0,
     children: 0,
