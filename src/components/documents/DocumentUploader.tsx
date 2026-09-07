@@ -30,6 +30,7 @@ const DocumentUploader: React.FC<DocumentUploaderProps> = ({ onUploadComplete, d
   const [showPremiumModal, setShowPremiumModal] = useState(false);
   const { toast } = useToast();
   const { profile } = useUserProfile();
+  const { weddingId } = useWeddingScope();
 
   const isPremium = profile?.subscription_type === 'premium';
   const isLimitReached = !isPremium && documentCount >= MAX_FREE_DOCUMENTS;
