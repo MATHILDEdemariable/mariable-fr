@@ -54,12 +54,15 @@ export const useQRCodes = () => {
       },
     });
 
-    const { error } = await supabase.from('qr_codes').insert({
+    const insertPayload: any = {
       user_id: user.id,
       title,
       url,
       qr_code_data: qrCodeDataUrl,
-    });
+    };
+    if (weddingId) insertPayload.wedding_id = weddingId;
+
+    const { error } = await supabase.from('qr_codes').insert(insertPayload);
 
     if (error) throw error;
     await fetchQRCodes();
@@ -73,7 +76,8 @@ export const useQRCodes = () => {
 
   useEffect(() => {
     fetchQRCodes();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   return {
     qrCodes,
