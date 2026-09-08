@@ -33,6 +33,9 @@ const ProjectSummary = () => {
   const [localWeddingDate, setLocalWeddingDate] = useState<Date | undefined>();
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
+  const scope = <T,>(query: T): T =>
+    weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
