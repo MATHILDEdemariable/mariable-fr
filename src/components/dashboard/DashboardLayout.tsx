@@ -6,7 +6,7 @@ import ProSidebar from '@/components/pro/ProSidebar';
 
 import { useIsMobile } from '@/hooks/use-mobile';
 import PremiumHeader from '@/components/home/PremiumHeader';
-import { Home, Users, Info, X, Crown } from 'lucide-react';
+import { Home, Users, Info, X, Crown, Heart } from 'lucide-react';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
 import SatisfactionModal from './SatisfactionModal';
@@ -26,7 +26,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const { t } = useTranslation('dashboard');
-  const { isPremium } = useUserProfile();
+  const { isPremium, isProAccount } = useUserProfile();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
@@ -90,27 +90,38 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         
         {/* Quick navigation bar - desktop only */}
         {!isMobile && (
-        <div className="fixed top-[88px] left-4 z-40 flex gap-2">
+        <div className="fixed top-[88px] left-4 z-40 flex items-center gap-2">
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Home className="h-4 w-4 mr-1" />
               {t('header.home')}
             </Button>
           </Link>
+          {isProAccount && (
+            <>
+              <Link to="/pro">
+                <Button size="sm" className="bg-premium-sage hover:bg-premium-sage/90 text-white shadow-sm">
+                  <Heart className="h-4 w-4 mr-1" />
+                  Mes mariages
+                </Button>
+              </Link>
+              <span className="h-6 w-px bg-editorial-noir/20 mx-1" aria-hidden="true" />
+            </>
+          )}
           <Link to="/professionnelsmariable">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Users className="h-4 w-4 mr-1" />
               {t('header.vendorSelection')}
             </Button>
           </Link>
-          {variant !== 'pro' && !isPremium && (
-            <Link to="/paiement">
+          {!isPremium && (
+            <Link to={isProAccount ? '/partenariat' : '/paiement'}>
               <Button
                 size="sm"
                 className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
               >
                 <Crown className="h-4 w-4 mr-1" />
-                {t('header.upgradePremium')}
+                {isProAccount ? 'Passer Pro Premium — 149 €/an' : t('header.upgradePremium')}
               </Button>
             </Link>
           )}
