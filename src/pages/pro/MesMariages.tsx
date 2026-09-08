@@ -327,6 +327,7 @@ const MesMariages: React.FC = () => {
       </div>
 
       <NouveauMariageDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <ModifierMariageDialog wedding={editingWedding} onOpenChange={(open) => !open && setEditingWedding(null)} />
     </DashboardLayout>
   );
 };
