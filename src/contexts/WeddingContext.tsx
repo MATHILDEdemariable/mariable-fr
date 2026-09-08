@@ -74,7 +74,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const type: AccountType = profile?.account_type === 'b2b' ? 'b2b' : 'b2c';
       setAccountType(type);
       setIsPremium(
-        profile?.subscription_type === 'premium' &&
+        ['premium', 'pro_premium'].includes(profile?.subscription_type) &&
           (!profile?.subscription_expires_at || new Date(profile.subscription_expires_at) > new Date())
       );
 

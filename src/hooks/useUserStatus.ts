@@ -1,7 +1,7 @@
 
 import { useMemo } from 'react';
 
-export type UserStatus = 'premium' | 'expired' | 'free';
+export type UserStatus = 'premium' | 'pro_premium' | 'expired' | 'free';
 
 interface UserProfile {
   subscription_type?: string;
@@ -15,6 +15,11 @@ export const useUserStatus = (profile: UserProfile | null | undefined) => {
     const subscriptionType = profile.subscription_type;
     const expiresAt = profile.subscription_expires_at;
     
+    if (subscriptionType === 'pro_premium') {
+      if (!expiresAt) return 'pro_premium';
+      return new Date(expiresAt) > new Date() ? 'pro_premium' : 'expired';
+    }
+
     if (subscriptionType === 'premium') {
       if (!expiresAt) return 'premium'; // No expiration = permanent premium
       
@@ -39,6 +44,12 @@ export const getStatusBadgeProps = (status: UserStatus) => {
         variant: 'default' as const,
         className: 'bg-green-500 text-white hover:bg-green-600',
         text: 'Premium'
+      };
+    case 'pro_premium':
+      return {
+        variant: 'default' as const,
+        className: 'bg-premium-sage text-white hover:bg-premium-sage/90',
+        text: 'Pro Premium'
       };
     case 'expired':
       return {
