@@ -7,19 +7,21 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 const PricingContent = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const { isProAccount } = useUserProfile();
 
   const handlePremiumClick = () => {
     if (!isAuthenticated) {
       navigate('/register-gratuit?redirect=paiement');
       return;
     }
-    navigate('/paiement');
+    navigate(isProAccount ? '/partenariat' : '/paiement');
   };
 
   const faqItems = [
