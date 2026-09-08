@@ -72,15 +72,21 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
       // Charger les infos des invités pour les noms
       const { data: coordination } = await supabase
         .from('wedding_coordination')
-        .select('user_id')
+        .select('user_id, wedding_id')
         .eq('id', coordinationId)
-        .single();
+        .single<{ user_id: string; wedding_id: string | null }>();
 
       if (coordination?.user_id) {
-        const { data: guestsData } = await supabase
+        let guestsQuery: any = supabase
           .from('wedding_guest_list')
           .select('id, guest_first_name, guest_last_name')
           .eq('user_id', coordination.user_id);
+
+        if (coordination.wedding_id) {
+          guestsQuery = guestsQuery.eq('wedding_id', coordination.wedding_id);
+        }
+
+        const { data: guestsData } = await guestsQuery;
 
         setGuests(guestsData || []);
       }

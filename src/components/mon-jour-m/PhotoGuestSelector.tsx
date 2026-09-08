@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, X, Users, Search, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Guest {
   id: string;
@@ -30,21 +31,27 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [newCustomName, setNewCustomName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
+  const { weddingId } = useWeddingScope();
 
   useEffect(() => {
     loadGuests();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   const loadGuests = async () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      const { data, error } = await supabase
+      let query: any = supabase
         .from('wedding_guest_list')
         .select('id, guest_first_name, guest_last_name, guest_type')
         .eq('user_id', user.id)
         .order('guest_last_name', { ascending: true });
+
+      if (weddingId) query = query.eq('wedding_id', weddingId);
+
+      const { data, error } = await query;
 
       if (error) throw error;
       setGuests(data || []);

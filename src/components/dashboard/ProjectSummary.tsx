@@ -12,6 +12,7 @@ import { Smartphone, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import PushNotificationBanner from './PushNotificationBanner';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
@@ -32,6 +33,9 @@ const ProjectSummary = () => {
   const [localWeddingDate, setLocalWeddingDate] = useState<Date | undefined>();
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
   const { toast } = useToast();
+  const { weddingId } = useWeddingScope();
+  const scope = <T,>(query: T): T =>
+    weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
   const [tasks, setTasks] = useState<Task[]>([]);
   const [tasksLoading, setTasksLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
@@ -116,17 +120,17 @@ const ProjectSummary = () => {
           documentsResult
         ] = await Promise.all([
           // Budget (10%)
-          supabase.from('budgets_detail').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+          scope(supabase.from('budgets_detail').select('*', { count: 'exact', head: true }).eq('user_id', user.id)),
           // Prestataires (10%) - check coordination_team
           supabase.from('coordination_team').select('id', { count: 'exact', head: true }).limit(1),
           // Jour-J (15%) - check wedding_coordination
-          supabase.from('wedding_coordination').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+          scope(supabase.from('wedding_coordination').select('id', { count: 'exact', head: true }).eq('user_id', user.id)),
           // RSVP (10%) - check wedding_rsvp_responses
           supabase.from('wedding_rsvp_responses').select('id', { count: 'exact', head: true }).limit(1),
           // Logements (10%) - check wedding_accommodations
-          supabase.from('wedding_accommodations').select('id', { count: 'exact', head: true }).limit(1),
+          scope(supabase.from('wedding_accommodations').select('id', { count: 'exact', head: true }).limit(1)),
           // Plan de table (10%) - check seating_plans
-          supabase.from('seating_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id),
+          scope(supabase.from('seating_plans').select('id', { count: 'exact', head: true }).eq('user_id', user.id)),
           // Documents (10%) - check coordination_documents
           supabase.from('coordination_documents').select('id', { count: 'exact', head: true }).limit(1),
         ]);
@@ -153,7 +157,8 @@ const ProjectSummary = () => {
       }
     };
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   // Auto-save wedding date
   const handleWeddingDateChange = async (date: Date | undefined) => {
