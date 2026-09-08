@@ -100,7 +100,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           {isProAccount && (
             <>
               <Link to="/pro">
-                <Button size="sm" className="bg-premium-sage hover:bg-premium-sage/90 text-white shadow-sm">
+                <Button size="sm" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-sm">
                   <Heart className="h-4 w-4 mr-1" />
                   Mes mariages
                 </Button>
@@ -114,14 +114,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {t('header.vendorSelection')}
             </Button>
           </Link>
-          {!isPremium && (
-            <Link to={isProAccount ? '/partenariat' : '/paiement'}>
+          {!isPremium && isProAccount && (
+            <Button
+              size="sm"
+              className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
+              onClick={() => setShowProPremiumModal(true)}
+            >
+              <Crown className="h-4 w-4 mr-1" />
+              Passer Pro Premium — 149 €/an
+            </Button>
+          )}
+          {!isPremium && !isProAccount && (
+            <Link to="/paiement">
               <Button
                 size="sm"
                 className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
               >
                 <Crown className="h-4 w-4 mr-1" />
-                {isProAccount ? 'Passer Pro Premium — 149 €/an' : t('header.upgradePremium')}
+                {t('header.upgradePremium')}
               </Button>
             </Link>
           )}
