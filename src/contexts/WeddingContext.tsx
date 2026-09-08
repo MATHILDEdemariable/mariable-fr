@@ -166,6 +166,25 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [user, selectWedding]
   );
 
+  const updateWedding = useCallback<WeddingContextType['updateWedding']>(
+    async (weddingId, input) => {
+      if (!user) throw new Error('Utilisateur non authentifié');
+
+      const payload = {
+        title: input.title,
+        wedding_date: input.wedding_date || null,
+        wedding_location: input.wedding_location || null,
+        guest_count: input.guest_count ?? null,
+      };
+
+      const { error } = await db.from('weddings').update(payload).eq('id', weddingId);
+      if (error) throw error;
+
+      setWeddings((prev) => prev.map((w) => (w.id === weddingId ? { ...w, ...payload } : w)));
+    },
+    [user]
+  );
+
   const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || weddings.length < 1;
 
   const value = useMemo<WeddingContextType>(
@@ -178,9 +197,10 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       selectWedding,
       refreshWeddings: loadAll,
       createWedding,
+      updateWedding,
       canCreateMoreWeddings,
     }),
-    [accountType, weddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, canCreateMoreWeddings]
+    [accountType, weddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, updateWedding, canCreateMoreWeddings]
   );
 
   return <WeddingContext.Provider value={value}>{children}</WeddingContext.Provider>;
