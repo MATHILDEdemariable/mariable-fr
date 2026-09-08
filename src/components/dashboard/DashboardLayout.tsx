@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
+import ProPremiumModal from '@/components/pro/ProPremiumModal';
 interface DashboardLayoutProps {
   children?: React.ReactNode;
   /** 'pro' affiche la navigation de l'espace professionnel (pré-dashboard) */
