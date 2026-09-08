@@ -35,6 +35,7 @@ const MesMariages: React.FC = () => {
   const { toast } = useToast();
   const { weddings, loading, selectWedding, canCreateMoreWeddings, accountType } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
