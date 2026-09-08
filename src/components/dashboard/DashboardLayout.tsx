@@ -189,6 +189,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Modal de satisfaction */}
         {showSatisfactionModal && currentUser && <SatisfactionModal isOpen={showSatisfactionModal} onClose={handleCloseSatisfactionModal} userId={currentUser.id} />}
+
+        {/* Modale Pro Premium (comptes pro uniquement) */}
+        {isProAccount && <ProPremiumModal open={showProPremiumModal} onOpenChange={setShowProPremiumModal} />}
       </div>
     </OnboardingProvider>;
 };
