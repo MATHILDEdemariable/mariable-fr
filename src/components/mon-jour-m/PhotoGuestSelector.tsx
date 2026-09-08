@@ -7,6 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Plus, X, Users, Search, UserPlus } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Guest {
   id: string;
