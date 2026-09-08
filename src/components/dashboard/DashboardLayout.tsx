@@ -29,6 +29,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { t } = useTranslation('dashboard');
   const { isPremium, isProAccount } = useUserProfile();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
+  const [showProPremiumModal, setShowProPremiumModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
   const {
