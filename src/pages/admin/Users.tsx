@@ -322,7 +322,7 @@ const AdminUsers = () => {
     }
     const premiumCount = users.filter(user => {
       const status = getUserStatus(user.profile);
-      const isPremium = status === 'premium';
+      const isPremium = status === 'premium' || status === 'pro_premium';
       if (isPremium) {
         console.log('👑 Premium user found:', user.email, user.profile);
       }
