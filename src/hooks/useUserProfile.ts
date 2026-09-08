@@ -109,19 +109,25 @@ export const useUserProfile = () => {
     }
   };
 
-  const isPremium = (() => {
+  const isSubscriptionActive = (() => {
     if (!profile) return false;
-    if (profile.subscription_type !== 'premium') return false;
     if (profile.subscription_expires_at === null) return true;
-    const expiresAt = new Date(profile.subscription_expires_at);
-    return expiresAt > new Date();
+    return new Date(profile.subscription_expires_at) > new Date();
   })();
+
+  // Premium professionnel (149 €/an) : mêmes accès illimités que le premium particulier
+  const isProPremium = profile?.subscription_type === 'pro_premium' && isSubscriptionActive;
+  const isPremium =
+    (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium;
+  const isProAccount = profile?.account_type === 'b2b';
 
   return {
     profile,
     loading,
     updateProfile,
     refetch,
-    isPremium
+    isPremium,
+    isProPremium,
+    isProAccount
   };
 };
