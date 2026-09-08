@@ -29,6 +29,15 @@ interface WeddingContextType {
     wedding_location?: string | null;
     guest_count?: number | null;
   }) => Promise<Wedding>;
+  updateWedding: (
+    weddingId: string,
+    input: {
+      title: string;
+      wedding_date?: string | null;
+      wedding_location?: string | null;
+      guest_count?: number | null;
+    }
+  ) => Promise<void>;
   canCreateMoreWeddings: boolean;
 }
 
