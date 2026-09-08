@@ -2362,6 +2362,8 @@ export type Database = {
       profiles: {
         Row: {
           account_type: string
+          city: string | null
+          company_name: string | null
           created_at: string
           first_name: string | null
           guest_count: number | null
@@ -2381,6 +2383,8 @@ export type Database = {
         }
         Insert: {
           account_type?: string
+          city?: string | null
+          company_name?: string | null
           created_at?: string
           first_name?: string | null
           guest_count?: number | null
@@ -2400,6 +2404,8 @@ export type Database = {
         }
         Update: {
           account_type?: string
+          city?: string | null
+          company_name?: string | null
           created_at?: string
           first_name?: string | null
           guest_count?: number | null
