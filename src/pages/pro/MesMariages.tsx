@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,8 +10,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { useWedding } from '@/contexts/WeddingContext';
+import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
+import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 
 interface ProProfileForm {
   first_name: string;
@@ -34,6 +35,7 @@ const MesMariages: React.FC = () => {
   const { toast } = useToast();
   const { weddings, loading, selectWedding, canCreateMoreWeddings, accountType } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
@@ -184,14 +186,33 @@ const MesMariages: React.FC = () => {
               {weddings.map((wedding) => (
                 <Card key={wedding.id} className="rounded-none border-border bg-background">
                   <CardContent className="p-5">
-                    <h3 className="font-serif text-xl text-foreground">{wedding.title}</h3>
+                    <div className="flex items-start justify-between gap-3">
+                      <h3 className="font-serif text-xl text-foreground">{wedding.title}</h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-none h-8 w-8 shrink-0"
+                        aria-label="Modifier le mariage"
+                        onClick={() => setEditingWedding(wedding)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">
-                      {wedding.wedding_date && (
-                        <p className="flex items-center gap-2">
-                          <CalendarDays className="h-4 w-4" />
-                          {new Date(wedding.wedding_date).toLocaleDateString('fr-FR')}
-                        </p>
-                      )}
+                      <p className="flex items-center gap-2">
+                        <CalendarDays className="h-4 w-4" />
+                        {wedding.wedding_date ? (
+                          new Date(wedding.wedding_date).toLocaleDateString('fr-FR')
+                        ) : (
+                          <button
+                            type="button"
+                            className="underline hover:text-foreground"
+                            onClick={() => setEditingWedding(wedding)}
+                          >
+                            Date à définir
+                          </button>
+                        )}
+                      </p>
                       {wedding.wedding_location && (
                         <p className="flex items-center gap-2">
                           <MapPin className="h-4 w-4" />
@@ -306,6 +327,7 @@ const MesMariages: React.FC = () => {
       </div>
 
       <NouveauMariageDialog open={dialogOpen} onOpenChange={setDialogOpen} />
+      <ModifierMariageDialog wedding={editingWedding} onOpenChange={(open) => !open && setEditingWedding(null)} />
     </DashboardLayout>
   );
 };

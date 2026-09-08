@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
+import ProPremiumModal from '@/components/pro/ProPremiumModal';
 interface DashboardLayoutProps {
   children?: React.ReactNode;
   /** 'pro' affiche la navigation de l'espace professionnel (pré-dashboard) */
@@ -28,6 +29,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { t } = useTranslation('dashboard');
   const { isPremium, isProAccount } = useUserProfile();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
+  const [showProPremiumModal, setShowProPremiumModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const location = useLocation();
   const {
@@ -100,7 +102,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
           {isProAccount && (
             <>
               <Link to="/pro">
-                <Button size="sm" className="bg-premium-sage hover:bg-premium-sage/90 text-white shadow-sm">
+                <Button size="sm" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-sm">
                   <Heart className="h-4 w-4 mr-1" />
                   Mes mariages
                 </Button>
@@ -114,14 +116,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {t('header.vendorSelection')}
             </Button>
           </Link>
-          {!isPremium && (
-            <Link to={isProAccount ? '/partenariat' : '/paiement'}>
+          {!isPremium && isProAccount && (
+            <Button
+              size="sm"
+              className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
+              onClick={() => setShowProPremiumModal(true)}
+            >
+              <Crown className="h-4 w-4 mr-1" />
+              Passer Pro Premium — 149 €/an
+            </Button>
+          )}
+          {!isPremium && !isProAccount && (
+            <Link to="/paiement">
               <Button
                 size="sm"
                 className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
               >
                 <Crown className="h-4 w-4 mr-1" />
-                {isProAccount ? 'Passer Pro Premium — 149 €/an' : t('header.upgradePremium')}
+                {t('header.upgradePremium')}
               </Button>
             </Link>
           )}
@@ -159,18 +171,20 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             {isMobile && isProAccount && (
               <div className="mb-4 flex flex-wrap gap-2">
                 <Link to="/pro" className="flex-1 min-w-[140px]">
-                  <Button size="sm" className="w-full bg-premium-sage hover:bg-premium-sage/90 text-white">
+                  <Button size="sm" className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                     <Heart className="h-4 w-4 mr-1" />
                     Mes mariages
                   </Button>
                 </Link>
                 {!isPremium && (
-                  <Link to="/partenariat" className="flex-1 min-w-[140px]">
-                    <Button size="sm" className="w-full bg-wedding-gold hover:bg-wedding-gold/90 text-white">
-                      <Crown className="h-4 w-4 mr-1" />
-                      Pro Premium — 149 €/an
-                    </Button>
-                  </Link>
+                  <Button
+                    size="sm"
+                    className="flex-1 min-w-[140px] bg-wedding-gold hover:bg-wedding-gold/90 text-white"
+                    onClick={() => setShowProPremiumModal(true)}
+                  >
+                    <Crown className="h-4 w-4 mr-1" />
+                    Pro Premium — 149 €/an
+                  </Button>
                 )}
               </div>
             )}
@@ -187,6 +201,9 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
         {/* Modal de satisfaction */}
         {showSatisfactionModal && currentUser && <SatisfactionModal isOpen={showSatisfactionModal} onClose={handleCloseSatisfactionModal} userId={currentUser.id} />}
+
+        {/* Modale Pro Premium (comptes pro uniquement) */}
+        {isProAccount && <ProPremiumModal open={showProPremiumModal} onOpenChange={setShowProPremiumModal} />}
       </div>
     </OnboardingProvider>;
 };

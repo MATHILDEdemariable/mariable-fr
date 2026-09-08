@@ -313,7 +313,7 @@ const Partenariat = () => {
         </section>
 
         {/* Conditions d'admission */}
-        <section className="py-20 px-4 bg-editorial-beige/30">
+        <section id="conditions-admission" className="py-20 px-4 bg-editorial-beige/30 scroll-mt-24">
           <div className="container mx-auto max-w-5xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
