@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,8 +10,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
-import { useWedding } from '@/contexts/WeddingContext';
+import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
+import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 
 interface ProProfileForm {
   first_name: string;
