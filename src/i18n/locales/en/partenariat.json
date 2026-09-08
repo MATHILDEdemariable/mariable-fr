@@ -68,16 +68,36 @@
     "priceNote": "that is €12.40/month — no automatic renewal commitment",
     "cta": "Join Mariable Pro",
     "contactSubject": "Mariable Pro — €149/year",
-    "included": [
-      "Listing on Mariable.fr",
-      "Dedicated Instagram carousel",
-      "Partnership announcement story",
-      "Article on Mariable.fr",
-      "LinkedIn feature",
-      "Price updates all year long",
-      "Your news shared in stories on request :-)",
-      "🎁 One Pro organiser access to manage your clients' weddings, or 3 Mariable Premium accesses to gift your couples through a unique promo code — depending on whether you plan yourself or want to offer them the premium experience"
-    ],
+    "included": {
+      "referencement": {
+        "title": "Listing & visibility",
+        "items": [
+          "Listing on Mariable.fr",
+          "Dedicated Instagram carousel",
+          "Partnership announcement story",
+          "Article on Mariable.fr",
+          "LinkedIn feature",
+          "Price updates all year long",
+          "Your news shared in stories on request :-)"
+        ]
+      },
+      "plateforme": {
+        "title": "Access to the Mariable platform",
+        "items": [
+          "One Pro organiser access to manage your clients' weddings",
+          "Or 3 Mariable Premium accesses to gift your couples through a unique promo code 🎁"
+        ],
+        "features": [
+          "Wedding budget management",
+          "Collaborative wedding-day timeline",
+          "Seating plan",
+          "Personalised checklist",
+          "Address book and vendor comparison",
+          "Shared guest photo album",
+          "And many more features…"
+        ]
+      }
+    },
     "ctaConditions": "See admission requirements"
   },
   "conditions": {
@@ -182,7 +202,7 @@
     "items": [
       {
         "question": "What exactly does the €149/year Mariable Pro offer include?",
-        "answer": "A dedicated professional profile (introduction, photos, services, detailed pricing, contact details), listing in the platform searches by service, location, style and budget, an editorial feature on Mariable's social channels (dedicated Instagram post or carousel, themed selections), presence in relevant SEO articles and selections, and access to the Mariable Pro network with priority on qualified introductions."
+        "answer": "Mariable Pro includes two parts. First, listing and visibility on the platform: a dedicated professional profile, listing in searches by service, location, style and budget, an editorial feature on Mariable's social channels (dedicated Instagram post or carousel, themed selections), presence in relevant SEO articles and selections, and access to the Mariable Pro network with priority on qualified introductions. Second, access to the Mariable platform: either one Pro organiser access to manage your clients' weddings, or 3 Mariable Premium accesses to gift your couples via a unique promo code. This access includes budget management, a collaborative wedding-day timeline, seating plan, checklist, address book, shared guest photo album and the app's other features."
       },
       {
         "question": "Why do I need to publish my prices to join Mariable Pro?",
