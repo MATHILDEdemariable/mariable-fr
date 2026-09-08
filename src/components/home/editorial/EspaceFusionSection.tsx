@@ -48,14 +48,11 @@ export default function EspaceFusionSection() {
           <div className="w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
             <img
               src={DASHBOARD_IMAGE}
-              alt="Mariable dashboard"
+              alt="Aperçu de l'espace Mariable : budget, invités, tâches et déroulé du Jour-J"
               loading="lazy"
               width={1600}
-              height={1000}
+              height={1008}
               className="w-full h-full object-cover"
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = 'none';
-              }}
             />
           </div>
         </div>
