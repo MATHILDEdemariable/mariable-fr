@@ -32,6 +32,7 @@ interface UserRegistration {
   profile?: {
     first_name?: string;
     last_name?: string;
+    account_type?: string;
     subscription_type?: string;
     subscription_expires_at?: string;
     wedding_date?: string;
@@ -53,6 +54,7 @@ const AdminUsers = () => {
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
+  const [updatingUserId, setUpdatingUserId] = useState<string | null>(null);
   const [usageStats, setUsageStats] = useState<{
     premiumUsers: number;
     expiredUsers: number;
@@ -109,6 +111,40 @@ const AdminUsers = () => {
 
     setFilteredUsers(filtered);
   }, [searchTerm, statusFilter, purposeFilter, users]);
+
+  const handleSetProPremium = async (userId: string, enable: boolean) => {
+    console.log('🚀 handleSetProPremium started:', { userId, enable });
+    try {
+      setUpdatingUserId(userId);
+      const expiresAt = new Date();
+      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
+
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          subscription_type: enable ? 'pro_premium' : 'free',
+          subscription_expires_at: enable ? expiresAt.toISOString() : null,
+        })
+        .eq('id', userId);
+
+      if (error) throw error;
+
+      const patch = {
+        subscription_type: enable ? 'pro_premium' : 'free',
+        subscription_expires_at: enable ? expiresAt.toISOString() : undefined,
+      };
+      setUsers(prev =>
+        prev.map(u => (u.id === userId ? { ...u, profile: { ...u.profile, ...patch } } : u))
+      );
+      toast.success(enable ? 'Compte passé en Pro Premium' : 'Pro Premium retiré');
+      console.log('✅ handleSetProPremium completed successfully');
+    } catch (error) {
+      console.error('❌ handleSetProPremium failed:', error);
+      toast.error("Impossible de modifier le statut de ce compte");
+    } finally {
+      setUpdatingUserId(null);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -208,6 +244,11 @@ const AdminUsers = () => {
     
     console.log('🔍 Checking user status:', { subscriptionType, expiresAt });
     
+    if (subscriptionType === 'pro_premium') {
+      if (!expiresAt) return 'pro_premium';
+      return new Date(expiresAt) > new Date() ? 'pro_premium' : 'expired';
+    }
+
     if (subscriptionType === 'premium') {
       if (!expiresAt) {
         console.log('✅ Premium user (no expiration)');
@@ -281,7 +322,7 @@ const AdminUsers = () => {
     }
     const premiumCount = users.filter(user => {
       const status = getUserStatus(user.profile);
-      const isPremium = status === 'premium';
+      const isPremium = status === 'premium' || status === 'pro_premium';
       if (isPremium) {
         console.log('👑 Premium user found:', user.email, user.profile);
       }
@@ -305,7 +346,7 @@ const AdminUsers = () => {
     
     return (
       <Badge variant={badgeProps.variant} className={badgeProps.className}>
-        {status === 'premium' && <Crown className="h-3 w-3 mr-1" />}
+        {(status === 'premium' || status === 'pro_premium') && <Crown className="h-3 w-3 mr-1" />}
         {badgeProps.text}
       </Badge>
     );
@@ -461,6 +502,7 @@ const AdminUsers = () => {
                 <SelectContent>
                   <SelectItem value="all">Tous les statuts</SelectItem>
                   <SelectItem value="premium">Premium</SelectItem>
+                  <SelectItem value="pro_premium">Pro Premium</SelectItem>
                   <SelectItem value="expired">Expirés</SelectItem>
                   <SelectItem value="free">Gratuit</SelectItem>
                   <SelectItem value="club_interested">Intéressés Club</SelectItem>
@@ -514,6 +556,7 @@ const AdminUsers = () => {
                       <TableHead>Club Notif</TableHead>
                       <TableHead>Date d'inscription</TableHead>
                       <TableHead>Statut</TableHead>
+                      <TableHead>Actions</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -571,10 +614,36 @@ const AdminUsers = () => {
                         </TableCell>
                         <TableCell>
                           <StatusBadge user={user} />
-                          {user.profile?.subscription_expires_at && getUserStatus(user.profile) === 'premium' && (
+                          {user.profile?.subscription_expires_at && ['premium', 'pro_premium'].includes(getUserStatus(user.profile)) && (
                             <div className="text-xs text-gray-500 mt-1">
                               Expire le {formatDate(user.profile.subscription_expires_at)}
                             </div>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {user.profile?.account_type === 'b2b' ? (
+                            getUserStatus(user.profile) === 'pro_premium' ? (
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                disabled={updatingUserId === user.id}
+                                onClick={() => handleSetProPremium(user.id, false)}
+                              >
+                                Retirer Pro Premium
+                              </Button>
+                            ) : (
+                              <Button
+                                size="sm"
+                                className="bg-premium-sage hover:bg-premium-sage/90 text-white"
+                                disabled={updatingUserId === user.id}
+                                onClick={() => handleSetProPremium(user.id, true)}
+                              >
+                                <Crown className="h-3 w-3 mr-1" />
+                                Passer Pro Premium
+                              </Button>
+                            )
+                          ) : (
+                            <span className="text-gray-400 text-sm">—</span>
                           )}
                         </TableCell>
                       </TableRow>

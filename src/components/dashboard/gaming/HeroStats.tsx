@@ -30,13 +30,13 @@ const HeroStats: React.FC<HeroStatsProps> = ({
   const { t, i18n } = useTranslation('dashboard');
   const today = new Date();
   const daysUntilWedding = weddingDate ? differenceInDays(weddingDate, today) : null;
-  const { isPremium } = useUserProfile();
+  const { isPremium, isProAccount } = useUserProfile();
   const navigate = useNavigate();
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const dateLocale = i18n.language?.startsWith('en') ? enUS : fr;
 
   const handlePremiumClick = () => {
-    navigate('/paiement');
+    navigate(isProAccount ? '/partenariat' : '/paiement');
   };
 
   const greeting = firstName ? t('hero.welcomeWithName', { name: firstName }) : t('hero.welcomeGeneric');

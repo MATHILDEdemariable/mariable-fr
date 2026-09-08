@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
         const userIds = allUsers.map(user => user.id);
         const { data: profiles, error: profilesError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable, registration_purpose')
+          .select('id, first_name, last_name, account_type, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable, registration_purpose')
           .in('id', userIds);
 
         if (profilesError) {
@@ -141,7 +141,7 @@ Deno.serve(async (req) => {
       try {
         const { data: profileUsers, error: profileError } = await supabase
           .from('profiles')
-          .select('id, first_name, last_name, subscription_type, subscription_expires_at, wedding_date, guest_count, created_at, notify_club_mariable, registration_purpose, referral_source')
+          .select('id, first_name, last_name, account_type, subscription_type, subscription_expires_at, wedding_date, guest_count, created_at, notify_club_mariable, registration_purpose, referral_source')
           .order('created_at', { ascending: false });
         
         if (profileError) {

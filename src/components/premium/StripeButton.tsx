@@ -2,12 +2,29 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { Tag } from 'lucide-react';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 /**
  * Point d'entrée unique vers le paiement Premium : la page /paiement.
  * Aucun tarif ni lien Stripe n'est codé ici pour éviter les prix divergents.
  */
 const StripeButton: React.FC = () => {
+  const { isProAccount } = useUserProfile();
+
+  if (isProAccount) {
+    return (
+      <div className="space-y-3">
+        <div className="text-center space-y-2">
+          <p className="text-2xl font-bold text-wedding-olive">149 €/an</p>
+          <p className="text-sm text-gray-600">soit 12,40 €/mois — offre professionnelle</p>
+        </div>
+        <Button asChild className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white" size="lg">
+          <Link to="/partenariat">Passer Pro Premium</Link>
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-3">
       <div className="text-center space-y-2">

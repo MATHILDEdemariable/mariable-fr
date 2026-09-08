@@ -11,6 +11,7 @@ interface UserProfile {
   wedding_date: string | null;
   guest_count: number | null;
   subscription_type: string;
+  account_type: string | null;
   subscription_expires_at: string | null;
   subscription_status: string | null;
   stripe_customer_id: string | null;
@@ -24,7 +25,7 @@ const fetchOrCreateProfile = async (userId: string, userMetadata?: any): Promise
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+    .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
     .eq('id', userId)
     .maybeSingle();
 
@@ -47,7 +48,7 @@ const fetchOrCreateProfile = async (userId: string, userMetadata?: any): Promise
     const { data: insertedProfile, error: insertError } = await supabase
       .from('profiles')
       .insert(newProfile)
-      .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+      .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
       .single();
 
     if (insertError) throw insertError;
@@ -91,7 +92,7 @@ export const useUserProfile = () => {
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
-        .select('id, first_name, last_name, wedding_date, guest_count, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+        .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
         .single();
 
       if (error) throw error;
@@ -109,19 +110,25 @@ export const useUserProfile = () => {
     }
   };
 
-  const isPremium = (() => {
+  const isSubscriptionActive = (() => {
     if (!profile) return false;
-    if (profile.subscription_type !== 'premium') return false;
     if (profile.subscription_expires_at === null) return true;
-    const expiresAt = new Date(profile.subscription_expires_at);
-    return expiresAt > new Date();
+    return new Date(profile.subscription_expires_at) > new Date();
   })();
+
+  // Premium professionnel (149 €/an) : mêmes accès illimités que le premium particulier
+  const isProPremium = profile?.subscription_type === 'pro_premium' && isSubscriptionActive;
+  const isPremium =
+    (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium;
+  const isProAccount = profile?.account_type === 'b2b';
 
   return {
     profile,
     loading,
     updateProfile,
     refetch,
-    isPremium
+    isPremium,
+    isProPremium,
+    isProAccount
   };
 };
