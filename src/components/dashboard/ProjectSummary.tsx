@@ -157,7 +157,8 @@ const ProjectSummary = () => {
       }
     };
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   // Auto-save wedding date
   const handleWeddingDateChange = async (date: Date | undefined) => {
