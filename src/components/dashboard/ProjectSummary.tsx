@@ -12,6 +12,7 @@ import { Smartphone, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import PushNotificationBanner from './PushNotificationBanner';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
