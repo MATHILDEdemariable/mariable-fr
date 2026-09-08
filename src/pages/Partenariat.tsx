@@ -31,6 +31,8 @@ const ICONS = [Film, MessageSquare, Globe];
 type ServiceItem = { title: string; description: string; points: string[] };
 type FaqItem = { question: string; answer: string };
 type PriceLine = { label: string; price: string };
+type IncludedGroup = { title: string; items: string[]; features?: string[] };
+type IncludedSection = { referencement: IncludedGroup; plateforme: IncludedGroup };
 
 const Partenariat = () => {
   const { t } = useTranslation("partenariat");
@@ -52,7 +54,7 @@ const Partenariat = () => {
 
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
-  const proIncluded = t("pro.included", { returnObjects: true }) as string[];
+  const proIncluded = t("pro.included", { returnObjects: true }) as IncludedSection;
   const centralPoints = t("central.points", { returnObjects: true }) as string[];
   const eligibleItems = t("conditions.one.items", { returnObjects: true }) as string[];
   const priceExample = t("conditions.two.example", { returnObjects: true }) as PriceLine[];
@@ -267,10 +269,29 @@ const Partenariat = () => {
                 viewport={{ once: true }}
                 className="bg-editorial-beige/20 border-l-2 border-editorial-olive p-6 md:p-8 space-y-4"
               >
-                {proIncluded.map((item) => (
-                  <li key={item} className="flex items-start gap-3">
-                    <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                    <span className="text-editorial-noir/85">{item}</span>
+                {Object.entries(proIncluded).map(([key, group]) => (
+                  <li key={key} className="space-y-4">
+                    <h3 className="font-serif text-lg text-editorial-noir">{group.title}</h3>
+                    <ul className="space-y-4">
+                      {group.items.map((item) => (
+                        <li key={item} className="flex items-start gap-3">
+                          <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                          <span className="text-editorial-noir/85">{item}</span>
+                        </li>
+                      ))}
+                      {group.features && (
+                        <li className="ml-8">
+                          <ul className="space-y-2 border-l-2 border-editorial-olive/30 pl-4">
+                            {group.features.map((feature) => (
+                              <li key={feature} className="flex items-start gap-2 text-editorial-noir/70">
+                                <span className="w-1.5 h-1.5 rounded-full bg-editorial-olive mt-2 shrink-0" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </li>
+                      )}
+                    </ul>
                   </li>
                 ))}
               </motion.ul>
