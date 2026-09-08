@@ -1877,6 +1877,18 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.mariable.fr/conseilsmariage/anniversaire-de-mariage-a-deux</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mariable.fr/conseilsmariage/renouvellement-voeux-vs-anniversaire-de-mariage</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.mariable.fr/conseilsmariage/content-creator-mariage-france</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1920,6 +1932,12 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://www.mariable.fr/conseilsmariage/comment-feter-anniversaire-de-mariage</loc>
+    <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://www.mariable.fr/conseilsmariage/demande-en-mariage-guide-homme</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -1927,6 +1945,12 @@
   <url>
     <loc>https://www.mariable.fr/conseilsmariage/idees-cadeau-mariage-top-5</loc>
     <lastmod>2026-08-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://www.mariable.fr/conseilsmariage/fete-surprise-anniversaire-de-mariage</loc>
+    <lastmod>2026-09-08</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2096,26 +2120,6 @@
   </url>
   <url>
     <loc>https://www.mariable.fr/conseilsmariage/renouvellement-voeux-guide-complet</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.mariable.fr/conseilsmariage/comment-feter-anniversaire-de-mariage</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.mariable.fr/conseilsmariage/fete-surprise-anniversaire-de-mariage</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.mariable.fr/conseilsmariage/anniversaire-de-mariage-a-deux</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.mariable.fr/conseilsmariage/renouvellement-voeux-vs-anniversaire-de-mariage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
