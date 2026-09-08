@@ -156,6 +156,24 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </button>
               </div>
             )}
+            {isMobile && isProAccount && (
+              <div className="mb-4 flex flex-wrap gap-2">
+                <Link to="/pro" className="flex-1 min-w-[140px]">
+                  <Button size="sm" className="w-full bg-premium-sage hover:bg-premium-sage/90 text-white">
+                    <Heart className="h-4 w-4 mr-1" />
+                    Mes mariages
+                  </Button>
+                </Link>
+                {!isPremium && (
+                  <Link to="/partenariat" className="flex-1 min-w-[140px]">
+                    <Button size="sm" className="w-full bg-wedding-gold hover:bg-wedding-gold/90 text-white">
+                      <Crown className="h-4 w-4 mr-1" />
+                      Pro Premium — 149 €/an
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
             <WeddingContextBar />
             {children || <Outlet />}
           </main>
