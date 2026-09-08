@@ -11,8 +11,9 @@ import { useTranslation } from 'react-i18next';
  * - CTAs « Créer un compte gratuit » + « J'ai déjà un compte »
  */
 
-const DASHBOARD_IMAGE =
-  'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/visuels/dashboard-mockup.png';
+import dashboardMockup from '@/assets/dashboard-mockup.jpg.asset.json';
+
+const DASHBOARD_IMAGE = dashboardMockup.url;
 
 export default function EspaceFusionSection() {
   const { t } = useTranslation('refonteJuillet');
