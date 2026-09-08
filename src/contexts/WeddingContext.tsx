@@ -9,8 +9,7 @@ export interface Wedding {
   wedding_location: string | null;
   guest_count: number | null;
   is_default: boolean;
-  created_by: string;
-  organization_id: string | null;
+  owner_id: string;
   created_at: string;
 }
 
@@ -67,7 +66,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           .maybeSingle(),
         db
           .from('weddings')
-          .select('id, title, wedding_date, wedding_location, guest_count, is_default, created_by, organization_id, created_at')
+          .select('id, title, wedding_date, wedding_location, guest_count, is_default, owner_id, created_at')
           .order('created_at', { ascending: true }),
       ]);
 
@@ -84,13 +83,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       // Un particulier a toujours un mariage : on le crée à la volée si besoin
       // (comptes créés après la migration initiale).
       if (list.length === 0 && type === 'b2c') {
+        // Le mariage par défaut reprend l'identifiant du compte (migration sans risque).
         const { data: created } = await db
           .from('weddings')
-          .insert({ created_by: user.id, title: 'Mon mariage', is_default: true })
+          .insert({ id: user.id, owner_id: user.id, title: 'Mon mariage', is_default: true })
           .select()
           .single();
         if (created) {
-          await db.from('wedding_members').insert({ wedding_id: created.id, user_id: user.id, role: 'owner' });
           list = [created];
         }
       }
@@ -140,7 +139,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       const { data, error } = await db
         .from('weddings')
         .insert({
-          created_by: user.id,
+          owner_id: user.id,
           title: input.title,
           wedding_date: input.wedding_date || null,
           wedding_location: input.wedding_location || null,
@@ -150,12 +149,6 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         .single();
 
       if (error) throw error;
-
-      await db.from('wedding_members').insert({
-        wedding_id: data.id,
-        user_id: user.id,
-        role: 'owner',
-      });
 
       setWeddings((prev) => [...prev, data]);
       selectWedding(data.id);
