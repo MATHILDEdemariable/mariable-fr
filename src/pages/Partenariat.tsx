@@ -54,7 +54,7 @@ const Partenariat = () => {
 
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
-  const proIncluded = t("pro.included", { returnObjects: true }) as string[];
+  const proIncluded = t("pro.included", { returnObjects: true }) as IncludedSection;
   const centralPoints = t("central.points", { returnObjects: true }) as string[];
   const eligibleItems = t("conditions.one.items", { returnObjects: true }) as string[];
   const priceExample = t("conditions.two.example", { returnObjects: true }) as PriceLine[];
