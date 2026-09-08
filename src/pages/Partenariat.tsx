@@ -31,6 +31,8 @@ const ICONS = [Film, MessageSquare, Globe];
 type ServiceItem = { title: string; description: string; points: string[] };
 type FaqItem = { question: string; answer: string };
 type PriceLine = { label: string; price: string };
+type IncludedGroup = { title: string; items: string[]; features?: string[] };
+type IncludedSection = { referencement: IncludedGroup; plateforme: IncludedGroup };
 
 const Partenariat = () => {
   const { t } = useTranslation("partenariat");
