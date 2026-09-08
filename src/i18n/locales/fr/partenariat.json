@@ -38,7 +38,7 @@
     ]
   },
   "pro": {
-    "sectionTitle": "Mariable Pro — ce que comprend vos frais d'adhésion ",
+    "sectionTitle": "Mariable Pro — ce que comprend vos frais d'adhésion",
     "intro": "Mariable aide les futurs mariés à trouver des professionnels qui correspondent à leur style, leurs envies et leur budget. En tant que professionnel Mariable Pro, vous êtes référencé sur notre plateforme et bénéficiez de mises en avant auprès de notre communauté.",
     "features": [
       {
@@ -68,16 +68,36 @@
     "priceNote": "soit 12,40 €/mois — sans engagement de reconduction",
     "cta": "Rejoindre Mariable Pro",
     "contactSubject": "Mariable Pro — 149€/an",
-    "included": [
-      "Référencement sur Mariable.fr",
-      "Carrousel Instagram dédié",
-      "Story d'annonce du partenariat",
-      "Article sur Mariable.fr",
-      "Mise en avant LinkedIn",
-      "Actualisation des tarifs toute l'année",
-      "Relais de vos actualités en story à votre demande :-)",
-      "Un accès Pro organisateur pour gérer les mariages de vos clients, OU 3 accès Mariable Premium à offrir à vos mariés via un code promo unique 🎁 "
-    ],
+    "included": {
+      "referencement": {
+        "title": "Référencement & visibilité",
+        "items": [
+          "Référencement sur Mariable.fr",
+          "Carrousel Instagram dédié",
+          "Story d'annonce du partenariat",
+          "Article sur Mariable.fr",
+          "Mise en avant LinkedIn",
+          "Actualisation des tarifs toute l'année",
+          "Relais de vos actualités en story à votre demande :-)"
+        ]
+      },
+      "plateforme": {
+        "title": "Accès à la plateforme Mariable",
+        "items": [
+          "Accès Pro organisateur pour gérer les mariages de vos clients",
+          "OU 3 accès Mariable Premium à offrir à vos mariés via un code promo unique 🎁"
+        ],
+        "features": [
+          "Gestion du budget mariage",
+          "Planning jour J collaboratif",
+          "Plan de table",
+          "Checklist personnalisée",
+          "Carnet d'adresses et comparatif prestataires",
+          "Album photo partagé avec vos invités",
+          "Et bien d'autres fonctionnalités…"
+        ]
+      }
+    },
     "ctaConditions": "Voir les conditions d'admission"
   },
   "conditions": {
@@ -182,7 +202,7 @@
     "items": [
       {
         "question": "Que comprend exactement l'offre Mariable Pro à 149 €/an ?",
-        "answer": "Un profil professionnel dédié (présentation, photos, prestations, tarifs détaillés, coordonnées), le référencement dans les recherches de la plateforme par prestation, localisation, style et budget, une mise en avant éditoriale sur les réseaux Mariable (post ou carrousel Instagram dédié, sélections thématiques), une présence dans les articles et sélections SEO pertinents, et l'accès au réseau Mariable Pro avec priorité sur les mises en relation qualifiées."
+        "answer": "Mariable Pro comprend deux volets. D'abord, un référencement et une visibilité sur la plateforme : profil professionnel dédié, référencement dans les recherches par prestation, localisation, style et budget, mise en avant éditoriale sur les réseaux Mariable (post ou carrousel Instagram dédié, sélections thématiques), présence dans les articles et sélections SEO pertinents, et accès au réseau Mariable Pro avec priorité sur les mises en relation qualifiées. Ensuite, un accès à la plateforme Mariable : soit un accès Pro organisateur pour gérer les mariages de vos clients, soit 3 accès Mariable Premium à offrir à vos mariés via un code promo unique. Cet accès inclut la gestion du budget, le planning jour J collaboratif, le plan de table, la checklist, le carnet d'adresses, l'album photo partagé et les autres fonctionnalités de l'app."
       },
       {
         "question": "Pourquoi faut-il publier ses tarifs pour rejoindre Mariable Pro ?",
