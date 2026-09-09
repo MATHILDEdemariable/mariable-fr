@@ -41,6 +41,27 @@ const Partenariat = () => {
   const [conditionsOpen, setConditionsOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
 
+  // Derniers articles de conseils destinés aux professionnels
+  const { data: proPosts = [] } = useQuery({
+    queryKey: ["partenariat-pro-posts"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("blog_posts")
+        .select("id, title, slug, meta_description, background_image_url")
+        .eq("status", "published")
+        .eq("audience", "pro")
+        .order("published_at", { ascending: false })
+        .limit(3);
+      if (error) {
+        console.error("❌ partenariat pro posts failed:", error.message);
+        return [];
+      }
+      return data ?? [];
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+
   const openContact = (subject?: string) => {
     setContactSubject(subject);
     setContactOpen(true);
