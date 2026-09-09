@@ -255,6 +255,7 @@ export type Database = {
       }
       blog_posts: {
         Row: {
+          audience: string
           background_image_url: string | null
           category: string | null
           content: string | null
@@ -277,6 +278,7 @@ export type Database = {
           updated_at: string | null
         }
         Insert: {
+          audience?: string
           background_image_url?: string | null
           category?: string | null
           content?: string | null
@@ -299,6 +301,7 @@ export type Database = {
           updated_at?: string | null
         }
         Update: {
+          audience?: string
           background_image_url?: string | null
           category?: string | null
           content?: string | null
