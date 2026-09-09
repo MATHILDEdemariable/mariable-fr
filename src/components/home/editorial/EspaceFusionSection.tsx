@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowRight, Calendar, Wallet, Users, LayoutGrid, ClipboardList, Wine, Camera } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, Calendar, Wallet, Users, LayoutGrid, ClipboardList, Wine, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
