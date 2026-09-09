@@ -53,12 +53,23 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
   });
 
 
+  const proCopy = {
+    seoTitle: "Conseils professionnels du mariage : marketing, Instagram, clients | Mariable",
+    seoDescription: "Conseils marketing et communication pour les professionnels du mariage : trouver des clients, gérer son Instagram, tarifs community manager, publicité mariage.",
+    seoKeywords: "communication mariage, publicité mariage, clients mariage, marketing wedding planner, instagram prestataire mariage, community manager mariage",
+    heroTitle: "Conseils professionnels du mariage",
+    heroSubtitle: "Marketing, communication, Instagram et acquisition de clients : nos guides pour les professionnels du mariage.",
+    schemaName: "Conseils professionnels du mariage - Mariable",
+  };
+
   const blogSchema = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "name": "Conseils Mariage - Mariable",
-    "description": "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J.",
-    "url": "https://www.mariable.fr/conseilsmariage",
+    "name": isPro ? proCopy.schemaName : "Conseils Mariage - Mariable",
+    "description": isPro
+      ? proCopy.seoDescription
+      : "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J.",
+    "url": `https://www.mariable.fr${basePath}`,
     "publisher": {
       "@type": "Organization",
       "name": "Mariable",
@@ -68,12 +79,13 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
       "@type": "BlogPosting",
       "headline": post.title,
       "description": post.meta_description || post.title,
-      "url": `https://www.mariable.fr/conseilsmariage/${post.slug}`,
+      "url": `https://www.mariable.fr${basePath}/${post.slug}`,
       "datePublished": post.published_at,
       "dateModified": post.updated_at,
       "author": { "@type": "Organization", "name": "Mariable" }
     })) || []
   };
+
 
   const formatDate = (dateString: string) => {
     const locale = i18n.language?.startsWith('en') ? 'en-US' : 'fr-FR';
