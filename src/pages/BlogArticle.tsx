@@ -146,7 +146,7 @@ const BlogArticlePage = () => {
   const articleLang = (post as any).language || 'fr';
   const isEnglish = articleLang === 'en';
 
-  const canonicalUrl = `https://www.mariable.fr/conseilsmariage/${post.slug}`;
+  const canonicalUrl = `https://www.mariable.fr${basePath}/${post.slug}`;
 
   // Schema Article complet (JSON.stringify évite toute casse liée aux guillemets du contenu)
   const articleSchema = {
@@ -176,7 +176,7 @@ const BlogArticlePage = () => {
     "@type": "BreadcrumbList",
     itemListElement: [
       { "@type": "ListItem", position: 1, name: "Accueil", item: "https://www.mariable.fr" },
-      { "@type": "ListItem", position: 2, name: "Conseils mariage", item: "https://www.mariable.fr/conseilsmariage" },
+      { "@type": "ListItem", position: 2, name: isPro ? "Conseils professionnels" : "Conseils mariage", item: `https://www.mariable.fr${basePath}` },
       { "@type": "ListItem", position: 3, name: h1Title, item: canonicalUrl },
     ],
   };
@@ -234,7 +234,7 @@ const BlogArticlePage = () => {
         title={metaTitle}
         description={metaDescription || undefined}
         image={post.background_image_url || undefined}
-        canonical={`/conseilsmariage/${post.slug}`}
+        canonical={`${basePath}/${post.slug}`}
         ogType="article"
       >
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
@@ -247,7 +247,7 @@ const BlogArticlePage = () => {
       <main className="flex-grow bg-gray-50/50 page-content">
         <article className="max-w-4xl mx-auto px-4 py-8 sm:py-12">
             <div className="mb-6">
-                <Link to="/conseilsmariage">
+                <Link to={basePath}>
                     <Button variant="outline" size="sm">
                         <ArrowLeft className="mr-2 h-4 w-4" />
                         Retour aux articles
@@ -317,7 +317,7 @@ const BlogArticlePage = () => {
                         {relatedPosts.map((relatedPost) => (
                             <Link 
                                 key={relatedPost.id}
-                                to={`/conseilsmariage/${relatedPost.slug}`}
+                                to={`${basePath}/${relatedPost.slug}`}
                                 className="group"
                             >
                                 <div className="overflow-hidden rounded-lg border border-gray-200 transition-all hover:shadow-md">
