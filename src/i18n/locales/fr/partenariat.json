@@ -1,7 +1,7 @@
 {
   "seo": {
-    "title": "Mariable Pro & Studio — Référencement et marketing pour pros du mariage",
-    "description": "Mariable Pro : référencement de votre activité auprès de couples qualifiés, 149€/an. Mariable Studio : agence marketing digital pour professionnels de l'événementiel, sur devis."
+    "title": "Trouver des clients mariage — Référencement pros | Mariable",
+    "description": "Professionnels du mariage : trouvez des clients qualifiés grâce au référencement Mariable (149 €/an) et à Mariable Studio, agence de communication et publicité mariage."
   },
   "backHome": "Retour à l'accueil",
   "hero": {
@@ -85,20 +85,15 @@
         "title": "Accès à la plateforme Mariable",
         "items": [
           "Accès Pro organisateur pour gérer les mariages de vos clients",
-          "OU 3 accès Mariable Premium à offrir à vos mariés via un code promo unique 🎁"
-        ],
-        "features": [
-          "Gestion du budget mariage",
-          "Planning jour J collaboratif",
-          "Plan de table",
-          "Checklist personnalisée",
-          "Carnet d'adresses et comparatif prestataires",
-          "\n",
-          "\n"
+          "OU 3 accès Mariable Premium à offrir à vos mariés via un code promo unique 🎁",
+          "Toutes les fonctionnalités de wedding planning digital de l'application"
         ]
       }
     },
-    "ctaConditions": "Voir les conditions d'admission"
+    "ctaConditions": "Voir les conditions d'admission",
+    "plateformeSummary": "Toutes les fonctionnalités de wedding planning digital de l'application Mariable.",
+    "eligibilityNote": "* Voir les conditions d'éligibilité au référencement",
+    "seoIntro": "Vous cherchez à trouver des clients mariage sans multiplier les demandes hors budget ? Mariable référence les prestataires de mariage auprès de couples qualifiés et prend en charge une partie de votre communication mariage : profil détaillé, mises en avant éditoriales, articles SEO et relais sur les réseaux."
   },
   "conditions": {
     "sectionTitle": "Les conditions d'admission pour le référencement",
@@ -200,6 +195,18 @@
   "faq": {
     "title": "Questions fréquentes",
     "items": [
+      {
+        "question": "Comment trouver des clients pour mon activité de mariage ?",
+        "answer": "En étant visible là où les couples cherchent réellement : Mariable référence votre activité auprès de futurs mariés qui comparent prestataires, styles et budgets. Votre profil affiche vos prestations et vos tarifs, ce qui filtre naturellement les demandes et vous amène des clients mariage alignés avec votre positionnement."
+      },
+      {
+        "question": "Combien coûte le référencement sur Mariable ?",
+        "answer": "149 €/an (au lieu de 200 €/an), sans engagement de reconduction. Ce montant couvre le référencement de votre activité, la communication mariage associée (Instagram, LinkedIn, article, sélections SEO) et l'accès à la plateforme Mariable."
+      },
+      {
+        "question": "Quelle communication mariage est incluse dans Mariable Pro ?",
+        "answer": "Un carrousel Instagram dédié, une story d'annonce du partenariat, un article sur Mariable.fr, une mise en avant LinkedIn, la présence dans les sélections éditoriales et SEO, et le relais de vos actualités en story à votre demande."
+      },
       {
         "question": "Que comprend exactement l'offre Mariable Pro à 149 €/an ?",
         "answer": "Mariable Pro comprend deux volets. D'abord, un référencement et une visibilité sur la plateforme : profil professionnel dédié, référencement dans les recherches par prestation, localisation, style et budget, mise en avant éditoriale sur les réseaux Mariable (post ou carrousel Instagram dédié, sélections thématiques), présence dans les articles et sélections SEO pertinents, et accès au réseau Mariable Pro avec priorité sur les mises en relation qualifiées. Ensuite, un accès à la plateforme Mariable : soit un accès Pro organisateur pour gérer les mariages de vos clients, soit 3 accès Mariable Premium à offrir à vos mariés via un code promo unique. Cet accès inclut la gestion du budget, le planning jour J collaboratif, le plan de table, la checklist, le carnet d'adresses, l'album photo partagé et les autres fonctionnalités de l'app."
