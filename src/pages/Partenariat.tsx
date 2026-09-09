@@ -263,38 +263,46 @@ const Partenariat = () => {
 
             <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
               {/* Gauche : ce qui est inclus */}
-              <motion.ul
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-editorial-beige/20 border-l-2 border-editorial-olive p-6 md:p-8 space-y-4"
+                className="grid sm:grid-cols-2 gap-6"
               >
-                {Object.entries(proIncluded).map(([key, group]) => (
-                  <li key={key} className="space-y-4">
-                    <h3 className="font-serif text-lg text-editorial-noir">{group.title}</h3>
-                    <ul className="space-y-4">
-                      {group.items.map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                          <span className="text-editorial-noir/85">{item}</span>
-                        </li>
-                      ))}
-                      {group.features && (
-                        <li className="ml-8">
-                          <ul className="space-y-2 border-l-2 border-editorial-olive/30 pl-4">
-                            {group.features.map((feature) => (
-                              <li key={feature} className="flex items-start gap-2 text-editorial-noir/70">
-                                <span className="w-1.5 h-1.5 rounded-full bg-editorial-olive mt-2 shrink-0" />
-                                <span>{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
+                {(["referencement", "plateforme"] as const).map((key) => {
+                  const group = proIncluded[key];
+                  if (!group) return null;
+                  return (
+                    <div
+                      key={key}
+                      className="bg-editorial-beige/20 border-t-4 border-editorial-olive p-6 md:p-8 h-full"
+                    >
+                      <h3 className="font-serif text-lg text-editorial-noir mb-4">
+                        {group.title}
+                        {key === "referencement" && <span className="text-editorial-olive"> *</span>}
+                      </h3>
+                      <ul className="space-y-3">
+                        {group.items.map((item) => (
+                          <li key={item} className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                            <span className="text-editorial-noir/85 text-sm">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {key === "referencement" && (
+                        <button
+                          type="button"
+                          onClick={() => setConditionsOpen(true)}
+                          className="mt-5 text-sm text-editorial-olive underline underline-offset-4 hover:text-editorial-noir"
+                        >
+                          {t("pro.eligibilityNote")}
+                        </button>
                       )}
-                    </ul>
-                  </li>
-                ))}
-              </motion.ul>
+                    </div>
+                  );
+                })}
+              </motion.div>
+
 
               {/* Droite : prix + CTA */}
               <motion.div
