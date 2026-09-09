@@ -259,6 +259,8 @@ const Partenariat = () => {
                 {t("pro.sectionTitle")}
               </h2>
               <p className="text-editorial-noir/70 max-w-3xl mx-auto">{t("pro.intro")}</p>
+              <p className="text-editorial-noir/70 max-w-3xl mx-auto mt-4">{t("pro.seoIntro")}</p>
+
             </motion.div>
 
             <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
