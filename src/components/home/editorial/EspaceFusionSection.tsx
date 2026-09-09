@@ -1,5 +1,5 @@
-import React from 'react';
-import { ArrowRight, Calendar, Wallet, Users, LayoutGrid, ClipboardList, Wine, Camera } from 'lucide-react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { ArrowRight, Calendar, Wallet, Users, LayoutGrid, ClipboardList, Wine, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -11,12 +11,39 @@ import { useTranslation } from 'react-i18next';
  * - CTAs « Créer un compte gratuit » + « J'ai déjà un compte »
  */
 
-import dashboardMockup from '@/assets/dashboard-mockup.jpg.asset.json';
+import dashboardBudget from '@/assets/dashboard-budget.jpg.asset.json';
+import dashboardSeating from '@/assets/dashboard-plan-de-table.jpg.asset.json';
+import dashboardPlanning from '@/assets/dashboard-planning.jpg.asset.json';
 
-const DASHBOARD_IMAGE = dashboardMockup.url;
+const SCREENS = [
+  { url: dashboardBudget.url, label: 'Budget', alt: 'Espace Mariable : suivi du budget mariage par catégorie' },
+  { url: dashboardSeating.url, label: 'Plan de table', alt: 'Espace Mariable : plan de table interactif avec les invités' },
+  { url: dashboardPlanning.url, label: 'Planning Jour-J', alt: 'Espace Mariable : déroulé du Jour-J avec l’équipe assignée' },
+];
 
 export default function EspaceFusionSection() {
   const { t } = useTranslation('refonteJuillet');
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const touchStartX = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (paused) return;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const id = window.setInterval(() => {
+      setActive((prev) => (prev + 1) % SCREENS.length);
+    }, 4000);
+    return () => window.clearInterval(id);
+  }, [paused]);
+
+  const handleTouchEnd = useCallback((event: React.TouchEvent<HTMLDivElement>) => {
+    if (touchStartX.current === null) return;
+    const delta = event.changedTouches[0].clientX - touchStartX.current;
+    if (Math.abs(delta) > 40) {
+      setActive((prev) => (prev + (delta < 0 ? 1 : SCREENS.length - 1)) % SCREENS.length);
+    }
+    touchStartX.current = null;
+  }, []);
 
   const features = [
     { key: 'planning', Icon: Calendar },
@@ -25,8 +52,9 @@ export default function EspaceFusionSection() {
     { key: 'seating', Icon: LayoutGrid },
     { key: 'jourJ', Icon: ClipboardList },
     { key: 'drinks', Icon: Wine },
-    { key: 'album', Icon: Camera },
+    { key: 'album', Icon: Sparkles },
   ] as const;
+
 
   return (
     <section id="ton-espace-mariable" className="bg-[#F8F5EF] py-16 md:py-24">
@@ -43,19 +71,49 @@ export default function EspaceFusionSection() {
           </p>
         </header>
 
-        {/* Capture dashboard pleine largeur */}
-        <div className="max-w-5xl mx-auto mb-14 md:mb-20">
-          <div className="w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
-            <img
-              src={DASHBOARD_IMAGE}
-              alt="Aperçu de l'espace Mariable : budget, invités, tâches et déroulé du Jour-J"
-              loading="lazy"
-              width={1600}
-              height={1008}
-              className="w-full h-full object-cover"
-            />
+        {/* Carrousel des 3 écrans */}
+        <div
+          className="max-w-5xl mx-auto mb-14 md:mb-20"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="relative w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
+            {SCREENS.map((screen, index) => (
+              <img
+                key={screen.url}
+                src={screen.url}
+                alt={screen.alt}
+                loading="lazy"
+                width={1600}
+                height={1000}
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out ${
+                  index === active ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
+                }`}
+              />
+            ))}
+            <span className="absolute left-4 bottom-4 bg-white/90 text-editorial-noir text-[11px] tracking-[0.25em] uppercase px-3 py-1">
+              {SCREENS[active].label}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 mt-5">
+            {SCREENS.map((screen, index) => (
+              <button
+                key={screen.url}
+                type="button"
+                onClick={() => setActive(index)}
+                aria-label={`Voir ${screen.label}`}
+                aria-current={index === active}
+                className={`h-2 rounded-none transition-all duration-300 ${
+                  index === active ? 'w-8 bg-wedding-olive' : 'w-2 bg-editorial-noir/25 hover:bg-editorial-noir/40'
+                }`}
+              />
+            ))}
           </div>
         </div>
+
 
 
         {/* Grille 3×2 */}

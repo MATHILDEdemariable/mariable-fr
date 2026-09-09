@@ -37,7 +37,10 @@ const RefonteJuillet: React.FC = () => {
           {/* 1. Hero */}
           <HeroEditorial />
 
-          {/* 2. Coups de cœur — beige clair */}
+          {/* 2. Lieux & prestataires recommandés — vert sauge */}
+          <EditorialCarousels />
+
+          {/* 3. Coups de cœur — beige clair */}
           <section id="selection" className="bg-[#F8F5EF]">
             <InstagramHighlightsGrid
               context="homepage"
@@ -47,23 +50,21 @@ const RefonteJuillet: React.FC = () => {
             />
           </section>
 
-          {/* 3. Lieux sélectionnés — vert sauge */}
-          <EditorialCarousels />
-
           {/* 4. Ton espace Mariable (fusion aperçu + service en détail + CTA) — blanc */}
           <EspaceFusionSection />
 
-          {/* 5. Comment ça marche — Gratuit / Premium — blanc */}
-          <PricingEditorial />
-
-          {/* 6. E-books / E-shop — beige clair */}
+          {/* 5. E-books / E-shop — beige clair */}
           <EditorialEShop />
+
+          {/* 6. Témoignages — blanc */}
+          <TestimonialsEditorial />
 
           {/* 7. Conseils & inspirations — vert sauge (carrousel) */}
           <BlogCarouselEditorial />
 
-          {/* 8. Témoignages — blanc */}
-          <TestimonialsEditorial />
+          {/* 8. Comment ça marche — Gratuit / Premium — blanc */}
+          <PricingEditorial />
+
 
           {/* 9. FAQ — blanc */}
           <V2FAQSection />
