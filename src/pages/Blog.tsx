@@ -230,7 +230,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
                       <Card
                         key={post.id}
                         className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-white border-wedding-olive/10"
-                        onClick={() => navigate(`/conseilsmariage/${post.slug}`)}
+                        onClick={() => navigate(`${basePath}/${post.slug}`)}
                       >
                         {post.background_image_url && (
                           <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -284,7 +284,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
                             className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/conseilsmariage/${post.slug}`);
+                              navigate(`${basePath}/${post.slug}`);
                             }}
                           >
                             {t('card.readArticle')}
