@@ -315,19 +315,22 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
         <section className="py-12 px-4 bg-wedding-olive/5">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-6 text-wedding-black">
-              {t('newsletter.title')}
+              {isPro ? 'Développez votre activité avec Mariable' : t('newsletter.title')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              {t('newsletter.subtitle')}
+              {isPro
+                ? 'Référencement auprès de couples qualifiés, visibilité éditoriale et accès à la plateforme : découvrez Mariable Pro et Mariable Studio.'
+                : t('newsletter.subtitle')}
             </p>
             <Button
-              onClick={() => navigate('/register')}
+              onClick={() => navigate(isPro ? '/partenariat' : '/register')}
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-3"
             >
-              {t('newsletter.cta')}
+              {isPro ? 'Découvrir Mariable Pro' : t('newsletter.cta')}
             </Button>
           </div>
         </section>
+
       </main>
 
       <Footer />
