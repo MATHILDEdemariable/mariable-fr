@@ -17,6 +17,7 @@ const BlogSection = () => {
         .from('blog_posts')
         .select('id, title, slug, category, meta_description, subtitle, background_image_url')
         .eq('status', 'published')
+        .eq('audience', 'couple')
         .order('published_at', { ascending: false })
         .limit(3);
       return data || [];
