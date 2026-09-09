@@ -277,6 +277,9 @@ function App() {
                   <Route path="/paiement" element={<Paiement />} />
                   <Route path="/conseilsmariage" element={<Blog />} />
                   <Route path="/conseilsmariage/:slug" element={<BlogPost />} />
+                  <Route path="/conseils-professionnels" element={<Blog audience="pro" />} />
+                  <Route path="/conseils-professionnels/:slug" element={<BlogPost />} />
+
                   {/* Redirection de l'ancienne route /blog vers /conseilsmariage */}
                   <Route path="/blog" element={<Navigate to="/conseilsmariage" replace />} />
                   <Route path="/blog/:slug" element={<Navigate to="/conseilsmariage" replace />} />
