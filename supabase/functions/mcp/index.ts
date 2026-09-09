@@ -68,7 +68,7 @@ var list_blog_posts_default = defineTool2({
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async ({ category, limit }) => {
     const supabase = anonSupabase2();
-    let q = supabase.from("blog_posts").select("id,slug,title,subtitle,category,meta_description,published_at").eq("status", "published").order("published_at", { ascending: false }).limit(limit);
+    let q = supabase.from("blog_posts").select("id,slug,title,subtitle,category,meta_description,published_at").eq("status", "published").eq("audience", "couple").order("published_at", { ascending: false }).limit(limit);
     if (category) q = q.eq("category", category);
     const { data, error } = await q;
     if (error) {

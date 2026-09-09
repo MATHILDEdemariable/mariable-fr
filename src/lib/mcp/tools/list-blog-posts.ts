@@ -26,6 +26,7 @@ export default defineTool({
       .from("blog_posts")
       .select("id,slug,title,subtitle,category,meta_description,published_at")
       .eq("status", "published" as never)
+      .eq("audience", "couple" as never)
       .order("published_at", { ascending: false })
       .limit(limit);
     if (category) q = q.eq("category", category);

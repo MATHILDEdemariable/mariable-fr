@@ -85,6 +85,8 @@ const Footer = () => {
               <li><Link to="/comparatif" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.compare')}</Link></li>
               <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.professionals')}</Link></li>
               <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.partnership')}</Link></li>
+              <li><Link to="/conseils-professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAdvice')}</Link></li>
+
             </ul>
           </div>
         </div>

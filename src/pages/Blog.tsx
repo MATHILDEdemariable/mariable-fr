@@ -16,11 +16,14 @@ import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsG
 
 type LangFilter = 'all' | 'fr' | 'en';
 
-const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
+type BlogAudience = 'couple' | 'pro';
+
+const fetchPublishedBlogPosts = async (audience: BlogAudience): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
     .eq('status', 'published')
+    .eq('audience', audience)
     .order("order_index", { ascending: true })
     .order("published_at", { ascending: false });
 
@@ -32,22 +35,41 @@ const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
   return data || [];
 };
 
-const BlogPage = () => {
+interface BlogPageProps {
+  audience?: BlogAudience;
+}
+
+const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('blog');
   const [langFilter, setLangFilter] = useState<LangFilter>('all');
 
+  const isPro = audience === 'pro';
+  const basePath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
+
   const { data: posts, isLoading, error } = useQuery({
-    queryKey: ['published_blog_posts'],
-    queryFn: fetchPublishedBlogPosts,
+    queryKey: ['published_blog_posts', audience],
+    queryFn: () => fetchPublishedBlogPosts(audience),
   });
+
+
+  const proCopy = {
+    seoTitle: "Conseils professionnels du mariage : marketing, Instagram, clients | Mariable",
+    seoDescription: "Conseils marketing et communication pour les professionnels du mariage : trouver des clients, gérer son Instagram, tarifs community manager, publicité mariage.",
+    seoKeywords: "communication mariage, publicité mariage, clients mariage, marketing wedding planner, instagram prestataire mariage, community manager mariage",
+    heroTitle: "Conseils professionnels du mariage",
+    heroSubtitle: "Marketing, communication, Instagram et acquisition de clients : nos guides pour les professionnels du mariage.",
+    schemaName: "Conseils professionnels du mariage - Mariable",
+  };
 
   const blogSchema = {
     "@context": "https://schema.org",
     "@type": "Blog",
-    "name": "Conseils Mariage - Mariable",
-    "description": "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J.",
-    "url": "https://www.mariable.fr/conseilsmariage",
+    "name": isPro ? proCopy.schemaName : "Conseils Mariage - Mariable",
+    "description": isPro
+      ? proCopy.seoDescription
+      : "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J.",
+    "url": `https://www.mariable.fr${basePath}`,
     "publisher": {
       "@type": "Organization",
       "name": "Mariable",
@@ -57,12 +79,13 @@ const BlogPage = () => {
       "@type": "BlogPosting",
       "headline": post.title,
       "description": post.meta_description || post.title,
-      "url": `https://www.mariable.fr/conseilsmariage/${post.slug}`,
+      "url": `https://www.mariable.fr${basePath}/${post.slug}`,
       "datePublished": post.published_at,
       "dateModified": post.updated_at,
       "author": { "@type": "Organization", "name": "Mariable" }
     })) || []
   };
+
 
   const formatDate = (dateString: string) => {
     const locale = i18n.language?.startsWith('en') ? 'en-US' : 'fr-FR';
@@ -132,10 +155,10 @@ const BlogPage = () => {
   return (
     <>
       <SEO
-        title="Conseils mariage - Mariable"
-        description="Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J."
-        keywords="conseils mariage, blog mariage, organisation mariage, planning mariage, budget mariage, prestataires mariage, coordination jour j"
-        canonical="/conseilsmariage"
+        title={isPro ? proCopy.seoTitle : "Conseils mariage - Mariable"}
+        description={isPro ? proCopy.seoDescription : "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J."}
+        keywords={isPro ? proCopy.seoKeywords : "conseils mariage, blog mariage, organisation mariage, planning mariage, budget mariage, prestataires mariage, coordination jour j"}
+        canonical={basePath}
       >
         <script type="application/ld+json">
           {JSON.stringify(blogSchema)}
@@ -149,46 +172,51 @@ const BlogPage = () => {
           <div className="container mx-auto max-w-4xl text-center">
             <Button
               variant="ghost"
-              onClick={() => navigate('/')}
+              onClick={() => navigate(isPro ? '/partenariat' : '/')}
               className="mb-6 hover:bg-wedding-olive/10"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              {t('hero.backHome')}
+              {isPro ? 'Retour à Mariable Pro' : t('hero.backHome')}
             </Button>
             <h1 className="text-4xl md:text-5xl font-serif mb-6 text-wedding-black">
-              {t('hero.title')}
+              {isPro ? proCopy.heroTitle : t('hero.title')}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              {t('hero.subtitle')}
+              {isPro ? proCopy.heroSubtitle : t('hero.subtitle')}
             </p>
 
             {/* Filtre FR / International */}
-            <div className="inline-flex flex-wrap gap-2 justify-center" role="tablist" aria-label="Langue des articles">
-              {filters.map(f => (
-                <button
-                  key={f.id}
-                  role="tab"
-                  aria-selected={langFilter === f.id}
-                  onClick={() => setLangFilter(f.id)}
-                  className={cn(
-                    "px-5 py-2 text-sm font-medium border transition-colors",
-                    langFilter === f.id
-                      ? "bg-wedding-olive text-white border-wedding-olive"
-                      : "bg-white text-wedding-olive border-wedding-olive/30 hover:bg-wedding-olive/10"
-                  )}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+            {!isPro && (
+              <div className="inline-flex flex-wrap gap-2 justify-center" role="tablist" aria-label="Langue des articles">
+                {filters.map(f => (
+                  <button
+                    key={f.id}
+                    role="tab"
+                    aria-selected={langFilter === f.id}
+                    onClick={() => setLangFilter(f.id)}
+                    className={cn(
+                      "px-5 py-2 text-sm font-medium border transition-colors",
+                      langFilter === f.id
+                        ? "bg-wedding-olive text-white border-wedding-olive"
+                        : "bg-white text-wedding-olive border-wedding-olive/30 hover:bg-wedding-olive/10"
+                    )}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        <InstagramHighlightsGrid
-          context="blog"
-          eyebrow="Conseils de prestataires"
-          title="Sélection Instagram Mariable"
-        />
+        {!isPro && (
+          <InstagramHighlightsGrid
+            context="blog"
+            eyebrow="Conseils de prestataires"
+            title="Sélection Instagram Mariable"
+          />
+        )}
+
 
         <section className="py-12 px-4">
 
@@ -202,7 +230,7 @@ const BlogPage = () => {
                       <Card
                         key={post.id}
                         className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-white border-wedding-olive/10"
-                        onClick={() => navigate(`/conseilsmariage/${post.slug}`)}
+                        onClick={() => navigate(`${basePath}/${post.slug}`)}
                       >
                         {post.background_image_url && (
                           <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -256,7 +284,7 @@ const BlogPage = () => {
                             className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`/conseilsmariage/${post.slug}`);
+                              navigate(`${basePath}/${post.slug}`);
                             }}
                           >
                             {t('card.readArticle')}
@@ -287,19 +315,22 @@ const BlogPage = () => {
         <section className="py-12 px-4 bg-wedding-olive/5">
           <div className="container mx-auto max-w-4xl text-center">
             <h2 className="text-2xl md:text-3xl font-serif mb-6 text-wedding-black">
-              {t('newsletter.title')}
+              {isPro ? 'Développez votre activité avec Mariable' : t('newsletter.title')}
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              {t('newsletter.subtitle')}
+              {isPro
+                ? 'Référencement auprès de couples qualifiés, visibilité éditoriale et accès à la plateforme : découvrez Mariable Pro et Mariable Studio.'
+                : t('newsletter.subtitle')}
             </p>
             <Button
-              onClick={() => navigate('/register')}
+              onClick={() => navigate(isPro ? '/partenariat' : '/register')}
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white px-8 py-3"
             >
-              {t('newsletter.cta')}
+              {isPro ? 'Découvrir Mariable Pro' : t('newsletter.cta')}
             </Button>
           </div>
         </section>
+
       </main>
 
       <Footer />
