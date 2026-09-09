@@ -82,6 +82,3 @@ verify_jwt = false
 
 [functions.album-media-url]
 verify_jwt = false
-
-[functions.import-pro-articles]
-verify_jwt = false
