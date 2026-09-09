@@ -186,7 +186,16 @@ const BlogArticlePage = () => {
 
   // CTA contextuel choisi selon le sujet de l'article
   const contextualCta = (() => {
+    if (isPro) {
+      return {
+        title: 'Développez votre activité mariage',
+        description: 'Référencement auprès de couples qualifiés, visibilité éditoriale et accès à la plateforme Mariable : découvrez Mariable Pro et Mariable Studio.',
+        label: 'Découvrir Mariable Pro',
+        href: '/partenariat',
+      };
+    }
     const haystack = `${post.slug} ${post.title}`.toLowerCase();
+
     if (haystack.includes('budget') || haystack.includes('prix') || haystack.includes('coût')) {
       return {
         title: 'Estimez le budget de votre mariage',
