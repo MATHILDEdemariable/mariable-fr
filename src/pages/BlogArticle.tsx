@@ -78,11 +78,12 @@ const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   return data;
 };
 
-const fetchRelatedPosts = async (currentSlug: string): Promise<BlogPost[]> => {
+const fetchRelatedPosts = async (currentSlug: string, audience: string): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
     .eq('status', 'published')
+    .eq('audience', audience)
     .neq('slug', currentSlug)
     .order('published_at', { ascending: false })
     .limit(3);
@@ -104,11 +105,16 @@ const BlogArticlePage = () => {
     enabled: !!slug,
   });
 
+  const postAudience = ((post as any)?.audience === 'pro' ? 'pro' : 'couple');
+  const isPro = postAudience === 'pro';
+  const basePath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
+
   const { data: relatedPosts = [] } = useQuery({
-    queryKey: ['related_posts', slug],
-    queryFn: () => fetchRelatedPosts(slug!),
+    queryKey: ['related_posts', slug, postAudience],
+    queryFn: () => fetchRelatedPosts(slug!, postAudience),
     enabled: !!slug && !!post,
   });
+
 
   if (isLoading) {
     return <div className="h-screen w-screen flex items-center justify-center">Chargement de l'article...</div>;
