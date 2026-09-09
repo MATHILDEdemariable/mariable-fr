@@ -71,19 +71,49 @@ export default function EspaceFusionSection() {
           </p>
         </header>
 
-        {/* Capture dashboard pleine largeur */}
-        <div className="max-w-5xl mx-auto mb-14 md:mb-20">
-          <div className="w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
-            <img
-              src={DASHBOARD_IMAGE}
-              alt="Aperçu de l'espace Mariable : budget, invités, tâches et déroulé du Jour-J"
-              loading="lazy"
-              width={1600}
-              height={1008}
-              className="w-full h-full object-cover"
-            />
+        {/* Carrousel des 3 écrans */}
+        <div
+          className="max-w-5xl mx-auto mb-14 md:mb-20"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={(e) => { touchStartX.current = e.touches[0].clientX; }}
+          onTouchEnd={handleTouchEnd}
+        >
+          <div className="relative w-full aspect-[16/10] bg-editorial-beige/40 overflow-hidden shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)]">
+            {SCREENS.map((screen, index) => (
+              <img
+                key={screen.url}
+                src={screen.url}
+                alt={screen.alt}
+                loading="lazy"
+                width={1600}
+                height={1000}
+                className={`absolute inset-0 w-full h-full object-cover transition-all duration-700 ease-out ${
+                  index === active ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-4 pointer-events-none'
+                }`}
+              />
+            ))}
+            <span className="absolute left-4 bottom-4 bg-white/90 text-editorial-noir text-[11px] tracking-[0.25em] uppercase px-3 py-1">
+              {SCREENS[active].label}
+            </span>
+          </div>
+
+          <div className="flex items-center justify-center gap-3 mt-5">
+            {SCREENS.map((screen, index) => (
+              <button
+                key={screen.url}
+                type="button"
+                onClick={() => setActive(index)}
+                aria-label={`Voir ${screen.label}`}
+                aria-current={index === active}
+                className={`h-2 rounded-none transition-all duration-300 ${
+                  index === active ? 'w-8 bg-wedding-olive' : 'w-2 bg-editorial-noir/25 hover:bg-editorial-noir/40'
+                }`}
+              />
+            ))}
           </div>
         </div>
+
 
 
         {/* Grille 3×2 */}
