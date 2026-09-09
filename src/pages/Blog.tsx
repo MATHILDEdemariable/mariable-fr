@@ -155,10 +155,10 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
   return (
     <>
       <SEO
-        title="Conseils mariage - Mariable"
-        description="Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J."
-        keywords="conseils mariage, blog mariage, organisation mariage, planning mariage, budget mariage, prestataires mariage, coordination jour j"
-        canonical="/conseilsmariage"
+        title={isPro ? proCopy.seoTitle : "Conseils mariage - Mariable"}
+        description={isPro ? proCopy.seoDescription : "Découvrez nos conseils d'experts pour organiser votre mariage. Outils, planning, budget, prestataires - tout pour réussir votre jour J."}
+        keywords={isPro ? proCopy.seoKeywords : "conseils mariage, blog mariage, organisation mariage, planning mariage, budget mariage, prestataires mariage, coordination jour j"}
+        canonical={basePath}
       >
         <script type="application/ld+json">
           {JSON.stringify(blogSchema)}
@@ -172,46 +172,51 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
           <div className="container mx-auto max-w-4xl text-center">
             <Button
               variant="ghost"
-              onClick={() => navigate('/')}
+              onClick={() => navigate(isPro ? '/partenariat' : '/')}
               className="mb-6 hover:bg-wedding-olive/10"
             >
               <ChevronLeft className="mr-2 h-4 w-4" />
-              {t('hero.backHome')}
+              {isPro ? 'Retour à Mariable Pro' : t('hero.backHome')}
             </Button>
             <h1 className="text-4xl md:text-5xl font-serif mb-6 text-wedding-black">
-              {t('hero.title')}
+              {isPro ? proCopy.heroTitle : t('hero.title')}
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-8">
-              {t('hero.subtitle')}
+              {isPro ? proCopy.heroSubtitle : t('hero.subtitle')}
             </p>
 
             {/* Filtre FR / International */}
-            <div className="inline-flex flex-wrap gap-2 justify-center" role="tablist" aria-label="Langue des articles">
-              {filters.map(f => (
-                <button
-                  key={f.id}
-                  role="tab"
-                  aria-selected={langFilter === f.id}
-                  onClick={() => setLangFilter(f.id)}
-                  className={cn(
-                    "px-5 py-2 text-sm font-medium border transition-colors",
-                    langFilter === f.id
-                      ? "bg-wedding-olive text-white border-wedding-olive"
-                      : "bg-white text-wedding-olive border-wedding-olive/30 hover:bg-wedding-olive/10"
-                  )}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+            {!isPro && (
+              <div className="inline-flex flex-wrap gap-2 justify-center" role="tablist" aria-label="Langue des articles">
+                {filters.map(f => (
+                  <button
+                    key={f.id}
+                    role="tab"
+                    aria-selected={langFilter === f.id}
+                    onClick={() => setLangFilter(f.id)}
+                    className={cn(
+                      "px-5 py-2 text-sm font-medium border transition-colors",
+                      langFilter === f.id
+                        ? "bg-wedding-olive text-white border-wedding-olive"
+                        : "bg-white text-wedding-olive border-wedding-olive/30 hover:bg-wedding-olive/10"
+                    )}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
-        <InstagramHighlightsGrid
-          context="blog"
-          eyebrow="Conseils de prestataires"
-          title="Sélection Instagram Mariable"
-        />
+        {!isPro && (
+          <InstagramHighlightsGrid
+            context="blog"
+            eyebrow="Conseils de prestataires"
+            title="Sélection Instagram Mariable"
+          />
+        )}
+
 
         <section className="py-12 px-4">
 
