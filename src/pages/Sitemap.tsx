@@ -23,7 +23,7 @@ const fetchPrestataires = async () => {
 const fetchBlogPosts = async () => {
     const { data, error } = await supabase
         .from('blog_posts')
-        .select('slug, updated_at')
+        .select('slug, updated_at, audience')
         .eq('status', 'published');
 
     if (error) {
@@ -58,6 +58,7 @@ const SitemapPage = () => {
         { url: '/retroplanning', lastmod: '2026-02-16', priority: 0.8, changefreq: 'monthly' },
         { url: '/detail-coordination-jourm', lastmod: '2026-02-16', priority: 0.9, changefreq: 'monthly' },
         { url: '/conseilsmariage', lastmod: '2026-02-16', priority: 0.9, changefreq: 'weekly' },
+        { url: '/conseils-professionnels', lastmod: '2026-09-09', priority: 0.8, changefreq: 'weekly' },
         { url: '/fonctionnalites', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
         { url: '/professionnelsmariable', lastmod: '2026-02-16', priority: 0.9, changefreq: 'weekly' },
         { url: '/partenariat', lastmod: '2026-02-16', priority: 0.7, changefreq: 'monthly' },
@@ -143,7 +144,7 @@ const SitemapPage = () => {
     </url>`).join('')}
   ${blogPosts.map(post => `
     <url>
-      <loc>${BASE_URL}/conseilsmariage/${post.slug}</loc>
+      <loc>${BASE_URL}${(post as any).audience === 'pro' ? '/conseils-professionnels' : '/conseilsmariage'}/${post.slug}</loc>
       <lastmod>${format(new Date(post.updated_at), 'yyyy-MM-dd')}</lastmod>
       <changefreq>monthly</changefreq>
       <priority>0.7</priority>

@@ -15,6 +15,7 @@ const staticPages = [
   { url: "/retroplanning", lastmod: "2026-02-16", priority: "0.8", changefreq: "monthly" },
   { url: "/detail-coordination-jourm", lastmod: "2026-02-16", priority: "0.9", changefreq: "monthly" },
   { url: "/conseilsmariage", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
+  { url: "/conseils-professionnels", lastmod: "2026-09-09", priority: "0.8", changefreq: "weekly" },
   { url: "/fonctionnalites", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/professionnelsmariable", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
   { url: "/partenariat", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
@@ -93,7 +94,7 @@ function generateXml(
     .concat(
       blogPosts.map(
         (p) => `  <url>
-    <loc>${BASE_URL}/conseilsmariage/${p.slug}</loc>
+    <loc>${BASE_URL}${p.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage"}/${p.slug}</loc>
     <lastmod>${formatDate(p.updated_at)}</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -127,7 +128,7 @@ Deno.serve(async () => {
         .eq("visible", true),
       supabase
         .from("blog_posts")
-        .select("slug, updated_at")
+        .select("slug, updated_at, audience")
         .eq("status", "published"),
     ]);
 
