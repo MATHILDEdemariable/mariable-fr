@@ -422,6 +422,58 @@ const Partenariat = () => {
           </div>
         </section>
 
+        {/* Conseils & tips professionnels */}
+        <section id="conseils-pros" className="py-20 px-4 bg-white scroll-mt-24">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-10">
+              <p className="text-xs uppercase tracking-[0.25em] text-editorial-olive mb-3">
+                Conseils &amp; tips
+              </p>
+              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir">
+                Ressources pour les professionnels du mariage
+              </h2>
+              <p className="text-editorial-noir/70 mt-3 max-w-2xl mx-auto">
+                Communication, Instagram, publicité, acquisition de clients : nos guides pour développer votre activité.
+              </p>
+            </div>
+
+            {proPosts.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {proPosts.map((post) => (
+                  <Link key={post.id} to={`/conseils-professionnels/${post.slug}`} className="group">
+                    <div className="aspect-[4/3] overflow-hidden bg-editorial-beige/40 mb-4">
+                      {post.background_image_url && (
+                        <img
+                          src={post.background_image_url}
+                          alt={post.title}
+                          loading="lazy"
+                          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <h3 className="font-serif text-lg text-editorial-noir group-hover:text-editorial-olive transition-colors line-clamp-2">
+                      {post.title}
+                    </h3>
+                    <p className="text-sm text-editorial-noir/70 mt-2 line-clamp-2">
+                      {post.meta_description}
+                    </p>
+                  </Link>
+                ))}
+              </div>
+            )}
+
+            <div className="text-center mt-10">
+              <Link to="/conseils-professionnels">
+                <Button variant="outline" className="rounded-none border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-white uppercase tracking-widest text-xs px-8 py-5">
+                  Voir tous les conseils professionnels
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+
+
         {/* FAQ */}
         <section className="py-16 px-4 bg-editorial-beige/30">
           <div className="container mx-auto max-w-4xl">
