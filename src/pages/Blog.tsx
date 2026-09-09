@@ -16,11 +16,14 @@ import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsG
 
 type LangFilter = 'all' | 'fr' | 'en';
 
-const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
+type BlogAudience = 'couple' | 'pro';
+
+const fetchPublishedBlogPosts = async (audience: BlogAudience): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
     .eq('status', 'published')
+    .eq('audience', audience)
     .order("order_index", { ascending: true })
     .order("published_at", { ascending: false });
 
@@ -32,15 +35,23 @@ const fetchPublishedBlogPosts = async (): Promise<BlogPost[]> => {
   return data || [];
 };
 
-const BlogPage = () => {
+interface BlogPageProps {
+  audience?: BlogAudience;
+}
+
+const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('blog');
   const [langFilter, setLangFilter] = useState<LangFilter>('all');
 
+  const isPro = audience === 'pro';
+  const basePath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
+
   const { data: posts, isLoading, error } = useQuery({
-    queryKey: ['published_blog_posts'],
-    queryFn: fetchPublishedBlogPosts,
+    queryKey: ['published_blog_posts', audience],
+    queryFn: () => fetchPublishedBlogPosts(audience),
   });
+
 
   const blogSchema = {
     "@context": "https://schema.org",
