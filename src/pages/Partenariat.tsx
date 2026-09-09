@@ -259,42 +259,52 @@ const Partenariat = () => {
                 {t("pro.sectionTitle")}
               </h2>
               <p className="text-editorial-noir/70 max-w-3xl mx-auto">{t("pro.intro")}</p>
+              <p className="text-editorial-noir/70 max-w-3xl mx-auto mt-4">{t("pro.seoIntro")}</p>
+
             </motion.div>
 
             <div className="grid lg:grid-cols-[1fr_380px] gap-8 items-start">
               {/* Gauche : ce qui est inclus */}
-              <motion.ul
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                className="bg-editorial-beige/20 border-l-2 border-editorial-olive p-6 md:p-8 space-y-4"
+                className="grid sm:grid-cols-2 gap-6"
               >
-                {Object.entries(proIncluded).map(([key, group]) => (
-                  <li key={key} className="space-y-4">
-                    <h3 className="font-serif text-lg text-editorial-noir">{group.title}</h3>
-                    <ul className="space-y-4">
-                      {group.items.map((item) => (
-                        <li key={item} className="flex items-start gap-3">
-                          <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                          <span className="text-editorial-noir/85">{item}</span>
-                        </li>
-                      ))}
-                      {group.features && (
-                        <li className="ml-8">
-                          <ul className="space-y-2 border-l-2 border-editorial-olive/30 pl-4">
-                            {group.features.map((feature) => (
-                              <li key={feature} className="flex items-start gap-2 text-editorial-noir/70">
-                                <span className="w-1.5 h-1.5 rounded-full bg-editorial-olive mt-2 shrink-0" />
-                                <span>{feature}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
+                {(["referencement", "plateforme"] as const).map((key) => {
+                  const group = proIncluded[key];
+                  if (!group) return null;
+                  return (
+                    <div
+                      key={key}
+                      className="bg-editorial-beige/20 border-t-4 border-editorial-olive p-6 md:p-8 h-full"
+                    >
+                      <h3 className="font-serif text-lg text-editorial-noir mb-4">
+                        {group.title}
+                        {key === "referencement" && <span className="text-editorial-olive"> *</span>}
+                      </h3>
+                      <ul className="space-y-3">
+                        {group.items.map((item) => (
+                          <li key={item} className="flex items-start gap-3">
+                            <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                            <span className="text-editorial-noir/85 text-sm">{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {key === "referencement" && (
+                        <button
+                          type="button"
+                          onClick={() => setConditionsOpen(true)}
+                          className="mt-5 text-sm text-editorial-olive underline underline-offset-4 hover:text-editorial-noir"
+                        >
+                          {t("pro.eligibilityNote")}
+                        </button>
                       )}
-                    </ul>
-                  </li>
-                ))}
-              </motion.ul>
+                    </div>
+                  );
+                })}
+              </motion.div>
+
 
               {/* Droite : prix + CTA */}
               <motion.div
@@ -333,95 +343,6 @@ const Partenariat = () => {
           </div>
         </section>
 
-        {/* Conditions d'admission */}
-        <section id="conditions-admission" className="py-20 px-4 bg-editorial-beige/30 scroll-mt-24">
-          <div className="container mx-auto max-w-5xl">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-2xl md:text-3xl font-serif text-editorial-noir mb-3">
-                {t("conditions.sectionTitle")}
-              </h2>
-              <p className="text-editorial-noir/70">{t("conditions.sectionSubtitle")}</p>
-            </motion.div>
-
-            <div className="grid md:grid-cols-2 gap-6 items-start">
-              <motion.article
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="bg-white p-8 border-t-4 border-editorial-olive h-full"
-              >
-                <span className="text-xs uppercase tracking-widest text-editorial-olive">
-                  {t("conditions.one.label")}
-                </span>
-                <h3 className="text-xl font-serif text-editorial-noir mt-2 mb-5">
-                  {t("conditions.one.title")}
-                </h3>
-                <ul className="space-y-2">
-                  {eligibleItems.map((item) => (
-                    <li key={item} className="flex items-start gap-2 text-sm">
-                      <CheckCircle className="w-4 h-4 text-editorial-olive shrink-0 mt-0.5" />
-                      <span className="text-editorial-noir/80">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </motion.article>
-
-              <motion.article
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.1 }}
-                className="bg-white p-8 border-t-4 border-editorial-olive h-full"
-              >
-                <span className="text-xs uppercase tracking-widest text-editorial-olive">
-                  {t("conditions.two.label")}
-                </span>
-                <h3 className="text-xl font-serif text-editorial-noir mt-2 mb-3">
-                  {t("conditions.two.title")}
-                </h3>
-                <p className="text-sm text-editorial-noir/70 mb-4">{t("conditions.two.body")}</p>
-
-                <div className="bg-editorial-beige/30 p-5 mb-5">
-                  <p className="font-serif text-editorial-noir mb-3">
-                    {t("conditions.two.exampleTitle")}
-                  </p>
-                  <ul className="space-y-2">
-                    {priceExample.map((line) => (
-                      <li
-                        key={line.label}
-                        className="flex items-baseline justify-between gap-4 text-sm border-b border-editorial-noir/10 pb-1.5 last:border-0"
-                      >
-                        <span className="text-editorial-noir/80">{line.label}</span>
-                        <span className="font-medium text-editorial-noir whitespace-nowrap">
-                          {line.price}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                <div className="flex items-start gap-3 mb-4">
-                  <Mail className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-editorial-noir text-sm mb-1">
-                      {t("conditions.two.howTitle")}
-                    </p>
-                    <p className="text-sm text-editorial-noir/70">{t("conditions.two.how")}</p>
-                  </div>
-                </div>
-
-                <p className="text-sm text-editorial-noir/60 italic border-l-2 border-editorial-olive pl-4">
-                  {t("conditions.two.note")}
-                </p>
-              </motion.article>
-            </div>
-          </div>
-        </section>
 
         {/* Mariable Studio */}
         <section id="mariable-studio" className="py-20 px-4 bg-white scroll-mt-24">
