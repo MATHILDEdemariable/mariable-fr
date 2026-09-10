@@ -333,5 +333,102 @@
       "Organise transport for guests",
       "Have a backup schedule"
     ]
+  },
+  "taskModal": {
+    "tabs": {
+      "manual": "Manual",
+      "suggestions": "Suggestions",
+      "ai": "AI Personalised"
+    },
+    "fields": {
+      "title": "Title *",
+      "titlePlaceholder": "Step name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "startTime": "Start time",
+      "duration": "Duration (min) *",
+      "category": "Category"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "add": "Add",
+      "adding": "Adding...",
+      "addSuggestions": "Add {{count}} suggestion(s)"
+    },
+    "suggestionsIntro": "Select the predefined steps you want to add to your schedule:",
+    "minutes": "{{count}} min",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "categories": {
+      "préparatifs_final": "Getting ready",
+      "logistique": "Logistics",
+      "cérémonie": "Ceremony",
+      "photos": "Photos",
+      "cocktail": "Cocktail",
+      "repas": "Dinner",
+      "soiree": "Party",
+      "personnalisé": "Custom",
+      "default": "General"
+    },
+    "premium": {
+      "manualFeature": "Adding a manual step",
+      "manualDesc": "To add custom steps to your schedule, you need a premium subscription.",
+      "suggestionsFeature": "Suggested steps",
+      "suggestionsDesc": "To add suggested steps to your schedule, you need a premium subscription.",
+      "aiFeature": "AI Personalised",
+      "aiDesc": "To generate a personalised schedule with AI, you need a premium subscription."
+    },
+    "toast": {
+      "validationTitle": "Validation error",
+      "titleRequired": "The title is required.",
+      "minDuration": "Minimum duration is 5 minutes.",
+      "sessionExpired": "Session expired, please sign in again to add a step.",
+      "added": "Step added",
+      "addedDesc": "\"{{title}}\" was added to the schedule.",
+      "duplicateTitle": "Title already used",
+      "duplicateDesc": "A step with this title already exists in your schedule. Change the title to add it.",
+      "errorTitle": "Error",
+      "addError": "Unable to add the step. Please try again.",
+      "suggestionsAdded": "Suggestions added",
+      "suggestionsAddedDesc": "{{count}} step(s) added.",
+      "suggestionsError": "Unable to add the suggestions."
+    },
+    "suggestions": {
+      "1": {
+        "title": "Getting ready",
+        "description": "Hair, makeup and dressing for the couple"
+      },
+      "2": {
+        "title": "Welcoming guests",
+        "description": "Welcoming and seating guests before the ceremony"
+      },
+      "3": {
+        "title": "Civil ceremony",
+        "description": "Civil wedding ceremony"
+      },
+      "4": {
+        "title": "Couple photos",
+        "description": "Photo session with the couple after the ceremony"
+      },
+      "5": {
+        "title": "Family photos",
+        "description": "Photos with families and witnesses"
+      },
+      "6": {
+        "title": "Cocktail hour",
+        "description": "Drinks reception with the guests"
+      },
+      "7": {
+        "title": "Wedding dinner",
+        "description": "Main meal with the guests"
+      },
+      "8": {
+        "title": "First dance",
+        "description": "The couple's first dance"
+      }
+    }
   }
 }

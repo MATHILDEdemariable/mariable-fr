@@ -333,5 +333,102 @@
       "Organiser le transport des invités",
       "Prévoir un planning de secours"
     ]
+  },
+  "taskModal": {
+    "tabs": {
+      "manual": "Manuel",
+      "suggestions": "Suggestions",
+      "ai": "IA Personnalisé"
+    },
+    "fields": {
+      "title": "Titre *",
+      "titlePlaceholder": "Nom de l'étape",
+      "description": "Description",
+      "descriptionPlaceholder": "Description optionnelle",
+      "startTime": "Heure de début",
+      "duration": "Durée (min) *",
+      "category": "Catégorie"
+    },
+    "buttons": {
+      "cancel": "Annuler",
+      "add": "Ajouter",
+      "adding": "Ajout...",
+      "addSuggestions": "Ajouter {{count}} suggestion(s)"
+    },
+    "suggestionsIntro": "Sélectionnez les étapes prédéfinies que vous souhaitez ajouter à votre planning :",
+    "minutes": "{{count}} min",
+    "priority": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible"
+    },
+    "categories": {
+      "préparatifs_final": "Préparatifs",
+      "logistique": "Logistique",
+      "cérémonie": "Cérémonie",
+      "photos": "Photos",
+      "cocktail": "Cocktail",
+      "repas": "Repas",
+      "soiree": "Soirée",
+      "personnalisé": "Personnalisé",
+      "default": "Général"
+    },
+    "premium": {
+      "manualFeature": "Ajout d'étape manuelle",
+      "manualDesc": "Pour ajouter des étapes personnalisées à votre planning, vous devez être abonné à notre version premium.",
+      "suggestionsFeature": "Suggestions d'étapes",
+      "suggestionsDesc": "Pour ajouter des étapes suggérées à votre planning, vous devez être abonné à notre version premium.",
+      "aiFeature": "IA Personnalisé",
+      "aiDesc": "Pour générer un planning personnalisé avec l'IA, vous devez être abonné à notre version premium."
+    },
+    "toast": {
+      "validationTitle": "Erreur de validation",
+      "titleRequired": "Le titre est obligatoire.",
+      "minDuration": "La durée minimum est de 5 minutes.",
+      "sessionExpired": "Session expirée, reconnectez-vous pour ajouter une étape.",
+      "added": "Étape ajoutée",
+      "addedDesc": "\"{{title}}\" a été ajoutée au planning.",
+      "duplicateTitle": "Titre déjà utilisé",
+      "duplicateDesc": "Une étape porte déjà ce titre dans votre planning. Modifiez le titre pour l'ajouter.",
+      "errorTitle": "Erreur",
+      "addError": "Impossible d'ajouter l'étape. Veuillez réessayer.",
+      "suggestionsAdded": "Suggestions ajoutées",
+      "suggestionsAddedDesc": "{{count}} étape(s) ajoutée(s).",
+      "suggestionsError": "Impossible d'ajouter les suggestions."
+    },
+    "suggestions": {
+      "1": {
+        "title": "Préparation des mariés",
+        "description": "Coiffure, maquillage et habillage des mariés"
+      },
+      "2": {
+        "title": "Accueil des invités",
+        "description": "Accueil et placement des invités avant la cérémonie"
+      },
+      "3": {
+        "title": "Cérémonie civile",
+        "description": "Cérémonie de mariage civil"
+      },
+      "4": {
+        "title": "Photos de couple",
+        "description": "Séance photo des mariés après la cérémonie"
+      },
+      "5": {
+        "title": "Photos de famille",
+        "description": "Photos avec les familles et témoins"
+      },
+      "6": {
+        "title": "Cocktail",
+        "description": "Vin d'honneur avec les invités"
+      },
+      "7": {
+        "title": "Dîner de mariage",
+        "description": "Repas principal avec les invités"
+      },
+      "8": {
+        "title": "Ouverture du bal",
+        "description": "Première danse des mariés"
+      }
+    }
   }
 }
