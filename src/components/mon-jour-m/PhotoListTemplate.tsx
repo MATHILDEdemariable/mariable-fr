@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -17,22 +18,7 @@ interface PhotoItem {
   customNames: string[];
 }
 
-const DEFAULT_PHOTO_LIST: PhotoItem[] = [
-  { id: 'photo-1', title: "Premier regard (First Look)", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-2', title: "Sortie de cérémonie", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-3', title: "Échange des alliances", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-4', title: "Famille des mariés", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-5', title: "Famille de la mariée", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-6', title: "Les deux familles réunies", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-7', title: "Témoins et demoiselles d'honneur", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-8', title: "Garçons d'honneur", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-9', title: "Photo tous les invités", toCapture: true, guestIds: [], customNames: ["Tous les invités"] },
-  { id: 'photo-10', title: "Séance couple - Jardins", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-11', title: "Séance couple - Coucher de soleil", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-12', title: "Photo avec les grands-parents", toCapture: true, guestIds: [], customNames: [] },
-  { id: 'photo-13', title: "Photo fun avec les amis", toCapture: false, guestIds: [], customNames: [] },
-  { id: 'photo-14', title: "Photo avec les enfants d'honneur", toCapture: false, guestIds: [], customNames: [] },
-];
+
 
 interface PhotoListTemplateProps {
   coordinationId: string;
@@ -40,7 +26,21 @@ interface PhotoListTemplateProps {
 
 const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId }) => {
   const { toast } = useToast();
-  const [photos, setPhotos] = useState<PhotoItem[]>(DEFAULT_PHOTO_LIST);
+  const { t, i18n } = useTranslation('monJourM');
+
+  const buildDefaultPhotoList = (): PhotoItem[] => {
+    const titles = t('photoList.defaults', { returnObjects: true }) as string[];
+    const list = Array.isArray(titles) ? titles : [];
+    return list.map((title, index) => ({
+      id: `photo-${index + 1}`,
+      title,
+      toCapture: index < 12,
+      guestIds: [],
+      customNames: index === 8 ? [t('photoList.allGuests')] : []
+    }));
+  };
+
+  const [photos, setPhotos] = useState<PhotoItem[]>(buildDefaultPhotoList);
   const [newPhotoTitle, setNewPhotoTitle] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
@@ -105,7 +105,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
 
       const documentData = {
         coordination_id: coordinationId,
-        title: 'Liste Photos Jour-J',
+        title: t('photoList.docTitle'),
         description: JSON.stringify(photos),
         category: 'photo_list',
         file_url: ''
@@ -124,14 +124,14 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
 
       setHasChanges(false);
       toast({
-        title: "Liste sauvegardée",
-        description: "Votre liste de photos a été enregistrée"
+        title: t('photoList.toast.saved'),
+        description: t('photoList.toast.savedDesc')
       });
     } catch (error) {
       console.error('Erreur sauvegarde:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de sauvegarder la liste",
+        title: t('photoList.toast.error'),
+        description: t('photoList.toast.errorDesc'),
         variant: "destructive"
       });
     } finally {
@@ -140,8 +140,8 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
   };
 
   const handleReset = () => {
-    if (window.confirm('Réinitialiser la liste aux valeurs par défaut ?')) {
-      setPhotos(DEFAULT_PHOTO_LIST);
+    if (window.confirm(t('photoList.resetConfirm'))) {
+      setPhotos(buildDefaultPhotoList());
       setHasChanges(true);
     }
   };
@@ -202,11 +202,11 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
     // Titre
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text('Liste Photos Jour-J', pageWidth / 2, 20, { align: 'center' });
+    doc.text(t('photoList.docTitle'), pageWidth / 2, 20, { align: 'center' });
     
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Généré le ${new Date().toLocaleDateString('fr-FR')}`, pageWidth / 2, 28, { align: 'center' });
+    doc.text(t('photoList.pdf.generatedOn', { date: new Date().toLocaleDateString(i18n.language === 'en' ? 'en-GB' : 'fr-FR') }), pageWidth / 2, 28, { align: 'center' });
     
     let yPos = 45;
     const lineHeight = 8;
@@ -217,7 +217,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
     if (toCapturePhotos.length > 0) {
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text(`Photos à faire (${toCapturePhotos.length})`, 14, yPos);
+      doc.text(t('photoList.pdf.toDo', { count: toCapturePhotos.length }), 14, yPos);
       yPos += 10;
       
       doc.setFontSize(10);
@@ -229,10 +229,10 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           yPos = 20;
         }
         
-        const persons = photo.customNames.length > 0 ? photo.customNames.join(', ') : 'Couple seul';
+        const persons = photo.customNames.length > 0 ? photo.customNames.join(', ') : t('photoList.pdf.coupleOnly');
         doc.text(`[ ] ${photo.title}`, 14, yPos);
         doc.setTextColor(100);
-        doc.text(`    Avec : ${persons}`, 14, yPos + 4);
+        doc.text(`    ${t('photoList.pdf.with')} ${persons}`, 14, yPos + 4);
         doc.setTextColor(0);
         yPos += lineHeight + 4;
       });
@@ -249,7 +249,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
       
       doc.setFontSize(14);
       doc.setFont('helvetica', 'bold');
-      doc.text(`Photos optionnelles (${skippedPhotos.length})`, 14, yPos);
+      doc.text(t('photoList.pdf.optional', { count: skippedPhotos.length }), 14, yPos);
       yPos += 10;
       
       doc.setFontSize(10);
@@ -261,16 +261,16 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           doc.addPage();
           yPos = 20;
         }
-        doc.text(`(optionnel) ${photo.title}`, 14, yPos);
+        doc.text(`${t('photoList.pdf.optionalTag')} ${photo.title}`, 14, yPos);
         yPos += lineHeight;
       });
     }
     
-    doc.save('liste-photos-jour-j.pdf');
+    doc.save(t('photoList.pdf.fileName'));
     
     toast({
-      title: "PDF exporté",
-      description: "La liste de photos a été téléchargée"
+      title: t('photoList.toast.exported'),
+      description: t('photoList.toast.exportedDesc')
     });
   };
 
@@ -285,9 +285,9 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               <Camera className="h-5 w-5 text-pink-600" />
             </div>
             <div>
-              <CardTitle className="text-lg">📸 Liste Photos Jour-J</CardTitle>
+              <CardTitle className="text-lg">{t('photoList.title')}</CardTitle>
               <p className="text-sm text-muted-foreground">
-                {toCaptureCount}/{photos.length} photos à faire
+                {t('photoList.count', { done: toCaptureCount, total: photos.length })}
               </p>
             </div>
           </div>
@@ -299,7 +299,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               className="text-gray-600"
             >
               <Download className="h-4 w-4 mr-1" />
-              Export PDF
+              {t('photoList.exportPdf')}
             </Button>
             <Button
               variant="outline"
@@ -308,7 +308,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               className="text-gray-600"
             >
               <RotateCcw className="h-4 w-4 mr-1" />
-              Réinitialiser
+              {t('photoList.reset')}
             </Button>
             <Button
               size="sm"
@@ -317,7 +317,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               className="bg-pink-600 hover:bg-pink-700"
             >
               <Save className="h-4 w-4 mr-1" />
-              {isSaving ? 'Sauvegarde...' : 'Sauvegarder'}
+              {isSaving ? t('photoList.saving') : t('photoList.save')}
             </Button>
           </div>
         </div>
@@ -327,9 +327,9 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
         <div className="border rounded-lg overflow-hidden">
           {/* En-tête */}
           <div className="grid grid-cols-[40px_1fr_1fr_40px] gap-2 p-3 bg-gray-50 border-b text-xs font-medium text-gray-600">
-            <div className="text-center">À faire</div>
-            <div>Photo</div>
-            <div>Personnes présentes</div>
+            <div className="text-center">{t('photoList.colToDo')}</div>
+            <div>{t('photoList.colPhoto')}</div>
+            <div>{t('photoList.colPeople')}</div>
             <div></div>
           </div>
 
@@ -403,7 +403,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           <div className="p-3 bg-gray-50 border-t">
             <div className="flex gap-2">
               <Input
-                placeholder="Ajouter une nouvelle photo..."
+                placeholder={t('photoList.addPlaceholder')}
                 value={newPhotoTitle}
                 onChange={(e) => setNewPhotoTitle(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && addPhoto()}
@@ -411,14 +411,14 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               />
               <Button onClick={addPhoto} variant="outline">
                 <Plus className="h-4 w-4 mr-1" />
-                Ajouter
+                {t('photoList.add')}
               </Button>
             </div>
           </div>
         </div>
 
         <p className="text-xs text-muted-foreground mt-3">
-          💡 Cliquez sur le nom d'une photo pour le modifier. Ajoutez les personnes qui doivent être présentes pour chaque photo.
+          {t('photoList.hint')}
         </p>
       </CardContent>
     </Card>

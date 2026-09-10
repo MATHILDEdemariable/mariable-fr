@@ -481,5 +481,55 @@
     "noGuests": "No guest in the list",
     "addManually": "Add manually",
     "namePlaceholder": "Person's name..."
+  },
+  "photoList": {
+    "title": "📸 Wedding day photo list",
+    "docTitle": "Wedding day photo list",
+    "count": "{{done}}/{{total}} photos to take",
+    "exportPdf": "Export PDF",
+    "reset": "Reset",
+    "saving": "Saving...",
+    "save": "Save",
+    "resetConfirm": "Reset the list to the default values?",
+    "colToDo": "To do",
+    "colPhoto": "Photo",
+    "colPeople": "People present",
+    "addPlaceholder": "Add a new photo...",
+    "add": "Add",
+    "hint": "💡 Click a photo name to edit it. Add the people who should be present for each photo.",
+    "pdf": {
+      "generatedOn": "Generated on {{date}}",
+      "toDo": "Photos to take ({{count}})",
+      "optional": "Optional photos ({{count}})",
+      "with": "With:",
+      "coupleOnly": "Couple only",
+      "optionalTag": "(optional)",
+      "fileName": "wedding-day-photo-list.pdf"
+    },
+    "toast": {
+      "saved": "List saved",
+      "savedDesc": "Your photo list has been saved",
+      "error": "Error",
+      "errorDesc": "Unable to save the list",
+      "exported": "PDF exported",
+      "exportedDesc": "The photo list has been downloaded"
+    },
+    "defaults": [
+      "First look",
+      "Leaving the ceremony",
+      "Exchange of rings",
+      "Couple's families",
+      "Bride's family",
+      "Both families together",
+      "Witnesses and bridesmaids",
+      "Groomsmen",
+      "Photo with all guests",
+      "Couple session - Gardens",
+      "Couple session - Sunset",
+      "Photo with the grandparents",
+      "Fun photo with friends",
+      "Photo with the flower children"
+    ],
+    "allGuests": "All guests"
   }
 }

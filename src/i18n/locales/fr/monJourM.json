@@ -481,5 +481,55 @@
     "noGuests": "Aucun invité dans la liste",
     "addManually": "Ajouter manuellement",
     "namePlaceholder": "Nom de la personne..."
+  },
+  "photoList": {
+    "title": "📸 Liste Photos Jour-J",
+    "docTitle": "Liste Photos Jour-J",
+    "count": "{{done}}/{{total}} photos à faire",
+    "exportPdf": "Export PDF",
+    "reset": "Réinitialiser",
+    "saving": "Sauvegarde...",
+    "save": "Sauvegarder",
+    "resetConfirm": "Réinitialiser la liste aux valeurs par défaut ?",
+    "colToDo": "À faire",
+    "colPhoto": "Photo",
+    "colPeople": "Personnes présentes",
+    "addPlaceholder": "Ajouter une nouvelle photo...",
+    "add": "Ajouter",
+    "hint": "💡 Cliquez sur le nom d'une photo pour le modifier. Ajoutez les personnes qui doivent être présentes pour chaque photo.",
+    "pdf": {
+      "generatedOn": "Généré le {{date}}",
+      "toDo": "Photos à faire ({{count}})",
+      "optional": "Photos optionnelles ({{count}})",
+      "with": "Avec :",
+      "coupleOnly": "Couple seul",
+      "optionalTag": "(optionnel)",
+      "fileName": "liste-photos-jour-j.pdf"
+    },
+    "toast": {
+      "saved": "Liste sauvegardée",
+      "savedDesc": "Votre liste de photos a été enregistrée",
+      "error": "Erreur",
+      "errorDesc": "Impossible de sauvegarder la liste",
+      "exported": "PDF exporté",
+      "exportedDesc": "La liste de photos a été téléchargée"
+    },
+    "defaults": [
+      "Premier regard (First Look)",
+      "Sortie de cérémonie",
+      "Échange des alliances",
+      "Famille des mariés",
+      "Famille de la mariée",
+      "Les deux familles réunies",
+      "Témoins et demoiselles d'honneur",
+      "Garçons d'honneur",
+      "Photo tous les invités",
+      "Séance couple - Jardins",
+      "Séance couple - Coucher de soleil",
+      "Photo avec les grands-parents",
+      "Photo fun avec les amis",
+      "Photo avec les enfants d'honneur"
+    ],
+    "allGuests": "Tous les invités"
   }
 }
