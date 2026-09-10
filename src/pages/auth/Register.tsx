@@ -221,13 +221,24 @@ const Register = () => {
                 <p className="text-sm text-muted-foreground">{t('register.includedText')}</p>
               </div>
 
-              <div className="p-4 border border-border rounded-lg bg-background/60">
-                <p className="text-sm font-medium text-foreground mb-1">{t('register.limitsTitle')}</p>
-                <p className="text-sm text-muted-foreground">{t('register.limitsText')}</p>
-                <Link to="/paiement" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
-                  {t('register.limitsCta')}
-                </Link>
-              </div>
+              {isPro ? (
+                <div className="p-4 border border-wedding-olive/30 rounded-lg bg-wedding-olive/5">
+                  <p className="text-sm font-semibold text-wedding-olive mb-1">{t('register.proBlockTitle')}</p>
+                  <p className="text-sm text-muted-foreground">{t('register.proBlockText')}</p>
+                  <p className="text-lg font-serif text-wedding-olive mt-2">{t('register.proBlockPrice')}</p>
+                  <Link to="/partenariat" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
+                    {t('register.proBlockCta')}
+                  </Link>
+                </div>
+              ) : (
+                <div className="p-4 border border-border rounded-lg bg-background/60">
+                  <p className="text-sm font-medium text-foreground mb-1">{t('register.limitsTitle')}</p>
+                  <p className="text-sm text-muted-foreground">{t('register.limitsText')}</p>
+                  <Link to="/paiement" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
+                    {t('register.limitsCta')}
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
 
