@@ -431,7 +431,9 @@
       "2w": "2 weeks",
       "wj": "Wedding week",
       "j": "The big day"
-    }
+    },
+    "languageMismatch": "This timeline was generated in French. Regenerate it to get the English version.",
+    "regenerate": "Regenerate this timeline in English"
   },
   "avantJourJ": {
     "pageTitle": "Before the wedding day - AI checklist | Mariable",
