@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { useWedding } from '@/contexts/WeddingContext';
 import {
@@ -16,6 +17,7 @@ import {
  */
 const WeddingContextBar: React.FC = () => {
   const { accountType, currentWedding, currentWeddingId, weddings, selectWedding } = useWedding();
+  const { t } = useTranslation('pro');
 
   if (accountType !== 'b2b' || !currentWedding) return null;
 
@@ -27,14 +29,14 @@ const WeddingContextBar: React.FC = () => {
           className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
         >
           <ArrowLeft className="h-4 w-4" />
-          Mes mariages
+          {t('bar.myWeddings')}
         </Link>
 
         <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground hidden sm:inline">Mariage en cours :</span>
+          <span className="text-sm text-muted-foreground hidden sm:inline">{t('bar.currentWedding')}</span>
           <Select value={currentWeddingId ?? undefined} onValueChange={selectWedding}>
             <SelectTrigger className="h-8 w-[220px] rounded-none bg-background text-sm">
-              <SelectValue placeholder="Choisir un mariage" />
+              <SelectValue placeholder={t('bar.chooseWedding')} />
             </SelectTrigger>
             <SelectContent>
               {weddings.map((wedding) => (
