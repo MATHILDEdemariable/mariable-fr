@@ -119,7 +119,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie', 'weddingDay', 'monJourM', 'contentCreator', 'refonteJuillet'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie', 'weddingDay', 'monJourM', 'contentCreator', 'refonteJuillet', 'guides', 'pro'],
     interpolation: {
       escapeValue: false,
     },
