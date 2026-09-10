@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -33,6 +34,7 @@ const emptyForm: ProProfileForm = {
 const MesMariages: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { t, i18n } = useTranslation('pro');
   const { weddings, loading, selectWedding, canCreateMoreWeddings, accountType } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
@@ -98,12 +100,12 @@ const MesMariages: React.FC = () => {
 
       if (error) throw error;
 
-      toast({ title: 'Informations enregistrées' });
+      toast({ title: t('profile.saved') });
     } catch (error) {
       console.error('❌ EspacePro: enregistrement impossible', error);
       toast({
-        title: 'Enregistrement impossible',
-        description: 'Vos informations n’ont pas pu être enregistrées. Réessayez dans un instant.',
+        title: t('profile.saveErrorTitle'),
+        description: t('profile.saveErrorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -117,52 +119,52 @@ const MesMariages: React.FC = () => {
   return (
     <DashboardLayout variant="pro">
       <Helmet>
-        <title>Espace professionnel | Mariable</title>
-        <meta name="description" content="Gérez tous vos mariages depuis votre espace professionnel Mariable." />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
 
       <div className="max-w-5xl mx-auto space-y-8">
         {/* En-tête */}
         <header>
           <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-3xl text-foreground">Espace professionnel</h1>
+            <h1 className="font-serif text-3xl text-foreground">{t('header.title')}</h1>
             <Badge className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
               <Building2 className="h-3 w-3 mr-1" />
-              Compte pro
+              {t('header.badge')}
             </Badge>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
             {form.company_name
               ? form.company_name
-              : 'Vos projets mariage, chacun avec ses propres outils.'}
+              : t('header.subtitle')}
           </p>
         </header>
 
         {isProfileIncomplete && (
           <div className="border border-border bg-background p-4 text-sm text-muted-foreground">
-            Complétez vos informations ci-dessous pour personnaliser votre espace et vos documents.
+            {t('header.incompleteProfile')}
           </div>
         )}
 
         {/* Mes mariages */}
         <section id="mes-mariages" className="scroll-mt-32">
           <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-            <h2 className="font-serif text-2xl text-foreground">Mes mariages</h2>
+            <h2 className="font-serif text-2xl text-foreground">{t('weddings.title')}</h2>
             <Button
               onClick={() => setDialogOpen(true)}
               disabled={!canCreateMoreWeddings && weddings.length > 0}
               className="rounded-none"
             >
               <Plus className="h-4 w-4 mr-2" />
-              Créer un mariage
+              {t('weddings.create')}
             </Button>
           </div>
 
           {accountType === 'b2b' && !canCreateMoreWeddings && weddings.length > 0 && (
             <div className="mb-4 border border-border bg-background p-4 text-sm text-muted-foreground">
-              Votre compte inclut un mariage. Pour en gérer plusieurs sans limite, passez au compte pro.{' '}
+              {t('weddings.limit')}{' '}
               <button className="underline" onClick={() => navigate('/partenariat#mariable-pro')}>
-                Découvrir l’offre
+                {t('weddings.limitCta')}
               </button>
             </div>
           )}
@@ -174,10 +176,10 @@ const MesMariages: React.FC = () => {
           ) : weddings.length === 0 ? (
             <Card className="rounded-none border-border">
               <CardContent className="py-12 text-center">
-                <p className="text-muted-foreground mb-4">Aucun mariage pour le moment.</p>
+                <p className="text-muted-foreground mb-4">{t('weddings.empty')}</p>
                 <Button onClick={() => setDialogOpen(true)} className="rounded-none">
                   <Plus className="h-4 w-4 mr-2" />
-                  Créer mon premier mariage
+                  {t('weddings.createFirst')}
                 </Button>
               </CardContent>
             </Card>
@@ -192,7 +194,7 @@ const MesMariages: React.FC = () => {
                         variant="ghost"
                         size="icon"
                         className="rounded-none h-8 w-8 shrink-0"
-                        aria-label="Modifier le mariage"
+                        aria-label={t('weddings.edit')}
                         onClick={() => setEditingWedding(wedding)}
                       >
                         <Pencil className="h-4 w-4" />
@@ -202,14 +204,14 @@ const MesMariages: React.FC = () => {
                       <p className="flex items-center gap-2">
                         <CalendarDays className="h-4 w-4" />
                         {wedding.wedding_date ? (
-                          new Date(wedding.wedding_date).toLocaleDateString('fr-FR')
+                          new Date(wedding.wedding_date).toLocaleDateString(i18n.language?.startsWith('en') ? 'en-GB' : 'fr-FR')
                         ) : (
                           <button
                             type="button"
                             className="underline hover:text-foreground"
                             onClick={() => setEditingWedding(wedding)}
                           >
-                            Date à définir
+                            {t('weddings.dateToDefine')}
                           </button>
                         )}
                       </p>
@@ -222,7 +224,7 @@ const MesMariages: React.FC = () => {
                       {wedding.guest_count ? (
                         <p className="flex items-center gap-2">
                           <Users className="h-4 w-4" />
-                          {wedding.guest_count} invités
+                          {t('weddings.guests', { count: wedding.guest_count })}
                         </p>
                       ) : null}
                     </div>
@@ -231,7 +233,7 @@ const MesMariages: React.FC = () => {
                       className="mt-5 rounded-none w-full"
                       onClick={() => handleOpenWedding(wedding.id)}
                     >
-                      Ouvrir
+                      {t('weddings.open')}
                       <ArrowRight className="h-4 w-4 ml-2" />
                     </Button>
                   </CardContent>
@@ -243,12 +245,12 @@ const MesMariages: React.FC = () => {
 
         {/* Mes informations */}
         <section id="mes-informations" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">Mes informations</h2>
+          <h2 className="font-serif text-2xl text-foreground mb-4">{t('profile.title')}</h2>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5">
               <form onSubmit={handleSaveProfile} className="grid gap-4 sm:grid-cols-2">
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-first-name">Prénom</Label>
+                  <Label htmlFor="pro-first-name">{t('profile.firstName')}</Label>
                   <Input
                     id="pro-first-name"
                     value={form.first_name}
@@ -257,7 +259,7 @@ const MesMariages: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-last-name">Nom</Label>
+                  <Label htmlFor="pro-last-name">{t('profile.lastName')}</Label>
                   <Input
                     id="pro-last-name"
                     value={form.last_name}
@@ -266,7 +268,7 @@ const MesMariages: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-company">Société</Label>
+                  <Label htmlFor="pro-company">{t('profile.company')}</Label>
                   <Input
                     id="pro-company"
                     value={form.company_name}
@@ -275,7 +277,7 @@ const MesMariages: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="pro-phone">Téléphone</Label>
+                  <Label htmlFor="pro-phone">{t('profile.phone')}</Label>
                   <Input
                     id="pro-phone"
                     type="tel"
@@ -285,7 +287,7 @@ const MesMariages: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label htmlFor="pro-city">Ville</Label>
+                  <Label htmlFor="pro-city">{t('profile.city')}</Label>
                   <Input
                     id="pro-city"
                     value={form.city}
@@ -296,7 +298,7 @@ const MesMariages: React.FC = () => {
                 <div className="sm:col-span-2">
                   <Button type="submit" disabled={savingProfile} className="rounded-none w-full sm:w-auto">
                     <Save className="h-4 w-4 mr-2" />
-                    {savingProfile ? 'Enregistrement…' : 'Enregistrer'}
+                    {savingProfile ? t('profile.saving') : t('profile.save')}
                   </Button>
                 </div>
               </form>
@@ -306,20 +308,20 @@ const MesMariages: React.FC = () => {
 
         {/* Mon offre */}
         <section id="mon-offre" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">Mon offre</h2>
+          <h2 className="font-serif text-2xl text-foreground mb-4">{t('offer.title')}</h2>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5 flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="font-medium text-foreground flex items-center gap-2">
                   <Crown className="h-4 w-4 text-wedding-olive" />
-                  Compte Pro Mariable
+                  {t('offer.name')}
                 </p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Mariages illimités, tous les modules débloqués pour chaque projet et visibilité sur la sélection Mariable.
+                  {t('offer.description')}
                 </p>
               </div>
               <Button className="rounded-none" onClick={() => navigate('/partenariat#mariable-pro')}>
-                Passer au compte pro
+                {t('offer.cta')}
               </Button>
             </CardContent>
           </Card>
