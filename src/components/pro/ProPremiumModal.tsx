@@ -60,7 +60,7 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
             </a>
           </Button>
           <a
-            href="/partenariat#conditions-admission"
+            href="/partenariat?conditions=1"
             target="_blank"
             rel="noopener noreferrer"
             className="text-center text-sm underline text-editorial-noir/70 hover:text-editorial-noir"
