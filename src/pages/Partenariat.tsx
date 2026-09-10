@@ -43,6 +43,13 @@ const Partenariat = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [conditionsOpen, setConditionsOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("conditions") === "1") {
+      setConditionsOpen(true);
+    }
+  }, [searchParams]);
 
   // Derniers articles de conseils destinés aux professionnels
   const { data: proPosts = [] } = useQuery({
