@@ -419,9 +419,13 @@ const Register = () => {
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {t('register.acceptTerms')}{" "}
-                  <Link to="/cgv-couples" className="text-wedding-olive hover:underline" target="_blank">
+                  <button
+                    type="button"
+                    onClick={() => setTermsOpen(true)}
+                    className="text-wedding-olive hover:underline"
+                  >
                     {t('register.termsLink')}
-                  </Link>
+                  </button>
                 </label>
               </div>
 
