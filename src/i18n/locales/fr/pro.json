@@ -39,5 +39,43 @@
     "name": "Compte Pro Mariable",
     "description": "Mariages illimités, tous les modules débloqués pour chaque projet et visibilité sur la sélection Mariable.",
     "cta": "Passer au compte pro"
+  },
+  "nav": {
+    "space": "Espace pro",
+    "weddings": "Mes mariages",
+    "info": "Mes informations",
+    "offer": "Mon offre",
+    "settings": "Paramètres",
+    "logout": "Déconnexion"
+  },
+  "bar": {
+    "home": "Accueil",
+    "myWeddings": "Mes mariages",
+    "vendorSelection": "Sélection prestataires",
+    "upgrade": "Passer Pro Premium — 149 €/an",
+    "upgradeShort": "Pro Premium — 149 €/an",
+    "currentWedding": "Mariage en cours :",
+    "chooseWedding": "Choisir un mariage"
+  },
+  "premiumModal": {
+    "subtitle": "Ce que comprennent vos frais d'adhésion",
+    "close": "Fermer"
+  },
+  "editWedding": {
+    "title": "Modifier le mariage",
+    "names": "Prénoms des mariés",
+    "namesPlaceholder": "Camille & Antoine",
+    "date": "Date du mariage",
+    "location": "Lieu",
+    "locationPlaceholder": "Château de ...",
+    "guests": "Nombre d'invités",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "namesRequired": "Prénoms requis",
+    "namesRequiredDesc": "Indiquez les prénoms des mariés.",
+    "updated": "Mariage mis à jour",
+    "errorTitle": "Enregistrement impossible",
+    "errorDesc": "Les informations n'ont pas pu être enregistrées. Réessayez dans un instant."
   }
 }
