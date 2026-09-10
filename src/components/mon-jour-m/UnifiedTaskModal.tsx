@@ -129,6 +129,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
   // État pour l'ajout manuel
   const [formData, setFormData] = useState({
+    title: '',
+    description: '',
     duration: '',
     startTime: referenceTime.toTimeString().slice(0, 5),
     category: 'personnalisé',
