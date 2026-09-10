@@ -39,6 +39,7 @@ const Register = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const isPro = accountType === 'b2b';
 
   // Support ?redirect=paiement (ou tout chemin relatif) pour ramener l'utilisateur
   // vers le tunnel de paiement après inscription / confirmation d'email.
