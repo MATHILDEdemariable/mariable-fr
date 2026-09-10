@@ -75,8 +75,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '6',
-    title: 'Cocktail',
-    description: 'Vin d\'honneur avec les invités',
     duration: 90,
     category: 'cocktail',
     priority: 'medium',
