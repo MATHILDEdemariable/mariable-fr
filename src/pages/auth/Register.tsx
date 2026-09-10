@@ -9,6 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import CGVCouplesContent from '@/components/legal/CGVCouplesContent';
+import CGVProContent from '@/components/legal/CGVProContent';
 import { Loader2, Mail, Lock, User, Smartphone, CheckCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
@@ -19,7 +22,10 @@ import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics'
 import { useAuth } from '@/contexts/AuthContext';
 
 const Register = () => {
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
+  const [preferredLanguage, setPreferredLanguage] = useState<'fr' | 'en'>(
+    i18n.language?.startsWith('en') ? 'en' : 'fr'
+  );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -29,12 +35,14 @@ const Register = () => {
   const [registrationPurpose, setRegistrationPurpose] = useState('');
   const [accountType, setAccountType] = useState<'b2c' | 'b2b'>('b2c');
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
+  const isPro = accountType === 'b2b';
 
   // Support ?redirect=paiement (ou tout chemin relatif) pour ramener l'utilisateur
   // vers le tunnel de paiement après inscription / confirmation d'email.
@@ -89,6 +97,7 @@ const Register = () => {
             referral_source: referralSource,
             registration_purpose: registrationPurpose,
             account_type: accountType,
+            preferred_language: preferredLanguage,
           },
           emailRedirectTo: redirectTo,
         },
@@ -216,13 +225,24 @@ const Register = () => {
                 <p className="text-sm text-muted-foreground">{t('register.includedText')}</p>
               </div>
 
-              <div className="p-4 border border-border rounded-lg bg-background/60">
-                <p className="text-sm font-medium text-foreground mb-1">{t('register.limitsTitle')}</p>
-                <p className="text-sm text-muted-foreground">{t('register.limitsText')}</p>
-                <Link to="/paiement" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
-                  {t('register.limitsCta')}
-                </Link>
-              </div>
+              {isPro ? (
+                <div className="p-4 border border-wedding-olive/30 rounded-lg bg-wedding-olive/5">
+                  <p className="text-sm font-semibold text-wedding-olive mb-1">{t('register.proBlockTitle')}</p>
+                  <p className="text-sm text-muted-foreground">{t('register.proBlockText')}</p>
+                  <p className="text-lg font-serif text-wedding-olive mt-2">{t('register.proBlockPrice')}</p>
+                  <Link to="/partenariat" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
+                    {t('register.proBlockCta')}
+                  </Link>
+                </div>
+              ) : (
+                <div className="p-4 border border-border rounded-lg bg-background/60">
+                  <p className="text-sm font-medium text-foreground mb-1">{t('register.limitsTitle')}</p>
+                  <p className="text-sm text-muted-foreground">{t('register.limitsText')}</p>
+                  <Link to="/paiement" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
+                    {t('register.limitsCta')}
+                  </Link>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -358,6 +378,35 @@ const Register = () => {
                 </Select>
               </div>
 
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="isPro"
+                  checked={isPro}
+                  disabled={isLoading}
+                  onCheckedChange={(checked) => setAccountType(checked === true ? 'b2b' : 'b2c')}
+                />
+                <label htmlFor="isPro" className="text-sm leading-snug">
+                  {t('register.isProCheckbox')}
+                </label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preferredLanguage">{t('register.preferredLanguage')} *</Label>
+                <Select
+                  value={preferredLanguage}
+                  onValueChange={(value) => setPreferredLanguage(value === 'en' ? 'en' : 'fr')}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="preferredLanguage">
+                    <SelectValue placeholder={t('register.selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fr">{t('register.languageFr')}</SelectItem>
+                    <SelectItem value="en">{t('register.languageEn')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password">{t('register.password')} *</Label>
                 <div className="relative">
@@ -385,9 +434,13 @@ const Register = () => {
                   className="text-sm leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
                   {t('register.acceptTerms')}{" "}
-                  <Link to="/cgv-couples" className="text-wedding-olive hover:underline" target="_blank">
+                  <button
+                    type="button"
+                    onClick={() => setTermsOpen(true)}
+                    className="text-wedding-olive hover:underline"
+                  >
                     {t('register.termsLink')}
-                  </Link>
+                  </button>
                 </label>
               </div>
 
@@ -408,16 +461,32 @@ const Register = () => {
                 {t('register.signIn')}
               </Link>
             </div>
-            <div className="text-center text-xs text-muted-foreground border-t pt-3 w-full">
-              Envie d'aller plus loin ?{" "}
-              <Link to="/paiement" className="text-wedding-olive hover:underline">
-                Découvrir Premium — 29€ à vie
-              </Link>
-            </div>
+            {!isPro && (
+              <div className="text-center text-xs text-muted-foreground border-t pt-3 w-full">
+                Envie d'aller plus loin ?{" "}
+                <Link to="/paiement" className="text-wedding-olive hover:underline">
+                  Découvrir Premium — 29€ à vie
+                </Link>
+              </div>
+            )}
           </CardFooter>
           </Card>
         </div>
       </main>
+
+      <Dialog open={termsOpen} onOpenChange={setTermsOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">{t('register.termsModalTitle')}</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm">
+            {isPro ? <CGVProContent /> : <CGVCouplesContent />}
+          </div>
+          <Button type="button" variant="outline" onClick={() => setTermsOpen(false)}>
+            {t('register.termsModalClose')}
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

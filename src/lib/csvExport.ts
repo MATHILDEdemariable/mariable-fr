@@ -5,6 +5,8 @@
 export interface UserExportData {
   email: string;
   nom_complet: string;
+  type_compte: string;
+  langue: string;
   date_inscription: string;
   telephone: string;
   source: string;
@@ -37,6 +39,8 @@ export const exportUsersToCSV = (users: any[]): void => {
           : user.raw_user_meta_data?.first_name && user.raw_user_meta_data?.last_name
             ? `${user.raw_user_meta_data.first_name} ${user.raw_user_meta_data.last_name}`.trim()
             : 'Non renseigné',
+        type_compte: profile.account_type === 'b2b' ? 'Professionnel' : 'Particulier',
+        langue: profile.preferred_language === 'en' ? 'EN' : 'FR',
         date_inscription: user.created_at 
           ? new Date(user.created_at).toLocaleDateString('fr-FR')
           : 'Non renseigné',
@@ -51,6 +55,8 @@ export const exportUsersToCSV = (users: any[]): void => {
     const headers = [
       'Email',
       'Nom Complet',
+      'Type de compte',
+      'Langue',
       'Date Inscription',
       'Téléphone',
       'Source',

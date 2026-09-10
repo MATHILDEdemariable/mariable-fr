@@ -40,6 +40,7 @@ interface UserRegistration {
     referral_source?: string;
     notify_club_mariable?: boolean;
     registration_purpose?: string;
+    preferred_language?: string;
   };
 }
 
@@ -51,6 +52,7 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [purposeFilter, setPurposeFilter] = useState<string>('all');
+  const [accountTypeFilter, setAccountTypeFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
@@ -109,8 +111,15 @@ const AdminUsers = () => {
       });
     }
 
+    if (accountTypeFilter !== 'all') {
+      filtered = filtered.filter(user => {
+        const type = user.profile?.account_type === 'b2b' ? 'b2b' : 'b2c';
+        return type === accountTypeFilter;
+      });
+    }
+
     setFilteredUsers(filtered);
-  }, [searchTerm, statusFilter, purposeFilter, users]);
+  }, [searchTerm, statusFilter, purposeFilter, accountTypeFilter, users]);
 
   const handleSetProPremium = async (userId: string, enable: boolean) => {
     console.log('🚀 handleSetProPremium started:', { userId, enable });
@@ -519,6 +528,16 @@ const AdminUsers = () => {
                   <SelectItem value="les_deux">Les deux</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={accountTypeFilter} onValueChange={setAccountTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="Filtrer par type de compte" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les comptes</SelectItem>
+                  <SelectItem value="b2c">Particuliers</SelectItem>
+                  <SelectItem value="b2b">Professionnels</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
@@ -550,6 +569,8 @@ const AdminUsers = () => {
                     <TableRow>
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Type de compte</TableHead>
+                      <TableHead>Langue</TableHead>
                       <TableHead>Téléphone</TableHead>
                       <TableHead>Source</TableHead>
                       <TableHead>Objectif</TableHead>
@@ -577,6 +598,20 @@ const AdminUsers = () => {
                               {user.email}
                             </span>
                           </div>
+                        </TableCell>
+                        <TableCell>
+                          {user.profile?.account_type === 'b2b' ? (
+                            <Badge variant="default" className="bg-wedding-olive text-white hover:bg-wedding-olive">
+                              Professionnel
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">Particulier</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm uppercase">
+                            {user.profile?.preferred_language === 'en' ? 'EN' : 'FR'}
+                          </span>
                         </TableCell>
                         <TableCell>
                           <div className="flex items-center gap-2">
