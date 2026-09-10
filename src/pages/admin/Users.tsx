@@ -111,8 +111,15 @@ const AdminUsers = () => {
       });
     }
 
+    if (accountTypeFilter !== 'all') {
+      filtered = filtered.filter(user => {
+        const type = user.profile?.account_type === 'b2b' ? 'b2b' : 'b2c';
+        return type === accountTypeFilter;
+      });
+    }
+
     setFilteredUsers(filtered);
-  }, [searchTerm, statusFilter, purposeFilter, users]);
+  }, [searchTerm, statusFilter, purposeFilter, accountTypeFilter, users]);
 
   const handleSetProPremium = async (userId: string, enable: boolean) => {
     console.log('🚀 handleSetProPremium started:', { userId, enable });
