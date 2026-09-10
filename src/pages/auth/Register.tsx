@@ -363,6 +363,35 @@ const Register = () => {
                 </Select>
               </div>
 
+              <div className="flex items-start space-x-2">
+                <Checkbox
+                  id="isPro"
+                  checked={isPro}
+                  disabled={isLoading}
+                  onCheckedChange={(checked) => setAccountType(checked === true ? 'b2b' : 'b2c')}
+                />
+                <label htmlFor="isPro" className="text-sm leading-snug">
+                  {t('register.isProCheckbox')}
+                </label>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="preferredLanguage">{t('register.preferredLanguage')} *</Label>
+                <Select
+                  value={preferredLanguage}
+                  onValueChange={(value) => setPreferredLanguage(value === 'en' ? 'en' : 'fr')}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger id="preferredLanguage">
+                    <SelectValue placeholder={t('register.selectPlaceholder')} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="fr">{t('register.languageFr')}</SelectItem>
+                    <SelectItem value="en">{t('register.languageEn')}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password">{t('register.password')} *</Label>
                 <div className="relative">
