@@ -52,6 +52,7 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [purposeFilter, setPurposeFilter] = useState<string>('all');
+  const [accountTypeFilter, setAccountTypeFilter] = useState<string>('all');
   const [isLoadingData, setIsLoadingData] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
