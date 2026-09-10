@@ -430,5 +430,56 @@
         "description": "Première danse des mariés"
       }
     }
+  },
+  "onboarding": {
+    "steps": [
+      {
+        "title": "Vue d'ensemble",
+        "content": "Bienvenue dans votre outil de coordination ! 5 étapes simples pour organiser votre journée parfaite avec votre équipe."
+      },
+      {
+        "title": "Étape 1 : Créer son équipe",
+        "content": "Ajoutez vos proches et prestataires avec leurs coordonnées dans l'onglet 'Équipe'. Ils pourront être assignés aux différentes tâches.",
+        "highlight": "Onglet 'Équipe'"
+      },
+      {
+        "title": "Étape 2 : Créez votre planning",
+        "content": "• Ajoutez des étapes avec 'Ajouter une étape'\n• Utilisez l'IA pour générer un planning automatique\n• Glissez-déposez pour réorganiser",
+        "highlight": "Bouton 'Ajouter une étape'"
+      },
+      {
+        "title": "Étape 3 : Assignez les tâches",
+        "content": "• Cliquez sur 'Assigné à:' pour attribuer chaque tâche\n• Assurez-vous d'avoir créé votre équipe au préalable",
+        "highlight": "Bouton 'Assigné à:'"
+      },
+      {
+        "title": "Étape 4 : Gérer documents",
+        "content": "Uploadez vos documents importants si besoin (moodboard, devis, planning détaillé) dans l'onglet 'Documents'.",
+        "highlight": "Onglet 'Documents'"
+      },
+      {
+        "title": "Étape 5 : Partager avec votre équipe ⭐",
+        "content": "• Cliquez sur 'Partager' pour générer un lien\n• Envoyez le lien à votre équipe !\n• Elle pourra voir le planning en temps réel ainsi que les fiches contacts et les mises à jour automatiquement",
+        "highlight": "Bouton 'Partager'"
+      }
+    ],
+    "focus": "Focus :",
+    "mobileNote": "Accessible sur smartphone via un simple lien, <strong>sans téléchargement</strong> !",
+    "previous": "Précédent",
+    "skip": "Passer",
+    "next": "Suivant",
+    "start": "Commencer ✨"
+  },
+  "photoGuests": {
+    "addPeople": "Ajouter personnes",
+    "add": "Ajouter",
+    "select": "Sélectionner des personnes",
+    "searchPlaceholder": "Rechercher un invité...",
+    "child": "Enfant",
+    "adult": "Adulte",
+    "noResult": "Aucun résultat",
+    "noGuests": "Aucun invité dans la liste",
+    "addManually": "Ajouter manuellement",
+    "namePlaceholder": "Nom de la personne..."
   }
 }
