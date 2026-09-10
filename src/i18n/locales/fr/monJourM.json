@@ -229,7 +229,16 @@
       "pinterestDeleted": "Lien Pinterest supprimé",
       "pinterestDeletedDesc": "Le lien a été supprimé",
       "pinterestDeleteError": "Impossible de supprimer le lien Pinterest"
-    }
+    },
+    "pinterestForm": {
+      "title": "Titre *",
+      "titlePlaceholder": "Ex: Inspiration décoration",
+      "url": "URL Pinterest *",
+      "description": "Description",
+      "descriptionPlaceholder": "Description de cette inspiration",
+      "editTitle": "Modifier le lien Pinterest"
+    },
+    "editTitle": "Modifier le document"
   },
   "public": {
     "loadingTitle": "Chargement du planning | Mariable",

@@ -229,7 +229,16 @@
       "pinterestDeleted": "Pinterest link deleted",
       "pinterestDeletedDesc": "The link has been deleted",
       "pinterestDeleteError": "Could not delete the Pinterest link"
-    }
+    },
+    "pinterestForm": {
+      "title": "Title *",
+      "titlePlaceholder": "E.g. Decoration inspiration",
+      "url": "Pinterest URL *",
+      "description": "Description",
+      "descriptionPlaceholder": "Description of this inspiration",
+      "editTitle": "Edit the Pinterest link"
+    },
+    "editTitle": "Edit the document"
   },
   "public": {
     "loadingTitle": "Loading schedule | Mariable",
