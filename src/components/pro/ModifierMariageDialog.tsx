@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useTranslation } from 'react-i18next';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 
 interface ModifierMariageDialogProps {
@@ -15,6 +16,7 @@ interface ModifierMariageDialogProps {
 const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, onOpenChange }) => {
   const { updateWedding } = useWedding();
   const { toast } = useToast();
+  const { t } = useTranslation('pro');
 
   const [title, setTitle] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
@@ -34,7 +36,7 @@ const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, 
     event.preventDefault();
     if (!wedding) return;
     if (!title.trim()) {
-      toast({ title: 'Prénoms requis', description: 'Indiquez les prénoms des mariés.', variant: 'destructive' });
+      toast({ title: t('editWedding.namesRequired'), description: t('editWedding.namesRequiredDesc'), variant: 'destructive' });
       return;
     }
 
@@ -46,13 +48,13 @@ const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, 
         wedding_location: location.trim() || null,
         guest_count: guestCount ? Number(guestCount) : null,
       });
-      toast({ title: 'Mariage mis à jour' });
+      toast({ title: t('editWedding.updated') });
       onOpenChange(false);
     } catch (error) {
       console.error('❌ ModifierMariageDialog: enregistrement impossible', error);
       toast({
-        title: 'Enregistrement impossible',
-        description: "Les informations n'ont pas pu être enregistrées. Réessayez dans un instant.",
+        title: t('editWedding.errorTitle'),
+        description: t('editWedding.errorDesc'),
         variant: 'destructive',
       });
     } finally {
@@ -64,24 +66,24 @@ const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, 
     <Dialog open={!!wedding} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-[#F8F5EF] rounded-none">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl">Modifier le mariage</DialogTitle>
+          <DialogTitle className="font-serif text-xl">{t('editWedding.title')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-1.5">
-            <Label htmlFor="edit-wedding-title">Prénoms des mariés</Label>
+            <Label htmlFor="edit-wedding-title">{t('editWedding.names')}</Label>
             <Input
               id="edit-wedding-title"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Camille & Antoine"
+              placeholder={t('editWedding.namesPlaceholder')}
               className="rounded-none"
               required
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="edit-wedding-date">Date du mariage</Label>
+            <Label htmlFor="edit-wedding-date">{t('editWedding.date')}</Label>
             <Input
               id="edit-wedding-date"
               type="date"
@@ -92,18 +94,18 @@ const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, 
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="edit-wedding-location">Lieu</Label>
+            <Label htmlFor="edit-wedding-location">{t('editWedding.location')}</Label>
             <Input
               id="edit-wedding-location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Château de ..."
+              placeholder={t('editWedding.locationPlaceholder')}
               className="rounded-none"
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="edit-wedding-guests">Nombre d'invités</Label>
+            <Label htmlFor="edit-wedding-guests">{t('editWedding.guests')}</Label>
             <Input
               id="edit-wedding-guests"
               type="number"
@@ -117,10 +119,10 @@ const ModifierMariageDialog: React.FC<ModifierMariageDialogProps> = ({ wedding, 
 
           <DialogFooter>
             <Button type="button" variant="outline" className="rounded-none" onClick={() => onOpenChange(false)}>
-              Annuler
+              {t('editWedding.cancel')}
             </Button>
             <Button type="submit" className="rounded-none" disabled={saving}>
-              {saving ? 'Enregistrement…' : 'Enregistrer'}
+              {saving ? t('editWedding.saving') : t('editWedding.save')}
             </Button>
           </DialogFooter>
         </form>
