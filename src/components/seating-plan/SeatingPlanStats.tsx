@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users, CheckCircle2, Table, TrendingUp } from 'lucide-react';
 import { SeatingTable, SeatingAssignment } from '@/types/seating';
@@ -17,6 +18,7 @@ const SeatingPlanStats = ({
   tables,
   guests 
 }: SeatingPlanStatsProps) => {
+  const { t } = useTranslation('seating');
   const unassignedGuests = totalGuests - assignedGuests;
   const assignmentRate = totalGuests > 0 ? Math.round((assignedGuests / totalGuests) * 100) : 0;
   
@@ -29,13 +31,13 @@ const SeatingPlanStats = ({
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Statistiques
+            {t('stats.title')}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Total invités</span>
+              <span className="text-muted-foreground">{t('stats.totalGuests')}</span>
               <span className="font-semibold">{totalGuests}</span>
             </div>
           </div>
@@ -44,7 +46,7 @@ const SeatingPlanStats = ({
             <div className="flex justify-between text-sm mb-1">
               <span className="text-muted-foreground flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3 text-green-600" />
-                Placés
+                {t('stats.seated')}
               </span>
               <span className="font-semibold text-green-600">{assignedGuests}</span>
             </div>
@@ -52,14 +54,14 @@ const SeatingPlanStats = ({
 
           <div>
             <div className="flex justify-between text-sm mb-1">
-              <span className="text-muted-foreground">Non placés</span>
+              <span className="text-muted-foreground">{t('stats.unseated')}</span>
               <span className="font-semibold text-orange-600">{unassignedGuests}</span>
             </div>
           </div>
 
           <div className="pt-2 border-t">
             <div className="flex justify-between text-sm mb-2">
-              <span className="text-muted-foreground">Taux d'assignation</span>
+              <span className="text-muted-foreground">{t('stats.assignmentRate')}</span>
               <span className="font-semibold">{assignmentRate}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
@@ -74,13 +76,13 @@ const SeatingPlanStats = ({
             <div className="flex justify-between text-sm mb-1">
               <span className="text-muted-foreground flex items-center gap-1">
                 <Table className="h-3 w-3" />
-                Tables
+                {t('stats.tables')}
               </span>
               <span className="font-semibold">{tablesCount}</span>
             </div>
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>Capacité totale</span>
-              <span>{totalCapacity} places</span>
+              <span>{t('stats.totalCapacity')}</span>
+              <span>{t('stats.seats', { count: totalCapacity })}</span>
             </div>
           </div>
 
@@ -88,7 +90,7 @@ const SeatingPlanStats = ({
             <div className="flex justify-between text-sm mb-2">
               <span className="text-muted-foreground flex items-center gap-1">
                 <TrendingUp className="h-3 w-3" />
-                Taux de remplissage
+                {t('stats.occupancyRate')}
               </span>
               <span className="font-semibold">{occupancyRate}%</span>
             </div>
