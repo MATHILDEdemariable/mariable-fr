@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -43,6 +43,13 @@ const Partenariat = () => {
   const [contactOpen, setContactOpen] = useState(false);
   const [conditionsOpen, setConditionsOpen] = useState(false);
   const [contactSubject, setContactSubject] = useState<string | undefined>(undefined);
+  const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("conditions") === "1") {
+      setConditionsOpen(true);
+    }
+  }, [searchParams]);
 
   // Derniers articles de conseils destinés aux professionnels
   const { data: proPosts = [] } = useQuery({
