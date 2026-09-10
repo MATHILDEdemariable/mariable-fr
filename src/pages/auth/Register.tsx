@@ -19,7 +19,10 @@ import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics'
 import { useAuth } from '@/contexts/AuthContext';
 
 const Register = () => {
-  const { t } = useTranslation('auth');
+  const { t, i18n } = useTranslation('auth');
+  const [preferredLanguage, setPreferredLanguage] = useState<'fr' | 'en'>(
+    i18n.language?.startsWith('en') ? 'en' : 'fr'
+  );
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
