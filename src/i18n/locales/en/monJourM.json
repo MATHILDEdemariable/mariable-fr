@@ -539,7 +539,15 @@
       "Fun photo with friends",
       "Photo with the flower children"
     ],
-    "allGuests": "All guests"
+    "allGuests": "All guests",
+    "readOnly": {
+      "title": "Photo list ({{count}} planned)",
+      "subtitle": "Photos to take on the day, with the people involved",
+      "loading": "Loading...",
+      "empty": "No photo list set up yet",
+      "coupleOnly": "Couple only",
+      "optional": "Optional / not planned photos ({{count}})"
+    }
   },
   "scenario": {
     "title": "Create my custom schedule",

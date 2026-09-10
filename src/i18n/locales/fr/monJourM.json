@@ -539,7 +539,15 @@
       "Photo fun avec les amis",
       "Photo avec les enfants d'honneur"
     ],
-    "allGuests": "Tous les invités"
+    "allGuests": "Tous les invités",
+    "readOnly": {
+      "title": "Liste des photos ({{count}} prévues)",
+      "subtitle": "Photos à réaliser le jour J avec les personnes concernées",
+      "loading": "Chargement...",
+      "empty": "Aucune liste de photos configurée",
+      "coupleOnly": "Couple seul",
+      "optional": "Photos optionnelles / non prévues ({{count}})"
+    }
   },
   "scenario": {
     "title": "Créer mon planning personnalisé",
