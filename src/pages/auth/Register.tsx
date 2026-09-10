@@ -97,6 +97,7 @@ const Register = () => {
             referral_source: referralSource,
             registration_purpose: registrationPurpose,
             account_type: accountType,
+            preferred_language: preferredLanguage,
           },
           emailRedirectTo: redirectTo,
         },
