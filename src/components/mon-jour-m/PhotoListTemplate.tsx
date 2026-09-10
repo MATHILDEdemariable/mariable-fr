@@ -376,7 +376,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
                       className={`text-sm cursor-pointer hover:text-pink-600 ${
                         !photo.toCapture ? 'line-through text-gray-400' : ''
                       }`}
-                      onClick={() => startEditing(photo)}
+                      onClick={() => startEditing({ ...photo, title: displayTitle(photo.title) })}
                     >
                       {displayTitle(photo.title)}
                     </span>

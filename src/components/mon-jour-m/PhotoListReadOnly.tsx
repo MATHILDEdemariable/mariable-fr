@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Camera, Check, X, Users } from 'lucide-react';
@@ -23,6 +24,16 @@ interface PhotoListReadOnlyProps {
 }
 
 const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId }) => {
+  const { t, i18n } = useTranslation('monJourM');
+
+  // Les intitulés enregistrés sont en français : on les réaffiche dans la langue courante.
+  const frDefaultTitles = (i18n.getFixedT('fr', 'monJourM')('photoList.defaults', { returnObjects: true }) as string[]) || [];
+  const currentDefaultTitles = (t('photoList.defaults', { returnObjects: true }) as string[]) || [];
+  const displayTitle = (title: string) => {
+    const index = frDefaultTitles.indexOf(title);
+    return index >= 0 ? currentDefaultTitles[index] ?? title : title;
+  };
+
   const [photos, setPhotos] = useState<PhotoItem[]>([]);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
@@ -114,14 +125,14 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
     // Ajouter les noms personnalisés
     names.push(...photo.customNames);
     
-    return names.length > 0 ? names.join(', ') : 'Couple seul';
+    return names.length > 0 ? names.join(', ') : t('photoList.readOnly.coupleOnly');
   };
 
   if (loading) {
     return (
       <Card>
         <CardContent className="py-8 text-center text-gray-500">
-          Chargement...
+          {t('photoList.readOnly.loading')}
         </CardContent>
       </Card>
     );
@@ -132,7 +143,7 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
       <Card>
         <CardContent className="py-12 text-center text-gray-500">
           <Camera className="h-12 w-12 mx-auto mb-4 opacity-50" />
-          <p>Aucune liste de photos configurée</p>
+          <p>{t('photoList.readOnly.empty')}</p>
         </CardContent>
       </Card>
     );
@@ -146,10 +157,10 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Camera className="h-5 w-5 text-pink-500" />
-          Liste des Photos ({photosToCapture.length} prévues)
+          {t('photoList.readOnly.title', { count: photosToCapture.length })}
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Photos à réaliser le jour J avec les personnes concernées
+          {t('photoList.readOnly.subtitle')}
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -167,7 +178,7 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <h4 className="font-medium text-sm">{photo.title}</h4>
+                  <h4 className="font-medium text-sm">{displayTitle(photo.title)}</h4>
                   <div className="flex items-center gap-1 mt-1 text-xs text-gray-600">
                     <Users className="h-3 w-3" />
                     <span>{getPersonsList(photo)}</span>
@@ -182,7 +193,7 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
         {photosSkipped.length > 0 && (
           <div className="pt-4 border-t">
             <p className="text-xs font-medium text-gray-500 mb-2">
-              Photos optionnelles / non prévues ({photosSkipped.length})
+              {t('photoList.readOnly.optional', { count: photosSkipped.length })}
             </p>
             <div className="space-y-1">
               {photosSkipped.map((photo) => (
@@ -191,7 +202,7 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId })
                   className="flex items-center gap-2 p-2 text-gray-400 text-sm"
                 >
                   <X className="h-4 w-4" />
-                  <span className="line-through">{photo.title}</span>
+                  <span className="line-through">{displayTitle(photo.title)}</span>
                 </div>
               ))}
             </div>
