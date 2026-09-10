@@ -520,6 +520,16 @@ const AdminUsers = () => {
                   <SelectItem value="les_deux">Les deux</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={accountTypeFilter} onValueChange={setAccountTypeFilter}>
+                <SelectTrigger className="w-full sm:w-[200px]">
+                  <SelectValue placeholder="Filtrer par type de compte" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">Tous les comptes</SelectItem>
+                  <SelectItem value="b2c">Particuliers</SelectItem>
+                  <SelectItem value="b2b">Professionnels</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
