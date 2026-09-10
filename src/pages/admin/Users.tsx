@@ -40,6 +40,7 @@ interface UserRegistration {
     referral_source?: string;
     notify_club_mariable?: boolean;
     registration_purpose?: string;
+    preferred_language?: string;
   };
 }
 
