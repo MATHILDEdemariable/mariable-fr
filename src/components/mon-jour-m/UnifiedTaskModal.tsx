@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,23 +25,21 @@ interface UnifiedTaskModalProps {
   onClose: () => void;
 }
 
-const CATEGORIES = [
-  { value: 'préparatifs_final', label: 'Préparatifs' },
-  { value: 'logistique', label: 'Logistique' },
-  { value: 'cérémonie', label: 'Cérémonie' },
-  { value: 'photos', label: 'Photos' },
-  { value: 'cocktail', label: 'Cocktail' },
-  { value: 'repas', label: 'Repas' },
-  { value: 'soiree', label: 'Soirée' },
-  { value: 'personnalisé', label: 'Personnalisé' }
+const CATEGORY_VALUES = [
+  'préparatifs_final',
+  'logistique',
+  'cérémonie',
+  'photos',
+  'cocktail',
+  'repas',
+  'soiree',
+  'personnalisé'
 ];
 
 // Suggestions prédéfinies
 const PREDEFINED_SUGGESTIONS = [
   {
     id: '1',
-    title: 'Préparation des mariés',
-    description: 'Coiffure, maquillage et habillage des mariés',
     duration: 120,
     category: 'préparatifs_final',
     priority: 'high',
@@ -48,8 +47,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '2',
-    title: 'Accueil des invités',
-    description: 'Accueil et placement des invités avant la cérémonie',
     duration: 30,
     category: 'cérémonie',
     priority: 'medium',
@@ -57,8 +54,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '3',
-    title: 'Cérémonie civile',
-    description: 'Cérémonie de mariage civil',
     duration: 45,
     category: 'cérémonie',
     priority: 'high',
@@ -66,8 +61,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '4',
-    title: 'Photos de couple',
-    description: 'Séance photo des mariés après la cérémonie',
     duration: 60,
     category: 'photos',
     priority: 'medium',
@@ -75,8 +68,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '5',
-    title: 'Photos de famille',
-    description: 'Photos avec les familles et témoins',
     duration: 45,
     category: 'photos',
     priority: 'medium',
@@ -93,8 +84,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '7',
-    title: 'Dîner de mariage',
-    description: 'Repas principal avec les invités',
     duration: 120,
     category: 'repas',
     priority: 'high',
@@ -102,8 +91,6 @@ const PREDEFINED_SUGGESTIONS = [
   },
   {
     id: '8',
-    title: 'Ouverture du bal',
-    description: 'Première danse des mariés',
     duration: 15,
     category: 'soiree',
     priority: 'medium',
@@ -121,28 +108,27 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   const [activeTab, setActiveTab] = useState('manual');
   const [isLoading, setIsLoading] = useState(false);
   const [selectedSuggestions, setSelectedSuggestions] = useState<string[]>([]);
+  const { t } = useTranslation('monJourM');
   const { toast } = useToast();
 
   // Premium action hooks for different actions
   const manualTaskAction = usePremiumAction({
-    feature: "Ajout d'étape manuelle",
-    description: "Pour ajouter des étapes personnalisées à votre planning, vous devez être abonné à notre version premium."
+    feature: t('taskModal.premium.manualFeature'),
+    description: t('taskModal.premium.manualDesc')
   });
 
   const suggestionsAction = usePremiumAction({
-    feature: "Suggestions d'étapes",
-    description: "Pour ajouter des étapes suggérées à votre planning, vous devez être abonné à notre version premium."
+    feature: t('taskModal.premium.suggestionsFeature'),
+    description: t('taskModal.premium.suggestionsDesc')
   });
 
   const aiPersonalizedAction = usePremiumAction({
-    feature: "IA Personnalisé",
-    description: "Pour générer un planning personnalisé avec l'IA, vous devez être abonné à notre version premium."
+    feature: t('taskModal.premium.aiFeature'),
+    description: t('taskModal.premium.aiDesc')
   });
 
   // État pour l'ajout manuel
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
     duration: '',
     startTime: referenceTime.toTimeString().slice(0, 5),
     category: 'personnalisé',
@@ -154,8 +140,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
     
     if (!formData.title.trim()) {
       toast({
-        title: "Erreur de validation",
-        description: "Le titre est obligatoire.",
+        title: t('taskModal.toast.validationTitle'),
+        description: t('taskModal.toast.titleRequired'),
         variant: "destructive"
       });
       return;
@@ -164,8 +150,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
     const durationNum = parseInt(formData.duration as string) || 0;
     if (durationNum < 5) {
       toast({
-        title: "Erreur de validation",
-        description: "La durée minimum est de 5 minutes.",
+        title: t('taskModal.toast.validationTitle'),
+        description: t('taskModal.toast.minDuration'),
         variant: "destructive"
       });
       return;
@@ -183,7 +169,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         // Vérifier que la session est toujours valide (sinon RLS bloque l'insertion)
         const { data: sessionData } = await supabase.auth.getSession();
         if (!sessionData.session) {
-          throw new Error('Session expirée, reconnectez-vous pour ajouter une étape.');
+          throw new Error(t('taskModal.toast.sessionExpired'));
         }
 
         const { data, error } = await supabase
@@ -222,8 +208,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         onEventAdded(newEvent);
         
         toast({
-          title: "Étape ajoutée",
-          description: `"${formData.title}" a été ajoutée au planning.`
+          title: t('taskModal.toast.added'),
+          description: t('taskModal.toast.addedDesc', { title: formData.title })
         });
 
         // Reset form
@@ -241,10 +227,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         console.error('❌ Error adding manual event:', error);
         const isDuplicateTitle = error?.code === '23505';
         toast({
-          title: isDuplicateTitle ? "Titre déjà utilisé" : "Erreur",
+          title: isDuplicateTitle ? t('taskModal.toast.duplicateTitle') : t('taskModal.toast.errorTitle'),
           description: isDuplicateTitle
-            ? "Une étape porte déjà ce titre dans votre planning. Modifiez le titre pour l'ajouter."
-            : "Impossible d'ajouter l'étape. Veuillez réessayer.",
+            ? t('taskModal.toast.duplicateDesc')
+            : t('taskModal.toast.addError'),
           variant: "destructive"
         });
 
@@ -274,8 +260,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         
         const eventsToInsert = suggestionsToAdd.map((suggestion, index) => ({
           coordination_id: coordinationId,
-          title: suggestion.title,
-          description: suggestion.description,
+          title: t(`taskModal.suggestions.${suggestion.id}.title`),
+          description: t(`taskModal.suggestions.${suggestion.id}.description`),
           start_time: '09:00',
           duration: suggestion.duration,
           category: 'jour-m', // Force jour-m category
@@ -299,8 +285,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         }
 
         toast({
-          title: "Suggestions ajoutées",
-          description: `${selectedSuggestions.length} étape${selectedSuggestions.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'}.`
+          title: t('taskModal.toast.suggestionsAdded'),
+          description: t('taskModal.toast.suggestionsAddedDesc', { count: selectedSuggestions.length })
         });
 
         setSelectedSuggestions([]);
@@ -312,8 +298,8 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
       } catch (error) {
         console.error('❌ Error adding suggestions:', error);
         toast({
-          title: "Erreur",
-          description: "Impossible d'ajouter les suggestions.",
+          title: t('taskModal.toast.errorTitle'),
+          description: t('taskModal.toast.suggestionsError'),
           variant: "destructive"
         });
       } finally {
@@ -332,7 +318,9 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   };
 
   const getCategoryLabel = (category: string) => {
-    return CATEGORIES.find(c => c.value === category)?.label || 'Général';
+    return CATEGORY_VALUES.includes(category)
+      ? t(`taskModal.categories.${category}`)
+      : t('taskModal.categories.default');
   };
 
   return (
@@ -341,38 +329,38 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="manual" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
-            Manuel
+            {t('taskModal.tabs.manual')}
           </TabsTrigger>
           <TabsTrigger value="suggestions" className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            Suggestions
+            {t('taskModal.tabs.suggestions')}
           </TabsTrigger>
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
-            IA Personnalisé
+            {t('taskModal.tabs.ai')}
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="manual" className="space-y-4 mt-4">
           <form onSubmit={handleManualSubmit} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Titre *</Label>
+              <Label htmlFor="title">{t('taskModal.fields.title')}</Label>
               <Input
                 id="title"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                placeholder="Nom de l'étape"
+                placeholder={t('taskModal.fields.titlePlaceholder')}
                 maxLength={100}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label htmlFor="description">{t('taskModal.fields.description')}</Label>
               <Textarea
                 id="description"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                placeholder="Description optionnelle"
+                placeholder={t('taskModal.fields.descriptionPlaceholder')}
                 rows={3}
                 maxLength={500}
               />
@@ -380,7 +368,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label htmlFor="startTime">Heure de début</Label>
+                <Label htmlFor="startTime">{t('taskModal.fields.startTime')}</Label>
                 <Input
                   id="startTime"
                   type="time"
@@ -389,7 +377,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="duration">Durée (min) *</Label>
+                <Label htmlFor="duration">{t('taskModal.fields.duration')}</Label>
                 <Input
                   id="duration"
                   type="number"
@@ -403,15 +391,15 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label>Catégorie</Label>
+              <Label>{t('taskModal.fields.category')}</Label>
               <Select value={formData.category} onValueChange={(value) => setFormData(prev => ({ ...prev, category: value }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {CATEGORIES.map((cat) => (
-                    <SelectItem key={cat.value} value={cat.value}>
-                      {cat.label}
+                  {CATEGORY_VALUES.map((cat) => (
+                    <SelectItem key={cat} value={cat}>
+                      {t(`taskModal.categories.${cat}`)}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -420,10 +408,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
             <div className="flex justify-end gap-2 pt-4">
               <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-                Annuler
+                {t('taskModal.buttons.cancel')}
               </Button>
               <Button type="submit" disabled={isLoading || !formData.title.trim()}>
-                {isLoading ? 'Ajout...' : 'Ajouter'}
+                {isLoading ? t('taskModal.buttons.adding') : t('taskModal.buttons.add')}
               </Button>
             </div>
           </form>
@@ -431,7 +419,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
         <TabsContent value="suggestions" className="space-y-4 mt-4">
           <p className="text-gray-600 text-sm">
-            Sélectionnez les étapes prédéfinies que vous souhaitez ajouter à votre planning :
+            {t('taskModal.suggestionsIntro')}
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -452,21 +440,20 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-2">
                         {suggestion.icon}
-                        <h3 className="font-medium">{suggestion.title}</h3>
+                        <h3 className="font-medium">{t(`taskModal.suggestions.${suggestion.id}.title`)}</h3>
                       </div>
                       
                       <p className="text-sm text-gray-600 mb-3">
-                        {suggestion.description}
+                        {t(`taskModal.suggestions.${suggestion.id}.description`)}
                       </p>
                       
                       <div className="flex items-center gap-2 text-xs">
                         <Badge variant="outline" className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {suggestion.duration} min
+                          {t('taskModal.minutes', { count: suggestion.duration })}
                         </Badge>
                         <Badge className={getPriorityColor(suggestion.priority)}>
-                          {suggestion.priority === 'high' ? 'Élevée' : 
-                           suggestion.priority === 'medium' ? 'Moyenne' : 'Faible'}
+                          {t(`taskModal.priority.${suggestion.priority}`)}
                         </Badge>
                         <Badge variant="secondary">
                           {getCategoryLabel(suggestion.category)}
@@ -481,14 +468,14 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
 
           <div className="flex gap-2 pt-4 border-t">
             <Button variant="outline" onClick={onClose}>
-              Annuler
+              {t('taskModal.buttons.cancel')}
             </Button>
             <Button 
               onClick={handleAddSuggestions}
               disabled={selectedSuggestions.length === 0 || isLoading}
               className="bg-purple-600 hover:bg-purple-700"
             >
-              {isLoading ? 'Ajout...' : `Ajouter ${selectedSuggestions.length} suggestion${selectedSuggestions.length > 1 ? 's' : ''}`}
+              {isLoading ? t('taskModal.buttons.adding') : t('taskModal.buttons.addSuggestions', { count: selectedSuggestions.length })}
             </Button>
           </div>
         </TabsContent>
