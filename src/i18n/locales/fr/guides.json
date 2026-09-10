@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "Guides PDF - Mon Mariage",
+    "description": "Téléchargez nos guides pratiques pour votre mariage."
+  },
+  "page": {
+    "title": "Nos Guides PDF",
+    "subtitle": "{{count}} guides exclusifs — inclus dans votre abonnement Premium",
+    "premiumLock": "Fonctionnalité Premium — Passez Premium pour télécharger",
+    "note": "Note :",
+    "noteText": "Les guides s'ouvriront dans un nouvel onglet. Le lien est valable 1 heure — vous pouvez le régénérer à tout moment."
+  },
+  "language": {
+    "badge": "Français uniquement",
+    "notice": "Nos guides PDF sont pour l'instant disponibles en français uniquement. Les versions anglaises arrivent bientôt."
+  },
+  "actions": {
+    "download": "Télécharger",
+    "preparing": "Préparation…"
+  },
+  "toast": {
+    "errorTitle": "Erreur",
+    "downloadError": "Téléchargement impossible",
+    "pdfUnavailable": "PDF indisponible"
+  },
+  "premium": {
+    "feature": "Guides PDF Premium",
+    "description": "Téléchargez nos guides exclusifs pour organiser votre mariage parfait."
+  }
+}

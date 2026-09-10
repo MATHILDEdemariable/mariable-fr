@@ -1,6 +1,8 @@
 import { Helmet } from 'react-helmet-async';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileText, Download, Lock } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
@@ -11,10 +13,11 @@ import { GUIDES } from '@/data/guides';
 
 const GuidesPage = () => {
   const { toast } = useToast();
+  const { t } = useTranslation('guides');
   const [downloadingSlug, setDownloadingSlug] = useState<string | null>(null);
   const { executeAction, showPremiumModal, closePremiumModal, isPremium, feature, description } = usePremiumAction({
-    feature: 'Guides PDF Premium',
-    description: 'Téléchargez nos guides exclusifs pour organiser votre mariage parfait.'
+    feature: t('premium.feature'),
+    description: t('premium.description')
   });
 
   const handleDownload = async (slug: string) => {
@@ -24,10 +27,10 @@ const GuidesPage = () => {
         const { data, error } = await supabase.functions.invoke('get-ebook-download-url', {
           body: { slug },
         });
-        if (error || !data?.url) throw new Error(error?.message || 'Téléchargement impossible');
+        if (error || !data?.url) throw new Error(error?.message || t('toast.downloadError'));
 
         const response = await fetch(data.url);
-        if (!response.ok) throw new Error('PDF indisponible');
+        if (!response.ok) throw new Error(t('toast.pdfUnavailable'));
 
         const pdfBlob = await response.blob();
         const downloadUrl = URL.createObjectURL(pdfBlob);
@@ -40,7 +43,7 @@ const GuidesPage = () => {
         URL.revokeObjectURL(downloadUrl);
       } catch (e) {
         toast({
-          title: 'Erreur',
+          title: t('toast.errorTitle'),
           description: (e as Error).message,
           variant: 'destructive',
         });
@@ -53,22 +56,28 @@ const GuidesPage = () => {
   return (
     <>
       <Helmet>
-        <title>Guides PDF - Mon Mariage</title>
-        <meta name="description" content="Téléchargez nos guides pratiques pour votre mariage." />
+        <title>{t('meta.title')}</title>
+        <meta name="description" content={t('meta.description')} />
       </Helmet>
 
       <div className="container mx-auto px-4 py-6 max-w-5xl">
         <div className="mb-8 text-center">
-          <h1 className="text-3xl font-serif font-bold text-foreground mb-2">Nos Guides PDF</h1>
+          <h1 className="text-3xl font-serif font-bold text-foreground mb-2">{t('page.title')}</h1>
           <p className="text-muted-foreground">
-            {GUIDES.length} guides exclusifs — inclus dans votre abonnement Premium
+            {t('page.subtitle', { count: GUIDES.length })}
           </p>
           {!isPremium && (
             <div className="mt-4 inline-flex items-center gap-2 px-4 py-2 bg-primary/10 rounded-lg text-sm text-primary">
               <Lock className="h-4 w-4" />
-              Fonctionnalité Premium — Passez Premium pour télécharger
+              {t('page.premiumLock')}
             </div>
           )}
+        </div>
+
+        <p className="mt-4 text-sm text-muted-foreground flex items-center justify-center gap-2">
+            <span aria-hidden="true">🇫🇷</span>
+            {t('language.notice')}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -78,6 +87,10 @@ const GuidesPage = () => {
                 <div className="w-12 h-12 bg-muted text-foreground flex items-center justify-center mx-auto mb-3">
                   <FileText className="h-6 w-6" />
                 </div>
+                <Badge variant="secondary" className="mx-auto mb-2 rounded-none gap-1 font-normal">
+                  <span aria-hidden="true">🇫🇷</span>
+                  {t('language.badge')}
+                </Badge>
                 <CardTitle className="text-lg font-serif">{guide.title}</CardTitle>
                 <CardDescription>{guide.description}</CardDescription>
               </CardHeader>
@@ -89,7 +102,7 @@ const GuidesPage = () => {
                 >
                   {!isPremium && <Lock className="h-4 w-4 mr-2" />}
                   <Download className="h-4 w-4 mr-2" />
-                  {downloadingSlug === guide.slug ? 'Préparation…' : 'Télécharger'}
+                  {downloadingSlug === guide.slug ? t('actions.preparing') : t('actions.download')}
                 </Button>
               </CardContent>
             </Card>
@@ -98,7 +111,7 @@ const GuidesPage = () => {
 
         <div className="mt-8 p-4 bg-muted border border-border text-center">
           <p className="text-sm text-foreground">
-            <strong>Note :</strong> Les guides s'ouvriront dans un nouvel onglet. Le lien est valable 1 heure — vous pouvez le régénérer à tout moment.
+            <strong>{t('page.note')}</strong> {t('page.noteText')}
           </p>
         </div>
       </div>

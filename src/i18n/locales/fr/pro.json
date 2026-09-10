@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "title": "Espace professionnel | Mariable",
+    "description": "Gérez tous vos mariages depuis votre espace professionnel Mariable."
+  },
+  "header": {
+    "title": "Espace professionnel",
+    "badge": "Compte pro",
+    "subtitle": "Vos projets mariage, chacun avec ses propres outils.",
+    "incompleteProfile": "Complétez vos informations ci-dessous pour personnaliser votre espace et vos documents."
+  },
+  "weddings": {
+    "title": "Mes mariages",
+    "create": "Créer un mariage",
+    "limit": "Votre compte inclut un mariage. Pour en gérer plusieurs sans limite, passez au compte pro.",
+    "limitCta": "Découvrir l'offre",
+    "empty": "Aucun mariage pour le moment.",
+    "createFirst": "Créer mon premier mariage",
+    "edit": "Modifier le mariage",
+    "dateToDefine": "Date à définir",
+    "guests": "{{count}} invités",
+    "open": "Ouvrir"
+  },
+  "profile": {
+    "title": "Mes informations",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "company": "Société",
+    "phone": "Téléphone",
+    "city": "Ville",
+    "save": "Enregistrer",
+    "saving": "Enregistrement…",
+    "saved": "Informations enregistrées",
+    "saveErrorTitle": "Enregistrement impossible",
+    "saveErrorDesc": "Vos informations n'ont pas pu être enregistrées. Réessayez dans un instant."
+  },
+  "offer": {
+    "title": "Mon offre",
+    "name": "Compte Pro Mariable",
+    "description": "Mariages illimités, tous les modules débloqués pour chaque projet et visibilité sur la sélection Mariable.",
+    "cta": "Passer au compte pro"
+  }
+}

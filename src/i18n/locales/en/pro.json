@@ -1,0 +1,43 @@
+{
+  "meta": {
+    "title": "Professional space | Mariable",
+    "description": "Manage all your weddings from your Mariable professional space."
+  },
+  "header": {
+    "title": "Professional space",
+    "badge": "Pro account",
+    "subtitle": "Your wedding projects, each with its own tools.",
+    "incompleteProfile": "Complete your details below to personalise your space and your documents."
+  },
+  "weddings": {
+    "title": "My weddings",
+    "create": "Create a wedding",
+    "limit": "Your account includes one wedding. To manage several with no limit, upgrade to a pro account.",
+    "limitCta": "See the offer",
+    "empty": "No wedding yet.",
+    "createFirst": "Create my first wedding",
+    "edit": "Edit wedding",
+    "dateToDefine": "Date to be set",
+    "guests": "{{count}} guests",
+    "open": "Open"
+  },
+  "profile": {
+    "title": "My details",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "company": "Company",
+    "phone": "Phone",
+    "city": "City",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Details saved",
+    "saveErrorTitle": "Could not save",
+    "saveErrorDesc": "Your details could not be saved. Please try again in a moment."
+  },
+  "offer": {
+    "title": "My plan",
+    "name": "Mariable Pro account",
+    "description": "Unlimited weddings, every module unlocked for each project and visibility in the Mariable selection.",
+    "cta": "Upgrade to pro"
+  }
+}

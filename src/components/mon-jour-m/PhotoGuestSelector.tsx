@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -32,6 +33,7 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
   const [newCustomName, setNewCustomName] = useState('');
   const [isOpen, setIsOpen] = useState(false);
   const { weddingId } = useWeddingScope();
+  const { t } = useTranslation('monJourM');
 
   useEffect(() => {
     loadGuests();
@@ -127,14 +129,14 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
         <PopoverTrigger asChild>
           <Button variant="ghost" size="sm" className="h-6 px-2 text-xs text-muted-foreground">
             <Plus className="h-3 w-3 mr-1" />
-            {totalSelected === 0 ? 'Ajouter personnes' : 'Ajouter'}
+            {totalSelected === 0 ? t('photoGuests.addPeople') : t('photoGuests.add')}
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-80 p-3" align="start">
           <div className="space-y-3">
             <div className="flex items-center gap-2 text-sm font-medium">
               <Users className="h-4 w-4" />
-              Sélectionner des personnes
+              {t('photoGuests.select')}
             </div>
 
             {/* Recherche dans la liste d'invités */}
@@ -143,7 +145,7 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
                 <div className="relative">
                   <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                   <Input
-                    placeholder="Rechercher un invité..."
+                    placeholder={t('photoGuests.searchPlaceholder')}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-8 h-9"
@@ -167,14 +169,14 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
                             {guest.guest_first_name} {guest.guest_last_name}
                           </span>
                           <Badge variant="outline" className="text-xs">
-                            {guest.guest_type === 'child' ? 'Enfant' : 'Adulte'}
+                            {guest.guest_type === 'child' ? t('photoGuests.child') : t('photoGuests.adult')}
                           </Badge>
                         </div>
                       ))}
                     </div>
                   ) : (
                     <p className="text-sm text-muted-foreground text-center py-4">
-                      {searchTerm ? 'Aucun résultat' : 'Aucun invité dans la liste'}
+                      {searchTerm ? t('photoGuests.noResult') : t('photoGuests.noGuests')}
                     </p>
                   )}
                 </ScrollArea>
@@ -185,11 +187,11 @@ const PhotoGuestSelector: React.FC<PhotoGuestSelectorProps> = ({
             <div className="border-t pt-3">
               <div className="flex items-center gap-2 mb-2 text-sm font-medium text-muted-foreground">
                 <UserPlus className="h-4 w-4" />
-                Ajouter manuellement
+                {t('photoGuests.addManually')}
               </div>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Nom de la personne..."
+                  placeholder={t('photoGuests.namePlaceholder')}
                   value={newCustomName}
                   onChange={(e) => setNewCustomName(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && addCustomName()}

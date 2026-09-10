@@ -876,7 +876,7 @@ const MonJourMDocuments: React.FC = () => {
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Titre *</label>
+                <label className="block text-sm font-medium mb-1">{t("documents.pinterestForm.title")}</label>
                 <Input
                   value={editingDocument.title}
                   onChange={(e) => setEditingDocument({ ...editingDocument, title: e.target.value })}
@@ -885,7 +885,7 @@ const MonJourMDocuments: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">{t("documents.pinterestForm.description")}</label>
                 <Textarea
                   value={editingDocument.description || ''}
                   onChange={(e) => setEditingDocument({ ...editingDocument, description: e.target.value })}
@@ -902,12 +902,12 @@ const MonJourMDocuments: React.FC = () => {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="general">Général</SelectItem>
-                      <SelectItem value="contract">Contrat</SelectItem>
-                      <SelectItem value="invoice">Facture</SelectItem>
-                      <SelectItem value="planning">Planning</SelectItem>
-                      <SelectItem value="photo">Photo</SelectItem>
-                      <SelectItem value="legal">Légal</SelectItem>
+                      <SelectItem value="general">{t("documents.categories.general")}</SelectItem>
+                      <SelectItem value="contract">{t("documents.categories.contract")}</SelectItem>
+                      <SelectItem value="invoice">{t("documents.categories.invoice")}</SelectItem>
+                      <SelectItem value="planning">{t("documents.categories.planning")}</SelectItem>
+                      <SelectItem value="photo">{t("documents.categories.photo")}</SelectItem>
+                      <SelectItem value="legal">{t("documents.categories.legal")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -916,10 +916,10 @@ const MonJourMDocuments: React.FC = () => {
                   <label className="block text-sm font-medium mb-1">{t("documents.fields.assignedTo")}</label>
                   <Select value={editingDocument.assigned_to || 'none'} onValueChange={(value) => setEditingDocument({ ...editingDocument, assigned_to: value })}>
                     <SelectTrigger>
-                      <SelectValue placeholder="Sélectionner un membre" />
+                      <SelectValue placeholder={t("documents.fields.assignedPlaceholder")} />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="none">Aucun</SelectItem>
+                      <SelectItem value="none">{t("documents.fields.none")}</SelectItem>
                     {teamMembers.map((member) => (
                       <SelectItem key={member.id} value={member.id}>
                         {member.name} ({member.role})
@@ -947,20 +947,20 @@ const MonJourMDocuments: React.FC = () => {
         <Dialog open={!!editingPinterest} onOpenChange={() => setEditingPinterest(null)}>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{t("documents.toasts.pinterestUpdated")}</DialogTitle>
+              <DialogTitle>{t("documents.pinterestForm.editTitle")}</DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium mb-1">Titre *</label>
+                <label className="block text-sm font-medium mb-1">{t("documents.pinterestForm.title")}</label>
                 <Input
                   value={editingPinterest.title}
                   onChange={(e) => setEditingPinterest({ ...editingPinterest, title: e.target.value })}
-                  placeholder="Ex: Inspiration décoration"
+                  placeholder={t("documents.pinterestForm.titlePlaceholder")}
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">URL Pinterest *</label>
+                <label className="block text-sm font-medium mb-1">{t("documents.pinterestForm.url")}</label>
                 <Input
                   value={editingPinterest.pinterest_url}
                   onChange={(e) => setEditingPinterest({ ...editingPinterest, pinterest_url: e.target.value })}
@@ -969,11 +969,11 @@ const MonJourMDocuments: React.FC = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Description</label>
+                <label className="block text-sm font-medium mb-1">{t("documents.pinterestForm.description")}</label>
                 <Textarea
                   value={editingPinterest.description || ''}
                   onChange={(e) => setEditingPinterest({ ...editingPinterest, description: e.target.value })}
-                  placeholder="Description de cette inspiration"
+                  placeholder={t("documents.pinterestForm.descriptionPlaceholder")}
                   rows={3}
                 />
               </div>

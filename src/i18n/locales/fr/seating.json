@@ -30,5 +30,16 @@
     "guestDeleted": "Invité supprimé",
     "guestsDeleted": "{{count}} invité(s) supprimé(s)",
     "defaultPlanName": "Mon Plan de Table"
+  },
+  "stats": {
+    "title": "Statistiques",
+    "totalGuests": "Total invités",
+    "seated": "Placés",
+    "unseated": "Non placés",
+    "assignmentRate": "Taux d'assignation",
+    "tables": "Tables",
+    "totalCapacity": "Capacité totale",
+    "seats": "{{count}} places",
+    "occupancyRate": "Taux de remplissage"
   }
 }

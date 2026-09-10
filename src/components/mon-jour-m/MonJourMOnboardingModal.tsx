@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Dialog,
   DialogContent,
@@ -41,49 +42,26 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
-  const steps: OnboardingStep[] = [
-    {
-      id: 0,
-      title: "Vue d'ensemble",
-      content: "Bienvenue dans votre outil de coordination ! 5 étapes simples pour organiser votre journée parfaite avec votre équipe.",
-      icon: <Sparkles className="h-6 w-6 text-wedding-olive" />,
-    },
-    {
-      id: 1,
-      title: "Étape 1 : Créer son équipe",
-      content: "Ajoutez vos proches et prestataires avec leurs coordonnées dans l'onglet 'Équipe'. Ils pourront être assignés aux différentes tâches.",
-      icon: <Users className="h-6 w-6 text-blue-600" />,
-      highlight: "Onglet 'Équipe'"
-    },
-    {
-      id: 2,
-      title: "Étape 2 : Créez votre planning",
-      content: "• Ajoutez des étapes avec 'Ajouter une étape'\n• Utilisez l'IA pour générer un planning automatique\n• Glissez-déposez pour réorganiser",
-      icon: <Calendar className="h-6 w-6 text-wedding-olive" />,
-      highlight: "Bouton 'Ajouter une étape'"
-    },
-    {
-      id: 3,
-      title: "Étape 3 : Assignez les tâches",
-      content: "• Cliquez sur 'Assigné à:' pour attribuer chaque tâche\n• Assurez-vous d'avoir créé votre équipe au préalable",
-      icon: <UserCheck className="h-6 w-6 text-green-600" />,
-      highlight: "Bouton 'Assigné à:'"
-    },
-    {
-      id: 4,
-      title: "Étape 4 : Gérer documents",
-      content: "Uploadez vos documents importants si besoin (moodboard, devis, planning détaillé) dans l'onglet 'Documents'.",
-      icon: <FileText className="h-6 w-6 text-purple-600" />,
-      highlight: "Onglet 'Documents'"
-    },
-    {
-      id: 5,
-      title: "Étape 5 : Partager avec votre équipe ⭐",
-      content: "• Cliquez sur 'Partager' pour générer un lien\n• Envoyez le lien à votre équipe !\n• Elle pourra voir le planning en temps réel ainsi que les fiches contacts et les mises à jour automatiquement",
-      icon: <Share2 className="h-6 w-6 text-amber-600" />,
-      highlight: "Bouton 'Partager'"
-    }
+  const { t } = useTranslation('monJourM');
+
+  const stepIcons = [
+    <Sparkles className="h-6 w-6 text-wedding-olive" />,
+    <Users className="h-6 w-6 text-blue-600" />,
+    <Calendar className="h-6 w-6 text-wedding-olive" />,
+    <UserCheck className="h-6 w-6 text-green-600" />,
+    <FileText className="h-6 w-6 text-purple-600" />,
+    <Share2 className="h-6 w-6 text-amber-600" />,
   ];
+
+  const translatedSteps = (t('onboarding.steps', { returnObjects: true }) as Array<{ title: string; content: string; highlight?: string }>) || [];
+
+  const steps: OnboardingStep[] = (Array.isArray(translatedSteps) ? translatedSteps : []).map((step, index) => ({
+    id: index,
+    title: step.title,
+    content: step.content,
+    icon: stepIcons[index],
+    highlight: step.highlight,
+  }));
 
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
@@ -111,6 +89,8 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
   };
 
   const currentStepData = steps[currentStep];
+
+  if (!currentStepData) return null;
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -164,7 +144,7 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
               {currentStepData.highlight && (
                 <div className="mt-4">
                   <Badge variant="outline" className="bg-wedding-olive/10 text-wedding-olive border-wedding-olive/30 px-3 py-1">
-                    💡 Focus: {currentStepData.highlight}
+                    💡 {t('onboarding.focus')} {currentStepData.highlight}
                   </Badge>
                 </div>
               )}
@@ -174,7 +154,7 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
             {currentStep === 5 && (
               <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                 <p className="text-amber-800 text-sm font-medium flex items-center gap-2">
-                  📱 <span>Accessible sur smartphone via un simple lien, <strong>sans téléchargement</strong> !</span>
+                  📱 <span dangerouslySetInnerHTML={{ __html: t('onboarding.mobileNote') }} />
                 </p>
               </div>
             )}
@@ -188,7 +168,7 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
                 className="flex items-center gap-2 border-gray-200"
               >
                 <ChevronLeft className="h-4 w-4" />
-                Précédent
+                {t('onboarding.previous')}
               </Button>
 
               <div className="flex gap-3">
@@ -197,14 +177,14 @@ const MonJourMOnboardingModal: React.FC<MonJourMOnboardingModalProps> = ({
                   onClick={handleSkip}
                   className="text-gray-400 hover:text-gray-600"
                 >
-                  Passer
+                  {t('onboarding.skip')}
                 </Button>
                 
                 <Button
                   onClick={nextStep}
                   className="bg-wedding-olive hover:bg-wedding-olive/90 flex items-center gap-2 px-6"
                 >
-                  {currentStep === steps.length - 1 ? 'Commencer ✨' : 'Suivant'}
+                  {currentStep === steps.length - 1 ? t('onboarding.start') : t('onboarding.next')}
                   {currentStep < steps.length - 1 && <ChevronRight className="h-4 w-4" />}
                 </Button>
               </div>

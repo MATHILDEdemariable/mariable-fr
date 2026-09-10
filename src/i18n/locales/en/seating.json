@@ -30,5 +30,16 @@
     "guestDeleted": "Guest removed",
     "guestsDeleted": "{{count}} guest(s) removed",
     "defaultPlanName": "My Seating Plan"
+  },
+  "stats": {
+    "title": "Statistics",
+    "totalGuests": "Total guests",
+    "seated": "Seated",
+    "unseated": "Not seated",
+    "assignmentRate": "Assignment rate",
+    "tables": "Tables",
+    "totalCapacity": "Total capacity",
+    "seats": "{{count}} seats",
+    "occupancyRate": "Occupancy rate"
   }
 }

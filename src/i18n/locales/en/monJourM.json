@@ -229,7 +229,16 @@
       "pinterestDeleted": "Pinterest link deleted",
       "pinterestDeletedDesc": "The link has been deleted",
       "pinterestDeleteError": "Could not delete the Pinterest link"
-    }
+    },
+    "pinterestForm": {
+      "title": "Title *",
+      "titlePlaceholder": "E.g. Decoration inspiration",
+      "url": "Pinterest URL *",
+      "description": "Description",
+      "descriptionPlaceholder": "Description of this inspiration",
+      "editTitle": "Edit the Pinterest link"
+    },
+    "editTitle": "Edit the document"
   },
   "public": {
     "loadingTitle": "Loading schedule | Mariable",
@@ -284,5 +293,294 @@
     "noFile": "This document has no associated file.",
     "pinterestTitle": "Pinterest inspirations",
     "pinterestHint": "Ideas and inspirations shared by the couple."
+  },
+  "advice": {
+    "title": "Wedding day tips",
+    "checklistTitle": "Last-minute checklist",
+    "categories": {
+      "morning": {
+        "title": "Morning preparations",
+        "tips": [
+          "Have a light but nourishing breakfast",
+          "Start getting ready 3 hours before the ceremony",
+          "Keep an emergency kit (pins, touch-up makeup)",
+          "Delegate the logistics to your witnesses"
+        ]
+      },
+      "photos": {
+        "title": "Photo timing",
+        "tips": [
+          "Allow 30 min for couple photos",
+          "Allow 45 min for group photos",
+          "Aim for golden hour (1h before sunset)",
+          "Share your wishes with the photographer beforehand"
+        ]
+      },
+      "guests": {
+        "title": "Managing guests",
+        "tips": [
+          "Appoint someone to welcome the guests",
+          "Prepare a clear seating plan",
+          "Plan activities during the cocktail hour",
+          "Tell guests the exact schedule"
+        ]
+      },
+      "keyMoments": {
+        "title": "Key moments",
+        "tips": [
+          "Keep 15 min of buffer between each step",
+          "Plan a private moment after the ceremony",
+          "Plan the speeches (max 3-4 speeches of 5 min)",
+          "Save time to actually enjoy your evening"
+        ]
+      }
+    },
+    "checklist": [
+      "Check the weather 3 days before",
+      "Confirm with every vendor",
+      "Prepare the rings and documents",
+      "Organise transport for guests",
+      "Have a backup schedule"
+    ]
+  },
+  "taskModal": {
+    "tabs": {
+      "manual": "Manual",
+      "suggestions": "Suggestions",
+      "ai": "AI Personalised"
+    },
+    "fields": {
+      "title": "Title *",
+      "titlePlaceholder": "Step name",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional description",
+      "startTime": "Start time",
+      "duration": "Duration (min) *",
+      "category": "Category"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "add": "Add",
+      "adding": "Adding...",
+      "addSuggestions": "Add {{count}} suggestion(s)"
+    },
+    "suggestionsIntro": "Select the predefined steps you want to add to your schedule:",
+    "minutes": "{{count}} min",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "categories": {
+      "préparatifs_final": "Getting ready",
+      "logistique": "Logistics",
+      "cérémonie": "Ceremony",
+      "photos": "Photos",
+      "cocktail": "Cocktail",
+      "repas": "Dinner",
+      "soiree": "Party",
+      "personnalisé": "Custom",
+      "default": "General"
+    },
+    "premium": {
+      "manualFeature": "Adding a manual step",
+      "manualDesc": "To add custom steps to your schedule, you need a premium subscription.",
+      "suggestionsFeature": "Suggested steps",
+      "suggestionsDesc": "To add suggested steps to your schedule, you need a premium subscription.",
+      "aiFeature": "AI Personalised",
+      "aiDesc": "To generate a personalised schedule with AI, you need a premium subscription."
+    },
+    "toast": {
+      "validationTitle": "Validation error",
+      "titleRequired": "The title is required.",
+      "minDuration": "Minimum duration is 5 minutes.",
+      "sessionExpired": "Session expired, please sign in again to add a step.",
+      "added": "Step added",
+      "addedDesc": "\"{{title}}\" was added to the schedule.",
+      "duplicateTitle": "Title already used",
+      "duplicateDesc": "A step with this title already exists in your schedule. Change the title to add it.",
+      "errorTitle": "Error",
+      "addError": "Unable to add the step. Please try again.",
+      "suggestionsAdded": "Suggestions added",
+      "suggestionsAddedDesc": "{{count}} step(s) added.",
+      "suggestionsError": "Unable to add the suggestions."
+    },
+    "suggestions": {
+      "1": {
+        "title": "Getting ready",
+        "description": "Hair, makeup and dressing for the couple"
+      },
+      "2": {
+        "title": "Welcoming guests",
+        "description": "Welcoming and seating guests before the ceremony"
+      },
+      "3": {
+        "title": "Civil ceremony",
+        "description": "Civil wedding ceremony"
+      },
+      "4": {
+        "title": "Couple photos",
+        "description": "Photo session with the couple after the ceremony"
+      },
+      "5": {
+        "title": "Family photos",
+        "description": "Photos with families and witnesses"
+      },
+      "6": {
+        "title": "Cocktail hour",
+        "description": "Drinks reception with the guests"
+      },
+      "7": {
+        "title": "Wedding dinner",
+        "description": "Main meal with the guests"
+      },
+      "8": {
+        "title": "First dance",
+        "description": "The couple's first dance"
+      }
+    }
+  },
+  "onboarding": {
+    "steps": [
+      {
+        "title": "Overview",
+        "content": "Welcome to your coordination tool! 5 simple steps to organise your perfect day with your team."
+      },
+      {
+        "title": "Step 1: Build your team",
+        "content": "Add your loved ones and vendors with their contact details in the 'Team' tab. They can then be assigned to tasks.",
+        "highlight": "'Team' tab"
+      },
+      {
+        "title": "Step 2: Build your schedule",
+        "content": "• Add steps with 'Add a step'\n• Use AI to generate a schedule automatically\n• Drag and drop to reorder",
+        "highlight": "'Add a step' button"
+      },
+      {
+        "title": "Step 3: Assign the tasks",
+        "content": "• Click 'Assigned to:' to allocate each task\n• Make sure you have created your team first",
+        "highlight": "'Assigned to:' button"
+      },
+      {
+        "title": "Step 4: Manage documents",
+        "content": "Upload your key documents if needed (moodboard, quotes, detailed schedule) in the 'Documents' tab.",
+        "highlight": "'Documents' tab"
+      },
+      {
+        "title": "Step 5: Share with your team ⭐",
+        "content": "• Click 'Share' to generate a link\n• Send the link to your team!\n• They will see the schedule in real time, along with contact sheets and automatic updates",
+        "highlight": "'Share' button"
+      }
+    ],
+    "focus": "Focus:",
+    "mobileNote": "Accessible on any smartphone through a simple link, <strong>no download needed</strong>!",
+    "previous": "Previous",
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get started ✨"
+  },
+  "photoGuests": {
+    "addPeople": "Add people",
+    "add": "Add",
+    "select": "Select people",
+    "searchPlaceholder": "Search a guest...",
+    "child": "Child",
+    "adult": "Adult",
+    "noResult": "No result",
+    "noGuests": "No guest in the list",
+    "addManually": "Add manually",
+    "namePlaceholder": "Person's name..."
+  },
+  "photoList": {
+    "title": "📸 Wedding day photo list",
+    "docTitle": "Wedding day photo list",
+    "count": "{{done}}/{{total}} photos to take",
+    "exportPdf": "Export PDF",
+    "reset": "Reset",
+    "saving": "Saving...",
+    "save": "Save",
+    "resetConfirm": "Reset the list to the default values?",
+    "colToDo": "To do",
+    "colPhoto": "Photo",
+    "colPeople": "People present",
+    "addPlaceholder": "Add a new photo...",
+    "add": "Add",
+    "hint": "💡 Click a photo name to edit it. Add the people who should be present for each photo.",
+    "pdf": {
+      "generatedOn": "Generated on {{date}}",
+      "toDo": "Photos to take ({{count}})",
+      "optional": "Optional photos ({{count}})",
+      "with": "With:",
+      "coupleOnly": "Couple only",
+      "optionalTag": "(optional)",
+      "fileName": "wedding-day-photo-list.pdf"
+    },
+    "toast": {
+      "saved": "List saved",
+      "savedDesc": "Your photo list has been saved",
+      "error": "Error",
+      "errorDesc": "Unable to save the list",
+      "exported": "PDF exported",
+      "exportedDesc": "The photo list has been downloaded"
+    },
+    "defaults": [
+      "First look",
+      "Leaving the ceremony",
+      "Exchange of rings",
+      "Couple's families",
+      "Bride's family",
+      "Both families together",
+      "Witnesses and bridesmaids",
+      "Groomsmen",
+      "Photo with all guests",
+      "Couple session - Gardens",
+      "Couple session - Sunset",
+      "Photo with the grandparents",
+      "Fun photo with friends",
+      "Photo with the flower children"
+    ],
+    "allGuests": "All guests"
+  },
+  "scenario": {
+    "title": "Create my custom schedule",
+    "ceremonyTime": "Ceremony time (required)",
+    "ceremonyLabel": "What time is your ceremony or main event planned for?",
+    "ceremonyHelp": "This time will be the reference used to organise your whole schedule automatically.",
+    "intro": "Describe your ideal scenario: type of ceremony, preparations, who does what, your priorities... The AI will build a custom schedule around your ceremony time!",
+    "placeholder": "Example: We want a secular ceremony in the garden. I'd like to get ready calmly with my witnesses for 2 hours in the morning. The florist will set up the decoration early in the morning. My photographer should arrive 2 hours before the ceremony for the getting-ready photos. After the ceremony, cocktails on the terrace then dinner indoors...",
+    "generating": "Generating... (1-2 minutes)",
+    "generate": "Generate my custom schedule",
+    "advice": "Personalised advice",
+    "generatedTitle": "Custom schedule generated",
+    "tasksBadge": "{{count}} task(s) • Reference: {{time}}",
+    "minutes": "min",
+    "cancel": "Cancel",
+    "addSelected": "Add {{count}} task(s) to the schedule",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "default": "Standard"
+    },
+    "toast": {
+      "scenarioRequired": "Scenario required",
+      "scenarioRequiredDesc": "Please describe your vision of the big day",
+      "timeRequired": "Reference time required",
+      "timeRequiredDesc": "Please select a ceremony time",
+      "generated": "Schedule generated successfully",
+      "generatedDesc": "{{count}} task(s) generated around {{time}}",
+      "error": "Generation error",
+      "errorDefault": "Unable to generate the schedule.",
+      "errorRate": "Too many requests right now. Please wait a moment.",
+      "errorCredits": "AI credits exhausted.",
+      "errorParse": "Error processing the AI response.",
+      "errorHint": "If the error persists, check the \"Having a problem?\" section",
+      "noneSelected": "No task selected",
+      "noneSelectedDesc": "Please select at least one task to add",
+      "added": "Schedule generated successfully",
+      "addedDesc": "{{count}} task(s) added to your schedule with {{time}} as reference time",
+      "addError": "Error while adding",
+      "addErrorDesc": "Unable to add the selected tasks"
+    }
   }
 }
