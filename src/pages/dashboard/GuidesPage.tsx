@@ -74,11 +74,11 @@ const GuidesPage = () => {
           )}
         </div>
 
-        <p className="mt-4 text-sm text-muted-foreground flex items-center justify-center gap-2">
-            <span aria-hidden="true">🇫🇷</span>
-            {t('language.notice')}
-          </p>
-        </div>
+        <p className="mb-8 text-sm text-muted-foreground flex items-center justify-center gap-2">
+          <span aria-hidden="true">🇫🇷</span>
+          {t('language.notice')}
+        </p>
+
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {GUIDES.map((guide) => (
