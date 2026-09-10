@@ -431,7 +431,9 @@
       "2w": "2 semaines",
       "wj": "Semaine J",
       "j": "Jour J"
-    }
+    },
+    "languageMismatch": "Ce rétroplanning a été généré en français. Régénérez-le pour l'obtenir en anglais.",
+    "regenerate": "Régénérer en anglais"
   },
   "avantJourJ": {
     "pageTitle": "Avant le jour-J - Checklist IA | Mariable",

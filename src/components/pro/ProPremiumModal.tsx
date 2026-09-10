@@ -22,6 +22,7 @@ interface ProPremiumModalProps {
  */
 const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange }) => {
   const { t } = useTranslation('partenariat');
+  const { t: tPro } = useTranslation('pro');
   const includedItems = t('pro.included', { returnObjects: true }) as string[];
 
   return (
@@ -33,7 +34,7 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
             Mariable Pro
           </DialogTitle>
           <DialogDescription className="text-editorial-noir/70">
-            Ce que comprennent vos frais d'adhésion
+            {tPro('premiumModal.subtitle')}
           </DialogDescription>
         </DialogHeader>
 
@@ -68,7 +69,7 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
             {t('pro.ctaConditions')}
           </a>
           <Button type="button" variant="ghost" className="w-full rounded-none" onClick={() => onOpenChange(false)}>
-            Fermer
+            {tPro('premiumModal.close')}
           </Button>
         </DialogFooter>
       </DialogContent>

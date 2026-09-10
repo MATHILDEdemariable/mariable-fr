@@ -61,6 +61,7 @@ const TIMELINE_PERIODS = [
 const WeddingRetroplanningEmbed = () => {
   const { t, i18n } = useTranslation('weddingDay');
   const dateLocale = i18n.language.startsWith('en') ? enUS : fr;
+  const currentLanguage: 'fr' | 'en' = i18n.language.startsWith('en') ? 'en' : 'fr';
   const getPeriodLabel = (key: string) => t(`retroplanning.periods.${key}`);
   const [weddingDate, setWeddingDate] = useState<Date>();
   const [isGenerating, setIsGenerating] = useState(false);
@@ -70,6 +71,7 @@ const WeddingRetroplanningEmbed = () => {
   const [checkedMilestones, setCheckedMilestones] = useState<Set<string>>(new Set());
   const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
   const [selectedPeriodIndex, setSelectedPeriodIndex] = useState(0);
+  const [contentLanguage, setContentLanguage] = useState<'fr' | 'en'>('fr');
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -212,6 +214,7 @@ const WeddingRetroplanningEmbed = () => {
         if (data) {
           console.log('✅ Retroplanning loaded:', data.id);
           setLoadedRetroplanningId(data.id);
+          setContentLanguage((data as any).language === 'en' ? 'en' : 'fr');
           setWeddingDate(new Date(data.wedding_date));
           setRetroplanning({
             timeline: data.timeline_data as unknown as TimelineItem[],
@@ -277,7 +280,7 @@ const WeddingRetroplanningEmbed = () => {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke('generate-wedding-retroplanning', {
-        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd'), language: i18n.language.startsWith('en') ? 'en' : 'fr' }
+        body: { weddingDate: format(weddingDate, 'yyyy-MM-dd'), language: currentLanguage }
       });
 
 
@@ -288,6 +291,7 @@ const WeddingRetroplanningEmbed = () => {
       }
 
       setRetroplanning(data.data);
+      setContentLanguage(currentLanguage);
       
       // Enregistrer l'utilisation pour les utilisateurs non-premium
       if (!isPremium) {
@@ -335,6 +339,7 @@ const WeddingRetroplanningEmbed = () => {
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
+            language: contentLanguage,
             updated_at: new Date().toISOString(),
           })
           .eq('id', loadedRetroplanningId);
@@ -347,12 +352,13 @@ const WeddingRetroplanningEmbed = () => {
           .from('wedding_retroplanning')
           .insert([{
             user_id: user.id,
-            title: `${i18n.language.startsWith('en') ? 'Wedding on' : 'Mariage du'} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`,
+            title: `${currentLanguage === 'en' ? 'Wedding on' : 'Mariage du'} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
             timeline_data: JSON.parse(JSON.stringify(retroplanning.timeline)),
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
+            language: contentLanguage,
           }])
           .select('id')
           .single();
@@ -570,6 +576,25 @@ const WeddingRetroplanningEmbed = () => {
       {/* Generated Retroplanning */}
       {retroplanning && (
         <>
+          {contentLanguage !== currentLanguage && (
+            <Card className="border-wedding-olive/40 bg-wedding-olive/5">
+              <CardContent className="pt-6 flex flex-col sm:flex-row sm:items-center gap-3 justify-between">
+                <p className="text-sm">{t('retroplanning.languageMismatch')}</p>
+                <Button
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                  className="bg-wedding-olive hover:bg-wedding-olive/90 shrink-0"
+                >
+                  {isGenerating ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="mr-2 h-4 w-4" />
+                  )}
+                  {t('retroplanning.regenerate')}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
           {/* Progress */}
           <Card>
             <CardHeader>

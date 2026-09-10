@@ -27,6 +27,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 }) => {
   const isMobile = useIsMobile();
   const { t } = useTranslation('dashboard');
+  const { t: tPro } = useTranslation('pro');
   const { isPremium, isProAccount } = useUserProfile();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [showProPremiumModal, setShowProPremiumModal] = useState(false);
@@ -104,7 +105,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               <Link to="/pro">
                 <Button size="sm" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-sm">
                   <Heart className="h-4 w-4 mr-1" />
-                  Mes mariages
+                  {tPro('bar.myWeddings')}
                 </Button>
               </Link>
               <span className="h-6 w-px bg-editorial-noir/20 mx-1" aria-hidden="true" />
@@ -123,7 +124,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               onClick={() => setShowProPremiumModal(true)}
             >
               <Crown className="h-4 w-4 mr-1" />
-              Passer Pro Premium — 149 €/an
+              {tPro('bar.upgrade')}
             </Button>
           )}
           {!isPremium && !isProAccount && (
@@ -173,7 +174,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 <Link to="/pro" className="flex-1 min-w-[140px]">
                   <Button size="sm" className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                     <Heart className="h-4 w-4 mr-1" />
-                    Mes mariages
+                    {tPro('bar.myWeddings')}
                   </Button>
                 </Link>
                 {!isPremium && (
@@ -183,7 +184,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                     onClick={() => setShowProPremiumModal(true)}
                   >
                     <Crown className="h-4 w-4 mr-1" />
-                    Pro Premium — 149 €/an
+                    {tPro('bar.upgradeShort')}
                   </Button>
                 )}
               </div>

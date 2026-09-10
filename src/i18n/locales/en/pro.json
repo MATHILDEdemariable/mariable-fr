@@ -39,5 +39,43 @@
     "name": "Mariable Pro account",
     "description": "Unlimited weddings, every module unlocked for each project and visibility in the Mariable selection.",
     "cta": "Upgrade to pro"
+  },
+  "nav": {
+    "space": "Pro space",
+    "weddings": "My weddings",
+    "info": "My details",
+    "offer": "My plan",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "bar": {
+    "home": "Home",
+    "myWeddings": "My weddings",
+    "vendorSelection": "Vendor selection",
+    "upgrade": "Upgrade to Pro Premium — €149/year",
+    "upgradeShort": "Pro Premium — €149/year",
+    "currentWedding": "Current wedding:",
+    "chooseWedding": "Choose a wedding"
+  },
+  "premiumModal": {
+    "subtitle": "What your membership includes",
+    "close": "Close"
+  },
+  "editWedding": {
+    "title": "Edit wedding",
+    "names": "Couple's first names",
+    "namesPlaceholder": "Camille & Antoine",
+    "date": "Wedding date",
+    "location": "Venue",
+    "locationPlaceholder": "Château de ...",
+    "guests": "Number of guests",
+    "cancel": "Cancel",
+    "save": "Save",
+    "saving": "Saving…",
+    "namesRequired": "First names required",
+    "namesRequiredDesc": "Please enter the couple's first names.",
+    "updated": "Wedding updated",
+    "errorTitle": "Could not save",
+    "errorDesc": "Your changes could not be saved. Please try again in a moment."
   }
 }

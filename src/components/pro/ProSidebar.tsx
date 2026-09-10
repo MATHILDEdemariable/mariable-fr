@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -11,6 +12,7 @@ import { cn } from '@/lib/utils';
  */
 const ProSidebar: React.FC = () => {
   const location = useLocation();
+  const { t } = useTranslation('pro');
 
   const handleLogout = async () => {
     try {
@@ -23,9 +25,9 @@ const ProSidebar: React.FC = () => {
   };
 
   const items = [
-    { label: 'Mes mariages', icon: <CalendarHeart className="h-4 w-4" />, hash: '#mes-mariages' },
-    { label: 'Mes informations', icon: <IdCard className="h-4 w-4" />, hash: '#mes-informations' },
-    { label: 'Mon offre', icon: <Crown className="h-4 w-4" />, hash: '#mon-offre' },
+    { label: t('nav.weddings'), icon: <CalendarHeart className="h-4 w-4" />, hash: '#mes-mariages' },
+    { label: t('nav.info'), icon: <IdCard className="h-4 w-4" />, hash: '#mes-informations' },
+    { label: t('nav.offer'), icon: <Crown className="h-4 w-4" />, hash: '#mon-offre' },
   ];
 
   const linkClass = (active: boolean) =>
@@ -38,7 +40,7 @@ const ProSidebar: React.FC = () => {
     <div className="h-full min-h-screen bg-white border-r border-gray-200" style={{ paddingTop: 'var(--header-h)' }}>
       <div className="flex items-center gap-2 px-6 py-4">
         <Building2 className="h-5 w-5 text-wedding-olive" />
-        <span className="font-bold text-lg">Espace pro</span>
+        <span className="font-bold text-lg">{t('nav.space')}</span>
       </div>
 
       <nav className="py-3 px-3 space-y-0.5">
@@ -51,12 +53,12 @@ const ProSidebar: React.FC = () => {
 
         <Link to="/dashboard/settings" className={linkClass(location.pathname.startsWith('/dashboard/settings'))}>
           <Settings className="h-4 w-4" />
-          <span className="ml-3 leading-tight">Paramètres</span>
+          <span className="ml-3 leading-tight">{t('nav.settings')}</span>
         </Link>
 
         <button onClick={handleLogout} className={cn(linkClass(false), 'w-full text-left')}>
           <LogOut className="h-4 w-4" />
-          <span className="ml-3 leading-tight">Déconnexion</span>
+          <span className="ml-3 leading-tight">{t('nav.logout')}</span>
         </button>
       </nav>
     </div>
