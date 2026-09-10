@@ -581,6 +581,20 @@ const AdminUsers = () => {
                           </div>
                         </TableCell>
                         <TableCell>
+                          {user.profile?.account_type === 'b2b' ? (
+                            <Badge variant="default" className="bg-wedding-olive text-white hover:bg-wedding-olive">
+                              Professionnel
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline">Particulier</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          <span className="text-sm uppercase">
+                            {user.profile?.preferred_language === 'en' ? 'EN' : 'FR'}
+                          </span>
+                        </TableCell>
+                        <TableCell>
                           <div className="flex items-center gap-2">
                             <Phone className="h-4 w-4 text-gray-400" />
                             <span className={getPhoneNumber(user) === 'Non renseigné' ? 'text-gray-400 italic' : ''}>
