@@ -6,9 +6,6 @@ import React from 'react';
  */
 const CGVProContent: React.FC = () => (
   <>
-    <h1 className="text-4xl font-serif mb-4 text-wedding-black">
-      CONTRAT DE MISE EN RELATION ET COMMISSION
-    </h1>
     
     <p className="text-lg text-muted-foreground mb-8">
       Entre professionnels de l'événementiel et la plateforme Mariable.fr

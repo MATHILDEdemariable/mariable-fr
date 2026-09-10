@@ -6,9 +6,6 @@ import React from 'react';
  */
 const CGVCouplesContent: React.FC = () => (
   <>
-    <h1 className="text-4xl font-serif mb-4 text-foreground">
-      CONDITIONS GÉNÉRALES D'UTILISATION
-    </h1>
     
     <p className="text-lg text-muted-foreground mb-8">
       Pour les utilisateurs couples de la plateforme Mariable.fr
