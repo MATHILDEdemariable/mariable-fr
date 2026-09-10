@@ -19,6 +19,8 @@ import frWeddingDay from './locales/fr/weddingDay.json';
 import frMonJourM from './locales/fr/monJourM.json';
 import frContentCreator from './locales/fr/contentCreator.json';
 import frRefonteJuillet from './locales/fr/refonteJuillet.json';
+import frGuides from './locales/fr/guides.json';
+import frPro from './locales/fr/pro.json';
 import enCommon from './locales/en/common.json';
 import enHome from './locales/en/home.json';
 import enHomeV2 from './locales/en/homeV2.json';
@@ -36,6 +38,8 @@ import enWeddingDay from './locales/en/weddingDay.json';
 import enMonJourM from './locales/en/monJourM.json';
 import enContentCreator from './locales/en/contentCreator.json';
 import enRefonteJuillet from './locales/en/refonteJuillet.json';
+import enGuides from './locales/en/guides.json';
+import enPro from './locales/en/pro.json';
 
 export const SUPPORTED_LANGUAGES = ['fr', 'en'] as const;
 export type SupportedLanguage = typeof SUPPORTED_LANGUAGES[number];
@@ -59,6 +63,8 @@ const resources = {
     monJourM: frMonJourM,
     contentCreator: frContentCreator,
     refonteJuillet: frRefonteJuillet,
+    guides: frGuides,
+    pro: frPro,
   },
   en: {
     common: enCommon,
@@ -78,6 +84,8 @@ const resources = {
     monJourM: enMonJourM,
     contentCreator: enContentCreator,
     refonteJuillet: enRefonteJuillet,
+    guides: enGuides,
+    pro: enPro,
   },
 };
 
