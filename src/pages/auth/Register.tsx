@@ -469,6 +469,20 @@ const Register = () => {
           </Card>
         </div>
       </main>
+
+      <Dialog open={termsOpen} onOpenChange={setTermsOpen}>
+        <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">{t('register.termsModalTitle')}</DialogTitle>
+          </DialogHeader>
+          <div className="text-sm">
+            {isPro ? <CGVProContent /> : <CGVCouplesContent />}
+          </div>
+          <Button type="button" variant="outline" onClick={() => setTermsOpen(false)}>
+            {t('register.termsModalClose')}
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
