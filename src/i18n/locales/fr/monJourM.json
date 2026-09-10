@@ -284,5 +284,54 @@
     "noFile": "Ce document n'a pas de fichier associé.",
     "pinterestTitle": "Inspirations Pinterest",
     "pinterestHint": "Idées et inspirations partagées par les mariés."
+  },
+  "advice": {
+    "title": "Conseils pour le jour J",
+    "checklistTitle": "Check-list dernière minute",
+    "categories": {
+      "morning": {
+        "title": "Préparatifs matinaux",
+        "tips": [
+          "Prévoyez un petit-déjeuner léger mais nutritif",
+          "Commencez la préparation 3h avant la cérémonie",
+          "Gardez une trousse d'urgence (épingles, maquillage de retouche)",
+          "Déléguez l'organisation aux témoins"
+        ]
+      },
+      "photos": {
+        "title": "Timing des photos",
+        "tips": [
+          "Planifiez 30min pour les photos de couple",
+          "Prévoyez 45min pour les photos de groupe",
+          "Privilégiez la golden hour (1h avant le coucher du soleil)",
+          "Communiquez vos souhaits au photographe en amont"
+        ]
+      },
+      "guests": {
+        "title": "Gestion des invités",
+        "tips": [
+          "Désignez une personne pour accueillir les invités",
+          "Préparez un plan de table clair",
+          "Prévoyez des activités pendant le cocktail",
+          "Informez les invités des horaires précis"
+        ]
+      },
+      "keyMoments": {
+        "title": "Moments clés",
+        "tips": [
+          "Gardez 15min de marge entre chaque étape",
+          "Prévoyez un moment d'intimité après la cérémonie",
+          "Planifiez les discours (max 3-4 discours de 5min)",
+          "Réservez du temps pour profiter de votre soirée"
+        ]
+      }
+    },
+    "checklist": [
+      "Vérifier la météo 3 jours avant",
+      "Confirmer avec tous les prestataires",
+      "Préparer les alliances et documents",
+      "Organiser le transport des invités",
+      "Prévoir un planning de secours"
+    ]
   }
 }

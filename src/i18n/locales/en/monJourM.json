@@ -284,5 +284,54 @@
     "noFile": "This document has no associated file.",
     "pinterestTitle": "Pinterest inspirations",
     "pinterestHint": "Ideas and inspirations shared by the couple."
+  },
+  "advice": {
+    "title": "Wedding day tips",
+    "checklistTitle": "Last-minute checklist",
+    "categories": {
+      "morning": {
+        "title": "Morning preparations",
+        "tips": [
+          "Have a light but nourishing breakfast",
+          "Start getting ready 3 hours before the ceremony",
+          "Keep an emergency kit (pins, touch-up makeup)",
+          "Delegate the logistics to your witnesses"
+        ]
+      },
+      "photos": {
+        "title": "Photo timing",
+        "tips": [
+          "Allow 30 min for couple photos",
+          "Allow 45 min for group photos",
+          "Aim for golden hour (1h before sunset)",
+          "Share your wishes with the photographer beforehand"
+        ]
+      },
+      "guests": {
+        "title": "Managing guests",
+        "tips": [
+          "Appoint someone to welcome the guests",
+          "Prepare a clear seating plan",
+          "Plan activities during the cocktail hour",
+          "Tell guests the exact schedule"
+        ]
+      },
+      "keyMoments": {
+        "title": "Key moments",
+        "tips": [
+          "Keep 15 min of buffer between each step",
+          "Plan a private moment after the ceremony",
+          "Plan the speeches (max 3-4 speeches of 5 min)",
+          "Save time to actually enjoy your evening"
+        ]
+      }
+    },
+    "checklist": [
+      "Check the weather 3 days before",
+      "Confirm with every vendor",
+      "Prepare the rings and documents",
+      "Organise transport for guests",
+      "Have a backup schedule"
+    ]
   }
 }
