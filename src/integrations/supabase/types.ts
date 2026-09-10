@@ -3721,6 +3721,7 @@ export type Database = {
           categories: Json
           created_at: string
           id: string
+          language: string
           milestones: Json
           progress: Json
           timeline_data: Json
@@ -3733,6 +3734,7 @@ export type Database = {
           categories?: Json
           created_at?: string
           id?: string
+          language?: string
           milestones?: Json
           progress?: Json
           timeline_data?: Json
@@ -3745,6 +3747,7 @@ export type Database = {
           categories?: Json
           created_at?: string
           id?: string
+          language?: string
           milestones?: Json
           progress?: Json
           timeline_data?: Json
