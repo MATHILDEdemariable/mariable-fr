@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "PDF Guides - My Wedding",
+    "description": "Download our practical guides for your wedding."
+  },
+  "page": {
+    "title": "Our PDF Guides",
+    "subtitle": "{{count}} exclusive guides — included in your Premium plan",
+    "premiumLock": "Premium feature — Go Premium to download",
+    "note": "Note:",
+    "noteText": "Guides open in a new tab. The link is valid for 1 hour — you can regenerate it at any time."
+  },
+  "language": {
+    "badge": "French only",
+    "notice": "Our PDF guides are currently available in French only. English versions are coming soon."
+  },
+  "actions": {
+    "download": "Download",
+    "preparing": "Preparing…"
+  },
+  "toast": {
+    "errorTitle": "Error",
+    "downloadError": "Download failed",
+    "pdfUnavailable": "PDF unavailable"
+  },
+  "premium": {
+    "feature": "Premium PDF guides",
+    "description": "Download our exclusive guides to plan your perfect wedding."
+  }
+}
