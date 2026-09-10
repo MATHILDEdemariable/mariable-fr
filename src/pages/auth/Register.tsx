@@ -29,6 +29,7 @@ const Register = () => {
   const [registrationPurpose, setRegistrationPurpose] = useState('');
   const [accountType, setAccountType] = useState<'b2c' | 'b2b'>('b2c');
   const [acceptTerms, setAcceptTerms] = useState(false);
+  const [termsOpen, setTermsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showEmailAlert, setShowEmailAlert] = useState(false);
   const { toast } = useToast();
