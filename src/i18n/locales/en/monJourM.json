@@ -531,5 +531,47 @@
       "Photo with the flower children"
     ],
     "allGuests": "All guests"
+  },
+  "scenario": {
+    "title": "Create my custom schedule",
+    "ceremonyTime": "Ceremony time (required)",
+    "ceremonyLabel": "What time is your ceremony or main event planned for?",
+    "ceremonyHelp": "This time will be the reference used to organise your whole schedule automatically.",
+    "intro": "Describe your ideal scenario: type of ceremony, preparations, who does what, your priorities... The AI will build a custom schedule around your ceremony time!",
+    "placeholder": "Example: We want a secular ceremony in the garden. I'd like to get ready calmly with my witnesses for 2 hours in the morning. The florist will set up the decoration early in the morning. My photographer should arrive 2 hours before the ceremony for the getting-ready photos. After the ceremony, cocktails on the terrace then dinner indoors...",
+    "generating": "Generating... (1-2 minutes)",
+    "generate": "Generate my custom schedule",
+    "advice": "Personalised advice",
+    "generatedTitle": "Custom schedule generated",
+    "tasksBadge": "{{count}} task(s) • Reference: {{time}}",
+    "minutes": "min",
+    "cancel": "Cancel",
+    "addSelected": "Add {{count}} task(s) to the schedule",
+    "priority": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low",
+      "default": "Standard"
+    },
+    "toast": {
+      "scenarioRequired": "Scenario required",
+      "scenarioRequiredDesc": "Please describe your vision of the big day",
+      "timeRequired": "Reference time required",
+      "timeRequiredDesc": "Please select a ceremony time",
+      "generated": "Schedule generated successfully",
+      "generatedDesc": "{{count}} task(s) generated around {{time}}",
+      "error": "Generation error",
+      "errorDefault": "Unable to generate the schedule.",
+      "errorRate": "Too many requests right now. Please wait a moment.",
+      "errorCredits": "AI credits exhausted.",
+      "errorParse": "Error processing the AI response.",
+      "errorHint": "If the error persists, check the \"Having a problem?\" section",
+      "noneSelected": "No task selected",
+      "noneSelectedDesc": "Please select at least one task to add",
+      "added": "Schedule generated successfully",
+      "addedDesc": "{{count}} task(s) added to your schedule with {{time}} as reference time",
+      "addError": "Error while adding",
+      "addErrorDesc": "Unable to add the selected tasks"
+    }
   }
 }

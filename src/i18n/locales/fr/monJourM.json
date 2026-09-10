@@ -531,5 +531,47 @@
       "Photo avec les enfants d'honneur"
     ],
     "allGuests": "Tous les invités"
+  },
+  "scenario": {
+    "title": "Créer mon planning personnalisé",
+    "ceremonyTime": "Heure de cérémonie (obligatoire)",
+    "ceremonyLabel": "Quelle est l'heure prévue de votre cérémonie ou événement principal ?",
+    "ceremonyHelp": "Cette heure servira de référence pour organiser automatiquement tout votre planning.",
+    "intro": "Décrivez votre scénario idéal : type de cérémonie, préparatifs souhaités, qui fait quoi, vos priorités... L'IA créera un planning personnalisé organisé autour de votre heure de cérémonie !",
+    "placeholder": "Exemple : Nous voulons une cérémonie laïque dans le jardin. Je souhaite me préparer tranquillement avec mes témoins pendant 2h le matin. La décoration sera installée par le fleuriste en début de matinée. Mon photographe doit arriver 2h avant la cérémonie pour les photos de préparation. Après la cérémonie, cocktail sur la terrasse puis repas en intérieur...",
+    "generating": "Génération en cours... (1-2 minutes)",
+    "generate": "Générer mon planning personnalisé",
+    "advice": "Conseils personnalisés",
+    "generatedTitle": "Planning personnalisé généré",
+    "tasksBadge": "{{count}} tâche(s) • Référence : {{time}}",
+    "minutes": "min",
+    "cancel": "Annuler",
+    "addSelected": "Ajouter {{count}} tâche(s) au planning",
+    "priority": {
+      "high": "Élevée",
+      "medium": "Moyenne",
+      "low": "Faible",
+      "default": "Standard"
+    },
+    "toast": {
+      "scenarioRequired": "Scénario requis",
+      "scenarioRequiredDesc": "Veuillez décrire votre vision du jour J",
+      "timeRequired": "Heure de référence requise",
+      "timeRequiredDesc": "Veuillez sélectionner une heure de cérémonie",
+      "generated": "Planning généré avec succès",
+      "generatedDesc": "{{count}} tâche(s) générée(s) autour de {{time}}",
+      "error": "Erreur de génération",
+      "errorDefault": "Impossible de générer le planning.",
+      "errorRate": "Trop de requêtes en cours. Patientez quelques instants.",
+      "errorCredits": "Crédits IA épuisés.",
+      "errorParse": "Erreur de traitement de la réponse IA.",
+      "errorHint": "Si l'erreur persiste, consultez la rubrique « Un problème ? »",
+      "noneSelected": "Aucune tâche sélectionnée",
+      "noneSelectedDesc": "Veuillez sélectionner au moins une tâche à ajouter",
+      "added": "Planning généré avec succès",
+      "addedDesc": "{{count}} tâche(s) ajoutée(s) à votre planning avec {{time}} comme heure de référence",
+      "addError": "Erreur d'ajout",
+      "addErrorDesc": "Impossible d'ajouter les tâches sélectionnées"
+    }
   }
 }

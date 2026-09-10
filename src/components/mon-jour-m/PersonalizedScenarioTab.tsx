@@ -1,5 +1,6 @@
 
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
@@ -54,12 +55,13 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
   const [selectedTasks, setSelectedTasks] = useState<string[]>([]);
   const [summary, setSummary] = useState('');
   const { toast } = useToast();
+  const { t } = useTranslation('monJourM');
 
   const handleGenerate = async () => {
     if (!scenario.trim()) {
       toast({
-        title: "Scénario requis",
-        description: "Veuillez décrire votre vision du jour J",
+        title: t('scenario.toast.scenarioRequired'),
+        description: t('scenario.toast.scenarioRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -67,8 +69,8 @@ const PersonalizedScenarioTab: React.FC<PersonalizedScenarioTabProps> = ({
 
     if (!referenceTime) {
       toast({
-        title: "Heure de référence requise",
-        description: "Veuillez sélectionner une heure de cérémonie",
+        title: t('scenario.toast.timeRequired'),
+        description: t('scenario.toast.timeRequiredDesc'),
         variant: "destructive"
       });
       return;
@@ -129,8 +131,8 @@ Instructions spécifiques :
         setSelectedTasks(allTaskIds);
         
         toast({
-          title: "Planning généré avec succès",
-          description: `${data.tasks.length} tâche${data.tasks.length > 1 ? 's' : ''} générée${data.tasks.length > 1 ? 's' : ''} autour de ${referenceTime}`
+          title: t('scenario.toast.generated'),
+          description: t('scenario.toast.generatedDesc', { count: data.tasks.length, time: referenceTime })
         });
       } else {
         throw new Error('Format de réponse invalide de l\'IA');
@@ -140,19 +142,19 @@ Instructions spécifiques :
       console.error('❌ Error generating personalized planning:', error);
       
       const errorMessage = error?.message || '';
-      let userMessage = 'Impossible de générer le planning.';
+      let userMessage = t('scenario.toast.errorDefault');
       
       if (errorMessage.includes('Rate limit') || errorMessage.includes('429')) {
-        userMessage = 'Trop de requêtes en cours. Patientez quelques instants.';
+        userMessage = t('scenario.toast.errorRate');
       } else if (errorMessage.includes('Crédits') || errorMessage.includes('épuisés') || errorMessage.includes('402')) {
-        userMessage = 'Crédits IA épuisés.';
+        userMessage = t('scenario.toast.errorCredits');
       } else if (errorMessage.includes('parse') || errorMessage.includes('Invalid')) {
-        userMessage = 'Erreur de traitement de la réponse IA.';
+        userMessage = t('scenario.toast.errorParse');
       }
       
       toast({
-        title: "Erreur de génération",
-        description: `${userMessage}\n\nSi l'erreur persiste, consultez la rubrique "Un problème ?"`,
+        title: t('scenario.toast.error'),
+        description: `${userMessage}\n\n${t('scenario.toast.errorHint')}`,
         variant: "destructive",
         duration: 7000
       });
@@ -269,8 +271,8 @@ Instructions spécifiques :
     
     if (tasksToAdd.length === 0) {
       toast({
-        title: "Aucune tâche sélectionnée",
-        description: "Veuillez sélectionner au moins une tâche à ajouter",
+        title: t('scenario.toast.noneSelected'),
+        description: t('scenario.toast.noneSelectedDesc'),
         variant: "destructive"
       });
       return;
@@ -295,8 +297,8 @@ Instructions spécifiques :
       }
       
       toast({
-        title: "Planning généré avec succès",
-        description: `${tasksToAdd.length} tâche${tasksToAdd.length > 1 ? 's ont été ajoutées' : ' a été ajoutée'} à votre planning avec ${referenceTime} comme heure de référence`
+        title: t('scenario.toast.added'),
+        description: t('scenario.toast.addedDesc', { count: tasksToAdd.length, time: referenceTime })
       });
       
       setSelectedTasks([]);
@@ -304,8 +306,8 @@ Instructions spécifiques :
     } catch (error) {
       console.error('❌ Error adding tasks:', error);
       toast({
-        title: "Erreur d'ajout",
-        description: "Impossible d'ajouter les tâches sélectionnées",
+        title: t('scenario.toast.addError'),
+        description: t('scenario.toast.addErrorDesc'),
         variant: "destructive"
       });
     }
@@ -322,10 +324,10 @@ Instructions spécifiques :
 
   const getPriorityLabel = (priority: string) => {
     switch (priority) {
-      case 'high': return 'Élevée';
-      case 'medium': return 'Moyenne';
-      case 'low': return 'Faible';
-      default: return 'Standard';
+      case 'high': return t('scenario.priority.high');
+      case 'medium': return t('scenario.priority.medium');
+      case 'low': return t('scenario.priority.low');
+      default: return t('scenario.priority.default');
     }
   };
 
@@ -334,7 +336,7 @@ Instructions spécifiques :
       <div className="space-y-4">
         <div className="flex items-center gap-2 mb-4">
           <Lightbulb className="h-5 w-5 text-purple-600" />
-          <h3 className="text-lg font-medium">Créer mon planning personnalisé</h3>
+          <h3 className="text-lg font-medium">{t('scenario.title')}</h3>
         </div>
 
         {/* Heure de référence obligatoire */}
@@ -343,10 +345,10 @@ Instructions spécifiques :
             <div className="flex items-start gap-3">
               <AlertCircle className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
               <div className="flex-1">
-                <h4 className="font-medium text-blue-800 mb-3">Heure de cérémonie (obligatoire)</h4>
+                <h4 className="font-medium text-blue-800 mb-3">{t('scenario.ceremonyTime')}</h4>
                 <div className="space-y-2">
                   <Label htmlFor="referenceTime" className="text-blue-700">
-                    Quelle est l'heure prévue de votre cérémonie ou événement principal ?
+                    {t('scenario.ceremonyLabel')}
                   </Label>
                   <Input
                     id="referenceTime"
@@ -357,7 +359,7 @@ Instructions spécifiques :
                     required
                   />
                   <p className="text-sm text-blue-600">
-                    Cette heure servira de référence pour organiser automatiquement tout votre planning.
+                    {t('scenario.ceremonyHelp')}
                   </p>
                 </div>
               </div>
@@ -366,12 +368,11 @@ Instructions spécifiques :
         </Card>
         
         <p className="text-sm text-gray-600">
-          Décrivez votre scénario idéal : type de cérémonie, préparatifs souhaités, qui fait quoi, vos priorités... 
-          L'IA créera un planning personnalisé organisé autour de votre heure de cérémonie !
+          {t('scenario.intro')}
         </p>
 
         <Textarea
-          placeholder="Exemple : Nous voulons une cérémonie laïque dans le jardin. Je souhaite me préparer tranquillement avec mes témoins pendant 2h le matin. La décoration sera installée par le fleuriste en début de matinée. Mon photographe doit arriver 2h avant la cérémonie pour les photos de préparation. Après la cérémonie, cocktail sur la terrasse puis repas en intérieur..."
+          placeholder={t('scenario.placeholder')}
           value={scenario}
           onChange={(e) => setScenario(e.target.value)}
           className="min-h-[120px] resize-none"
@@ -386,12 +387,12 @@ Instructions spécifiques :
           {isGenerating ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin mr-2" />
-              Génération en cours... (1-2 minutes)
+              {t('scenario.generating')}
             </>
           ) : (
             <>
               <Sparkles className="h-4 w-4 mr-2" />
-              Générer mon planning personnalisé
+              {t('scenario.generate')}
             </>
           )}
         </Button>
@@ -400,7 +401,7 @@ Instructions spécifiques :
       {summary && (
         <Card className="bg-purple-50 border-purple-200">
           <CardContent className="p-4">
-            <h4 className="font-medium text-purple-800 mb-2">Conseils personnalisés</h4>
+            <h4 className="font-medium text-purple-800 mb-2">{t('scenario.advice')}</h4>
             <p className="text-sm text-purple-700">{summary}</p>
           </CardContent>
         </Card>
@@ -409,9 +410,9 @@ Instructions spécifiques :
       {generatedTasks.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <h4 className="font-medium">Planning personnalisé généré</h4>
+            <h4 className="font-medium">{t('scenario.generatedTitle')}</h4>
             <Badge variant="secondary">
-              {generatedTasks.length} tâche{generatedTasks.length > 1 ? 's' : ''} • Référence: {referenceTime}
+              {t('scenario.tasksBadge', { count: generatedTasks.length, time: referenceTime })}
             </Badge>
           </div>
 
@@ -462,7 +463,7 @@ Instructions spécifiques :
                         )}
                         <Badge variant="outline" className="flex items-center gap-1">
                           <Clock className="h-3 w-3" />
-                          {task.duration} min
+                          {task.duration} {t('scenario.minutes')}
                         </Badge>
                         <Badge className={getPriorityColor(task.priority)}>
                           {getPriorityLabel(task.priority)}
@@ -486,14 +487,14 @@ Instructions spécifiques :
 
           <div className="flex gap-2 pt-4 border-t">
             <Button variant="outline" onClick={onClose}>
-              Annuler
+              {t('scenario.cancel')}
             </Button>
             <Button 
               onClick={handleAddSelected}
               disabled={selectedTasks.length === 0}
               className="bg-purple-600 hover:bg-purple-700"
             >
-              Ajouter {selectedTasks.length} tâche{selectedTasks.length > 1 ? 's' : ''} au planning
+              {t('scenario.addSelected', { count: selectedTasks.length })}
             </Button>
           </div>
         </div>
