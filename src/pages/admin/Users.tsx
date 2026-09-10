@@ -550,6 +550,8 @@ const AdminUsers = () => {
                     <TableRow>
                       <TableHead>Nom Complet</TableHead>
                       <TableHead>Email</TableHead>
+                      <TableHead>Type de compte</TableHead>
+                      <TableHead>Langue</TableHead>
                       <TableHead>Téléphone</TableHead>
                       <TableHead>Source</TableHead>
                       <TableHead>Objectif</TableHead>
