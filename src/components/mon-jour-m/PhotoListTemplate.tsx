@@ -28,6 +28,16 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
   const { toast } = useToast();
   const { t, i18n } = useTranslation('monJourM');
 
+
+  // Les listes enregistrées contiennent les intitulés français du modèle standard :
+  // on les réaffiche dans la langue courante, sans toucher aux entrées personnalisées.
+  const frDefaultTitles = (i18n.getFixedT('fr', 'monJourM')('photoList.defaults', { returnObjects: true }) as string[]) || [];
+  const currentDefaultTitles = (t('photoList.defaults', { returnObjects: true }) as string[]) || [];
+  const displayTitle = (title: string) => {
+    const index = frDefaultTitles.indexOf(title);
+    return index >= 0 ? currentDefaultTitles[index] ?? title : title;
+  };
+
   const buildDefaultPhotoList = (): PhotoItem[] => {
     const titles = t('photoList.defaults', { returnObjects: true }) as string[];
     const list = Array.isArray(titles) ? titles : [];
@@ -230,7 +240,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
         }
         
         const persons = photo.customNames.length > 0 ? photo.customNames.join(', ') : t('photoList.pdf.coupleOnly');
-        doc.text(`[ ] ${photo.title}`, 14, yPos);
+        doc.text(`[ ] ${displayTitle(photo.title)}`, 14, yPos);
         doc.setTextColor(100);
         doc.text(`    ${t('photoList.pdf.with')} ${persons}`, 14, yPos + 4);
         doc.setTextColor(0);
@@ -261,7 +271,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
           doc.addPage();
           yPos = 20;
         }
-        doc.text(`${t('photoList.pdf.optionalTag')} ${photo.title}`, 14, yPos);
+        doc.text(`${t('photoList.pdf.optionalTag')} ${displayTitle(photo.title)}`, 14, yPos);
         yPos += lineHeight;
       });
     }
@@ -368,7 +378,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
                       }`}
                       onClick={() => startEditing(photo)}
                     >
-                      {photo.title}
+                      {displayTitle(photo.title)}
                     </span>
                   )}
                 </div>
