@@ -113,12 +113,15 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         ? new URLSearchParams(window.location.search).get('wedding')
         : null;
 
+      // Un mariage archivé n'est jamais sélectionné automatiquement
+      const active = list.filter((w) => !w.archived_at);
+
       const resolved =
-        (fromUrl && list.find((w) => w.id === fromUrl)?.id) ||
+        (fromUrl && active.find((w) => w.id === fromUrl)?.id) ||
         (type === 'b2b'
-          ? stored && list.find((w) => w.id === stored)?.id
-          : list.find((w) => w.is_default)?.id || list[0]?.id) ||
-        (type === 'b2b' && list.length === 1 ? list[0].id : null) ||
+          ? stored && active.find((w) => w.id === stored)?.id
+          : active.find((w) => w.is_default)?.id || active[0]?.id) ||
+        (type === 'b2b' && active.length === 1 ? active[0].id : null) ||
         null;
 
       setCurrentWeddingId(resolved ?? null);
