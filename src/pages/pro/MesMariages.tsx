@@ -88,6 +88,17 @@ const MesMariages: React.FC = () => {
     navigate('/dashboard');
   };
 
+  const handleArchive = async (weddingId: string, archived: boolean) => {
+    if (archived && !window.confirm(t('weddings.archiveConfirm'))) return;
+    try {
+      await setWeddingArchived(weddingId, archived);
+      toast({ title: archived ? t('weddings.archiveDone') : t('weddings.restoreDone') });
+    } catch (error) {
+      console.error('❌ EspacePro: archivage impossible', error);
+      toast({ title: t('weddings.archiveError'), variant: 'destructive' });
+    }
+  };
+
   const handleSaveProfile = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
