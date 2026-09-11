@@ -10,6 +10,7 @@ import { Calendar, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Tâches initiales avec IDs cohérents
 const INITIAL_WEDDING_TASKS = [
@@ -213,7 +214,7 @@ const ChecklistMariage = () => {
         category: task.category,
         position: task.position,
         completed: task.completed
-      })));
+      }));
       
       console.log('📝 Inserting', tasksToInsert.length, 'initial tasks');
       
