@@ -218,6 +218,15 @@ const MesMariages: React.FC = () => {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-none h-8 w-8 shrink-0"
+                        aria-label={t('weddings.archive')}
+                        onClick={() => handleArchive(wedding.id, true)}
+                      >
+                        <Archive className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                       <p className="flex items-center gap-2">
@@ -258,6 +267,34 @@ const MesMariages: React.FC = () => {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+
+          {archivedWeddings.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-serif text-lg text-foreground mb-3">{t('weddings.archivedTitle')}</h3>
+              <div className="space-y-2">
+                {archivedWeddings.map((wedding) => (
+                  <div
+                    key={wedding.id}
+                    className="flex flex-wrap items-center justify-between gap-3 border border-border bg-background p-4"
+                  >
+                    <div className="text-sm">
+                      <p className="text-foreground">{wedding.title}</p>
+                      <p className="text-muted-foreground">{t('weddings.archived')}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-none"
+                      onClick={() => handleArchive(wedding.id, false)}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      {t('weddings.restore')}
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
