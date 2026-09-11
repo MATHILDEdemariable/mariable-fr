@@ -291,7 +291,7 @@ const WeddingRetroplanning = () => {
       } else {
         const { data: insertedData, error } = await supabase
           .from('wedding_retroplanning')
-          .insert([{
+          .insert([withWedding({
             user_id: user.id,
             title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
@@ -299,7 +299,7 @@ const WeddingRetroplanning = () => {
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
-          }])
+          })])
           .select('id')
           .single();
 
