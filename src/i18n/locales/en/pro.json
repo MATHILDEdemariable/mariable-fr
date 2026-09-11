@@ -19,7 +19,15 @@
     "edit": "Edit wedding",
     "dateToDefine": "Date to be set",
     "guests": "{{count}} guests",
-    "open": "Open"
+    "open": "Open",
+    "archive": "Archive",
+    "restore": "Restore",
+    "archivedTitle": "Archived weddings",
+    "archived": "Archived",
+    "archiveConfirm": "Archive this wedding? The data is kept and the wedding can be restored at any time.",
+    "archiveDone": "Wedding archived",
+    "restoreDone": "Wedding restored",
+    "archiveError": "The operation failed"
   },
   "profile": {
     "title": "My details",
