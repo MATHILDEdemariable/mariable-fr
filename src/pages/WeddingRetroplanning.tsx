@@ -17,6 +17,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import jsPDF from 'jspdf';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface TimelineItem {
   period: string;
