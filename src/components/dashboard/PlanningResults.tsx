@@ -33,10 +33,12 @@ const PlanningResults: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { quizData } = usePersistentQuiz();
+  const { weddingId, scopeQuery } = useWeddingScope();
 
   useEffect(() => {
     loadPlanningData();
-  }, [quizData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizData, weddingId]);
 
   const loadPlanningData = async () => {
     try {
