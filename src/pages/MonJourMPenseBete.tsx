@@ -31,10 +31,12 @@ const MonJourMPenseBete: React.FC = () => {
         
         if (user) {
           // Charger la coordination
-          const { data: coordinations } = await supabase
-            .from('wedding_coordination')
-            .select('id')
-            .eq('user_id', user.id)
+          const { data: coordinations } = await scopeQuery(
+            supabase
+              .from('wedding_coordination')
+              .select('id')
+              .eq('user_id', user.id)
+          )
             .order('created_at', { ascending: false })
             .limit(1);
 
@@ -43,11 +45,12 @@ const MonJourMPenseBete: React.FC = () => {
           }
 
           // Charger les items du pense-bête
-          const { data: items } = await supabase
-            .from('pense_bete')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('position', { ascending: true });
+          const { data: items } = await scopeQuery(
+            supabase
+              .from('pense_bete')
+              .select('*')
+              .eq('user_id', user.id)
+          ).order('position', { ascending: true });
 
           if (items) {
             setPenseBeteItems(items);
