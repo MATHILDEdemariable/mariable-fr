@@ -113,11 +113,14 @@ const ChecklistMariage = () => {
   const [dataSource, setDataSource] = useState<string>('');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { weddingId, weddingLoading, scopeQuery, withWedding } = useWeddingScope();
   
   useEffect(() => {
+    if (weddingLoading) return;
     console.log('🚀 ChecklistMariage component mounted');
     loadTasksWithDiagnostic();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId, weddingLoading]);
 
   // Guard de sécurité finale pour garantir l'affichage
   useEffect(() => {
