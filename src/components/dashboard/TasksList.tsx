@@ -19,6 +19,7 @@ import { UserQuizResult } from '../wedding-assistant/v2/types';
 import { Separator } from '@/components/ui/separator';
 import { Link } from 'react-router-dom';
 import { useReaderMode } from '@/contexts/ReaderModeContext';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Task {
   id: string;
