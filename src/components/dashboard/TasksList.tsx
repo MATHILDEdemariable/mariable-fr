@@ -64,6 +64,10 @@ const TasksList: React.FC = () => {
   const [viewingSource, setViewingSource] = useState<'all' | 'manual' | 'quiz'>('all');
   const { toast } = useToast();
   const { isReaderMode, userId } = useReaderMode();
+  const { weddingId } = useWeddingScope();
+  // En mode consultation partagée, on garde le périmètre d'origine (par compte)
+  const scope = <T,>(query: T): T =>
+    !isReaderMode && weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
   
   // Fetch user's quiz score to adjust task prioritization
   const { data: quizData } = useQuery({
@@ -187,20 +191,22 @@ const TasksList: React.FC = () => {
       
       if (queryUserId) {
         // Récupérer les tâches manuelles de l'utilisateur
-        const { data: manualTasks, error: manualError } = await supabase
-          .from('todos_planification')
-          .select('*')
-          .eq('user_id', queryUserId)
-          .order('position', { ascending: true });
+        const { data: manualTasks, error: manualError } = await scope(
+          supabase
+            .from('todos_planification')
+            .select('*')
+            .eq('user_id', queryUserId)
+        ).order('position', { ascending: true });
           
         if (manualError) throw manualError;
         
         // Récupérer les tâches générées de l'utilisateur
-        const { data: generatedTasks, error: generatedError } = await supabase
-          .from('generated_tasks')
-          .select('*')
-          .eq('user_id', queryUserId)
-          .order('position', { ascending: true });
+        const { data: generatedTasks, error: generatedError } = await scope(
+          supabase
+            .from('generated_tasks')
+            .select('*')
+            .eq('user_id', queryUserId)
+        ).order('position', { ascending: true });
           
         if (generatedError) throw generatedError;
         
