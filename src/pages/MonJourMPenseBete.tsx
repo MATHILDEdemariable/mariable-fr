@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface PenseBeteItem {
   id: string;
