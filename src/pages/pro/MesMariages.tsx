@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,7 +35,15 @@ const MesMariages: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, i18n } = useTranslation('pro');
-  const { weddings, loading, selectWedding, canCreateMoreWeddings, accountType } = useWedding();
+  const {
+    weddings,
+    archivedWeddings,
+    loading,
+    selectWedding,
+    canCreateMoreWeddings,
+    accountType,
+    setWeddingArchived,
+  } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
