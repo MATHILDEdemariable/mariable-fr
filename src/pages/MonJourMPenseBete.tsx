@@ -22,6 +22,7 @@ const MonJourMPenseBete: React.FC = () => {
   const [penseBeteItems, setPenseBeteItems] = useState<PenseBeteItem[]>([]);
   const [newItemContent, setNewItemContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const { weddingId, weddingLoading, scopeQuery, withWedding } = useWeddingScope();
 
   useEffect(() => {
     const loadData = async () => {
