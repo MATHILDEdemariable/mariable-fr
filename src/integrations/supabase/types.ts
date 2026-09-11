@@ -4082,6 +4082,7 @@ export type Database = {
       }
       weddings: {
         Row: {
+          archived_at: string | null
           created_at: string
           guest_count: number | null
           id: string
@@ -4093,6 +4094,7 @@ export type Database = {
           wedding_location: string | null
         }
         Insert: {
+          archived_at?: string | null
           created_at?: string
           guest_count?: number | null
           id?: string
@@ -4104,6 +4106,7 @@ export type Database = {
           wedding_location?: string | null
         }
         Update: {
+          archived_at?: string | null
           created_at?: string
           guest_count?: number | null
           id?: string

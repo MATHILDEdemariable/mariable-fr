@@ -11,6 +11,7 @@ export interface Wedding {
   is_default: boolean;
   owner_id: string;
   created_at: string;
+  archived_at?: string | null;
 }
 
 export type AccountType = 'b2c' | 'b2b';
@@ -38,6 +39,8 @@ interface WeddingContextType {
       guest_count?: number | null;
     }
   ) => Promise<void>;
+  setWeddingArchived: (weddingId: string, archived: boolean) => Promise<void>;
+  archivedWeddings: Wedding[];
   canCreateMoreWeddings: boolean;
 }
 
@@ -75,7 +78,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           .maybeSingle(),
         db
           .from('weddings')
-          .select('id, title, wedding_date, wedding_location, guest_count, is_default, owner_id, created_at')
+          .select('id, title, wedding_date, wedding_location, guest_count, is_default, owner_id, created_at, archived_at')
           .order('created_at', { ascending: true }),
       ]);
 
@@ -110,12 +113,15 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
         ? new URLSearchParams(window.location.search).get('wedding')
         : null;
 
+      // Un mariage archivé n'est jamais sélectionné automatiquement
+      const active = list.filter((w) => !w.archived_at);
+
       const resolved =
-        (fromUrl && list.find((w) => w.id === fromUrl)?.id) ||
+        (fromUrl && active.find((w) => w.id === fromUrl)?.id) ||
         (type === 'b2b'
-          ? stored && list.find((w) => w.id === stored)?.id
-          : list.find((w) => w.is_default)?.id || list[0]?.id) ||
-        (type === 'b2b' && list.length === 1 ? list[0].id : null) ||
+          ? stored && active.find((w) => w.id === stored)?.id
+          : active.find((w) => w.is_default)?.id || active[0]?.id) ||
+        (type === 'b2b' && active.length === 1 ? active[0].id : null) ||
         null;
 
       setCurrentWeddingId(resolved ?? null);
@@ -185,22 +191,46 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [user]
   );
 
-  const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || weddings.length < 1;
+  const setWeddingArchived = useCallback<WeddingContextType['setWeddingArchived']>(
+    async (weddingId, archived) => {
+      const archived_at = archived ? new Date().toISOString() : null;
+      const { error } = await db.from('weddings').update({ archived_at }).eq('id', weddingId);
+      if (error) throw error;
+
+      setWeddings((prev) => prev.map((w) => (w.id === weddingId ? { ...w, archived_at } : w)));
+      if (archived && currentWeddingId === weddingId) {
+        setCurrentWeddingId(null);
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* stockage indisponible : sans effet */
+        }
+      }
+    },
+    [currentWeddingId]
+  );
+
+  const activeWeddings = useMemo(() => weddings.filter((w) => !w.archived_at), [weddings]);
+  const archivedWeddings = useMemo(() => weddings.filter((w) => !!w.archived_at), [weddings]);
+
+  const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || activeWeddings.length < 1;
 
   const value = useMemo<WeddingContextType>(
     () => ({
       accountType,
-      weddings,
+      weddings: activeWeddings,
+      archivedWeddings,
       currentWeddingId,
-      currentWedding: weddings.find((w) => w.id === currentWeddingId) ?? null,
+      currentWedding: activeWeddings.find((w) => w.id === currentWeddingId) ?? null,
       loading,
       selectWedding,
       refreshWeddings: loadAll,
       createWedding,
       updateWedding,
+      setWeddingArchived,
       canCreateMoreWeddings,
     }),
-    [accountType, weddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, updateWedding, canCreateMoreWeddings]
+    [accountType, activeWeddings, archivedWeddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, updateWedding, setWeddingArchived, canCreateMoreWeddings]
   );
 
   return <WeddingContext.Provider value={value}>{children}</WeddingContext.Provider>;

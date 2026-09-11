@@ -19,7 +19,15 @@
     "edit": "Modifier le mariage",
     "dateToDefine": "Date à définir",
     "guests": "{{count}} invités",
-    "open": "Ouvrir"
+    "open": "Ouvrir",
+    "archive": "Archiver",
+    "restore": "Restaurer",
+    "archivedTitle": "Mariages archivés",
+    "archived": "Archivé",
+    "archiveConfirm": "Archiver ce mariage ? Les données sont conservées et le mariage peut être restauré à tout moment.",
+    "archiveDone": "Mariage archivé",
+    "restoreDone": "Mariage restauré",
+    "archiveError": "L'opération a échoué"
   },
   "profile": {
     "title": "Mes informations",

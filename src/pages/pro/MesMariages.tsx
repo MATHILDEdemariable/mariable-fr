@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,7 +35,15 @@ const MesMariages: React.FC = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { t, i18n } = useTranslation('pro');
-  const { weddings, loading, selectWedding, canCreateMoreWeddings, accountType } = useWedding();
+  const {
+    weddings,
+    archivedWeddings,
+    loading,
+    selectWedding,
+    canCreateMoreWeddings,
+    accountType,
+    setWeddingArchived,
+  } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
@@ -78,6 +86,17 @@ const MesMariages: React.FC = () => {
   const handleOpenWedding = (weddingId: string) => {
     selectWedding(weddingId);
     navigate('/dashboard');
+  };
+
+  const handleArchive = async (weddingId: string, archived: boolean) => {
+    if (archived && !window.confirm(t('weddings.archiveConfirm'))) return;
+    try {
+      await setWeddingArchived(weddingId, archived);
+      toast({ title: archived ? t('weddings.archiveDone') : t('weddings.restoreDone') });
+    } catch (error) {
+      console.error('❌ EspacePro: archivage impossible', error);
+      toast({ title: t('weddings.archiveError'), variant: 'destructive' });
+    }
   };
 
   const handleSaveProfile = async (event: React.FormEvent) => {
@@ -199,6 +218,15 @@ const MesMariages: React.FC = () => {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="rounded-none h-8 w-8 shrink-0"
+                        aria-label={t('weddings.archive')}
+                        onClick={() => handleArchive(wedding.id, true)}
+                      >
+                        <Archive className="h-4 w-4" />
+                      </Button>
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                       <p className="flex items-center gap-2">
@@ -239,6 +267,34 @@ const MesMariages: React.FC = () => {
                   </CardContent>
                 </Card>
               ))}
+            </div>
+          )}
+
+          {archivedWeddings.length > 0 && (
+            <div className="mt-8">
+              <h3 className="font-serif text-lg text-foreground mb-3">{t('weddings.archivedTitle')}</h3>
+              <div className="space-y-2">
+                {archivedWeddings.map((wedding) => (
+                  <div
+                    key={wedding.id}
+                    className="flex flex-wrap items-center justify-between gap-3 border border-border bg-background p-4"
+                  >
+                    <div className="text-sm">
+                      <p className="text-foreground">{wedding.title}</p>
+                      <p className="text-muted-foreground">{t('weddings.archived')}</p>
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-none"
+                      onClick={() => handleArchive(wedding.id, false)}
+                    >
+                      <RotateCcw className="h-4 w-4 mr-2" />
+                      {t('weddings.restore')}
+                    </Button>
+                  </div>
+                ))}
+              </div>
             </div>
           )}
         </section>
