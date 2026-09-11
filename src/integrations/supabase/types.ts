@@ -1086,6 +1086,7 @@ export type Database = {
           quiz_result_id: string | null
           updated_at: string | null
           user_id: string | null
+          wedding_id: string | null
         }
         Insert: {
           category: string
@@ -1100,6 +1101,7 @@ export type Database = {
           quiz_result_id?: string | null
           updated_at?: string | null
           user_id?: string | null
+          wedding_id?: string | null
         }
         Update: {
           category?: string
@@ -1114,6 +1116,7 @@ export type Database = {
           quiz_result_id?: string | null
           updated_at?: string | null
           user_id?: string | null
+          wedding_id?: string | null
         }
         Relationships: [
           {
@@ -1515,6 +1518,7 @@ export type Database = {
           position: number
           updated_at: string
           user_id: string
+          wedding_id: string | null
         }
         Insert: {
           content: string
@@ -1525,6 +1529,7 @@ export type Database = {
           position?: number
           updated_at?: string
           user_id: string
+          wedding_id?: string | null
         }
         Update: {
           content?: string
@@ -1535,6 +1540,7 @@ export type Database = {
           position?: number
           updated_at?: string
           user_id?: string
+          wedding_id?: string | null
         }
         Relationships: []
       }
@@ -2877,6 +2883,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["todo_priority"]
           updated_at: string
           user_id: string
+          wedding_id: string | null
         }
         Insert: {
           category?: string | null
@@ -2890,6 +2897,7 @@ export type Database = {
           priority: Database["public"]["Enums"]["todo_priority"]
           updated_at?: string
           user_id: string
+          wedding_id?: string | null
         }
         Update: {
           category?: string | null
@@ -2903,6 +2911,7 @@ export type Database = {
           priority?: Database["public"]["Enums"]["todo_priority"]
           updated_at?: string
           user_id?: string
+          wedding_id?: string | null
         }
         Relationships: []
       }
@@ -2987,6 +2996,7 @@ export type Database = {
           step_name: string
           updated_at: string
           user_id: string
+          wedding_id: string | null
         }
         Insert: {
           completed_at?: string | null
@@ -2996,6 +3006,7 @@ export type Database = {
           step_name: string
           updated_at?: string
           user_id: string
+          wedding_id?: string | null
         }
         Update: {
           completed_at?: string | null
@@ -3005,6 +3016,7 @@ export type Database = {
           step_name?: string
           updated_at?: string
           user_id?: string
+          wedding_id?: string | null
         }
         Relationships: []
       }
@@ -3729,6 +3741,7 @@ export type Database = {
           updated_at: string
           user_id: string
           wedding_date: string
+          wedding_id: string | null
         }
         Insert: {
           categories?: Json
@@ -3742,6 +3755,7 @@ export type Database = {
           updated_at?: string
           user_id: string
           wedding_date: string
+          wedding_id?: string | null
         }
         Update: {
           categories?: Json
@@ -3755,6 +3769,7 @@ export type Database = {
           updated_at?: string
           user_id?: string
           wedding_date?: string
+          wedding_id?: string | null
         }
         Relationships: []
       }
