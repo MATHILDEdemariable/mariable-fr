@@ -7,6 +7,7 @@ import { CheckCircle, Calendar, Download, ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface QuizResult {
   score: number;

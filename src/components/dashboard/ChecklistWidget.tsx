@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { CheckSquare, ArrowRight, Circle, CheckCircle2, Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface Task {
   id: string;
@@ -19,6 +20,7 @@ const ChecklistWidget: React.FC = () => {
   const { toast } = useToast();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
+  const { weddingId, scopeQuery } = useWeddingScope();
 
   // Charger les tâches récentes
   useEffect(() => {
@@ -27,10 +29,12 @@ const ChecklistWidget: React.FC = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
 
-        const { data, error } = await supabase
-          .from('generated_tasks')
-          .select('*')
-          .eq('user_id', user.id)
+        const { data, error } = await scopeQuery(
+          supabase
+            .from('generated_tasks')
+            .select('*')
+            .eq('user_id', user.id)
+        )
           .order('priority', { ascending: false })
           .order('position', { ascending: true })
           .limit(5);
