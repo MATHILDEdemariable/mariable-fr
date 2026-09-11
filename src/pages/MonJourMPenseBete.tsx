@@ -80,13 +80,13 @@ const MonJourMPenseBete: React.FC = () => {
       
       const { data, error } = await supabase
         .from('pense_bete')
-        .insert({
+        .insert(withWedding({
           user_id: user.id,
           coordination_id: coordinationId || null,
           content: newItemContent.trim(),
           position: newPosition,
           is_checked: false
-        })
+        }))
         .select()
         .single();
 
