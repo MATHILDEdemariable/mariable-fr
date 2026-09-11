@@ -64,8 +64,10 @@ const MonJourMPenseBete: React.FC = () => {
       }
     };
 
+    if (weddingLoading) return;
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId, weddingLoading]);
 
   const addItem = async () => {
     if (!newItemContent.trim()) return;
