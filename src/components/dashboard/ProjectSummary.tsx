@@ -80,10 +80,12 @@ const ProjectSummary = () => {
         if (!user) return;
 
         // Get recent tasks for display
-        const { data: recentTasks, error } = await supabase
-          .from('generated_tasks')
-          .select('*')
-          .eq('user_id', user.id)
+        const { data: recentTasks, error } = await scope(
+          supabase
+            .from('generated_tasks')
+            .select('*')
+            .eq('user_id', user.id)
+        )
           .order('priority', { ascending: false })
           .order('position', { ascending: true })
           .limit(5);
@@ -95,16 +97,19 @@ const ProjectSummary = () => {
         setTasks(recentTasks || []);
 
         // Get tasks counts for checklist progress
-        const { count: total } = await supabase
-          .from('generated_tasks')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id);
+        const { count: total } = await scope(
+          supabase
+            .from('generated_tasks')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+        );
 
-        const { count: completed } = await supabase
-          .from('generated_tasks')
-          .select('*', { count: 'exact', head: true })
-          .eq('user_id', user.id)
-          .eq('completed', true);
+        const { count: completed } = await scope(
+          supabase
+            .from('generated_tasks')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', user.id)
+        ).eq('completed', true);
 
         setTotalTasksCount(total || 0);
         setCompletedTasksCount(completed || 0);

@@ -2,6 +2,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface ProgressItem {
   id: string;
@@ -12,6 +13,7 @@ interface ProgressItem {
 
 export const useProgressTracking = () => {
   const location = useLocation();
+  const { weddingId, scopeQuery, withWedding } = useWeddingScope();
   const [progressItems, setProgressItems] = useState<ProgressItem[]>([
     { id: 'planning', label: 'Planning personnalisé', path: '/dashboard/planning', completed: false },
     { id: 'budget', label: 'Budget défini', path: '/dashboard/budget', completed: false },
@@ -34,14 +36,14 @@ export const useProgressTracking = () => {
       if (user) {
         const { error } = await supabase
           .from('user_progress')
-          .upsert({
+          .upsert(withWedding({
             user_id: user.id,
             step_name: itemId,
             is_complete: completed,
             completed_at: completed ? new Date().toISOString() : null,
             updated_at: new Date().toISOString()
-          }, {
-            onConflict: 'user_id,step_name'
+          }), {
+            onConflict: 'user_id,wedding_id,step_name'
           });
 
         if (error) {
@@ -55,17 +57,20 @@ export const useProgressTracking = () => {
       // Revert local state on error
       loadProgress();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [withWedding]);
 
   const loadProgress = useCallback(async () => {
     try {
       setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (user) {
-        const { data, error } = await supabase
-          .from('user_progress')
-          .select('step_name, is_complete')
-          .eq('user_id', user.id);
+        const { data, error } = await scopeQuery(
+          supabase
+            .from('user_progress')
+            .select('step_name, is_complete')
+            .eq('user_id', user.id)
+        );
 
         if (error) {
           console.error('Progress load error:', error);
@@ -89,7 +94,7 @@ export const useProgressTracking = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [scopeQuery]);
 
   const getProgressPercentage = useCallback(() => {
     const completed = progressItems.filter(item => item.completed).length;

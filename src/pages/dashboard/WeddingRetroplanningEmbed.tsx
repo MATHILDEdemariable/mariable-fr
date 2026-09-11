@@ -14,6 +14,7 @@ import { fr, enUS } from 'date-fns/locale';
 import { useNavigate } from 'react-router-dom';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import { useAiUsageLimit } from '@/hooks/useAiUsageLimit';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import jsPDF from 'jspdf';
@@ -80,6 +81,7 @@ const WeddingRetroplanningEmbed = () => {
     description: t('retroplanning.premiumDesc')
   });
   const { canUseFeature, recordUsage } = useAiUsageLimit();
+  const { scopeQuery, withWedding } = useWeddingScope();
 
   // Sauvegarde automatique des tâches cochées
   useEffect(() => {
@@ -199,10 +201,12 @@ const WeddingRetroplanningEmbed = () => {
           }
 
           console.log('🔄 Loading latest retroplanning for user:', user.id);
-          const { data: retroData, error } = await supabase
-            .from('wedding_retroplanning')
-            .select('*')
-            .eq('user_id', user.id)
+          const { data: retroData, error } = await scopeQuery(
+            supabase
+              .from('wedding_retroplanning')
+              .select('*')
+              .eq('user_id', user.id)
+          )
             .order('updated_at', { ascending: false })
             .limit(1)
             .maybeSingle();
@@ -350,7 +354,7 @@ const WeddingRetroplanningEmbed = () => {
         console.log('🔄 Inserting new retroplanning');
         const { data: insertedData, error } = await supabase
           .from('wedding_retroplanning')
-          .insert([{
+          .insert([withWedding({
             user_id: user.id,
             title: `${currentLanguage === 'en' ? 'Wedding on' : 'Mariage du'} ${format(weddingDate, 'd MMMM yyyy', { locale: dateLocale })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
@@ -359,7 +363,7 @@ const WeddingRetroplanningEmbed = () => {
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
             language: contentLanguage,
-          }])
+          })])
           .select('id')
           .single();
 

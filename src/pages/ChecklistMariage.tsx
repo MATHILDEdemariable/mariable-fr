@@ -10,6 +10,7 @@ import { Calendar, ArrowLeft } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Tâches initiales avec IDs cohérents
 const INITIAL_WEDDING_TASKS = [
@@ -112,11 +113,14 @@ const ChecklistMariage = () => {
   const [dataSource, setDataSource] = useState<string>('');
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { weddingId, weddingLoading, scopeQuery, withWedding } = useWeddingScope();
   
   useEffect(() => {
+    if (weddingLoading) return;
     console.log('🚀 ChecklistMariage component mounted');
     loadTasksWithDiagnostic();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId, weddingLoading]);
 
   // Guard de sécurité finale pour garantir l'affichage
   useEffect(() => {
@@ -166,11 +170,12 @@ const ChecklistMariage = () => {
     
     try {
       console.log('🔍 Querying todos_planification table...');
-      const { data: userTasks, error } = await supabase
-        .from('todos_planification')
-        .select('*')
-        .eq('user_id', userId)
-        .order('position', { ascending: true });
+      const { data: userTasks, error } = await scopeQuery(
+        supabase
+          .from('todos_planification')
+          .select('*')
+          .eq('user_id', userId)
+      ).order('position', { ascending: true });
         
       console.log('📊 Database query result:', { 
         data: userTasks, 
@@ -204,7 +209,7 @@ const ChecklistMariage = () => {
     console.log('📥 Step 3: Creating initial tasks for user:', userId);
     
     try {
-      const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => ({
+      const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => withWedding({
         user_id: userId,
         label: task.label,
         description: task.description,

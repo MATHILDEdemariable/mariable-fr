@@ -17,6 +17,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import jsPDF from 'jspdf';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface TimelineItem {
   period: string;
@@ -70,6 +71,7 @@ const WeddingRetroplanning = () => {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { withWedding } = useWeddingScope();
   const { executeAction, showPremiumModal, closePremiumModal } = usePremiumAction({
     feature: "Rétroplanning Personnalisé",
     description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
@@ -289,7 +291,7 @@ const WeddingRetroplanning = () => {
       } else {
         const { data: insertedData, error } = await supabase
           .from('wedding_retroplanning')
-          .insert([{
+          .insert([withWedding({
             user_id: user.id,
             title: `Mariage du ${format(weddingDate, 'd MMMM yyyy', { locale: fr })}`,
             wedding_date: format(weddingDate, 'yyyy-MM-dd'),
@@ -297,7 +299,7 @@ const WeddingRetroplanning = () => {
             categories: JSON.parse(JSON.stringify(retroplanning.categories)),
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
-          }])
+          })])
           .select('id')
           .single();
 

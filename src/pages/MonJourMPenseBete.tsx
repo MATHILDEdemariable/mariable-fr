@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Trash2, Plus } from 'lucide-react';
 import { toast } from 'sonner';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface PenseBeteItem {
   id: string;
@@ -21,6 +22,7 @@ const MonJourMPenseBete: React.FC = () => {
   const [penseBeteItems, setPenseBeteItems] = useState<PenseBeteItem[]>([]);
   const [newItemContent, setNewItemContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const { weddingId, weddingLoading, scopeQuery, withWedding } = useWeddingScope();
 
   useEffect(() => {
     const loadData = async () => {
@@ -29,10 +31,12 @@ const MonJourMPenseBete: React.FC = () => {
         
         if (user) {
           // Charger la coordination
-          const { data: coordinations } = await supabase
-            .from('wedding_coordination')
-            .select('id')
-            .eq('user_id', user.id)
+          const { data: coordinations } = await scopeQuery(
+            supabase
+              .from('wedding_coordination')
+              .select('id')
+              .eq('user_id', user.id)
+          )
             .order('created_at', { ascending: false })
             .limit(1);
 
@@ -41,11 +45,12 @@ const MonJourMPenseBete: React.FC = () => {
           }
 
           // Charger les items du pense-bête
-          const { data: items } = await supabase
-            .from('pense_bete')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('position', { ascending: true });
+          const { data: items } = await scopeQuery(
+            supabase
+              .from('pense_bete')
+              .select('*')
+              .eq('user_id', user.id)
+          ).order('position', { ascending: true });
 
           if (items) {
             setPenseBeteItems(items);
@@ -59,8 +64,10 @@ const MonJourMPenseBete: React.FC = () => {
       }
     };
 
+    if (weddingLoading) return;
     loadData();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId, weddingLoading]);
 
   const addItem = async () => {
     if (!newItemContent.trim()) return;
@@ -73,13 +80,13 @@ const MonJourMPenseBete: React.FC = () => {
       
       const { data, error } = await supabase
         .from('pense_bete')
-        .insert({
+        .insert(withWedding({
           user_id: user.id,
           coordination_id: coordinationId || null,
           content: newItemContent.trim(),
           position: newPosition,
           is_checked: false
-        })
+        }))
         .select()
         .single();
 

@@ -7,6 +7,7 @@ import { CheckCircle, Calendar, Download, ArrowRight } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { usePersistentQuiz } from '@/hooks/usePersistentQuiz';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface QuizResult {
   score: number;
@@ -32,10 +33,12 @@ const PlanningResults: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { quizData } = usePersistentQuiz();
+  const { weddingId, scopeQuery } = useWeddingScope();
 
   useEffect(() => {
     loadPlanningData();
-  }, [quizData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quizData, weddingId]);
 
   const loadPlanningData = async () => {
     try {
@@ -81,11 +84,12 @@ const PlanningResults: React.FC = () => {
           setGeneratedTasks(mappedTasks);
         } else {
           // Fallback to database
-          const { data: tasks } = await supabase
-            .from('generated_tasks')
-            .select('*')
-            .eq('user_id', user.id)
-            .order('position', { ascending: true });
+          const { data: tasks } = await scopeQuery(
+            supabase
+              .from('generated_tasks')
+              .select('*')
+              .eq('user_id', user.id)
+          ).order('position', { ascending: true });
 
           if (tasks) {
             const mappedTasks: GeneratedTask[] = tasks.map(task => ({
