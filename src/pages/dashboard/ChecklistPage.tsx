@@ -209,7 +209,7 @@ const ChecklistPage = () => {
         category: task.category,
         position: task.position,
         completed: task.completed
-      }));
+      })));
       
       console.log('📝 Dashboard Inserting', tasksToInsert.length, 'initial tasks');
       
