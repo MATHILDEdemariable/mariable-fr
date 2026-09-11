@@ -57,7 +57,8 @@ export const useProgressTracking = () => {
       // Revert local state on error
       loadProgress();
     }
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [withWedding]);
 
   const loadProgress = useCallback(async () => {
     try {
@@ -93,7 +94,7 @@ export const useProgressTracking = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [scopeQuery]);
 
   const getProgressPercentage = useCallback(() => {
     const completed = progressItems.filter(item => item.completed).length;
