@@ -156,7 +156,8 @@ const MonMariage = () => {
   };
   useEffect(() => {
     loadProjects();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
   if (isLoading) {
     return <div className="flex items-center justify-center h-96">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-premium-sage"></div>
