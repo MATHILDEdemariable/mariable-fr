@@ -363,7 +363,7 @@ const WeddingRetroplanningEmbed = () => {
             milestones: JSON.parse(JSON.stringify(retroplanning.milestones)),
             progress: progressObj as any,
             language: contentLanguage,
-          }])
+          })])
           .select('id')
           .single();
 
