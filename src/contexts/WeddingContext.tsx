@@ -11,6 +11,7 @@ export interface Wedding {
   is_default: boolean;
   owner_id: string;
   created_at: string;
+  archived_at?: string | null;
 }
 
 export type AccountType = 'b2c' | 'b2b';
@@ -38,6 +39,8 @@ interface WeddingContextType {
       guest_count?: number | null;
     }
   ) => Promise<void>;
+  setWeddingArchived: (weddingId: string, archived: boolean) => Promise<void>;
+  archivedWeddings: Wedding[];
   canCreateMoreWeddings: boolean;
 }
 
