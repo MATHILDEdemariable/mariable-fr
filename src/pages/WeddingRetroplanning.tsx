@@ -71,6 +71,7 @@ const WeddingRetroplanning = () => {
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { withWedding } = useWeddingScope();
   const { executeAction, showPremiumModal, closePremiumModal } = usePremiumAction({
     feature: "Rétroplanning Personnalisé",
     description: "Créez votre rétroplanning de mariage intelligent avec l'IA"
