@@ -10,6 +10,7 @@ import { fr } from 'date-fns/locale';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 interface WeddingProject {
   id: string;
   title: string;
@@ -32,6 +33,7 @@ const MonMariage = () => {
   const [retroplannings, setRetroplannings] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [projectToDelete, setProjectToDelete] = useState<string | null>(null);
+  const { weddingId, scopeQuery } = useWeddingScope();
   const loadProjects = async () => {
     try {
       const {
@@ -67,7 +69,7 @@ const MonMariage = () => {
       const {
         data: retroplanningsData,
         error: retroplanningsError
-      } = await supabase.from('wedding_retroplanning').select('*').eq('user_id', user.id).order('created_at', {
+      } = await scopeQuery(supabase.from('wedding_retroplanning').select('*').eq('user_id', user.id)).order('created_at', {
         ascending: false
       });
       if (retroplanningsError) throw retroplanningsError;
