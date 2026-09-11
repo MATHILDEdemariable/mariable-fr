@@ -53,7 +53,8 @@ const ChecklistWidget: React.FC = () => {
     };
 
     loadRecentTasks();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weddingId]);
 
   // Marquer une tâche comme complétée
   const toggleTask = async (taskId: string) => {
