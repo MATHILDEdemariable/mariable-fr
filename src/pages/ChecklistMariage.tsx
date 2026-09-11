@@ -166,11 +166,12 @@ const ChecklistMariage = () => {
     
     try {
       console.log('🔍 Querying todos_planification table...');
-      const { data: userTasks, error } = await supabase
-        .from('todos_planification')
-        .select('*')
-        .eq('user_id', userId)
-        .order('position', { ascending: true });
+      const { data: userTasks, error } = await scopeQuery(
+        supabase
+          .from('todos_planification')
+          .select('*')
+          .eq('user_id', userId)
+      ).order('position', { ascending: true });
         
       console.log('📊 Database query result:', { 
         data: userTasks, 
@@ -204,7 +205,7 @@ const ChecklistMariage = () => {
     console.log('📥 Step 3: Creating initial tasks for user:', userId);
     
     try {
-      const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => ({
+      const tasksToInsert = INITIAL_WEDDING_TASKS.map((task) => withWedding({
         user_id: userId,
         label: task.label,
         description: task.description,
@@ -212,7 +213,7 @@ const ChecklistMariage = () => {
         category: task.category,
         position: task.position,
         completed: task.completed
-      }));
+      })));
       
       console.log('📝 Inserting', tasksToInsert.length, 'initial tasks');
       
