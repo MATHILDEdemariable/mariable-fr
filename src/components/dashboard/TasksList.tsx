@@ -64,7 +64,7 @@ const TasksList: React.FC = () => {
   const [viewingSource, setViewingSource] = useState<'all' | 'manual' | 'quiz'>('all');
   const { toast } = useToast();
   const { isReaderMode, userId } = useReaderMode();
-  const { weddingId } = useWeddingScope();
+  const { weddingId, weddingLoading } = useWeddingScope();
   // En mode consultation partagée, on garde le périmètre d'origine (par compte)
   const scope = <T,>(query: T): T =>
     !isReaderMode && weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
@@ -131,7 +131,12 @@ const TasksList: React.FC = () => {
   }, []);
   
   useEffect(() => {
+    // On attend la résolution du mariage courant pour éviter d'afficher
+    // les tâches de tous les mariages d'un compte professionnel
+    if (!isReaderMode && weddingLoading) return;
+
     fetchTasks();
+    
     
     // S'abonner aux mises à jour en temps réel
     const todosChannel = supabase
@@ -171,7 +176,8 @@ const TasksList: React.FC = () => {
       supabase.removeChannel(todosChannel);
       supabase.removeChannel(generatedTasksChannel);
     };
-  }, [userId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, weddingId, weddingLoading, isReaderMode]);
   
   const fetchTasks = async () => {
     try {
