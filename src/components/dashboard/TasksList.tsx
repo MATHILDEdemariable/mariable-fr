@@ -64,7 +64,7 @@ const TasksList: React.FC = () => {
   const [viewingSource, setViewingSource] = useState<'all' | 'manual' | 'quiz'>('all');
   const { toast } = useToast();
   const { isReaderMode, userId } = useReaderMode();
-  const { weddingId } = useWeddingScope();
+  const { weddingId, weddingLoading } = useWeddingScope();
   // En mode consultation partagée, on garde le périmètre d'origine (par compte)
   const scope = <T,>(query: T): T =>
     !isReaderMode && weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
