@@ -176,7 +176,8 @@ const TasksList: React.FC = () => {
       supabase.removeChannel(todosChannel);
       supabase.removeChannel(generatedTasksChannel);
     };
-  }, [userId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userId, weddingId, weddingLoading, isReaderMode]);
   
   const fetchTasks = async () => {
     try {
