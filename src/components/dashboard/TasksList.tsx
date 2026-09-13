@@ -131,7 +131,12 @@ const TasksList: React.FC = () => {
   }, []);
   
   useEffect(() => {
+    // On attend la résolution du mariage courant pour éviter d'afficher
+    // les tâches de tous les mariages d'un compte professionnel
+    if (!isReaderMode && weddingLoading) return;
+
     fetchTasks();
+    
     
     // S'abonner aux mises à jour en temps réel
     const todosChannel = supabase
