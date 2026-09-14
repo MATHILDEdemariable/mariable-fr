@@ -17,7 +17,8 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') === 'detailed' ? 'detailed' : 'calculator';
+  const tabParam = searchParams.get('tab');
+  const initialTab = tabParam === 'detailed' || tabParam === 'catalog' ? tabParam : 'calculator';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
   const { isPremium, loading: loadingProfile } = useUserProfile();
