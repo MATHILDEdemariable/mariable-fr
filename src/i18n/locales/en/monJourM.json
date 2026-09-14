@@ -590,5 +590,46 @@
       "addError": "Error while adding",
       "addErrorDesc": "Unable to add the selected tasks"
     }
+  },
+  "importExcel": {
+    "tab": "Excel import",
+    "intro": "Import several steps at once from an Excel or CSV file. Download the template, fill it in, then drop it here.",
+    "downloadTemplate": "Download template",
+    "chooseFile": "Choose a file",
+    "reading": "Reading…",
+    "validCount": "{{count}} valid step(s)",
+    "ignoredCount": "{{count}} row(s) skipped",
+    "importButton": "Import {{count}} step(s)",
+    "importing": "Importing…",
+    "newPeopleTitle": "{{count}} person(s) to add to the team",
+    "newPeopleDesc": "These people are not in your team yet. They will be created automatically with the selected role.",
+    "columns": {
+      "time": "Time",
+      "title": "Step",
+      "duration": "Duration (min)",
+      "people": "Assigned person",
+      "description": "Description"
+    },
+    "sample": {
+      "row1Title": "Guests arrival",
+      "row1Desc": "Welcome in front of the town hall",
+      "row2Title": "Ceremony"
+    },
+    "errors": {
+      "missingTitle": "Missing title",
+      "invalidTime": "Invalid time (e.g. 15:00)"
+    },
+    "premiumFeature": "Excel planning import",
+    "premiumDesc": "Import several steps at once from an Excel file.",
+    "toast": {
+      "emptyTitle": "No step detected",
+      "emptyDesc": "Check that your file uses the template columns.",
+      "parseErrorTitle": "Unreadable file",
+      "parseErrorDesc": "This file could not be read. Please use the provided template (.xlsx, .xls or .csv).",
+      "successTitle": "Import complete",
+      "successDesc": "{{steps}} step(s) added and {{people}} person(s) created in the team.",
+      "importErrorTitle": "Import failed",
+      "importErrorDesc": "The steps could not be saved. Please try again."
+    }
   }
 }

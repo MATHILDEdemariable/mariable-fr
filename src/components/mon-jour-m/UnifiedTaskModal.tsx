@@ -15,11 +15,14 @@ import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
-import { Plus, Sparkles, Clock, Users, Camera, Utensils, Heart } from 'lucide-react';
+import { Plus, Sparkles, Clock, Users, Camera, Utensils, Heart, FileSpreadsheet } from 'lucide-react';
+import ImportExcelTasksTab from './ImportExcelTasksTab';
 
 interface UnifiedTaskModalProps {
   coordinationId: string;
   referenceTime: Date;
+  activeDay?: string;
+  startPosition?: number;
   onEventAdded: (event: PlanningEvent) => void;
   onPlanningGenerated: (events: PlanningEvent[]) => void;
   onClose: () => void;
@@ -99,6 +102,8 @@ const PREDEFINED_SUGGESTIONS = [
 const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   coordinationId,
   referenceTime,
+  activeDay,
+  startPosition,
   onEventAdded,
   onPlanningGenerated,
   onClose
@@ -123,6 +128,11 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   const aiPersonalizedAction = usePremiumAction({
     feature: t('taskModal.premium.aiFeature'),
     description: t('taskModal.premium.aiDesc')
+  });
+
+  const importExcelAction = usePremiumAction({
+    feature: t('importExcel.premiumFeature'),
+    description: t('importExcel.premiumDesc')
   });
 
   // État pour l'ajout manuel
@@ -326,7 +336,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   return (
     <>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
           <TabsTrigger value="manual" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             {t('taskModal.tabs.manual')}
@@ -338,6 +348,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             {t('taskModal.tabs.ai')}
+          </TabsTrigger>
+          <TabsTrigger value="excel" className="flex items-center gap-2">
+            <FileSpreadsheet className="h-4 w-4" />
+            {t('importExcel.tab')}
           </TabsTrigger>
         </TabsList>
 
@@ -488,6 +502,17 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             premiumAction={aiPersonalizedAction}
           />
         </TabsContent>
+
+        <TabsContent value="excel" className="mt-4">
+          <ImportExcelTasksTab
+            coordinationId={coordinationId}
+            activeDay={activeDay}
+            startPosition={startPosition}
+            premiumAction={importExcelAction}
+            onImported={() => onPlanningGenerated([])}
+            onClose={onClose}
+          />
+        </TabsContent>
       </Tabs>
 
       {/* Modals Premium */}
@@ -510,6 +535,13 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         onClose={aiPersonalizedAction.closePremiumModal}
         feature={aiPersonalizedAction.feature}
         description={aiPersonalizedAction.description}
+      />
+
+      <PremiumModal
+        isOpen={importExcelAction.showPremiumModal}
+        onClose={importExcelAction.closePremiumModal}
+        feature={importExcelAction.feature}
+        description={importExcelAction.description}
       />
     </>
   );

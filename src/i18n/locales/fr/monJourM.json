@@ -590,5 +590,46 @@
       "addError": "Erreur d'ajout",
       "addErrorDesc": "Impossible d'ajouter les tâches sélectionnées"
     }
+  },
+  "importExcel": {
+    "tab": "Import Excel",
+    "intro": "Importez plusieurs étapes d'un coup depuis un fichier Excel ou CSV. Téléchargez le modèle, remplissez-le, puis déposez-le ici.",
+    "downloadTemplate": "Télécharger le modèle",
+    "chooseFile": "Choisir un fichier",
+    "reading": "Lecture…",
+    "validCount": "{{count}} étape(s) valide(s)",
+    "ignoredCount": "{{count}} ligne(s) ignorée(s)",
+    "importButton": "Importer {{count}} étape(s)",
+    "importing": "Import en cours…",
+    "newPeopleTitle": "{{count}} personne(s) à ajouter à l'équipe",
+    "newPeopleDesc": "Ces personnes ne sont pas encore dans votre équipe. Elles seront créées automatiquement avec le rôle choisi.",
+    "columns": {
+      "time": "Heure",
+      "title": "Étape",
+      "duration": "Durée (min)",
+      "people": "Personne assignée",
+      "description": "Description"
+    },
+    "sample": {
+      "row1Title": "Arrivée des invités",
+      "row1Desc": "Accueil devant la mairie",
+      "row2Title": "Cérémonie"
+    },
+    "errors": {
+      "missingTitle": "Titre manquant",
+      "invalidTime": "Heure invalide (ex. 15:00)"
+    },
+    "premiumFeature": "Import Excel du planning",
+    "premiumDesc": "Importez plusieurs étapes d'un coup depuis un fichier Excel.",
+    "toast": {
+      "emptyTitle": "Aucune étape détectée",
+      "emptyDesc": "Vérifiez que votre fichier reprend les colonnes du modèle.",
+      "parseErrorTitle": "Fichier illisible",
+      "parseErrorDesc": "Impossible de lire ce fichier. Utilisez le modèle fourni (.xlsx, .xls ou .csv).",
+      "successTitle": "Import réussi",
+      "successDesc": "{{steps}} étape(s) ajoutée(s) et {{people}} personne(s) créée(s) dans l'équipe.",
+      "importErrorTitle": "Import impossible",
+      "importErrorDesc": "Les étapes n'ont pas pu être enregistrées. Réessayez."
+    }
   }
 }
