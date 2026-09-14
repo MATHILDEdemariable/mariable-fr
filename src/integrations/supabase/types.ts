@@ -399,7 +399,9 @@ export type Database = {
           item_id: string
           item_name: string
           payment_note: string | null
+          quantity: number
           remaining: number | null
+          unit_price: number
           updated_at: string
           user_id: string
           wedding_id: string | null
@@ -414,7 +416,9 @@ export type Database = {
           item_id: string
           item_name: string
           payment_note?: string | null
+          quantity?: number
           remaining?: number | null
+          unit_price?: number
           updated_at?: string
           user_id: string
           wedding_id?: string | null
@@ -429,7 +433,9 @@ export type Database = {
           item_id?: string
           item_name?: string
           payment_note?: string | null
+          quantity?: number
           remaining?: number | null
+          unit_price?: number
           updated_at?: string
           user_id?: string
           wedding_id?: string | null
