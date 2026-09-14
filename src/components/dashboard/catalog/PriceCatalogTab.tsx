@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { Package, Pencil, Plus, Search, Sparkles, Trash2 } from 'lucide-react';
-import { PRICE_UNITS, VENDOR_CATEGORIES, getPriceUnit } from '@/data/constants';
+import { VENDOR_CATEGORIES, getPriceUnit } from '@/data/constants';
 import { usePriceCatalog, type PriceCatalogItem } from '@/hooks/usePriceCatalog';
 import CatalogItemDialog from './CatalogItemDialog';
 
