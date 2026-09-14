@@ -54,24 +54,7 @@ interface BudgetDetailDB {
 
 // Default categories with proper initialization of all required properties
 const DEFAULT_CATEGORIES: BudgetCategory[] = [
-  { 
-    name: 'Lieu de réception', 
-    items: [
-      {
-        id: 'example_lieu_reception',
-        name: 'Château de mes rêves',
-        estimated: 3000,
-        actual: 5000,
-        deposit: 2000,
-        remaining: 3000,
-        payment_note: 'mes beaux parents payent'
-      }
-    ], 
-    totalEstimated: 3000, 
-    totalActual: 5000, 
-    totalDeposit: 2000, 
-    totalRemaining: 3000 
-  },
+  { name: 'Lieu de réception', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Traiteur & Boissons', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Tenues & Accessoires', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Décoration & Fleurs', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
