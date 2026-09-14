@@ -11,7 +11,61 @@
   },
   "tabs": {
     "detailed": "Details",
-    "calculator": "Calculator"
+    "calculator": "Calculator",
+    "catalog": "Catalog"
+  },
+  "catalog": {
+    "title": "Price catalog",
+    "count": "{{count}} item(s)",
+    "searchPlaceholder": "Search a price...",
+    "allCategories": "All categories",
+    "loading": "Loading catalog...",
+    "empty": "No prices yet. Add an item or load the standard rates.",
+    "fields": {
+      "category": "Category",
+      "name": "Name",
+      "namePlaceholder": "e.g. 3-course standard menu",
+      "description": "Description",
+      "price": "Base price (€)",
+      "unit": "Price unit"
+    },
+    "dialog": {
+      "addTitle": "Add an item",
+      "editTitle": "Edit item"
+    },
+    "actions": {
+      "add": "Add an item",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirm": "Delete \"{{name}}\" from the catalog?",
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "templates": {
+      "button": "Load standard rates",
+      "confirm": "Add the standard French market rates to your catalog?",
+      "successTitle": "Catalog updated",
+      "successDescription": "{{count}} rate(s) added",
+      "alreadyLoaded": "Standard rates are already in your catalog"
+    },
+    "toasts": {
+      "savedTitle": "Item saved",
+      "deletedTitle": "Item deleted"
+    },
+    "errors": {
+      "title": "Error",
+      "generic": "Something went wrong, please try again."
+    },
+    "import": {
+      "button": "Catalog",
+      "title": "Import from catalog",
+      "empty": "Your catalog is empty. Add prices in the Catalog tab.",
+      "quantity": "Quantity",
+      "confirm": "Import ({{count}})",
+      "note": "Imported from catalog",
+      "successTitle": "Import successful",
+      "successDescription": "{{count}} line(s) added to the budget"
+    }
   },
   "detailed": {
     "title": "Detailed Budget",
