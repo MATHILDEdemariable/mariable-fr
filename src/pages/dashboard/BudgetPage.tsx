@@ -135,6 +135,10 @@ const BudgetPage: React.FC = () => {
               <BudgetCalculator />
             </div>
           </TabsContent>
+
+          <TabsContent value="catalog" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
+            <PriceCatalogTab />
+          </TabsContent>
         </Tabs>
       </div>
 
