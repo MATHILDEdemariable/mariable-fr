@@ -20,6 +20,8 @@ import { Plus, Sparkles, Clock, Users, Camera, Utensils, Heart } from 'lucide-re
 interface UnifiedTaskModalProps {
   coordinationId: string;
   referenceTime: Date;
+  activeDay?: string;
+  startPosition?: number;
   onEventAdded: (event: PlanningEvent) => void;
   onPlanningGenerated: (events: PlanningEvent[]) => void;
   onClose: () => void;
@@ -99,6 +101,8 @@ const PREDEFINED_SUGGESTIONS = [
 const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   coordinationId,
   referenceTime,
+  activeDay,
+  startPosition,
   onEventAdded,
   onPlanningGenerated,
   onClose
@@ -123,6 +127,11 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   const aiPersonalizedAction = usePremiumAction({
     feature: t('taskModal.premium.aiFeature'),
     description: t('taskModal.premium.aiDesc')
+  });
+
+  const importExcelAction = usePremiumAction({
+    feature: t('importExcel.premiumFeature'),
+    description: t('importExcel.premiumDesc')
   });
 
   // État pour l'ajout manuel
