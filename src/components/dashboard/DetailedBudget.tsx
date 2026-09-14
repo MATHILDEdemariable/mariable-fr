@@ -493,7 +493,7 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
 
     try {
       // Créer les en-têtes CSV
-      const headers = ['Catégorie', 'Article', 'Estimé (€)', 'Réel (€)', 'Acompte (€)', 'Restant (€)', 'Note de paiement'];
+      const headers = ['Catégorie', 'Article', 'Prix unitaire (€)', 'Nb pers.', 'Estimé (€)', 'Réel (€)', 'Acompte (€)', 'Restant (€)', 'Note de paiement'];
       
       // Créer les lignes de données
       const rows = categories.flatMap(category => 
@@ -1024,6 +1024,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
               {/* Totals row */}
               <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
                 <td className="px-4 py-3">TOTAL</td>
+                <td className="px-4 py-3"></td>
+                <td className="px-4 py-3"></td>
                 <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>
