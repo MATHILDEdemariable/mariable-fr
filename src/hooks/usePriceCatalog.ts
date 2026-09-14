@@ -43,7 +43,7 @@ const QUERY_KEY = ['price-catalog'];
 export const usePriceCatalog = () => {
   const queryClient = useQueryClient();
 
-  const { data: items = [], isLoading } = useQuery({
+  const { data: userItems = [], isLoading } = useQuery({
     queryKey: QUERY_KEY,
     queryFn: async (): Promise<PriceCatalogItem[]> => {
       const { data: userData } = await supabase.auth.getUser();
@@ -61,10 +61,19 @@ export const usePriceCatalog = () => {
         throw error;
       }
 
-      return (data || []).map(row => ({ ...row, base_price: Number(row.base_price) || 0 })) as PriceCatalogItem[];
+      return (data || []).map(row => ({
+        ...row,
+        base_price: Number(row.base_price) || 0,
+        is_standard: false,
+      })) as PriceCatalogItem[];
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // Les tarifs standards sont toujours disponibles, complétés par les tarifs personnels
+  const items: PriceCatalogItem[] = [...STANDARD_ITEMS, ...userItems].sort((a, b) =>
+    a.category === b.category ? a.name.localeCompare(b.name) : a.category.localeCompare(b.category)
+  );
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY });
 
