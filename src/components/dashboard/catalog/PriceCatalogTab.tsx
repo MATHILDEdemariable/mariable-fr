@@ -4,23 +4,34 @@ import { motion } from 'framer-motion';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { Package, Pencil, Plus, Search, Sparkles, Trash2 } from 'lucide-react';
+import { Package, Pencil, Plus, Search, Trash2 } from 'lucide-react';
 import { VENDOR_CATEGORIES, getPriceUnit } from '@/data/constants';
 import { usePriceCatalog, type PriceCatalogItem } from '@/hooks/usePriceCatalog';
+import { useUserProfile } from '@/hooks/useUserProfile';
 import CatalogItemDialog from './CatalogItemDialog';
+import type { CatalogImportSelection } from './ImportFromCatalogDialog';
 
-const PriceCatalogTab: React.FC = () => {
+interface PriceCatalogTabProps {
+  guestsCount: number;
+  onAddToBudget: (selections: CatalogImportSelection[]) => void;
+}
+
+const PriceCatalogTab: React.FC<PriceCatalogTabProps> = ({ guestsCount, onAddToBudget }) => {
   const { t, i18n } = useTranslation('budget');
   const { toast } = useToast();
   const isEnglish = i18n.language?.startsWith('en');
-  const { items, isLoading, createItem, updateItem, deleteItem, loadStandardTemplates } = usePriceCatalog();
+  const { items, isLoading, createItem, updateItem, deleteItem } = usePriceCatalog();
+  const { isProAccount } = useUserProfile();
 
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<PriceCatalogItem | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
   const filteredItems = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -42,20 +53,22 @@ const PriceCatalogTab: React.FC = () => {
       .filter(group => group.entries.length > 0);
   }, [filteredItems]);
 
-  const handleLoadTemplates = async () => {
-    if (!window.confirm(t('catalog.templates.confirm'))) return;
-    try {
-      const count = await loadStandardTemplates.mutateAsync();
-      toast({
-        title: t('catalog.templates.successTitle'),
-        description: count > 0
-          ? t('catalog.templates.successDescription', { count })
-          : t('catalog.templates.alreadyLoaded'),
+  const toggleSelection = (itemId: string, checked: boolean) => {
+    setSelectedIds(prev => (checked ? [...prev, itemId] : prev.filter(id => id !== itemId)));
+  };
+
+  const handleAddSelectionToBudget = () => {
+    const selections: CatalogImportSelection[] = items
+      .filter(item => selectedIds.includes(item.id))
+      .map(item => {
+        const quantity = item.price_unit === 'per_person' ? Math.max(guestsCount || 1, 1) : 1;
+        return { item, quantity, amount: Math.round(item.base_price * quantity) };
       });
-    } catch (error) {
-      console.error('❌ loadStandardTemplates failed:', error);
-      toast({ title: t('catalog.errors.title'), description: t('catalog.errors.generic'), variant: 'destructive' });
-    }
+
+    if (selections.length === 0) return;
+    console.log('🚀 catalog selection to budget:', { count: selections.length });
+    onAddToBudget(selections);
+    setSelectedIds([]);
   };
 
   const handleSubmit = async (values: Parameters<typeof createItem.mutateAsync>[0]) => {
@@ -90,7 +103,7 @@ const PriceCatalogTab: React.FC = () => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-20">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -102,26 +115,21 @@ const PriceCatalogTab: React.FC = () => {
             {t('catalog.count', { count: items.length })}
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleLoadTemplates}
-            disabled={loadStandardTemplates.isPending}
-            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10"
-          >
-            <Sparkles className="h-4 w-4 mr-2" />
-            {t('catalog.templates.button')}
-          </Button>
-          <Button
-            size="sm"
-            className="bg-wedding-olive hover:bg-wedding-olive/90"
-            onClick={() => { setEditingItem(null); setDialogOpen(true); }}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            {t('catalog.actions.add')}
-          </Button>
-        </div>
+        {isProAccount && (
+          <div className="flex items-center gap-2">
+            <Badge variant="outline" className="border-wedding-olive text-wedding-olive">
+              {t('catalog.proOnly')}
+            </Badge>
+            <Button
+              size="sm"
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
+              onClick={() => { setEditingItem(null); setDialogOpen(true); }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('catalog.actions.add')}
+            </Button>
+          </div>
+        )}
       </motion.div>
 
       <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
@@ -181,35 +189,45 @@ const PriceCatalogTab: React.FC = () => {
               <CardContent className="p-0 divide-y">
                 {entries.map(item => (
                   <div key={item.id} className="group flex items-start justify-between gap-3 p-3 sm:p-4">
-                    <div className="min-w-0">
-                      <p className="font-medium truncate">{item.name}</p>
-                      {item.description && (
-                        <p className="text-xs sm:text-sm text-muted-foreground">{item.description}</p>
-                      )}
+                    <div className="flex items-start gap-3 min-w-0">
+                      <Checkbox
+                        className="mt-1"
+                        checked={selectedIds.includes(item.id)}
+                        onCheckedChange={checked => toggleSelection(item.id, Boolean(checked))}
+                        aria-label={item.name}
+                      />
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{item.name}</p>
+                        {item.description && (
+                          <p className="text-xs sm:text-sm text-muted-foreground">{item.description}</p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       <div className="text-right">
                         <p className="font-semibold text-wedding-olive">{formatPrice(item.base_price)}</p>
                         <p className="text-xs text-muted-foreground">{unitLabel(item.price_unit)}</p>
                       </div>
-                      <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={t('catalog.actions.edit')}
-                          onClick={() => { setEditingItem(item); setDialogOpen(true); }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          aria-label={t('catalog.actions.delete')}
-                          onClick={() => handleDelete(item)}
-                        >
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
+                      {isProAccount && !item.is_standard && (
+                        <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={t('catalog.actions.edit')}
+                            onClick={() => { setEditingItem(item); setDialogOpen(true); }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            aria-label={t('catalog.actions.delete')}
+                            onClick={() => handleDelete(item)}
+                          >
+                            <Trash2 className="h-4 w-4 text-destructive" />
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -217,6 +235,21 @@ const PriceCatalogTab: React.FC = () => {
             </Card>
           ))}
         </motion.div>
+      )}
+
+      {selectedIds.length > 0 && (
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t p-3 flex items-center justify-end gap-2 shadow-lg">
+          <Button variant="ghost" size="sm" onClick={() => setSelectedIds([])}>
+            {t('catalog.selection.clear')}
+          </Button>
+          <Button
+            size="sm"
+            className="bg-wedding-olive hover:bg-wedding-olive/90"
+            onClick={handleAddSelectionToBudget}
+          >
+            {t('catalog.selection.addToBudget', { count: selectedIds.length })}
+          </Button>
+        </div>
       )}
 
       <CatalogItemDialog
