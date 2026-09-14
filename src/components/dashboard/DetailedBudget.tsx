@@ -92,6 +92,7 @@ const DetailedBudget: React.FC = () => {
   const [totalRemaining, setTotalRemaining] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const [saveTimeouts, setSaveTimeouts] = useState<{ [key: string]: NodeJS.Timeout }>({});
+  const [isCatalogImportOpen, setIsCatalogImportOpen] = useState(false);
   
   // Fetch detailed budget data from Supabase
   const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
