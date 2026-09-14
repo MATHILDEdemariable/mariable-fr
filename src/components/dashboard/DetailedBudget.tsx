@@ -22,6 +22,8 @@ import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/componen
 interface BudgetItem {
   id: string;
   name: string;
+  unit_price: number;
+  quantity: number;
   estimated: number;
   actual: number;
   deposit: number;
@@ -45,6 +47,8 @@ interface BudgetDetailDB {
   category_name: string;
   item_id: string;
   item_name: string;
+  unit_price: number;
+  quantity: number;
   estimated: number;
   actual: number;
   deposit: number;
