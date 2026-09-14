@@ -536,6 +536,13 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
         feature={aiPersonalizedAction.feature}
         description={aiPersonalizedAction.description}
       />
+
+      <PremiumModal
+        isOpen={importExcelAction.showPremiumModal}
+        onClose={importExcelAction.closePremiumModal}
+        feature={importExcelAction.feature}
+        description={importExcelAction.description}
+      />
     </>
   );
 };

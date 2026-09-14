@@ -538,6 +538,8 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             <UnifiedTaskModal
               coordinationId={coordinationId}
               referenceTime={referenceTime}
+              activeDay={activeDay}
+              startPosition={events.length}
               onEventAdded={handleManualEventAdded}
               onPlanningGenerated={handlePlanningGenerated}
               onClose={() => setIsTaskModalOpen(false)}
