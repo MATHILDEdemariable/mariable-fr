@@ -22,6 +22,8 @@ import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/componen
 interface BudgetItem {
   id: string;
   name: string;
+  unit_price: number;
+  quantity: number;
   estimated: number;
   actual: number;
   deposit: number;
@@ -45,6 +47,8 @@ interface BudgetDetailDB {
   category_name: string;
   item_id: string;
   item_name: string;
+  unit_price: number;
+  quantity: number;
   estimated: number;
   actual: number;
   deposit: number;
@@ -159,6 +163,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         category_name: categoryName,
         item_id: item.id,
         item_name: item.name,
+        unit_price: Number(item.unit_price) || 0,
+        quantity: Number(item.quantity) || 1,
         estimated: Number(item.estimated) || 0,
         actual: Number(item.actual) || 0,
         deposit: Number(item.deposit) || 0,
@@ -287,6 +293,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         categoriesMap.get(dbItem.category_name)?.push({
           id: dbItem.item_id,
           name: dbItem.item_name,
+          unit_price: Number(dbItem.unit_price) || Number(dbItem.estimated) || 0,
+          quantity: Number(dbItem.quantity) || 1,
           estimated: Number(dbItem.estimated) || 0,
           actual: Number(dbItem.actual) || 0,
           deposit: Number(dbItem.deposit) || 0,
@@ -339,6 +347,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
             items: category.items.map(item => ({
               id: item.id,
               name: item.name,
+              unit_price: item.unit_price,
+              quantity: item.quantity,
               estimated: item.estimated,
               actual: item.actual,
               deposit: item.deposit,
@@ -483,13 +493,15 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
 
     try {
       // Créer les en-têtes CSV
-      const headers = ['Catégorie', 'Article', 'Estimé (€)', 'Réel (€)', 'Acompte (€)', 'Restant (€)', 'Note de paiement'];
+      const headers = ['Catégorie', 'Article', 'Prix unitaire (€)', 'Nb pers.', 'Estimé (€)', 'Réel (€)', 'Acompte (€)', 'Restant (€)', 'Note de paiement'];
       
       // Créer les lignes de données
       const rows = categories.flatMap(category => 
         category.items.map(item => [
           category.name,
           item.name || 'Article sans nom',
+          (item.unit_price || 0).toString(),
+          (item.quantity || 1).toString(),
           item.estimated.toString(),
           item.actual.toString(),
           item.deposit.toString(),
@@ -501,6 +513,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
       // Ajouter une ligne de total
       rows.push([
         'TOTAL',
+        '',
+        '',
         '',
         totalEstimated.toString(),
         totalActual.toString(),
@@ -553,6 +567,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
     const newItem: BudgetItem = {
       id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: '',
+      unit_price: 0,
+      quantity: 1,
       estimated: 0,
       actual: 0,
       deposit: 0,
@@ -620,9 +636,20 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
     } else {
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
       (item[field] as number) = numValue;
-      
+
+      // Prix unitaire × nombre de personnes = budget estimé
+      if (field === 'unit_price' || field === 'quantity') {
+        item.quantity = Math.max(Number(item.quantity) || 1, 1);
+        item.estimated = Math.round((Number(item.unit_price) || 0) * item.quantity);
+      }
+
+      // Saisie en dur du budget estimé : on réajuste le prix unitaire
+      if (field === 'estimated') {
+        item.unit_price = item.estimated / Math.max(Number(item.quantity) || 1, 1);
+      }
+
       // Auto-calculate remaining amount
-      if (field === 'estimated' || field === 'actual' || field === 'deposit') {
+      if (field === 'estimated' || field === 'actual' || field === 'deposit' || field === 'unit_price' || field === 'quantity') {
         item.remaining = calculateRemaining(item.estimated, item.actual, item.deposit);
       }
     }
@@ -652,7 +679,9 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
 
       const newItem: BudgetItem = {
         id: `catalog_${item.id}_${Date.now()}_${importedCount}`,
-        name: quantity > 1 ? `${item.name} (x${quantity})` : item.name,
+        name: item.name,
+        unit_price: item.base_price,
+        quantity,
         estimated: amount,
         actual: 0,
         deposit: 0,
@@ -717,6 +746,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         const newItem: BudgetItem = {
           id: `cart_${cartItem.vendorId}_${Date.now()}`,
           name: cartItem.vendorName,
+          unit_price: itemPrice,
+          quantity: 1,
           estimated: itemPrice,
           actual: 0,
           deposit: 0,
@@ -850,6 +881,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
             <thead>
               <tr className="bg-gray-50 border-y">
                 <th className="px-4 py-3 text-left font-medium">{t('detailed.columns.category')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.unitPrice')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.quantity')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.estimated')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.actual')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.deposit')}</th>
@@ -864,6 +897,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
                   {/* Category row */}
                   <tr className="bg-wedding-cream/20 border-t">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-4 py-2"></td>
                     <td className="px-4 py-2 text-right font-medium">
                       {category.totalEstimated.toFixed(2)}
                     </td>
@@ -904,6 +939,27 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'name', e.target.value)}
                           className="h-8 border-gray-200"
                           placeholder={t('detailed.placeholders.itemName')}
+                          disabled={!isPremium}
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <Input
+                          type="number"
+                          value={item.unit_price || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'unit_price', e.target.value)}
+                          className="h-8 text-right border-gray-200 min-w-[90px]"
+                          placeholder="0.00"
+                          step="0.01"
+                          disabled={!isPremium}
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          value={item.quantity || 1}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'quantity', e.target.value)}
+                          className="h-8 text-right border-gray-200 w-20"
                           disabled={!isPremium}
                         />
                       </td>
@@ -972,6 +1028,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
               {/* Totals row */}
               <tr className="border-t-2 border-t-wedding-olive/50 font-semibold">
                 <td className="px-4 py-3">TOTAL</td>
+                <td className="px-4 py-3"></td>
+                <td className="px-4 py-3"></td>
                 <td className="px-4 py-3 text-right">{totalEstimated.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalActual.toFixed(2)}</td>
                 <td className="px-4 py-3 text-right">{totalDeposit.toFixed(2)}</td>

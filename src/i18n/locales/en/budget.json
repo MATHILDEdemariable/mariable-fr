@@ -77,6 +77,8 @@
     "premiumDescription": "Add and edit your budget line items with a Premium subscription",
     "columns": {
       "category": "Category / Item",
+      "unitPrice": "Unit price (€)",
+      "quantity": "Qty",
       "estimated": "Estimated Budget (€)",
       "actual": "Actual Cost (€)",
       "deposit": "Deposit Paid (€)",
@@ -92,18 +94,54 @@
       "comment": "e.g. Bride, Groom, Parents..."
     },
     "toasts": {
-      "saved": { "title": "Budget saved", "description": "Your changes have been saved successfully." },
-      "autosave": { "title": "Auto-save active", "description": "Your changes are saved automatically." },
-      "deleteError": { "title": "Delete error", "description": "Could not delete the item." },
-      "noData": { "title": "Error", "description": "No budget data to export" },
-      "pdfStart": { "title": "Exporting PDF", "description": "Preparing your budget..." },
-      "pdfSuccess": { "title": "Export successful", "description": "Your budget has been exported to PDF" },
-      "pdfError": { "title": "Export error", "description": "Something went wrong while exporting to PDF" },
-      "csvSuccess": { "title": "Export successful", "description": "Your budget has been exported to CSV" },
-      "csvError": { "title": "Export error", "description": "Something went wrong while exporting to CSV" },
-      "cartEmpty": { "title": "Empty cart", "description": "Add vendors to your cart first" },
-      "importSuccess": { "title": "Import successful", "description": "{{count}} vendor(s) imported from the cart" },
-      "importNone": { "title": "No import", "description": "All cart vendors are already in the budget" }
+      "saved": {
+        "title": "Budget saved",
+        "description": "Your changes have been saved successfully."
+      },
+      "autosave": {
+        "title": "Auto-save active",
+        "description": "Your changes are saved automatically."
+      },
+      "deleteError": {
+        "title": "Delete error",
+        "description": "Could not delete the item."
+      },
+      "noData": {
+        "title": "Error",
+        "description": "No budget data to export"
+      },
+      "pdfStart": {
+        "title": "Exporting PDF",
+        "description": "Preparing your budget..."
+      },
+      "pdfSuccess": {
+        "title": "Export successful",
+        "description": "Your budget has been exported to PDF"
+      },
+      "pdfError": {
+        "title": "Export error",
+        "description": "Something went wrong while exporting to PDF"
+      },
+      "csvSuccess": {
+        "title": "Export successful",
+        "description": "Your budget has been exported to CSV"
+      },
+      "csvError": {
+        "title": "Export error",
+        "description": "Something went wrong while exporting to CSV"
+      },
+      "cartEmpty": {
+        "title": "Empty cart",
+        "description": "Add vendors to your cart first"
+      },
+      "importSuccess": {
+        "title": "Import successful",
+        "description": "{{count}} vendor(s) imported from the cart"
+      },
+      "importNone": {
+        "title": "No import",
+        "description": "All cart vendors are already in the budget"
+      }
     },
     "cartImportNote": "Imported from cart ({{category}})"
   }
