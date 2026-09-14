@@ -226,8 +226,6 @@ const PriceCatalogTab: React.FC = () => {
         onSubmit={handleSubmit}
         isSubmitting={createItem.isPending || updateItem.isPending}
       />
-
-      <p className="sr-only">{PRICE_UNITS.length}</p>
     </div>
   );
 };
