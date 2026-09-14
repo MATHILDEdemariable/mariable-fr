@@ -630,9 +630,20 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
     } else {
       const numValue = typeof value === 'string' ? parseFloat(value) || 0 : value;
       (item[field] as number) = numValue;
-      
+
+      // Prix unitaire × nombre de personnes = budget estimé
+      if (field === 'unit_price' || field === 'quantity') {
+        item.quantity = Math.max(Number(item.quantity) || 1, 1);
+        item.estimated = Math.round((Number(item.unit_price) || 0) * item.quantity);
+      }
+
+      // Saisie en dur du budget estimé : on réajuste le prix unitaire
+      if (field === 'estimated') {
+        item.unit_price = item.estimated / Math.max(Number(item.quantity) || 1, 1);
+      }
+
       // Auto-calculate remaining amount
-      if (field === 'estimated' || field === 'actual' || field === 'deposit') {
+      if (field === 'estimated' || field === 'actual' || field === 'deposit' || field === 'unit_price' || field === 'quantity') {
         item.remaining = calculateRemaining(item.estimated, item.actual, item.deposit);
       }
     }
