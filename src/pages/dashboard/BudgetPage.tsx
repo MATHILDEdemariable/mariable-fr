@@ -9,6 +9,7 @@ import { BarChart, Calculator, Play, Monitor, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
+import PriceCatalogTab from '@/components/dashboard/catalog/PriceCatalogTab';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
