@@ -675,6 +675,15 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
     console.log('✅ handleImportFromCatalog completed:', { importedCount });
   };
 
+  // Consomme la sélection faite depuis l'onglet Catalogue
+  useEffect(() => {
+    if (pendingCatalogSelections.length === 0 || isLoadingDetails) return;
+    handleImportFromCatalog(pendingCatalogSelections);
+    onPendingCatalogConsumed?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingCatalogSelections, isLoadingDetails]);
+
+
   // Import items from cart into the detailed budget
   const handleImportFromCart = () => {
     if (cartItems.length === 0) {
