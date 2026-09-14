@@ -561,6 +561,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
     const newItem: BudgetItem = {
       id: `item_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       name: '',
+      unit_price: 0,
+      quantity: 1,
       estimated: 0,
       actual: 0,
       deposit: 0,
@@ -660,7 +662,9 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
 
       const newItem: BudgetItem = {
         id: `catalog_${item.id}_${Date.now()}_${importedCount}`,
-        name: quantity > 1 ? `${item.name} (x${quantity})` : item.name,
+        name: item.name,
+        unit_price: item.base_price,
+        quantity,
         estimated: amount,
         actual: 0,
         deposit: 0,
@@ -725,6 +729,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         const newItem: BudgetItem = {
           id: `cart_${cartItem.vendorId}_${Date.now()}`,
           name: cartItem.vendorName,
+          unit_price: itemPrice,
+          quantity: 1,
           estimated: itemPrice,
           actual: 0,
           deposit: 0,
