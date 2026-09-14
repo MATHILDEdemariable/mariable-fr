@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download, ShoppingCart, Lock } from 'lucide-react';
+import { Plus, Trash2, Save, Download, ShoppingCart, Lock, Package } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
