@@ -12,7 +12,23 @@ export interface PriceCatalogItem {
   price_unit: string;
   created_at: string;
   updated_at: string;
+  /** Tarif standard du marché (lecture seule, non stocké en base) */
+  is_standard: boolean;
 }
+
+// Tarifs standards affichés d'office, sans insertion en base
+const STANDARD_ITEMS: PriceCatalogItem[] = PRICE_CATALOG_TEMPLATES.map((template, index) => ({
+  id: `std-${index}`,
+  user_id: 'standard',
+  category: template.category,
+  name: template.name,
+  description: template.description ?? null,
+  base_price: Number(template.base_price) || 0,
+  price_unit: template.price_unit,
+  created_at: '',
+  updated_at: '',
+  is_standard: true,
+}));
 
 export interface PriceCatalogInput {
   category: string;
@@ -27,7 +43,7 @@ const QUERY_KEY = ['price-catalog'];
 export const usePriceCatalog = () => {
   const queryClient = useQueryClient();
 
-  const { data: items = [], isLoading } = useQuery({
+  const { data: userItems = [], isLoading } = useQuery({
     queryKey: QUERY_KEY,
     queryFn: async (): Promise<PriceCatalogItem[]> => {
       const { data: userData } = await supabase.auth.getUser();
@@ -45,10 +61,19 @@ export const usePriceCatalog = () => {
         throw error;
       }
 
-      return (data || []).map(row => ({ ...row, base_price: Number(row.base_price) || 0 })) as PriceCatalogItem[];
+      return (data || []).map(row => ({
+        ...row,
+        base_price: Number(row.base_price) || 0,
+        is_standard: false,
+      })) as PriceCatalogItem[];
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  // Les tarifs standards sont toujours disponibles, complétés par les tarifs personnels
+  const items: PriceCatalogItem[] = [...STANDARD_ITEMS, ...userItems].sort((a, b) =>
+    a.category === b.category ? a.name.localeCompare(b.name) : a.category.localeCompare(b.category)
+  );
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: QUERY_KEY });
 
@@ -86,25 +111,5 @@ export const usePriceCatalog = () => {
     onSuccess: invalidate,
   });
 
-  const loadStandardTemplates = useMutation({
-    mutationFn: async (): Promise<number> => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error('User not authenticated');
-
-      const existingNames = new Set(items.map(item => `${item.category}|${item.name.toLowerCase()}`));
-      const toInsert = PRICE_CATALOG_TEMPLATES
-        .filter(template => !existingNames.has(`${template.category}|${template.name.toLowerCase()}`))
-        .map(template => ({ ...template, user_id: userData.user!.id }));
-
-      if (toInsert.length === 0) return 0;
-
-      const { error } = await supabase.from('price_catalog').insert(toInsert);
-      if (error) throw error;
-
-      return toInsert.length;
-    },
-    onSuccess: invalidate,
-  });
-
-  return { items, isLoading, createItem, updateItem, deleteItem, loadStandardTemplates };
+  return { items, isLoading, createItem, updateItem, deleteItem };
 };

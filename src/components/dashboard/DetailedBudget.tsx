@@ -68,7 +68,16 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
   { name: 'Divers', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
 ];
 
-const DetailedBudget: React.FC = () => {
+interface DetailedBudgetProps {
+  /** Éléments sélectionnés dans l'onglet Catalogue, à ajouter au budget */
+  pendingCatalogSelections?: CatalogImportSelection[];
+  onPendingCatalogConsumed?: () => void;
+}
+
+const DetailedBudget: React.FC<DetailedBudgetProps> = ({
+  pendingCatalogSelections = [],
+  onPendingCatalogConsumed,
+}) => {
   const { t } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -665,6 +674,15 @@ const DetailedBudget: React.FC = () => {
     }
     console.log('✅ handleImportFromCatalog completed:', { importedCount });
   };
+
+  // Consomme la sélection faite depuis l'onglet Catalogue
+  useEffect(() => {
+    if (pendingCatalogSelections.length === 0 || isLoadingDetails) return;
+    handleImportFromCatalog(pendingCatalogSelections);
+    onPendingCatalogConsumed?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingCatalogSelections, isLoadingDetails]);
+
 
   // Import items from cart into the detailed budget
   const handleImportFromCart = () => {

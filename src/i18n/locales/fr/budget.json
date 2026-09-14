@@ -20,7 +20,12 @@
     "searchPlaceholder": "Rechercher un tarif...",
     "allCategories": "Toutes les catégories",
     "loading": "Chargement du catalogue...",
-    "empty": "Aucun tarif pour l'instant. Ajoutez un élément ou chargez les tarifs standards.",
+    "empty": "Aucun tarif ne correspond à votre recherche.",
+    "proOnly": "Pro",
+    "selection": {
+      "addToBudget": "Ajouter au budget ({{count}})",
+      "clear": "Tout décocher"
+    },
     "fields": {
       "category": "Catégorie",
       "name": "Nom",
@@ -40,13 +45,6 @@
       "deleteConfirm": "Supprimer « {{name}} » du catalogue ?",
       "cancel": "Annuler",
       "save": "Enregistrer"
-    },
-    "templates": {
-      "button": "Charger les tarifs standards",
-      "confirm": "Ajouter les tarifs standards du marché français à votre catalogue ?",
-      "successTitle": "Catalogue mis à jour",
-      "successDescription": "{{count}} tarif(s) ajouté(s)",
-      "alreadyLoaded": "Les tarifs standards sont déjà présents"
     },
     "toasts": {
       "savedTitle": "Élément enregistré",

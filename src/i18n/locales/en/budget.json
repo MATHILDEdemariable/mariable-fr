@@ -20,7 +20,12 @@
     "searchPlaceholder": "Search a price...",
     "allCategories": "All categories",
     "loading": "Loading catalog...",
-    "empty": "No prices yet. Add an item or load the standard rates.",
+    "empty": "No price matches your search.",
+    "proOnly": "Pro",
+    "selection": {
+      "addToBudget": "Add to budget ({{count}})",
+      "clear": "Clear selection"
+    },
     "fields": {
       "category": "Category",
       "name": "Name",
@@ -40,13 +45,6 @@
       "deleteConfirm": "Delete \"{{name}}\" from the catalog?",
       "cancel": "Cancel",
       "save": "Save"
-    },
-    "templates": {
-      "button": "Load standard rates",
-      "confirm": "Add the standard French market rates to your catalog?",
-      "successTitle": "Catalog updated",
-      "successDescription": "{{count}} rate(s) added",
-      "alreadyLoaded": "Standard rates are already in your catalog"
     },
     "toasts": {
       "savedTitle": "Item saved",

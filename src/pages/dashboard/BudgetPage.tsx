@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import PriceCatalogTab from '@/components/dashboard/catalog/PriceCatalogTab';
+import type { CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -22,6 +23,7 @@ const BudgetPage: React.FC = () => {
   const initialTab = tabParam === 'detailed' || tabParam === 'catalog' ? tabParam : 'calculator';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [pendingCatalogSelections, setPendingCatalogSelections] = useState<CatalogImportSelection[]>([]);
   const { isPremium, loading: loadingProfile } = useUserProfile();
   const isMobile = useIsMobile();
 
@@ -127,7 +129,10 @@ const BudgetPage: React.FC = () => {
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
             <div className="overflow-hidden max-w-full">
-              <DetailedBudget />
+              <DetailedBudget
+                pendingCatalogSelections={pendingCatalogSelections}
+                onPendingCatalogConsumed={() => setPendingCatalogSelections([])}
+              />
             </div>
           </TabsContent>
 
@@ -138,7 +143,13 @@ const BudgetPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="catalog" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
-            <PriceCatalogTab />
+            <PriceCatalogTab
+              guestsCount={Number((budgetData as any)?.guests_count) || 100}
+              onAddToBudget={selections => {
+                setPendingCatalogSelections(selections);
+                handleTabChange('detailed');
+              }}
+            />
           </TabsContent>
         </Tabs>
       </div>
