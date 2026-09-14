@@ -2326,6 +2326,42 @@ export type Database = {
           },
         ]
       }
+      price_catalog: {
+        Row: {
+          base_price: number
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          price_unit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_price?: number
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          price_unit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_price?: number
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          price_unit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       professional_payment_leads: {
         Row: {
           admin_notes: string | null
