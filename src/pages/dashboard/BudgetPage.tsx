@@ -129,7 +129,10 @@ const BudgetPage: React.FC = () => {
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
             <div className="overflow-hidden max-w-full">
-              <DetailedBudget />
+              <DetailedBudget
+                pendingCatalogSelections={pendingCatalogSelections}
+                onPendingCatalogConsumed={() => setPendingCatalogSelections([])}
+              />
             </div>
           </TabsContent>
 
@@ -140,7 +143,13 @@ const BudgetPage: React.FC = () => {
           </TabsContent>
 
           <TabsContent value="catalog" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
-            <PriceCatalogTab />
+            <PriceCatalogTab
+              guestsCount={Number((budgetData as any)?.guests_count) || 100}
+              onAddToBudget={selections => {
+                setPendingCatalogSelections(selections);
+                handleTabChange('detailed');
+              }}
+            />
           </TabsContent>
         </Tabs>
       </div>
