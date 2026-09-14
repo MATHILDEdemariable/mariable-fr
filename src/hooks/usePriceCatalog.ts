@@ -12,7 +12,23 @@ export interface PriceCatalogItem {
   price_unit: string;
   created_at: string;
   updated_at: string;
+  /** Tarif standard du marché (lecture seule, non stocké en base) */
+  is_standard: boolean;
 }
+
+// Tarifs standards affichés d'office, sans insertion en base
+const STANDARD_ITEMS: PriceCatalogItem[] = PRICE_CATALOG_TEMPLATES.map((template, index) => ({
+  id: `std-${index}`,
+  user_id: 'standard',
+  category: template.category,
+  name: template.name,
+  description: template.description ?? null,
+  base_price: Number(template.base_price) || 0,
+  price_unit: template.price_unit,
+  created_at: '',
+  updated_at: '',
+  is_standard: true,
+}));
 
 export interface PriceCatalogInput {
   category: string;
