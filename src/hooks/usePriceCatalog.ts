@@ -111,25 +111,5 @@ export const usePriceCatalog = () => {
     onSuccess: invalidate,
   });
 
-  const loadStandardTemplates = useMutation({
-    mutationFn: async (): Promise<number> => {
-      const { data: userData } = await supabase.auth.getUser();
-      if (!userData.user) throw new Error('User not authenticated');
-
-      const existingNames = new Set(items.map(item => `${item.category}|${item.name.toLowerCase()}`));
-      const toInsert = PRICE_CATALOG_TEMPLATES
-        .filter(template => !existingNames.has(`${template.category}|${template.name.toLowerCase()}`))
-        .map(template => ({ ...template, user_id: userData.user!.id }));
-
-      if (toInsert.length === 0) return 0;
-
-      const { error } = await supabase.from('price_catalog').insert(toInsert);
-      if (error) throw error;
-
-      return toInsert.length;
-    },
-    onSuccess: invalidate,
-  });
-
-  return { items, isLoading, createItem, updateItem, deleteItem, loadStandardTemplates };
+  return { items, isLoading, createItem, updateItem, deleteItem };
 };
