@@ -627,6 +627,42 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
+  // Import items from the personal price catalog
+  const handleImportFromCatalog = (selections: CatalogImportSelection[]) => {
+    console.log('🚀 handleImportFromCatalog started:', { count: selections.length });
+    const newCategories = [...categories];
+    let importedCount = 0;
+
+    selections.forEach(({ item, quantity, amount }) => {
+      const budgetCategoryName = CATALOG_TO_BUDGET_CATEGORY[item.category] || 'Divers';
+      const categoryIndex = newCategories.findIndex(category => category.name === budgetCategoryName);
+      if (categoryIndex === -1) return;
+
+      const newItem: BudgetItem = {
+        id: `catalog_${item.id}_${Date.now()}_${importedCount}`,
+        name: quantity > 1 ? `${item.name} (x${quantity})` : item.name,
+        estimated: amount,
+        actual: 0,
+        deposit: 0,
+        remaining: amount,
+        payment_note: t('catalog.import.note')
+      };
+
+      newCategories[categoryIndex].items.push(newItem);
+      saveBudgetItemMutation.mutate({ item: newItem, categoryName: budgetCategoryName });
+      importedCount++;
+    });
+
+    if (importedCount > 0) {
+      setCategories(calculateTotalsFromCategories(newCategories));
+      toast({
+        title: t('catalog.import.successTitle'),
+        description: t('catalog.import.successDescription', { count: importedCount })
+      });
+    }
+    console.log('✅ handleImportFromCatalog completed:', { importedCount });
+  };
+
   // Import items from cart into the detailed budget
   const handleImportFromCart = () => {
     if (cartItems.length === 0) {
