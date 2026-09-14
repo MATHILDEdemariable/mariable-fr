@@ -10,6 +10,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import PriceCatalogTab from '@/components/dashboard/catalog/PriceCatalogTab';
+import type { CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -22,6 +23,7 @@ const BudgetPage: React.FC = () => {
   const initialTab = tabParam === 'detailed' || tabParam === 'catalog' ? tabParam : 'calculator';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [pendingCatalogSelections, setPendingCatalogSelections] = useState<CatalogImportSelection[]>([]);
   const { isPremium, loading: loadingProfile } = useUserProfile();
   const isMobile = useIsMobile();
 
