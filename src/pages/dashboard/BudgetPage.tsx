@@ -115,6 +115,13 @@ const BudgetPage: React.FC = () => {
               <Calculator className="h-4 w-4 shrink-0" />
               <span>{t('tabs.calculator')}</span>
             </TabsTrigger>
+            <TabsTrigger 
+              value="catalog" 
+              className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
+            >
+              <Package className="h-4 w-4 shrink-0" />
+              <span>{t('tabs.catalog')}</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
