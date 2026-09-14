@@ -15,6 +15,8 @@ import PremiumModal from '@/components/premium/PremiumModal';
 import { useCart } from '@/components/cart/CartProvider';
 import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
+import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 
 // Type for budget category
 interface BudgetItem {
