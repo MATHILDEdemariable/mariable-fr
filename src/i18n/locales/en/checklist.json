@@ -14,12 +14,15 @@
     "manualShort": "Manual",
     "manualLong": "Manual checklist",
     "smartShort": "AI",
-    "smartLong": "Smart checklist"
+    "smartLong": "Smart checklist",
+    "proShort": "Pro",
+    "proLong": "Professional"
   },
   "cards": {
     "stepsTitle": "Checklist in 10 essential steps",
     "manualTitle": "Customizable checklist",
-    "smartTitle": "AI-generated checklist"
+    "smartTitle": "AI-generated checklist",
+    "proTitle": "Tasks in Kanban, list and calendar"
   },
   "tenSteps": {
     "progressTitle": "Your progress",
@@ -37,16 +40,115 @@
       "description": "Could not update the task. Please try again."
     },
     "items": [
-      { "label": "Lay the groundwork", "description": "Define your wedding vision: style, vibe, type of ceremony." },
-      { "label": "Estimate your guest count", "description": "Even a rough number will guide your logistics and budget choices." },
-      { "label": "Calibrate your budget", "description": "Assess your means and prioritize the items that matter most to you." },
-      { "label": "Pick a period or a target date", "description": "It dictates venue and vendor availability." },
-      { "label": "Book your key vendors", "description": "Venue, caterer, photographer first. Then DJ, decor, entertainment, etc." },
-      { "label": "Handle the official paperwork", "description": "City hall, religious or secular ceremonies, contracts, insurance, etc." },
-      { "label": "Anticipate wedding-day coordination", "description": "Plan a coordinator (recommended), beauty prep, logistics (transport, accommodations) and key moments." },
-      { "label": "Prepare your personal items", "description": "Outfits, rings, accessories, stationery, DIY or personal touches." },
-      { "label": "Consolidate your organization", "description": "Review every detail with your vendors: timing, deliveries, technical needs, final adjustments." },
-      { "label": "Live your day to the fullest", "description": "You've planned everything: now it's time to enjoy 100%!" }
+      {
+        "label": "Lay the groundwork",
+        "description": "Define your wedding vision: style, vibe, type of ceremony."
+      },
+      {
+        "label": "Estimate your guest count",
+        "description": "Even a rough number will guide your logistics and budget choices."
+      },
+      {
+        "label": "Calibrate your budget",
+        "description": "Assess your means and prioritize the items that matter most to you."
+      },
+      {
+        "label": "Pick a period or a target date",
+        "description": "It dictates venue and vendor availability."
+      },
+      {
+        "label": "Book your key vendors",
+        "description": "Venue, caterer, photographer first. Then DJ, decor, entertainment, etc."
+      },
+      {
+        "label": "Handle the official paperwork",
+        "description": "City hall, religious or secular ceremonies, contracts, insurance, etc."
+      },
+      {
+        "label": "Anticipate wedding-day coordination",
+        "description": "Plan a coordinator (recommended), beauty prep, logistics (transport, accommodations) and key moments."
+      },
+      {
+        "label": "Prepare your personal items",
+        "description": "Outfits, rings, accessories, stationery, DIY or personal touches."
+      },
+      {
+        "label": "Consolidate your organization",
+        "description": "Review every detail with your vendors: timing, deliveries, technical needs, final adjustments."
+      },
+      {
+        "label": "Live your day to the fullest",
+        "description": "You've planned everything: now it's time to enjoy 100%!"
+      }
     ]
+  },
+  "tasks": {
+    "views": {
+      "kanban": "Kanban",
+      "list": "List",
+      "calendar": "Calendar"
+    },
+    "status": {
+      "pending": "To do",
+      "in_progress": "In progress",
+      "completed": "Done"
+    },
+    "priority": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "categories": {
+      "invites": "Guests",
+      "budget": "Budget",
+      "lieu": "Venue",
+      "traiteur": "Catering",
+      "image": "Photo & video",
+      "decorations": "Decoration",
+      "jour-j": "Wedding day",
+      "tenues": "Outfits",
+      "beaute": "Hair & makeup",
+      "autres": "Other"
+    },
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "E.g. Book the photographer",
+      "description": "Description",
+      "category": "Category",
+      "status": "Status",
+      "priority": "Priority",
+      "dueDate": "Due date",
+      "assignedTo": "Assigned to"
+    },
+    "actions": {
+      "add": "Add a task",
+      "save": "Save",
+      "cancel": "Cancel",
+      "edit": "Edit",
+      "delete": "Delete",
+      "drag": "Move task",
+      "toggleStatus": "Toggle status"
+    },
+    "dialog": {
+      "addTitle": "New task",
+      "editTitle": "Edit task"
+    },
+    "calendar": {
+      "previous": "Previous month",
+      "next": "Next month"
+    },
+    "empty": {
+      "column": "No task",
+      "all": "No task yet"
+    },
+    "loading": "Loading tasks...",
+    "toasts": {
+      "created": "Task added",
+      "updated": "Task updated",
+      "deleted": "Task deleted",
+      "completed": "Task completed",
+      "statusUpdated": "Status updated",
+      "error": "Something went wrong"
+    }
   }
 }

@@ -14,12 +14,15 @@
     "manualShort": "Manuelle",
     "manualLong": "Check-list manuelle",
     "smartShort": "IA",
-    "smartLong": "Check-list intelligente"
+    "smartLong": "Check-list intelligente",
+    "proShort": "Pro",
+    "proLong": "Professionnel"
   },
   "cards": {
     "stepsTitle": "Checklist en 10 étapes essentielles",
     "manualTitle": "Checklist personnalisable",
-    "smartTitle": "Checklist générée par IA"
+    "smartTitle": "Checklist générée par IA",
+    "proTitle": "Tâches en Kanban, liste et calendrier"
   },
   "tenSteps": {
     "progressTitle": "Votre progression",
@@ -37,16 +40,115 @@
       "description": "Impossible de mettre à jour la tâche. Veuillez réessayer."
     },
     "items": [
-      { "label": "Posez les bases", "description": "Définissez la vision de votre mariage : style, ambiance, type de cérémonie." },
-      { "label": "Estimez le nombre d'invités", "description": "Même approximatif, cela guidera vos choix logistiques et budgétaires." },
-      { "label": "Calibrez votre budget", "description": "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies." },
-      { "label": "Choisissez une période ou une date cible", "description": "Cela conditionne les disponibilités des lieux et prestataires." },
-      { "label": "Réservez les prestataires clés", "description": "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc." },
-      { "label": "Gérez les démarches officielles", "description": "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc." },
-      { "label": "Anticipez la coordination du jour J", "description": "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts." },
-      { "label": "Préparez vos éléments personnels", "description": "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés." },
-      { "label": "Consolidez votre organisation", "description": "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements." },
-      { "label": "Vivez pleinement votre journée", "description": "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !" }
+      {
+        "label": "Posez les bases",
+        "description": "Définissez la vision de votre mariage : style, ambiance, type de cérémonie."
+      },
+      {
+        "label": "Estimez le nombre d'invités",
+        "description": "Même approximatif, cela guidera vos choix logistiques et budgétaires."
+      },
+      {
+        "label": "Calibrez votre budget",
+        "description": "Évaluez vos moyens et priorisez les postes les plus importants selon vos envies."
+      },
+      {
+        "label": "Choisissez une période ou une date cible",
+        "description": "Cela conditionne les disponibilités des lieux et prestataires."
+      },
+      {
+        "label": "Réservez les prestataires clés",
+        "description": "Lieu, traiteur, photographe en priorité. Puis DJ, déco, animation, etc."
+      },
+      {
+        "label": "Gérez les démarches officielles",
+        "description": "Mairie, cérémonies religieuses ou laïques, contrats, assurances, etc."
+      },
+      {
+        "label": "Anticipez la coordination du jour J",
+        "description": "Prévoyez une coordinatrice (recommandée), les préparatifs beauté, la logistique (transport, hébergements) et les temps forts."
+      },
+      {
+        "label": "Préparez vos éléments personnels",
+        "description": "Tenues, alliances, accessoires, papeterie, DIY ou détails personnalisés."
+      },
+      {
+        "label": "Consolidez votre organisation",
+        "description": "Revoyez chaque point avec vos prestataires : timing, livraisons, besoins techniques, derniers ajustements."
+      },
+      {
+        "label": "Vivez pleinement votre journée",
+        "description": "Vous avez tout prévu : il ne reste plus qu'à profiter à 100% !"
+      }
     ]
+  },
+  "tasks": {
+    "views": {
+      "kanban": "Kanban",
+      "list": "Liste",
+      "calendar": "Calendrier"
+    },
+    "status": {
+      "pending": "À faire",
+      "in_progress": "En cours",
+      "completed": "Terminé"
+    },
+    "priority": {
+      "low": "Basse",
+      "medium": "Moyenne",
+      "high": "Haute"
+    },
+    "categories": {
+      "invites": "Invités",
+      "budget": "Budget",
+      "lieu": "Lieu",
+      "traiteur": "Traiteur",
+      "image": "Image",
+      "decorations": "Décorations",
+      "jour-j": "Jour-J",
+      "tenues": "Tenues",
+      "beaute": "Mise en beauté",
+      "autres": "Autres"
+    },
+    "fields": {
+      "title": "Titre",
+      "titlePlaceholder": "Ex : Réserver le photographe",
+      "description": "Description",
+      "category": "Catégorie",
+      "status": "Statut",
+      "priority": "Priorité",
+      "dueDate": "Échéance",
+      "assignedTo": "Assignée à"
+    },
+    "actions": {
+      "add": "Ajouter une tâche",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "drag": "Déplacer la tâche",
+      "toggleStatus": "Changer le statut"
+    },
+    "dialog": {
+      "addTitle": "Nouvelle tâche",
+      "editTitle": "Modifier la tâche"
+    },
+    "calendar": {
+      "previous": "Mois précédent",
+      "next": "Mois suivant"
+    },
+    "empty": {
+      "column": "Aucune tâche",
+      "all": "Aucune tâche pour le moment"
+    },
+    "loading": "Chargement des tâches...",
+    "toasts": {
+      "created": "Tâche ajoutée",
+      "updated": "Tâche mise à jour",
+      "deleted": "Tâche supprimée",
+      "completed": "Tâche terminée",
+      "statusUpdated": "Statut mis à jour",
+      "error": "Une erreur est survenue"
+    }
   }
 }

@@ -119,7 +119,9 @@ const ChecklistMariageManuelle: React.FC = () => {
         position: maxPosition + 1,
         due_date: newItem.due_date || null,
         responsible: newItem.responsible || null,
+        status: 'pending',
       };
+
       if (weddingId) insertPayload.wedding_id = weddingId;
 
       const { error } = await supabase
@@ -157,8 +159,9 @@ const ChecklistMariageManuelle: React.FC = () => {
     try {
       const { error } = await supabase
         .from('checklist_mariage_manuel')
-        .update({ completed: !item.completed })
+        .update({ completed: !item.completed, status: !item.completed ? 'completed' : 'pending' } as any)
         .eq('id', item.id);
+
 
       if (error) throw error;
       loadItems();
