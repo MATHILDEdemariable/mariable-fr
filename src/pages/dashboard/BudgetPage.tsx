@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, Calculator, Play, Monitor } from 'lucide-react';
+import { BarChart, Calculator, Play, Monitor, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
