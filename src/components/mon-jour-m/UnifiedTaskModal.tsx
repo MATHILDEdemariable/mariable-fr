@@ -502,6 +502,17 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
             premiumAction={aiPersonalizedAction}
           />
         </TabsContent>
+
+        <TabsContent value="excel" className="mt-4">
+          <ImportExcelTasksTab
+            coordinationId={coordinationId}
+            activeDay={activeDay}
+            startPosition={startPosition}
+            premiumAction={importExcelAction}
+            onImported={() => onPlanningGenerated([])}
+            onClose={onClose}
+          />
+        </TabsContent>
       </Tabs>
 
       {/* Modals Premium */}
