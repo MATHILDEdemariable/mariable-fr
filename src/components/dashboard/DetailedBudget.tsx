@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download, ShoppingCart, Lock } from 'lucide-react';
+import { Plus, Trash2, Save, Download, ShoppingCart, Lock, Package } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
@@ -15,6 +15,8 @@ import PremiumModal from '@/components/premium/PremiumModal';
 import { useCart } from '@/components/cart/CartProvider';
 import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
+import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 
 // Type for budget category
 interface BudgetItem {
@@ -54,24 +56,7 @@ interface BudgetDetailDB {
 
 // Default categories with proper initialization of all required properties
 const DEFAULT_CATEGORIES: BudgetCategory[] = [
-  { 
-    name: 'Lieu de réception', 
-    items: [
-      {
-        id: 'example_lieu_reception',
-        name: 'Château de mes rêves',
-        estimated: 3000,
-        actual: 5000,
-        deposit: 2000,
-        remaining: 3000,
-        payment_note: 'mes beaux parents payent'
-      }
-    ], 
-    totalEstimated: 3000, 
-    totalActual: 5000, 
-    totalDeposit: 2000, 
-    totalRemaining: 3000 
-  },
+  { name: 'Lieu de réception', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Traiteur & Boissons', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Tenues & Accessoires', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
   { name: 'Décoration & Fleurs', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
@@ -107,6 +92,7 @@ const DetailedBudget: React.FC = () => {
   const [totalRemaining, setTotalRemaining] = useState(0);
   const [isExporting, setIsExporting] = useState(false);
   const [saveTimeouts, setSaveTimeouts] = useState<{ [key: string]: NodeJS.Timeout }>({});
+  const [isCatalogImportOpen, setIsCatalogImportOpen] = useState(false);
   
   // Fetch detailed budget data from Supabase
   const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
@@ -644,6 +630,42 @@ const DetailedBudget: React.FC = () => {
     updateBudgetMutation.mutate();
   };
 
+  // Import items from the personal price catalog
+  const handleImportFromCatalog = (selections: CatalogImportSelection[]) => {
+    console.log('🚀 handleImportFromCatalog started:', { count: selections.length });
+    const newCategories = [...categories];
+    let importedCount = 0;
+
+    selections.forEach(({ item, quantity, amount }) => {
+      const budgetCategoryName = CATALOG_TO_BUDGET_CATEGORY[item.category] || 'Divers';
+      const categoryIndex = newCategories.findIndex(category => category.name === budgetCategoryName);
+      if (categoryIndex === -1) return;
+
+      const newItem: BudgetItem = {
+        id: `catalog_${item.id}_${Date.now()}_${importedCount}`,
+        name: quantity > 1 ? `${item.name} (x${quantity})` : item.name,
+        estimated: amount,
+        actual: 0,
+        deposit: 0,
+        remaining: amount,
+        payment_note: t('catalog.import.note')
+      };
+
+      newCategories[categoryIndex].items.push(newItem);
+      saveBudgetItemMutation.mutate({ item: newItem, categoryName: budgetCategoryName });
+      importedCount++;
+    });
+
+    if (importedCount > 0) {
+      setCategories(calculateTotalsFromCategories(newCategories));
+      toast({
+        title: t('catalog.import.successTitle'),
+        description: t('catalog.import.successDescription', { count: importedCount })
+      });
+    }
+    console.log('✅ handleImportFromCatalog completed:', { importedCount });
+  };
+
   // Import items from cart into the detailed budget
   const handleImportFromCart = () => {
     if (cartItems.length === 0) {
@@ -721,10 +743,25 @@ const DetailedBudget: React.FC = () => {
         feature={feature}
         description={description}
       />
+      <ImportFromCatalogDialog
+        open={isCatalogImportOpen}
+        onOpenChange={setIsCatalogImportOpen}
+        guestsCount={Number(budgetData?.guests_count) || 100}
+        onImport={handleImportFromCatalog}
+      />
       <Card className="border shadow-sm max-w-full overflow-hidden">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
         <CardTitle className="text-lg sm:text-xl font-serif">{t('detailed.title')}</CardTitle>
         <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
+          <Button
+            onClick={() => setIsCatalogImportOpen(true)}
+            variant="outline"
+            size="sm"
+            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10 text-xs sm:text-sm"
+          >
+            <Package className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{t('catalog.import.button')}</span>
+          </Button>
           <Button 
             onClick={handleImportFromCart}
             variant="outline"

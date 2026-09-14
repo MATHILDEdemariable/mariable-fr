@@ -5,10 +5,11 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, Calculator, Play, Monitor } from 'lucide-react';
+import { BarChart, Calculator, Play, Monitor, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
+import PriceCatalogTab from '@/components/dashboard/catalog/PriceCatalogTab';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -17,7 +18,8 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab') === 'detailed' ? 'detailed' : 'calculator';
+  const tabParam = searchParams.get('tab');
+  const initialTab = tabParam === 'detailed' || tabParam === 'catalog' ? tabParam : 'calculator';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
   const { isPremium, loading: loadingProfile } = useUserProfile();
@@ -25,7 +27,7 @@ const BudgetPage: React.FC = () => {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'detailed' || tab === 'calculator') setActiveTab(tab);
+    if (tab === 'detailed' || tab === 'calculator' || tab === 'catalog') setActiveTab(tab);
   }, [searchParams]);
 
   const handleTabChange = (value: string) => {
@@ -99,7 +101,7 @@ const BudgetPage: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-3 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
               value="detailed" 
               className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
@@ -114,6 +116,13 @@ const BudgetPage: React.FC = () => {
               <Calculator className="h-4 w-4 shrink-0" />
               <span>{t('tabs.calculator')}</span>
             </TabsTrigger>
+            <TabsTrigger 
+              value="catalog" 
+              className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
+            >
+              <Package className="h-4 w-4 shrink-0" />
+              <span>{t('tabs.catalog')}</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="detailed" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
@@ -126,6 +135,10 @@ const BudgetPage: React.FC = () => {
             <div className="bg-white rounded-lg overflow-hidden">
               <BudgetCalculator />
             </div>
+          </TabsContent>
+
+          <TabsContent value="catalog" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
+            <PriceCatalogTab />
           </TabsContent>
         </Tabs>
       </div>
