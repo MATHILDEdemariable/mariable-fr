@@ -163,6 +163,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         category_name: categoryName,
         item_id: item.id,
         item_name: item.name,
+        unit_price: Number(item.unit_price) || 0,
+        quantity: Number(item.quantity) || 1,
         estimated: Number(item.estimated) || 0,
         actual: Number(item.actual) || 0,
         deposit: Number(item.deposit) || 0,
@@ -291,6 +293,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         categoriesMap.get(dbItem.category_name)?.push({
           id: dbItem.item_id,
           name: dbItem.item_name,
+          unit_price: Number(dbItem.unit_price) || Number(dbItem.estimated) || 0,
+          quantity: Number(dbItem.quantity) || 1,
           estimated: Number(dbItem.estimated) || 0,
           actual: Number(dbItem.actual) || 0,
           deposit: Number(dbItem.deposit) || 0,
