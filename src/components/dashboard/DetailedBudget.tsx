@@ -877,6 +877,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
             <thead>
               <tr className="bg-gray-50 border-y">
                 <th className="px-4 py-3 text-left font-medium">{t('detailed.columns.category')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.unitPrice')}</th>
+                <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.quantity')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.estimated')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.actual')}</th>
                 <th className="px-4 py-3 text-right font-medium">{t('detailed.columns.deposit')}</th>
@@ -891,6 +893,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
                   {/* Category row */}
                   <tr className="bg-wedding-cream/20 border-t">
                     <td className="px-4 py-2 font-medium text-base">{category.name}</td>
+                    <td className="px-4 py-2"></td>
+                    <td className="px-4 py-2"></td>
                     <td className="px-4 py-2 text-right font-medium">
                       {category.totalEstimated.toFixed(2)}
                     </td>
