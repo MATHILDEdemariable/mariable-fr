@@ -743,10 +743,25 @@ const DetailedBudget: React.FC = () => {
         feature={feature}
         description={description}
       />
+      <ImportFromCatalogDialog
+        open={isCatalogImportOpen}
+        onOpenChange={setIsCatalogImportOpen}
+        guestsCount={Number(budgetData?.guests_count) || 100}
+        onImport={handleImportFromCatalog}
+      />
       <Card className="border shadow-sm max-w-full overflow-hidden">
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
         <CardTitle className="text-lg sm:text-xl font-serif">{t('detailed.title')}</CardTitle>
         <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
+          <Button
+            onClick={() => setIsCatalogImportOpen(true)}
+            variant="outline"
+            size="sm"
+            className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10 text-xs sm:text-sm"
+          >
+            <Package className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline">{t('catalog.import.button')}</span>
+          </Button>
           <Button 
             onClick={handleImportFromCart}
             variant="outline"
