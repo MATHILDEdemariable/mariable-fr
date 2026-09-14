@@ -11,7 +11,61 @@
   },
   "tabs": {
     "detailed": "Détail",
-    "calculator": "Calcul"
+    "calculator": "Calcul",
+    "catalog": "Catalogue"
+  },
+  "catalog": {
+    "title": "Catalogue de prix",
+    "count": "{{count}} élément(s)",
+    "searchPlaceholder": "Rechercher un tarif...",
+    "allCategories": "Toutes les catégories",
+    "loading": "Chargement du catalogue...",
+    "empty": "Aucun tarif pour l'instant. Ajoutez un élément ou chargez les tarifs standards.",
+    "fields": {
+      "category": "Catégorie",
+      "name": "Nom",
+      "namePlaceholder": "Ex : Menu standard 3 plats",
+      "description": "Description",
+      "price": "Prix de base (€)",
+      "unit": "Unité de prix"
+    },
+    "dialog": {
+      "addTitle": "Ajouter un élément",
+      "editTitle": "Modifier l'élément"
+    },
+    "actions": {
+      "add": "Ajouter un élément",
+      "edit": "Modifier",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer « {{name}} » du catalogue ?",
+      "cancel": "Annuler",
+      "save": "Enregistrer"
+    },
+    "templates": {
+      "button": "Charger les tarifs standards",
+      "confirm": "Ajouter les tarifs standards du marché français à votre catalogue ?",
+      "successTitle": "Catalogue mis à jour",
+      "successDescription": "{{count}} tarif(s) ajouté(s)",
+      "alreadyLoaded": "Les tarifs standards sont déjà présents"
+    },
+    "toasts": {
+      "savedTitle": "Élément enregistré",
+      "deletedTitle": "Élément supprimé"
+    },
+    "errors": {
+      "title": "Erreur",
+      "generic": "Une erreur s'est produite, réessayez."
+    },
+    "import": {
+      "button": "Catalogue",
+      "title": "Importer depuis le catalogue",
+      "empty": "Votre catalogue est vide. Ajoutez des tarifs dans l'onglet Catalogue.",
+      "quantity": "Quantité",
+      "confirm": "Importer ({{count}})",
+      "note": "Importé du catalogue",
+      "successTitle": "Import réussi",
+      "successDescription": "{{count}} poste(s) ajouté(s) au budget"
+    }
   },
   "detailed": {
     "title": "Budget Détaillé",
