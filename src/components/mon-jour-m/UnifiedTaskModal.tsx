@@ -15,7 +15,8 @@ import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import PersonalizedScenarioTab from './PersonalizedScenarioTab';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
-import { Plus, Sparkles, Clock, Users, Camera, Utensils, Heart } from 'lucide-react';
+import { Plus, Sparkles, Clock, Users, Camera, Utensils, Heart, FileSpreadsheet } from 'lucide-react';
+import ImportExcelTasksTab from './ImportExcelTasksTab';
 
 interface UnifiedTaskModalProps {
   coordinationId: string;
@@ -335,7 +336,7 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
   return (
     <>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto">
           <TabsTrigger value="manual" className="flex items-center gap-2">
             <Plus className="h-4 w-4" />
             {t('taskModal.tabs.manual')}
@@ -347,6 +348,10 @@ const UnifiedTaskModal: React.FC<UnifiedTaskModalProps> = ({
           <TabsTrigger value="ai" className="flex items-center gap-2">
             <Sparkles className="h-4 w-4" />
             {t('taskModal.tabs.ai')}
+          </TabsTrigger>
+          <TabsTrigger value="excel" className="flex items-center gap-2">
+            <FileSpreadsheet className="h-4 w-4" />
+            {t('importExcel.tab')}
           </TabsTrigger>
         </TabsList>
 
