@@ -26,7 +26,7 @@ const BudgetPage: React.FC = () => {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'detailed' || tab === 'calculator') setActiveTab(tab);
+    if (tab === 'detailed' || tab === 'calculator' || tab === 'catalog') setActiveTab(tab);
   }, [searchParams]);
 
   const handleTabChange = (value: string) => {
