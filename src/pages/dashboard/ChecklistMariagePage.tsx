@@ -9,6 +9,8 @@ import { Play } from 'lucide-react';
 import ChecklistMariageManuelle from '@/components/dashboard/ChecklistMariageManuelle';
 import ChecklistDixEtapes from '@/components/dashboard/ChecklistDixEtapes';
 import ChecklistIntelligente from '@/components/dashboard/ChecklistIntelligente';
+import TasksTab from '@/components/dashboard/checklist/TasksTab';
+
 import { useIsMobile } from '@/hooks/use-mobile';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
@@ -22,7 +24,7 @@ const ChecklistMariagePage: React.FC = () => {
   // Synchroniser avec les paramètres URL
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && ['etapes', 'manuelle', 'intelligente'].includes(tabParam)) {
+    if (tabParam && ['etapes', 'manuelle', 'intelligente', 'pro'].includes(tabParam)) {
       setActiveTab(tabParam);
     }
   }, [searchParams]);
@@ -59,7 +61,7 @@ const ChecklistMariagePage: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger 
               value="etapes"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
@@ -78,7 +80,14 @@ const ChecklistMariagePage: React.FC = () => {
             >
               {isMobile ? t('tabs.smartShort') : t('tabs.smartLong')}
             </TabsTrigger>
+            <TabsTrigger 
+              value="pro"
+              className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
+            >
+              {isMobile ? t('tabs.proShort') : t('tabs.proLong')}
+            </TabsTrigger>
           </TabsList>
+
           
           <TabsContent value="etapes" className="space-y-6">
             <Card>
@@ -112,8 +121,20 @@ const ChecklistMariagePage: React.FC = () => {
               </CardContent>
             </Card>
           </TabsContent>
+
+          <TabsContent value="pro" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>{t('cards.proTitle')}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <TasksTab />
+              </CardContent>
+            </Card>
+          </TabsContent>
         </Tabs>
       </div>
+
 
       <TutorialVideoModal
         isOpen={showTutorial}
