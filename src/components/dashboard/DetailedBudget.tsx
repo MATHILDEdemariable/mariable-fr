@@ -941,6 +941,27 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
                       <td className="px-4 py-2">
                         <Input
                           type="number"
+                          value={item.unit_price || ''}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'unit_price', e.target.value)}
+                          className="h-8 text-right border-gray-200 min-w-[90px]"
+                          placeholder="0.00"
+                          step="0.01"
+                          disabled={!isPremium}
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <Input
+                          type="number"
+                          min={1}
+                          value={item.quantity || 1}
+                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'quantity', e.target.value)}
+                          className="h-8 text-right border-gray-200 w-20"
+                          disabled={!isPremium}
+                        />
+                      </td>
+                      <td className="px-4 py-2">
+                        <Input
+                          type="number"
                           value={item.estimated || ''}
                           onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'estimated', e.target.value)}
                           className="h-8 text-right border-gray-200"
