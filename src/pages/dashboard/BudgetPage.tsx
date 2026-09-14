@@ -100,7 +100,7 @@ const BudgetPage: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-3 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
               value="detailed" 
               className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
