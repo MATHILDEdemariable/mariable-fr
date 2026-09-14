@@ -500,6 +500,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         category.items.map(item => [
           category.name,
           item.name || 'Article sans nom',
+          (item.unit_price || 0).toString(),
+          (item.quantity || 1).toString(),
           item.estimated.toString(),
           item.actual.toString(),
           item.deposit.toString(),
@@ -511,6 +513,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
       // Ajouter une ligne de total
       rows.push([
         'TOTAL',
+        '',
+        '',
         '',
         totalEstimated.toString(),
         totalActual.toString(),
