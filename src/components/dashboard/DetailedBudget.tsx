@@ -68,7 +68,16 @@ const DEFAULT_CATEGORIES: BudgetCategory[] = [
   { name: 'Divers', items: [], totalEstimated: 0, totalActual: 0, totalDeposit: 0, totalRemaining: 0 },
 ];
 
-const DetailedBudget: React.FC = () => {
+interface DetailedBudgetProps {
+  /** Éléments sélectionnés dans l'onglet Catalogue, à ajouter au budget */
+  pendingCatalogSelections?: CatalogImportSelection[];
+  onPendingCatalogConsumed?: () => void;
+}
+
+const DetailedBudget: React.FC<DetailedBudgetProps> = ({
+  pendingCatalogSelections = [],
+  onPendingCatalogConsumed,
+}) => {
   const { t } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
