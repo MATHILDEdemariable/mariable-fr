@@ -347,6 +347,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
             items: category.items.map(item => ({
               id: item.id,
               name: item.name,
+              unit_price: item.unit_price,
+              quantity: item.quantity,
               estimated: item.estimated,
               actual: item.actual,
               deposit: item.deposit,
