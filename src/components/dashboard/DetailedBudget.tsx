@@ -669,14 +669,12 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   // Import items from the personal price catalog
   const handleImportFromCatalog = (selections: CatalogImportSelection[]) => {
     console.log('🚀 handleImportFromCatalog started:', { count: selections.length });
-    const newCategories = [...categories];
     let importedCount = 0;
 
+    // Construit les nouvelles lignes sans dépendre de l'état capturé dans la closure
+    const additions: { categoryName: string; item: BudgetItem }[] = [];
     selections.forEach(({ item, quantity, amount }) => {
       const budgetCategoryName = CATALOG_TO_BUDGET_CATEGORY[item.category] || 'Divers';
-      const categoryIndex = newCategories.findIndex(category => category.name === budgetCategoryName);
-      if (categoryIndex === -1) return;
-
       const newItem: BudgetItem = {
         id: `catalog_${item.id}_${Date.now()}_${importedCount}`,
         name: item.name,
@@ -688,19 +686,39 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         remaining: amount,
         payment_note: t('catalog.import.note')
       };
-
-      newCategories[categoryIndex].items.push(newItem);
-      saveBudgetItemMutation.mutate({ item: newItem, categoryName: budgetCategoryName });
+      additions.push({ categoryName: budgetCategoryName, item: newItem });
       importedCount++;
     });
 
-    if (importedCount > 0) {
-      setCategories(calculateTotalsFromCategories(newCategories));
-      toast({
-        title: t('catalog.import.successTitle'),
-        description: t('catalog.import.successDescription', { count: importedCount })
-      });
+    if (additions.length === 0) {
+      console.log('✅ handleImportFromCatalog completed:', { importedCount: 0 });
+      return;
     }
+
+    setCategories(prevCategories => {
+      // Copie profonde des tableaux d'items pour ne jamais muter DEFAULT_CATEGORIES
+      const newCategories = prevCategories.map(category => ({
+        ...category,
+        items: [...category.items]
+      }));
+
+      additions.forEach(({ categoryName, item }) => {
+        const categoryIndex = newCategories.findIndex(category => category.name === categoryName);
+        if (categoryIndex === -1) return;
+        newCategories[categoryIndex].items.push(item);
+      });
+
+      return calculateTotalsFromCategories(newCategories);
+    });
+
+    additions.forEach(({ categoryName, item }) => {
+      saveBudgetItemMutation.mutate({ item, categoryName });
+    });
+
+    toast({
+      title: t('catalog.import.successTitle'),
+      description: t('catalog.import.successDescription', { count: importedCount })
+    });
     console.log('✅ handleImportFromCatalog completed:', { importedCount });
   };
 
