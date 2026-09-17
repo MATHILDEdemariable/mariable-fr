@@ -123,7 +123,7 @@ const SEO: React.FC<SEOProps> = ({
         <meta name="language" content="fr-FR" />
         <meta name="geo.region" content="FR" />
         <meta name="geo.country" content="France" />
-        <link rel="canonical" href={canonical ? `${siteUrl}${canonical}` : siteUrl} />
+        <link rel="canonical" href={`${siteUrl}${resolvedPath || ''}`} />
         
         {/* Open Graph / Facebook */}
         <meta property="og:type" content={ogType} />
