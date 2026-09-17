@@ -1,12 +1,20 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
-import { ArrowRight, BookOpen, X, ChevronRight, Loader2, Check } from 'lucide-react';
+import { ArrowRight, X, ChevronRight, Loader2, Check } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
 import Footer from '@/components/Footer';
 import { GUIDES, GUIDE_THEMES, Guide, GuideTheme } from '@/data/guides';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import guideJourJImage from '@/assets/guides/guide-jour-j.png';
+import guideDebutantsImage from '@/assets/guides/guide-debutants-mariage.png';
+import checklistMarieeImage from '@/assets/guides/checklist-mariee.png';
+import checklistTemoinsImage from '@/assets/guides/checklist-temoins.png';
+import checklistPrestatairesImage from '@/assets/guides/checklist-prestataires.png';
+import guideDiscoursImage from '@/assets/guides/guide-discours-mariage.png';
+import guideCeremonieLaiqueImage from '@/assets/guides/guide-ceremonie-laique.png';
+import cataloguePrixImage from '@/assets/guides/catalogue-prix-mariage.png';
 
 const GUIDE_SECTIONS = [
   {
@@ -80,6 +88,17 @@ const findGuide = (slug: string) => GUIDES.find((g) => g.slug === slug);
 
 const formatPrice = (n: number) =>
   n.toLocaleString('fr-FR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+const GUIDE_IMAGES: Record<string, string> = {
+  'guide-jour-j': guideJourJImage,
+  'guide-debutants-mariage': guideDebutantsImage,
+  'checklist-mariee': checklistMarieeImage,
+  'checklist-temoins': checklistTemoinsImage,
+  'checklist-questions-prestataires': checklistPrestatairesImage,
+  'guide-discours-mariage': guideDiscoursImage,
+  'guide-ceremonie-laique': guideCeremonieLaiqueImage,
+  'catalogue-prix-mariage-2026': cataloguePrixImage,
+};
 
 export default function GuidesShop() {
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
@@ -275,9 +294,16 @@ export default function GuidesShop() {
                       id={`ebook-${g.slug}`}
                       className="bg-white border border-editorial-noir/10 flex flex-col group hover:shadow-md transition-shadow scroll-mt-24"
                     >
-                      <div className="aspect-square bg-gradient-to-br from-editorial-beige to-editorial-cream border-b border-editorial-noir/10 flex flex-col items-center justify-center p-4 text-center">
-                        <BookOpen className="w-6 h-6 text-editorial-olive mb-2 opacity-60" />
-                        <p className="uppercase tracking-[0.2em] text-[9px] text-editorial-olive mb-2">
+                       <div className="aspect-square bg-editorial-beige border-b border-editorial-noir/10 flex flex-col items-center justify-between p-3 md:p-4 text-center overflow-hidden">
+                         <img
+                           src={GUIDE_IMAGES[g.slug]}
+                           alt={`Illustration du guide ${g.title}`}
+                           loading="lazy"
+                           width="520"
+                           height="520"
+                           className="w-full min-h-0 flex-1 object-contain"
+                         />
+                         <p className="uppercase tracking-[0.2em] text-[9px] text-editorial-olive mt-1 mb-1">
                           Mariable · PDF
                         </p>
                         <h3 className="font-serif text-sm md:text-base text-editorial-noir leading-snug line-clamp-3">
