@@ -39,5 +39,5 @@ Allow: /
 User-agent: Bingbot
 Allow: /
 
-Sitemap: https://www.mariable.fr/sitemap.xml
+Sitemap: https://mariable.fr/sitemap.xml
 Sitemap: https://bgidfcqktsttzlwlumtz.supabase.co/functions/v1/generate-sitemap
