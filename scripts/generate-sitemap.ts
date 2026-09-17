@@ -8,7 +8,7 @@
 import { writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-const BASE_URL = "https://www.mariable.fr";
+const BASE_URL = "https://mariable.fr";
 const SUPABASE_URL =
   process.env.VITE_SUPABASE_URL ?? "https://bgidfcqktsttzlwlumtz.supabase.co";
 const SUPABASE_ANON_KEY =
