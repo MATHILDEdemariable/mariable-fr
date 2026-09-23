@@ -1877,7 +1877,7 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/agence-social-media-mariage</loc>
+    <loc>https://mariable.fr/conseils-professionnels/agence-social-media-mariage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1920,12 +1920,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/se-lancer-wedding-planner</loc>
+    <loc>https://mariable.fr/conseils-professionnels/se-lancer-wedding-planner</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/prix-community-manager-mariage</loc>
+    <loc>https://mariable.fr/conseils-professionnels/prix-community-manager-mariage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1976,12 +1976,12 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/idees-posts-instagram-prestataire-mariage</loc>
+    <loc>https://mariable.fr/conseils-professionnels/idees-posts-instagram-prestataire-mariage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/gestion-instagram-professionnel-mariage</loc>
+    <loc>https://mariable.fr/conseils-professionnels/gestion-instagram-professionnel-mariage</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2160,6 +2160,30 @@
   </url>
   <url>
     <loc>https://mariable.fr/conseilsmariage/plan-de-table-mariage-idees-inspiration</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/alternative-excel-deroule-mariage</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/logiciel-wedding-planner</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/lieux-reception</loc>
+    <lastmod>2026-09-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/coordination-jour-j</loc>
+    <lastmod>2026-09-23</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
