@@ -29,7 +29,7 @@ const SEO: React.FC<SEOProps> = ({
   const resolvedPath = canonical ?? currentPath;
   // Avoid "X – Mariable" when title already contains "Mariable"
   const fullTitle = /mariable/i.test(title) ? title : `${title} – Mariable`;
-  const siteUrl = "https://www.mariable.fr";
+  const siteUrl = "https://mariable.fr";
   const logoUrl = `${siteUrl}/lovable-uploads/c1b39e22-fe32-4dc7-8f94-fbb929ae43fa.png`;
   
   // Ensure image is always absolute URL
