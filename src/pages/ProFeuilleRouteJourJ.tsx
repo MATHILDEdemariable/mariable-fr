@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { ArrowRight, Check, Download, Link2, RefreshCw, UserCheck } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
@@ -16,12 +15,8 @@ const FAQ = [
 ];
 
 const ProFeuilleRouteJourJ = () => {
-  const { i18n } = useTranslation();
-  const isEnglish = i18n.language?.startsWith("en");
-  const title = isEnglish ? "Share one wedding-day timeline with every vendor" : "Un seul lien pour partager votre feuille de route mariage";
-  const description = isEnglish
-    ? "Create, filter and update a wedding-day timeline shared with every vendor, with no account required to view it."
-    : "Créez une feuille de route mariage, partagez-la sans compte à tous les prestataires et gardez toujours la dernière version du déroulé du jour J.";
+  const title = "Un seul lien pour partager votre feuille de route mariage";
+  const description = "Créez une feuille de route mariage, partagez-la sans compte à tous les prestataires et gardez toujours la dernière version du déroulé du jour J.";
 
   const serviceSchema = {
     "@context": "https://schema.org",
