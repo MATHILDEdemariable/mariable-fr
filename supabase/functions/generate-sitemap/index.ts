@@ -1,6 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const BASE_URL = "https://www.mariable.fr";
+const BASE_URL = "https://mariable.fr";
 
 const staticPages = [
   { url: "/", lastmod: "2026-02-16", priority: "1.0", changefreq: "daily" },
@@ -70,7 +70,7 @@ function formatDate(dateStr: string): string {
 
 function generateXml(
   prestataires: { slug: string; updated_at: string }[],
-  blogPosts: { slug: string; updated_at: string }[]
+  blogPosts: { slug: string; updated_at: string; audience?: string | null }[]
 ): string {
   const urls = staticPages
     .map(
