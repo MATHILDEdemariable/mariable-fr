@@ -33,7 +33,10 @@ const Register = () => {
   const [phone, setPhone] = useState('');
   const [referralSource, setReferralSource] = useState('');
   const [registrationPurpose, setRegistrationPurpose] = useState('');
-  const [accountType, setAccountType] = useState<'b2c' | 'b2b'>('b2c');
+  const requestedAccountType = new URLSearchParams(window.location.search).get('type');
+  const [accountType, setAccountType] = useState<'b2c' | 'b2b'>(
+    requestedAccountType === 'pro' ? 'b2b' : 'b2c'
+  );
   const [acceptTerms, setAcceptTerms] = useState(false);
   const [termsOpen, setTermsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
