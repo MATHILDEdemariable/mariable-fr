@@ -8,6 +8,7 @@ import { Calendar, Users, FileText, Clock, CheckCircle2, Circle, User, Building,
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { validatePlanningShareToken, getPublicCoordinationData } from '@/utils/tokenUtils';
 import PhotoListReadOnly from '@/components/mon-jour-m/PhotoListReadOnly';
+import { supabase } from '@/integrations/supabase/client';
 
 interface WeddingData {
   coordination: any;
@@ -25,6 +26,7 @@ const JourMVue: React.FC = () => {
   const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [isExporting, setIsExporting] = useState(false);
+  const [coordinationId, setCoordinationId] = useState<string | null>(null);
 
   useEffect(() => {
     console.log('🚀 JourMVue component mounted with token:', token);
@@ -37,16 +39,35 @@ const JourMVue: React.FC = () => {
   }, [token]);
 
   useEffect(() => {
+    if (!coordinationId || !token) return;
+
+    const refreshSharedData = () => {
+      loadSharedData(token, false);
+    };
+    const channel = supabase
+      .channel(`jour-m-public-${coordinationId}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'wedding_coordination', filter: `id=eq.${coordinationId}` }, refreshSharedData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_planning', filter: `coordination_id=eq.${coordinationId}` }, refreshSharedData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_team', filter: `coordination_id=eq.${coordinationId}` }, refreshSharedData)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_documents', filter: `coordination_id=eq.${coordinationId}` }, refreshSharedData)
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [coordinationId, token]);
+
+  useEffect(() => {
     if (weddingData?.tasks) {
       filterTasks();
     }
   }, [selectedTeamMember, weddingData?.tasks]);
 
-  const loadSharedData = async (shareToken: string) => {
+  const loadSharedData = async (shareToken: string, showLoader = true) => {
     console.log('📊 Loading shared data for token:', shareToken);
     
     try {
-      setLoading(true);
+      if (showLoader) setLoading(true);
       
       // Valider le token avec la nouvelle fonction simplifiée
       const { isValid, coordinationId } = await validatePlanningShareToken(shareToken);
@@ -59,6 +80,8 @@ const JourMVue: React.FC = () => {
         return;
       }
 
+      setCoordinationId(coordinationId);
+
       // Récupérer les données publiques
       const weddingDataResult = await getPublicCoordinationData(coordinationId);
       
@@ -68,7 +91,7 @@ const JourMVue: React.FC = () => {
       console.error('❌ Error loading shared data:', error);
       setError(`Erreur lors du chargement des données: ${error.message}`);
     } finally {
-      setLoading(false);
+      if (showLoader) setLoading(false);
     }
   };
 

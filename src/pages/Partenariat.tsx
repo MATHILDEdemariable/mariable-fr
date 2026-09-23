@@ -291,6 +291,9 @@ const Partenariat = () => {
               </h2>
               <p className="text-editorial-noir/70 max-w-3xl mx-auto">{t("pro.intro")}</p>
               <p className="text-editorial-noir/70 max-w-3xl mx-auto mt-4">{t("pro.seoIntro")}</p>
+              <Link to="/pro/feuille-de-route-jour-j" className="mt-5 inline-flex items-center gap-2 text-sm text-editorial-olive underline underline-offset-4">
+                Découvrir l’application de feuille de route Jour-J <ArrowLeft className="h-4 w-4 rotate-180" />
+              </Link>
 
             </motion.div>
 
