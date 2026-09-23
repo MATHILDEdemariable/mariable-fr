@@ -331,6 +331,18 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
           </div>
         </section>
 
+        {isPro && (
+          <section className="px-4 py-12 bg-white">
+            <div className="container mx-auto max-w-4xl border-l-4 border-editorial-olive pl-6 md:pl-8">
+              <h2 className="text-2xl md:text-3xl font-serif text-wedding-black">Un seul lien pour coordonner tous vos prestataires</h2>
+              <p className="mt-3 max-w-2xl text-muted-foreground">Découvrez l’application Jour-J, sa feuille de route filtrable et son partage sans compte prestataire.</p>
+              <Button onClick={() => navigate('/pro/feuille-de-route-jour-j')} variant="link" className="mt-3 h-auto p-0 text-editorial-olive">
+                Voir l’appli Jour-J <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </section>
+        )}
+
       </main>
 
       <Footer />

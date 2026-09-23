@@ -48,6 +48,7 @@ const staticPages = [
   { url: "/coordinateurs-mariage", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   
   { url: "/coordination-jour-j", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
+  { url: "/pro/feuille-de-route-jour-j", lastmod: "2026-09-23", priority: "0.9", changefreq: "weekly" },
   { url: "/outils-planning-mariage", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/to-do-list-mariage", lastmod: "2026-02-16", priority: "0.6", changefreq: "monthly" },
   { url: "/liste-preparatif-mariage", lastmod: "2026-02-16", priority: "0.6", changefreq: "monthly" },

@@ -37,6 +37,7 @@ const MariageCorse = lazy(() => import("./pages/MariageCorse"));
 const ChecklistMariage = lazy(() => import("./pages/ChecklistMariage"));
 const AlbumPhotoPartage = lazy(() => import("./pages/AlbumPhotoPartage"));
 const CoordinationJourJ = lazy(() => import("./pages/CoordinationJourJ"));
+const ProFeuilleRouteJourJ = lazy(() => import("./pages/ProFeuilleRouteJourJ"));
 
 const Callback = lazy(() => import("./pages/auth/Callback"));
 
@@ -220,6 +221,7 @@ function App() {
                    {/* Nouvelles pages outils */}
           <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
                     <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
+                    <Route path="/pro/feuille-de-route-jour-j" element={<ProFeuilleRouteJourJ />} />
                     <Route path="/landingjourj" element={<LandingJourJ />} />
           
           {/* Pages régionales */}
