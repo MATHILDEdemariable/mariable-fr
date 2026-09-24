@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const BUDGET_WEDDING_IMAGE = '/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png';
+const EDITORIAL_WEDDING_IMAGE = '/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png';
 
 const centralizedInformation = [
   'schedule',
@@ -137,14 +137,6 @@ export const JourJProductFocus: React.FC = () => {
           <p className="mx-auto mt-4 max-w-3xl border-l-2 border-editorial-olive pl-5 text-left text-sm leading-relaxed text-editorial-noir/70 md:text-center md:text-base">
             {t('jourJFocus.assistance')}
           </p>
-          <div className="mt-7 grid grid-cols-2 gap-px bg-editorial-noir/10 md:grid-cols-5">
-            {(['caterer', 'dj', 'witnesses', 'venue', 'couple'] as const).map((person) => (
-              <div key={person} className={person === 'couple' ? 'col-span-2 bg-editorial-beige px-4 py-5 text-center md:col-span-1' : 'bg-editorial-beige px-4 py-5 text-center'}>
-                <p className="text-xs uppercase tracking-widest text-editorial-noir/55">{t(`jourJFocus.people.${person}.name`)}</p>
-                <p className="mt-2 text-sm text-editorial-noir">{t(`jourJFocus.people.${person}.need`)}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </section>
@@ -155,33 +147,54 @@ export const AudiencePaths: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
 
   return (
-    <section className="bg-background py-16 md:py-24">
+    <section className="overflow-hidden bg-background py-16 md:py-24">
       <div className="container mx-auto px-4 md:px-8">
-        <header className="mx-auto mb-12 max-w-3xl text-center">
-          <p className="mb-3 text-xs uppercase tracking-[0.3em] text-editorial-noir/60">{t('audiences.eyebrow')}</p>
-          <h2 className="font-serif text-3xl leading-tight text-editorial-noir md:text-5xl">{t('audiences.title')}</h2>
-        </header>
+        <div className="grid items-center gap-10 md:grid-cols-12 md:gap-8 lg:gap-12">
+          <div className="relative md:col-span-7 lg:col-span-7">
+            <div className="aspect-[4/5] overflow-hidden bg-editorial-beige">
+              <img
+                src={EDITORIAL_WEDDING_IMAGE}
+                alt={t('audiences.couple.imageAlt')}
+                width={1080}
+                height={1350}
+                loading="lazy"
+                className="h-full w-full object-cover object-center transition-[filter] duration-700 motion-reduce:transition-none md:grayscale-[20%] md:hover:grayscale-0"
+              />
+            </div>
+            <div className="absolute bottom-5 left-5 border border-primary-foreground/80 px-4 py-3 text-[10px] uppercase tracking-[0.25em] text-primary-foreground md:bottom-8 md:left-8">
+              {t('audiences.eyebrow')}
+            </div>
+          </div>
 
-        <div className="grid gap-px bg-editorial-noir/15 lg:grid-cols-2">
-          <article id="couple" className="flex flex-col bg-editorial-beige p-7 md:p-10">
-              <p className="text-xs uppercase tracking-[0.25em] text-editorial-olive">{t('audiences.couple.label')}</p>
-              <h3 className="mt-3 font-serif text-3xl text-editorial-noir">{t('audiences.couple.title')}</h3>
-              <p className="mt-5 flex-1 text-sm leading-relaxed text-editorial-noir/70 md:text-base">{t('audiences.couple.body')}</p>
-              <p className="mt-5 font-serif text-lg text-editorial-noir">{t('audiences.couple.highlight')}</p>
-              <Button asChild className="mt-7 h-12 rounded-none bg-editorial-olive px-6 text-xs uppercase tracking-widest text-primary-foreground hover:bg-editorial-noir">
-                <Link to="/register-gratuit">{t('audiences.couple.cta')}</Link>
-              </Button>
-          </article>
+          <div className="relative z-10 md:col-span-5 md:-ml-16 lg:-ml-24">
+            <div className="bg-background/95 p-6 md:p-9 lg:p-12">
+              <h2 className="font-serif text-4xl leading-tight text-editorial-noir md:text-5xl lg:text-6xl">
+                {t('audiences.title')}
+              </h2>
 
-          <article id="professionnel" className="flex flex-col bg-editorial-olive p-7 text-primary-foreground md:p-10">
-            <p className="text-xs uppercase tracking-[0.25em] text-primary-foreground/75">{t('audiences.pro.label')}</p>
-            <h3 className="mt-3 font-serif text-3xl">{t('audiences.pro.title')}</h3>
-            <p className="mt-5 flex-1 text-sm leading-relaxed text-primary-foreground/80 md:text-base">{t('audiences.pro.body')}</p>
-            <p className="mt-5 font-serif text-lg">{t('audiences.pro.highlight')}</p>
-            <Button asChild variant="outline" className="mt-8 h-12 w-full rounded-none border-primary-foreground bg-transparent px-6 text-xs uppercase tracking-widest text-primary-foreground hover:bg-primary-foreground hover:text-editorial-noir">
-              <Link to="/register-gratuit?type=pro">{t('audiences.pro.cta')}</Link>
-            </Button>
-          </article>
+              <div className="mt-10 space-y-10 md:mt-12 md:space-y-12">
+                <article id="couple" className="border-l border-editorial-noir/20 pl-5 md:pl-7">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-editorial-olive">{t('audiences.couple.label')}</p>
+                  <h3 className="mt-3 font-serif text-2xl leading-snug text-editorial-noir">{t('audiences.couple.title')}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-editorial-noir/70">{t('audiences.couple.body')}</p>
+                  <p className="mt-3 font-serif text-base text-editorial-noir">{t('audiences.couple.highlight')}</p>
+                  <Button asChild variant="outline" className="mt-6 min-h-12 w-full rounded-none border-editorial-noir bg-transparent px-5 text-xs uppercase tracking-widest text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground sm:w-auto">
+                    <Link to="/register-gratuit">{t('audiences.couple.cta')}</Link>
+                  </Button>
+                </article>
+
+                <article id="professionnel" className="border-l border-editorial-noir/20 pl-5 md:pl-7">
+                  <p className="text-[10px] uppercase tracking-[0.25em] text-editorial-olive">{t('audiences.pro.label')}</p>
+                  <h3 className="mt-3 font-serif text-2xl leading-snug text-editorial-noir">{t('audiences.pro.title')}</h3>
+                  <p className="mt-4 text-sm leading-relaxed text-editorial-noir/70">{t('audiences.pro.body')}</p>
+                  <p className="mt-3 font-serif text-base text-editorial-noir">{t('audiences.pro.highlight')}</p>
+                  <Button asChild variant="outline" className="mt-6 min-h-12 w-full rounded-none border-editorial-noir bg-transparent px-5 text-xs uppercase tracking-widest text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground sm:w-auto">
+                    <Link to="/register-gratuit?type=pro">{t('audiences.pro.cta')}</Link>
+                  </Button>
+                </article>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -241,7 +254,7 @@ export const PreparationTools: React.FC = () => {
         </div>
 
         <div className="mt-16 grid overflow-hidden bg-editorial-olive text-primary-foreground md:grid-cols-[0.7fr_1.3fr]">
-          <img src={BUDGET_WEDDING_IMAGE} alt={t('preparation.editorialAlt')} width={1080} height={1350} loading="lazy" className="h-full min-h-64 w-full object-cover" />
+          <img src={EDITORIAL_WEDDING_IMAGE} alt={t('preparation.editorialAlt')} width={1080} height={1350} loading="lazy" className="h-full min-h-64 w-full object-cover" />
           <div className="flex flex-col justify-center p-8 md:p-12">
             <FileText className="h-6 w-6" strokeWidth={1.3} />
             <p className="mt-5 text-xs uppercase tracking-[0.25em] text-primary-foreground/70">{t('preparation.editorialEyebrow')}</p>
