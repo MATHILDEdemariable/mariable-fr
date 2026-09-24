@@ -147,7 +147,7 @@ const Partenariat = () => {
               </div>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="relative min-h-[420px] lg:min-h-[660px]">
-              <img src={receptionProAsset.url} alt="Réception de mariage dans un jardin" width={768} height={1024} className="absolute inset-0 h-full w-full object-cover" fetchPriority="high" />
+              <img src={receptionProAsset.url} alt="Réception de mariage dans un jardin" width={768} height={1024} className="absolute inset-0 h-full w-full object-cover" />
             </motion.div>
           </div>
           <p className="mx-auto mt-7 max-w-7xl border-t border-editorial-noir/15 pt-5 text-center text-xs uppercase tracking-[0.16em] text-editorial-noir/60">{t("hero.audiences")}</p>
