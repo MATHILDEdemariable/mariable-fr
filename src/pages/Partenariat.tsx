@@ -305,35 +305,42 @@ const Partenariat = () => {
                 viewport={{ once: true }}
                 className="grid sm:grid-cols-2 gap-6"
               >
-                {(["referencement", "plateforme"] as const).map((key) => {
+                {(["plateforme", "referencement"] as const).map((key, index) => {
                   const group = proIncluded[key];
                   if (!group) return null;
                   return (
-                    <div
-                      key={key}
-                      className="bg-editorial-beige/20 border-t-4 border-editorial-olive p-6 md:p-8 h-full"
-                    >
-                      <h3 className="font-serif text-lg text-editorial-noir mb-4">
-                        {group.title}
-                        {key === "referencement" && <span className="text-editorial-olive"> *</span>}
-                      </h3>
-                      <ul className="space-y-3">
-                        {group.items.map((item) => (
-                          <li key={item} className="flex items-start gap-3">
-                            <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                            <span className="text-editorial-noir/85 text-sm">{item}</span>
-                          </li>
-                        ))}
-                      </ul>
-                      {key === "referencement" && (
-                        <button
-                          type="button"
-                          onClick={() => setConditionsOpen(true)}
-                          className="mt-5 text-sm text-editorial-olive underline underline-offset-4 hover:text-editorial-noir"
+                    <div key={key} className="relative h-full">
+                      {index === 1 && (
+                        <span
+                          aria-hidden="true"
+                          className="absolute -top-5 left-1/2 z-10 -translate-x-1/2 bg-white px-3 font-serif text-3xl text-editorial-olive sm:-left-3 sm:top-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 sm:px-2"
                         >
-                          {t("pro.eligibilityNote")}
-                        </button>
+                          +
+                        </span>
                       )}
+                      <div className="bg-editorial-beige/20 border-t-4 border-editorial-olive p-6 md:p-8 h-full">
+                        <h3 className="font-serif text-lg text-editorial-noir mb-4">
+                          {group.title}
+                          {key === "referencement" && <span className="text-editorial-olive"> *</span>}
+                        </h3>
+                        <ul className="space-y-3">
+                          {group.items.map((item) => (
+                            <li key={item} className="flex items-start gap-3">
+                              <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                              <span className="text-editorial-noir/85 text-sm">{item}</span>
+                            </li>
+                          ))}
+                        </ul>
+                        {key === "referencement" && (
+                          <button
+                            type="button"
+                            onClick={() => setConditionsOpen(true)}
+                            className="mt-5 text-sm text-editorial-olive underline underline-offset-4 hover:text-editorial-noir"
+                          >
+                            {t("pro.eligibilityNote")}
+                          </button>
+                        )}
+                      </div>
                     </div>
                   );
                 })}
@@ -363,13 +370,6 @@ const Partenariat = () => {
                   className="w-full bg-editorial-noir text-white hover:bg-editorial-noir/90 py-6 text-base rounded-none"
                 >
                   {t("pro.cta")}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setConditionsOpen(true)}
-                  className="w-full mt-3 border-editorial-olive text-editorial-noir hover:bg-editorial-olive/10 py-6 text-base rounded-none"
-                >
-                  {t("pro.ctaConditions")}
                 </Button>
               </motion.div>
             </div>
