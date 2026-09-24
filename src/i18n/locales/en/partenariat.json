@@ -30,7 +30,7 @@
   },
   "pro": {
     "sectionTitle": "Mariable Pro — what your membership includes",
-    "intro": "Mariable Pro first gives you access to the Mariable.fr app to manage unlimited projects, including the Wedding Day module and AI features. Your offer also includes listings and visibility among couples on the B2C platform and Mariable social channels.",
+    "intro": "Mariable Pro first gives you access to the Mariable.fr app to manage unlimited projects, including the Wedding Day module and AI features. Your offer also includes listings and visibility among couples in the B2C app and on Mariable social channels.",
     "features": [
       {
         "title": "Dedicated professional profile on Mariable",
@@ -137,6 +137,7 @@
     }
   },
   "services": {
+    "transition": "In addition to Mariable Pro, discover Mariable Studio.",
     "sectionLabel": "Mariable Studio",
     "sectionTitle": "The digital marketing agency for event professionals",
     "sectionSubtitle": "Three levers to build your brand, your client acquisition and your digital presence — à la carte or as a full retainer.",
@@ -192,7 +193,7 @@
       },
       {
         "question": "How much does Mariable Pro cost?",
-        "answer": "Mariable Pro costs €149/year, with no automatic renewal commitment. It includes unlimited projects, a multi-wedding professional workspace, wedding-day coordination, AI features and optional Mariable listing."
+        "answer": "Mariable Pro costs €149/year, with no automatic renewal commitment and a free trial available. It includes unlimited projects, a multi-wedding professional workspace, wedding-day coordination, AI features and optional Mariable listing."
       },
       {
         "question": "What wedding marketing is included in Mariable Pro?",

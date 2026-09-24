@@ -30,7 +30,7 @@
   },
   "pro": {
     "sectionTitle": "Mariable Pro — ce que comprend vos frais d'adhésion",
-    "intro": "Mariable Pro vous donne d'abord accès à l'application Mariable.fr pour gérer un nombre illimité de projets, notamment avec le module Jour-J et les fonctionnalités IA. Votre offre inclut aussi un référencement et une visibilité auprès des couples sur la plateforme B2C et les réseaux Mariable.",
+    "intro": "Mariable Pro vous donne d'abord accès à l'application Mariable.fr pour gérer un nombre illimité de projets, notamment avec le module Jour-J et les fonctionnalités IA. Votre offre inclut aussi un référencement et une visibilité auprès des couples dans l’app B2C et sur les réseaux Mariable.",
     "features": [
       {
         "title": "Profil professionnel dédié sur Mariable",
@@ -137,6 +137,7 @@
     }
   },
   "services": {
+    "transition": "En plus de Mariable Pro, découvrez Mariable Studio.",
     "sectionLabel": "Mariable Studio",
     "sectionTitle": "L'agence marketing digital des professionnels de l'événementiel",
     "sectionSubtitle": "Trois leviers pour construire votre marque, votre acquisition clients et votre présence digitale, à la carte ou en accompagnement complet.",
@@ -192,7 +193,7 @@
       },
       {
         "question": "Combien coûte Mariable Pro ?",
-        "answer": "Mariable Pro coûte 149 €/an, sans engagement de reconduction. L’abonnement comprend les projets illimités, l’espace professionnel multi-mariages, la coordination Jour J, les fonctionnalités IA et le référencement Mariable en option."
+        "answer": "Mariable Pro coûte 149 €/an, sans engagement de reconduction, avec un essai gratuit disponible. L’abonnement comprend les projets illimités, l’espace professionnel multi-mariages, la coordination Jour J, les fonctionnalités IA et le référencement Mariable en option."
       },
       {
         "question": "Quelle communication mariage est incluse dans Mariable Pro ?",
