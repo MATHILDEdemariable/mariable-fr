@@ -9,4 +9,4 @@
 - [x] Ajouter le tutoriel d’installation en FAQ et traduire le mockup
 - [x] Vérifier les parcours et affichages FR/EN sur mobile et ordinateur
 - [x] Refondre /partenariat autour de Mariable Pro et Studio avec les nouveaux visuels
-- [ ] Recentrer le hero /partenariat sur les deux offres et fusionner le récit Jour J
+- [x] Recentrer le hero /partenariat sur les deux offres et fusionner le récit Jour J

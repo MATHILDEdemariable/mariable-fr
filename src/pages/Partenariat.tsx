@@ -28,7 +28,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import coupleProAsset from "@/assets/partenariat/couple-mariable-pro.png.asset.json";
-import receptionProAsset from "@/assets/partenariat/reception-mariable-pro.png.asset.json";
+import receptionProAsset from "@/assets/partenariat/reception-mariable-pro-v2.webp.asset.json";
 
 const SERVICE_ICONS = [Film, MessageSquare, Globe];
 
