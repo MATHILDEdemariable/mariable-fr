@@ -1,19 +1,21 @@
 {
   "seo": {
-    "title": "Mariable Pro — Wedding day coordination for professionals",
-    "description": "Wedding planners, coordinators and venues: manage every wedding, coordinate each wedding day and share the right information with Mariable Pro."
+    "title": "Mariable Pro & Studio — Solutions for wedding professionals",
+    "description": "Wedding planners, coordinators and venues: save time with the Mariable Pro wedding-day app and grow your communications with Mariable Studio."
   },
   "backHome": "Back to home",
   "hero": {
-    "eyebrow": "Mariable Pro",
-    "tagline": "Coordinate every wedding day, simply.",
-    "subtitle": "A platform designed for wedding planners, coordinators and venues managing several weddings throughout the year.",
-    "body": "Centralise your projects, build each timeline, gather key information and share it easily with the right people.",
-    "cta": "Try Mariable Pro for free",
+    "eyebrow": "Mariable · For professionals",
+    "tagline": "The solution designed for wedding planners, coordinators and venues managing several weddings throughout the year.",
+    "subtitle": "Two complementary offers to simplify your events and grow your business.",
+    "proLabel": "The coordination app",
+    "proBody": "Centralise your projects, prepare timelines, gather key information and share it easily with the right people through the Wedding Day app.",
+    "proCta": "Discover Mariable Pro",
     "audiences": "Wedding planners · Coordinators · Estates · Châteaux · Hotels · Wedding venues",
     "studioLabel": "Mariable Studio",
-    "studioTitle": "Marketing shaped for the events industry.",
-    "studioBody": "Strategy, content, advertising and bespoke digital tools to grow your brand."
+    "studioBody": "The digital marketing and communications agency designed for event professionals.",
+    "studioCta": "Discover Mariable Studio",
+    "imageAlt": "Wedding reception arranged in a garden"
   },
   "central": {
     "title": "The transparency that saves you time.",
@@ -28,15 +30,15 @@
   },
   "pro": {
     "sectionTitle": "Mariable Pro — what your membership includes",
-    "intro": "Mariable Pro first gives you access to the Mariable.fr app to manage unlimited projects, including the Wedding Day module and AI features. Your offer also includes listings and visibility among couples on the B2C platform and Mariable social channels.",
+    "intro": "Mariable Pro first gives you access to the Mariable.fr app to manage unlimited projects, including the Wedding Day module and AI features. Your offer also includes listings and visibility among couples in the B2C app and on Mariable social channels.",
     "features": [
       {
         "title": "Dedicated professional profile on Mariable",
         "body": "Introduction, photos, services, detailed pricing, contact details and links."
       },
       {
-        "title": "Listing inside the platform",
-        "body": "Visible in searches by service, location, style and budget."
+        "title": "Listing inside the app",
+        "body": "Visible in the app by service, location, style and budget."
       },
       {
         "title": "Editorial feature",
@@ -135,6 +137,7 @@
     }
   },
   "services": {
+    "transition": "In addition to Mariable Pro, discover Mariable Studio.",
     "sectionLabel": "Mariable Studio",
     "sectionTitle": "The digital marketing agency for event professionals",
     "sectionSubtitle": "Three levers to build your brand, your client acquisition and your digital presence — à la carte or as a full retainer.",
@@ -190,7 +193,7 @@
       },
       {
         "question": "How much does Mariable Pro cost?",
-        "answer": "Mariable Pro costs €149/year, with no automatic renewal commitment. It includes unlimited projects, a multi-wedding professional workspace, wedding-day coordination, AI features and optional Mariable listing."
+        "answer": "Mariable Pro costs €149/year, with no automatic renewal commitment and a free trial available. It includes unlimited projects, a multi-wedding professional workspace, wedding-day coordination, AI features and optional Mariable listing."
       },
       {
         "question": "What wedding marketing is included in Mariable Pro?",
@@ -264,9 +267,9 @@
   },
   "workspace": {
     "eyebrow": "Your professional workspace",
-    "title": "One workspace for all your weddings.",
-    "intro": "Every event has its own timeline, vendors, contacts, documents and last-minute changes.",
-    "body": "With Mariable Pro, every project is available from one dashboard, with a dedicated workspace for each wedding.",
+    "title": "A dedicated wedding-day space for every wedding.",
+    "intro": "Centralise and simplify essential information to save time, from preparation through to the wedding day.",
+    "body": "In the Mariable Pro app, every wedding keeps its own timeline, vendors, contacts and documents, always clear and up to date.",
     "items": [
       {
         "title": "Multiple projects",
@@ -320,7 +323,7 @@
     "cta": "Discover the Wedding Day module"
   },
   "uses": {
-    "eyebrow": "One platform, two uses",
+    "eyebrow": "One app, two uses",
     "title": "Two ways to use Mariable Pro.",
     "direct": {
       "number": "01",
@@ -358,6 +361,7 @@
     "title": "All your weddings. One subscription.",
     "price": "€149 / year",
     "priceNote": "about €12 / month",
+    "trial": "Free trial available",
     "includedLabel": "Included",
     "items": [
       "Unlimited projects",
@@ -367,7 +371,7 @@
       "Collaboration with couples",
       "Mariable planning tools",
       "AI features",
-      "Platform updates",
+      "App updates",
       "Optional Mariable listing included"
     ],
     "cta": "Try Mariable Pro for free",
