@@ -11,7 +11,7 @@
     "proCard": {
       "label": "Offre principale",
       "title": "Mariable Pro",
-      "subtitle": "De la visibilité et un référencement qualitatif auprès de couples prêts à vous contacter et un accès à la plateforme mariable (wedding planning digital et intelligent).",
+      "subtitle": "L'application Mariable.fr pour gérer un nombre illimité de projets avec les fonctionnalités IA, dont le module Jour-J, puis une visibilité et un référencement qualitatif auprès des couples.",
       "badge": "🎁 Offre de rentrée",
       "priceOld": "200 €/an",
       "price": "149 €/an",
@@ -39,7 +39,7 @@
   },
   "pro": {
     "sectionTitle": "Mariable Pro — ce que comprend vos frais d'adhésion",
-    "intro": "Mariable aide les futurs mariés à trouver des professionnels qui correspondent à leur style, leurs envies et leur budget. En tant que professionnel Mariable Pro, vous êtes référencé sur notre plateforme et bénéficiez de mises en avant auprès de notre communauté.",
+    "intro": "Mariable Pro vous donne d'abord accès à l'application Mariable.fr pour gérer un nombre illimité de projets, notamment avec le module Jour-J et les fonctionnalités IA. Votre offre inclut aussi un référencement et une visibilité auprès des couples sur la plateforme B2C et les réseaux Mariable.",
     "features": [
       {
         "title": "Profil professionnel dédié sur Mariable",
@@ -82,11 +82,11 @@
         ]
       },
       "plateforme": {
-        "title": "Accès à la plateforme Mariable",
+        "title": "Application Mariable.fr",
         "items": [
           "Accès Pro organisateur pour gérer les mariages de vos clients",
           "OU 3 accès Mariable Premium à offrir à vos mariés via un code promo unique 🎁",
-          "Toutes les fonctionnalités de wedding planning digital de l'application"
+          "Nombre de projets illimité avec utilisation des fonctionnalités IA"
         ]
       }
     },

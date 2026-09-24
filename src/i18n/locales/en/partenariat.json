@@ -11,7 +11,7 @@
     "proCard": {
       "label": "Main offer",
       "title": "Mariable Pro",
-      "subtitle": "Presence, visibility and quality listing in front of couples ready to contact you.",
+      "subtitle": "The Mariable.fr app to manage unlimited projects with AI features, including the Wedding Day module, plus quality visibility and listings for couples.",
       "badge": "🎁 Back-to-season offer",
       "priceOld": "€200/year",
       "price": "€149/year",
@@ -39,7 +39,7 @@
   },
   "pro": {
     "sectionTitle": "Mariable Pro — what your membership includes",
-    "intro": "Mariable helps couples find professionals matching their style, their wishes and their budget. As a Mariable Pro professional, you are listed on our platform and featured to our community.",
+    "intro": "Mariable Pro first gives you access to the Mariable.fr app to manage unlimited projects, including the Wedding Day module and AI features. Your offer also includes listings and visibility among couples on the B2C platform and Mariable social channels.",
     "features": [
       {
         "title": "Dedicated professional profile on Mariable",
@@ -82,11 +82,11 @@
         ]
       },
       "plateforme": {
-        "title": "Access to the Mariable platform",
+        "title": "Mariable.fr app",
         "items": [
           "One Pro organiser access to manage your clients' weddings",
           "Or 3 Mariable Premium accesses to gift your couples through a unique promo code 🎁",
-          "All the digital wedding-planning features of the app"
+          "Unlimited projects with access to AI features"
         ]
       }
     },
