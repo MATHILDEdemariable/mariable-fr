@@ -38,7 +38,7 @@ const HeroEditorial: React.FC = () => {
             <span key={heroTitleLine} className="block whitespace-nowrap">{heroTitleLine}</span>
           ))}
         </h1>
-        <p className="mt-7 max-w-3xl font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
+        <p className="mt-7 max-w-3xl whitespace-pre-line font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
         <button
           type="button"
           onClick={handleDiscover}
