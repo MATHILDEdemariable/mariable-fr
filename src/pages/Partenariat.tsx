@@ -128,7 +128,7 @@ const Partenariat = () => {
           </Button>
         </div>
 
-        <section className="bg-editorial-beige px-4 pb-16 pt-8 md:px-8 md:pb-24 md:pt-12">
+        <section className="bg-background px-4 pb-16 pt-8 md:px-8 md:pb-24 md:pt-12">
           <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-6xl text-center">
             <p className="mb-5 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("hero.eyebrow")}</p>
             <h1 className="mx-auto max-w-5xl font-serif text-4xl leading-tight text-editorial-noir md:text-6xl">{t("hero.tagline")}</h1>
