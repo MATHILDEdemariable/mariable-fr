@@ -5,18 +5,27 @@ import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import HeroEditorial from '@/components/home/editorial/HeroEditorial';
 import EditorialCarousels from '@/components/home/editorial/EditorialCarousels';
 import EditorialEShop from '@/components/home/editorial/EditorialEShop';
-import EspaceFusionSection from '@/components/home/editorial/EspaceFusionSection';
 import PricingEditorial from '@/components/home/editorial/PricingEditorial';
 import BlogCarouselEditorial from '@/components/home/editorial/BlogCarouselEditorial';
 import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEditorial';
 import FinalEditorialCTA from '@/components/home/editorial/FinalEditorialCTA';
-import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsGrid';
-import V2FAQSection from '@/components/home/v2/FAQSection';
 import Footer from '@/components/Footer';
 import { SelectionLockProvider } from '@/components/home/editorial/SelectionLockModal';
+import { AudiencePaths, JourJProductFocus, PreparationTools } from '@/components/home/editorial/JourJHomeSections';
+import HomeJourJFAQ, { HomeFaqItem } from '@/components/home/editorial/HomeJourJFAQ';
 
 const RefonteJuillet: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
+  const faqItems = t('faq.items', { returnObjects: true }) as HomeFaqItem[];
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqItems.map((faqItem) => ({
+      '@type': 'Question',
+      name: faqItem.q,
+      acceptedAnswer: { '@type': 'Answer', text: faqItem.a },
+    })),
+  };
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,11 +34,13 @@ const RefonteJuillet: React.FC = () => {
   return (
     <SelectionLockProvider>
       <SEO
-        title="Mariable — sélection de lieux de mariage & Wedding planner en ligne"
-        description="La sélection éditoriale Mariable : lieux et pros triés à la main, sans sponsoring. Et l'appli qui vous accompagne jusqu'au Jour J."
+        title={t('seo.title')}
+        description={t('seo.description')}
         canonical="/"
-        keywords="organisation mariage, wedding planner digital, sélection lieux mariage, prestataires mariage premium, ebooks mariage, application mariage"
-      />
+        keywords={t('seo.keywords')}
+      >
+        <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
+      </SEO>
 
       <div className="min-h-screen bg-[#F8F5EF] text-editorial-noir">
         <EditorialHeader transparent />
@@ -37,43 +48,18 @@ const RefonteJuillet: React.FC = () => {
           {/* 1. Hero */}
           <HeroEditorial />
 
-          {/* 2. Lieux & prestataires recommandés — vert sauge */}
-          <EditorialCarousels />
-
-          {/* 3. Coups de cœur — beige clair */}
-          <section id="selection" className="bg-[#F8F5EF]">
-            <InstagramHighlightsGrid
-              context="homepage"
-              eyebrow={t('selection.eyebrow')}
-              title={t('selection.title')}
-              limit={10}
-            />
-          </section>
-
-          {/* 4. Ton espace Mariable (fusion aperçu + service en détail + CTA) — blanc */}
-          <EspaceFusionSection />
-
-          {/* 5. E-books / E-shop — beige clair */}
-          <EditorialEShop />
-
-          {/* 6. Témoignages — blanc */}
-          <TestimonialsEditorial />
-
-          {/* 7. Conseils & inspirations — vert sauge (carrousel) */}
-          <BlogCarouselEditorial />
-
-          {/* 8. Comment ça marche — Gratuit / Premium — blanc */}
+          <JourJProductFocus />
+          <AudiencePaths />
+          <PreparationTools />
           <PricingEditorial />
-
-
-          {/* 9. FAQ — blanc */}
-          <V2FAQSection />
-
-          {/* 10. CTA final — vert sauge */}
+          <EditorialEShop />
+          <EditorialCarousels />
+          <TestimonialsEditorial />
+          <BlogCarouselEditorial />
+          <HomeJourJFAQ />
           <FinalEditorialCTA />
         </main>
 
-        {/* 11. Footer */}
         <Footer />
       </div>
     </SelectionLockProvider>
