@@ -45,7 +45,12 @@ const ProFeuilleRouteJourJ = () => {
       </SEO>
       <PremiumHeader />
       <main className="page-content bg-background text-editorial-noir">
-        <section className="bg-editorial-beige/30 px-4 pb-16 pt-12 md:pb-24 md:pt-20">
+        <div className="bg-editorial-beige/30 px-4 pt-6">
+          <Link to="/partenariat" className="mx-auto flex min-h-11 max-w-6xl items-center gap-2 text-sm text-editorial-noir/70 hover:text-editorial-olive">
+            <ArrowRight className="h-4 w-4 rotate-180" aria-hidden="true" /> Retour à Mariable Pro
+          </Link>
+        </div>
+        <section className="bg-editorial-beige/30 px-4 pb-16 pt-6 md:pb-24 md:pt-12">
           <div className="mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[1.05fr_.95fr]">
             <div>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">Mariable Pro · Coordination Jour-J</p>

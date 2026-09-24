@@ -20,6 +20,8 @@ import {
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import coupleJardinAsset from "@/assets/home/couple-jardin.png.asset.json";
+import dinerChateauAsset from "@/assets/home/diner-chateau.png.asset.json";
 import ContactProModal from "@/components/partenariat/ContactProModal";
 import {
   Dialog,
@@ -161,7 +163,7 @@ const Partenariat = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.6 }}
-          className="py-16 md:py-20 px-4 bg-white"
+          className="py-16 md:py-24 px-4 bg-editorial-beige"
         >
           <div className="container mx-auto max-w-6xl">
             <div className="text-center mb-12">
@@ -182,7 +184,7 @@ const Partenariat = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 }}
-                className="flex flex-col p-8 bg-editorial-olive/5 border-2 border-editorial-olive"
+                className="flex flex-col p-8 md:p-10 bg-background border-t-4 border-editorial-olive"
               >
                 <span className="text-xs uppercase tracking-widest text-editorial-olive mb-3">
                   {t("hero.proCard.label")}
@@ -192,20 +194,6 @@ const Partenariat = () => {
                 </h2>
                 <p className="text-sm text-editorial-noir/70 mb-6 flex-grow">
                   {t("hero.proCard.subtitle")}
-                </p>
-                <span className="inline-block self-start text-xs bg-editorial-olive text-white px-3 py-1 mb-3">
-                  {t("hero.proCard.badge")}
-                </span>
-                <div className="flex items-baseline gap-3 mb-1">
-                  <span className="text-editorial-noir/40 line-through text-lg">
-                    {t("hero.proCard.priceOld")}
-                  </span>
-                  <span className="text-3xl md:text-4xl font-serif text-editorial-noir">
-                    {t("hero.proCard.price")}
-                  </span>
-                </div>
-                <p className="text-sm text-editorial-noir/60 mb-6">
-                  {t("hero.proCard.priceNote")}
                 </p>
                 <Button
                   onClick={() => scrollToSection("mariable-pro")}
@@ -220,7 +208,7 @@ const Partenariat = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
-                className="flex flex-col p-8 bg-white border border-editorial-noir/15"
+                className="flex flex-col p-8 md:p-10 bg-background"
               >
                 <span className="text-xs uppercase tracking-widest text-editorial-noir/50 mb-3">
                   {t("hero.studioCard.label")}
@@ -230,12 +218,6 @@ const Partenariat = () => {
                 </h2>
                 <p className="text-sm text-editorial-noir/70 mb-6 flex-grow">
                   {t("hero.studioCard.subtitle")}
-                </p>
-                <p className="text-xs uppercase tracking-widest text-editorial-noir/50 mb-1">
-                  {t("services.pricingLabel")}
-                </p>
-                <p className="text-3xl md:text-4xl font-serif text-editorial-noir mb-6">
-                  {t("hero.studioCard.price")}
                 </p>
                 <Button
                   onClick={() => scrollToSection("mariable-studio")}
@@ -249,33 +231,10 @@ const Partenariat = () => {
           </div>
         </motion.section>
 
-        {/* Message central */}
-        <section className="py-16 px-4 bg-editorial-olive/10 border-y border-editorial-olive/20">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="container mx-auto max-w-4xl text-center"
-          >
-            <h2 className="text-2xl md:text-4xl font-serif text-editorial-noir mb-4">
-              {t("central.title")}
-            </h2>
-            <p className="text-editorial-noir/70 max-w-2xl mx-auto mb-8">
-              {t("central.body")}
-            </p>
-            <p className="text-xs uppercase tracking-widest text-editorial-olive mb-5">
-              {t("central.resultLabel")}
-            </p>
-            <ul className="grid sm:grid-cols-2 gap-3 text-left max-w-3xl mx-auto">
-              {centralPoints.map((point) => (
-                <li key={point} className="flex items-start gap-3 bg-white p-4">
-                  <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
-                  <span className="text-sm text-editorial-noir/80">{point}</span>
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        </section>
+
+        <div className="relative h-72 md:h-[28rem] overflow-hidden bg-editorial-beige">
+          <img src={coupleJardinAsset.url} alt="Couple de mariés marchant dans un jardin" loading="lazy" width={1440} height={1920} className="h-full w-full object-cover object-[center_40%]" />
+        </div>
 
         {/* Mariable Pro — détail de l'offre */}
         <section id="mariable-pro" className="py-20 px-4 bg-white scroll-mt-24">
@@ -377,9 +336,41 @@ const Partenariat = () => {
           </div>
         </section>
 
+        {/* Message central */}
+        <section className="py-16 px-4 bg-editorial-olive text-primary-foreground">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="container mx-auto max-w-4xl text-center"
+          >
+            <h2 className="text-2xl md:text-4xl font-serif text-primary-foreground mb-4">
+              {t("central.title")}
+            </h2>
+            <p className="text-primary-foreground/85 max-w-2xl mx-auto mb-8">
+              {t("central.body")}
+            </p>
+            <p className="text-xs uppercase tracking-widest text-primary-foreground/80 mb-5">
+              {t("central.resultLabel")}
+            </p>
+            <ul className="grid sm:grid-cols-2 gap-3 text-left max-w-3xl mx-auto">
+              {centralPoints.map((point) => (
+                <li key={point} className="flex items-start gap-3 bg-white p-4">
+                  <CheckCircle className="w-5 h-5 text-editorial-olive shrink-0 mt-0.5" />
+                  <span className="text-sm text-editorial-noir/80">{point}</span>
+                </li>
+              ))}
+            </ul>
+          </motion.div>
+        </section>
+
+        <div className="relative h-72 md:h-[28rem] overflow-hidden bg-editorial-beige">
+          <img src={dinerChateauAsset.url} alt="Dîner de mariage sous un arbre devant un château" loading="lazy" width={1440} height={1920} className="h-full w-full object-cover object-[center_70%]" />
+        </div>
+
 
         {/* Mariable Studio */}
-        <section id="mariable-studio" className="py-20 px-4 bg-white scroll-mt-24">
+        <section id="mariable-studio" className="py-20 px-4 bg-editorial-beige scroll-mt-24">
           <div className="container mx-auto max-w-6xl">
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -408,7 +399,7 @@ const Partenariat = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.1 }}
-                    className="p-8 bg-editorial-beige/20 border-t-4 border-editorial-olive flex flex-col"
+                    className="p-8 bg-background border-t-4 border-editorial-olive flex flex-col"
                   >
                     <Icon className="w-8 h-8 text-editorial-olive mb-4" />
                     <h3 className="text-xl font-serif text-editorial-noir mb-3">{p.title}</h3>
