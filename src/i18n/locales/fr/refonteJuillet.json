@@ -99,16 +99,16 @@
     "eyebrow": "Deux espaces, une même coordination",
     "title": "Pour votre mariage ou ceux de vos clients.",
     "couple": {
-      "label": "Je suis un(e) futur(e) marié(e)",
-      "title": "Votre mariage, parfaitement coordonné.",
+      "label": "FUTUR(E)S  MARIÉ(E)S",
+      "title": "Je suis un couple : ",
       "body": "Construisez votre déroulé, attribuez les rôles et partagez-le avec vos témoins, proches et prestataires.",
       "highlight": "Un seul mariage. Une seule source d’information.",
       "cta": "Je prépare mon mariage",
       "imageAlt": "Couple préparant son mariage avec Mariable"
     },
     "pro": {
-      "label": "Je suis wedding planner ou lieu de mariage",
-      "title": "Tous vos mariages depuis un même espace Pro.",
+      "label": "WEDDING PLANNER / COORDINATEUR / LIEUX RECEPTIONS",
+      "title": "Je suis un professionel :",
       "body": "Centralisez tous vos mariages dans un même espace, collaborez avec vos couples ou clients, puis partagez à chaque équipe les informations qui la concernent.",
       "features": {
         "schedule": "Créez et suivez le déroulé du Jour J",
