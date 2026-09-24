@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MoreVertical, Plus, PlusSquare, Share, Smartphone } from 'lucide-react';
+import { MoreVertical, Plus, Share, Smartphone } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { Button } from '@/components/ui/button';
@@ -49,7 +49,7 @@ const HomeJourJFAQ: React.FC = () => {
           <p className="text-sm leading-relaxed text-editorial-noir/70">{t('faq.installModal.intro')}</p>
           <div className="mt-3 grid gap-6 md:grid-cols-2">
             {installSteps.map((step, index) => {
-              const Icon = index === 0 ? Share : index === 1 ? PlusSquare : MoreVertical;
+              const Icon = index === 0 ? Share : MoreVertical;
               return (
                 <div key={step.title} className="border-t border-editorial-noir/15 pt-4">
                   <Icon className="h-5 w-5 text-editorial-olive" />

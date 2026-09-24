@@ -20,7 +20,7 @@
   },
   "hero": {
     "eyebrow": "Mariable · L'application Jour J",
-    "title": "L’app qui simplifie vraiment le Jour J.",
+    "title": "Célébrer l’amour. Simplifier le Jour J.",
     "promise": "Un seul planning. Les bonnes informations. Les bonnes personnes.",
     "subtitle": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning une seule fois, puis partagez simplement les bonnes informations aux personnes concernées.",
     "cta": "Découvrir Mariable"
@@ -31,7 +31,7 @@
     "intro": "Le traiteur a besoin de ses horaires. Le DJ de ses temps forts. Les témoins de leurs missions. Le lieu des informations logistiques. Le couple d’avoir une vision globale.",
     "items": {
       "schedule": "Déroulé heure par heure",
-      "roles": "Rôles et responsabilités",
+      "roles": "Tâches, rôles et responsabilités",
       "contacts": "Contacts clés",
       "vendors": "Prestataires",
       "briefs": "Briefs",
@@ -45,28 +45,71 @@
     "mobileAlt": "Planning du Jour J Mariable consulté sur téléphone",
     "peopleIntro": "Les bonnes informations, au bon moment.",
     "people": {
-      "caterer": { "name": "Le traiteur", "need": "Ses horaires et contraintes" },
-      "dj": { "name": "Le DJ", "need": "Les temps forts" },
-      "witnesses": { "name": "Les témoins", "need": "Leurs missions" },
-      "venue": { "name": "Le lieu", "need": "La logistique" },
-      "couple": { "name": "Le couple", "need": "La vision globale" }
+      "caterer": {
+        "name": "Le traiteur",
+        "need": "Ses horaires et contraintes"
+      },
+      "dj": {
+        "name": "Le DJ",
+        "need": "Les temps forts"
+      },
+      "witnesses": {
+        "name": "Les témoins",
+        "need": "Leurs missions"
+      },
+      "venue": {
+        "name": "Le lieu",
+        "need": "La logistique"
+      },
+      "couple": {
+        "name": "Le couple",
+        "need": "La vision globale"
+      }
+    },
+    "needs": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning une seule fois, puis partagez simplement les bonnes informations aux personnes concernées.",
+    "assistance": "Attribuez chaque tâche à la bonne personne. Partez de nos conseils et de modèles pré-remplis, ou utilisez l’IA pour générer une première trame adaptée à votre mariage.",
+    "mockup": {
+      "date": "Samedi 20 juin · Provence",
+      "share": "Partager",
+      "items": [
+        {
+          "time": "14:30",
+          "title": "Arrivée des prestataires",
+          "person": "Lieu"
+        },
+        {
+          "time": "16:00",
+          "title": "Cérémonie laïque",
+          "person": "Témoins"
+        },
+        {
+          "time": "18:00",
+          "title": "Cocktail & photos",
+          "person": "Traiteur"
+        },
+        {
+          "time": "20:15",
+          "title": "Entrée des mariés",
+          "person": "DJ"
+        }
+      ]
     }
   },
   "audiences": {
     "eyebrow": "Deux espaces, une même coordination",
     "title": "Pour votre mariage ou ceux de vos clients.",
     "couple": {
-      "label": "Je prépare mon mariage",
+      "label": "Je suis un(e) futur(e) marié(e)",
       "title": "Votre mariage, parfaitement coordonné.",
       "body": "Construisez votre déroulé, attribuez les rôles et partagez-le avec vos témoins, proches et prestataires.",
       "highlight": "Un seul mariage. Une seule source d’information.",
-      "cta": "Créer mon mariage gratuitement",
+      "cta": "Je prépare mon mariage",
       "imageAlt": "Couple préparant son mariage avec Mariable"
     },
     "pro": {
       "label": "Je suis wedding planner ou lieu de mariage",
       "title": "Tous vos mariages depuis un même espace Pro.",
-      "body": "Gérez plusieurs mariages, collaborez avec vos couples ou clients et coordonnez chaque équipe depuis Mariable.",
+      "body": "Centralisez tous vos mariages dans un même espace, collaborez avec vos couples ou clients, puis partagez à chaque équipe les informations qui la concernent.",
       "features": {
         "schedule": "Créez et suivez le déroulé du Jour J",
         "contacts": "Centralisez prestataires et contacts",
@@ -75,7 +118,8 @@
         "sharing": "Partagez avec équipes et prestataires",
         "projects": "Retrouvez tous vos mariages au même endroit"
       },
-      "cta": "Tester Mariable Pro"
+      "cta": "Je gère plusieurs mariages",
+      "highlight": "Des mariages illimités. Une coordination claire."
     }
   },
   "preparation": {
@@ -87,16 +131,34 @@
     "budgetAlt": "Outil de gestion du budget mariage Mariable",
     "seatingAlt": "Outil de plan de table Mariable",
     "editorialAlt": "Inspiration pour préparer son mariage sereinement",
-    "editorialEyebrow": "Préparer sans s'éparpiller",
+    "editorialEyebrow": "Célébrer l’amour",
     "editorialTitle": "La structure d’un outil, l’émotion de votre histoire.",
     "editorialBody": "Des outils concrets pour avancer à votre rythme, tout en gardant de la place pour les choix, les inspirations et les moments qui rendent votre mariage unique.",
     "tools": {
-      "planning": { "title": "Rétroplanning & checklist", "body": "Les étapes et tâches à suivre au fil des mois." },
-      "budget": { "title": "Budget", "body": "Les coûts estimés et réels, poste par poste." },
-      "guests": { "title": "Invités & RSVP", "body": "Les réponses et informations de vos invités centralisées." },
-      "seating": { "title": "Plan de table", "body": "Une organisation visuelle reliée à votre liste d’invités." },
-      "vendors": { "title": "Prestataires", "body": "Vos contacts et informations utiles réunis." },
-      "practical": { "title": "Outils pratiques", "body": "Boissons, documents, album partagé et ressources utiles." }
+      "planning": {
+        "title": "Rétroplanning & checklist",
+        "body": "Les étapes et tâches à suivre au fil des mois."
+      },
+      "budget": {
+        "title": "Budget",
+        "body": "Les coûts estimés et réels, poste par poste."
+      },
+      "guests": {
+        "title": "Invités & RSVP",
+        "body": "Les réponses et informations de vos invités centralisées."
+      },
+      "seating": {
+        "title": "Plan de table",
+        "body": "Une organisation visuelle reliée à votre liste d’invités."
+      },
+      "vendors": {
+        "title": "Prestataires",
+        "body": "Vos contacts et informations utiles réunis."
+      },
+      "practical": {
+        "title": "Outils pratiques",
+        "body": "Boissons, documents, album partagé et ressources utiles."
+      }
     }
   },
   "pricing": {
@@ -108,7 +170,11 @@
         "price": "0 €",
         "frequency": "pour commencer",
         "description": "Créez votre espace et découvrez les outils essentiels.",
-        "features": ["Un mariage", "Outils de préparation essentiels", "Accès aux conseils et prestataires"],
+        "features": [
+          "Un mariage",
+          "Outils de préparation essentiels",
+          "Accès aux conseils et prestataires"
+        ],
         "cta": "Créer mon espace gratuitement",
         "href": "/register-gratuit"
       },
@@ -117,7 +183,11 @@
         "price": "29 €",
         "frequency": "par mariage · paiement unique",
         "description": "Tous les outils Mariable sans abonnement pour organiser votre mariage.",
-        "features": ["Application Jour J complète", "IA, stockage et exports étendus", "Guides et album photo partagé"],
+        "features": [
+          "Application Jour J complète",
+          "IA, stockage et exports étendus",
+          "Guides et album photo partagé"
+        ],
         "cta": "Choisir Mariable Couple",
         "href": "/paiement"
       },
@@ -126,7 +196,11 @@
         "price": "149 €",
         "frequency": "par an",
         "description": "Pour les wedding planners, coordinatrices et lieux de mariage.",
-        "features": ["Nombre de mariages illimité", "Collaboration avec les clients", "Référencement auprès des couples"],
+        "features": [
+          "Nombre de mariages illimité",
+          "Collaboration avec les clients",
+          "Référencement auprès des couples"
+        ],
         "cta": "Tester Mariable Pro",
         "href": "/register-gratuit?type=pro"
       }
@@ -140,13 +214,28 @@
     "discover": "Découvrir →",
     "priceLabel": "Guide PDF 🇫🇷",
     "items": {
-      "guide-jour-j": { "title": "Guide Ultime Jour-J", "desc": "Tout orchestrer de M-1 au Jour J." },
-      "guide-debutants-mariage": { "title": "Guide Ultime Débutants", "desc": "Organiser votre mariage à partir de zéro." },
-      "catalogue-prix-mariage-2026": { "title": "Catalogue Prix Mariage", "desc": "Les fourchettes réelles pour construire votre budget." },
-      "guide-discours-mariage": { "title": "Do & Don't du Discours", "desc": "Structure et exemples pour un discours réussi." }
+      "guide-jour-j": {
+        "title": "Guide Ultime Jour-J",
+        "desc": "Tout orchestrer de M-1 au Jour J."
+      },
+      "guide-debutants-mariage": {
+        "title": "Guide Ultime Débutants",
+        "desc": "Organiser votre mariage à partir de zéro."
+      },
+      "catalogue-prix-mariage-2026": {
+        "title": "Catalogue Prix Mariage",
+        "desc": "Les fourchettes réelles pour construire votre budget."
+      },
+      "guide-discours-mariage": {
+        "title": "Do & Don't du Discours",
+        "desc": "Structure et exemples pour un discours réussi."
+      }
     }
   },
-  "selection": { "eyebrow": "RECOMMANDATIONS", "title": "La sélection Mariable" },
+  "selection": {
+    "eyebrow": "RECOMMANDATIONS",
+    "title": "La sélection Mariable"
+  },
   "carousels": {
     "eyebrow": "La sélection Mariable",
     "title": "Les bons prestataires pour donner vie à votre journée.",
@@ -158,20 +247,69 @@
     "discover": "Découvrir",
     "membersBadge": "Membres"
   },
-  "blog": { "eyebrow": "Conseils & contenus", "title": "Le média Mariable", "discover": "Découvrir →" },
-  "testimonials": { "eyebrow": "Témoignages", "title": "Ils ont célébré leur histoire", "titleEm": "avec Mariable." },
+  "blog": {
+    "eyebrow": "Conseils & contenus",
+    "title": "Le média Mariable",
+    "discover": "Découvrir →"
+  },
+  "testimonials": {
+    "eyebrow": "Témoignages",
+    "title": "Ils ont célébré leur histoire",
+    "titleEm": "avec Mariable."
+  },
   "faq": {
     "eyebrow": "Questions fréquentes",
     "title": "Tout savoir avant de commencer.",
     "items": [
-      { "q": "Quelle différence entre Mariable Gratuit et Premium ?", "a": "L’espace gratuit permet de commencer à organiser votre mariage. L’offre Couple à 29 € débloque les capacités étendues de l’application Jour J, de l’IA, du stockage, des exports et les ressources Premium." },
-      { "q": "Les 29 € sont-ils un paiement unique ?", "a": "Oui. L’offre Mariable Couple coûte 29 € par mariage, en un seul paiement et sans abonnement." },
-      { "q": "Quelle différence entre l’offre Couple et l’offre Pro ?", "a": "L’offre Couple est conçue pour organiser un mariage. Mariable Pro permet aux professionnels de gérer un nombre illimité de mariages, de collaborer avec leurs clients et d’être référencés auprès des couples." },
-      { "q": "Un couple peut-il collaborer avec son wedding planner ?", "a": "Oui. Les informations du mariage peuvent être centralisées et partagées entre le couple et son professionnel pour travailler à partir du même déroulé." },
-      { "q": "Puis-je partager le planning avec mes prestataires ?", "a": "Oui. Le planning Jour J peut être partagé par lien. Chaque personne peut consulter les informations utiles et utiliser les filtres disponibles depuis son téléphone." },
-      { "q": "Mariable Pro permet-il de gérer plusieurs mariages ?", "a": "Oui. L’offre Pro à 149 € par an donne accès à un nombre de mariages illimité depuis un même espace professionnel." },
-      { "q": "Mariable est-il une application mobile ?", "a": "Mariable est une application web accessible sur ordinateur, tablette et téléphone, sans téléchargement obligatoire." }
-    ]
+      {
+        "q": "Quelle différence entre Mariable Gratuit et Premium ?",
+        "a": "L’espace gratuit permet de commencer à organiser votre mariage. L’offre Couple à 29 € débloque les capacités étendues de l’application Jour J, de l’IA, du stockage, des exports et les ressources Premium."
+      },
+      {
+        "q": "Les 29 € sont-ils un paiement unique ?",
+        "a": "Oui. L’offre Mariable Couple coûte 29 € par mariage, en un seul paiement et sans abonnement."
+      },
+      {
+        "q": "Quelle différence entre l’offre Couple et l’offre Pro ?",
+        "a": "L’offre Couple est conçue pour organiser un mariage. Mariable Pro permet aux professionnels de gérer un nombre illimité de mariages, de collaborer avec leurs clients et d’être référencés auprès des couples."
+      },
+      {
+        "q": "Un couple peut-il collaborer avec son wedding planner ?",
+        "a": "Oui. Les informations du mariage peuvent être centralisées et partagées entre le couple et son professionnel pour travailler à partir du même déroulé."
+      },
+      {
+        "q": "Puis-je partager le planning avec mes prestataires ?",
+        "a": "Oui. Le planning Jour J peut être partagé par lien. Chaque personne peut consulter les informations utiles et utiliser les filtres disponibles depuis son téléphone."
+      },
+      {
+        "q": "Mariable Pro permet-il de gérer plusieurs mariages ?",
+        "a": "Oui. L’offre Pro à 149 € par an donne accès à un nombre de mariages illimité depuis un même espace professionnel."
+      },
+      {
+        "q": "Mariable est-il une application mobile ?",
+        "a": "Mariable est une application web accessible sur ordinateur, tablette et téléphone, sans téléchargement obligatoire."
+      },
+      {
+        "q": "Comment installer Mariable sur mon téléphone ?",
+        "a": "Mariable fonctionne directement depuis votre navigateur, sans téléchargement depuis l’App Store ou Google Play. Vous pouvez l’ajouter à votre écran d’accueil pour y accéder comme à une application.",
+        "install": true
+      }
+    ],
+    "installModal": {
+      "open": "Voir le tutoriel d’installation",
+      "title": "Installer Mariable sur votre téléphone",
+      "intro": "L’installation est gratuite et ne passe par aucun store. Choisissez les instructions correspondant à votre téléphone.",
+      "steps": [
+        {
+          "title": "Sur iPhone ou iPad",
+          "body": "Ouvrez mariable.fr dans Safari, touchez Partager, puis « Sur l’écran d’accueil » et confirmez avec « Ajouter »."
+        },
+        {
+          "title": "Sur Android",
+          "body": "Ouvrez mariable.fr dans Chrome, ouvrez le menu à trois points, puis choisissez « Ajouter à l’écran d’accueil » ou « Installer l’application »."
+        }
+      ]
+    }
   },
   "finalCta": {
     "title": "Votre Jour J mérite",

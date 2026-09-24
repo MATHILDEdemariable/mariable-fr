@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ORGANIZING_WEDDING_IMAGE = '/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png';
 const BUDGET_WEDDING_IMAGE = '/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png';
 
 const centralizedInformation = [
