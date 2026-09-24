@@ -28,7 +28,7 @@
   "jourJFocus": {
     "eyebrow": "UN SEUL DEROULE. TOUJOURS A JOUR.",
     "title": "L'application du jour-J",
-    "intro": "Le traiteur a besoin de ses horaires. Le DJ de ses temps forts. Les témoins de leurs missions. Le lieu des informations logistiques. Le couple d’avoir une vision globale.",
+    "intro": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning une seule fois, puis partagez simplement les bonnes informations aux personnes concernées.\n\n",
     "items": {
       "schedule": "Déroulé heure par heure",
       "roles": "Tâches, rôles et responsabilités",
@@ -43,7 +43,7 @@
     "cta": "Découvrir l'appli Jour J",
     "desktopAlt": "Planning du Jour J Mariable affiché sur ordinateur",
     "mobileAlt": "Planning du Jour J Mariable consulté sur téléphone",
-    "peopleIntro": "Les bonnes informations, au bon moment.",
+    "peopleIntro": "Les bonnes informations, au bon moment aux bonnes personnes. ",
     "people": {
       "caterer": {
         "name": "Le traiteur",
@@ -66,7 +66,7 @@
         "need": "La vision globale"
       }
     },
-    "needs": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning une seule fois, puis partagez simplement les bonnes informations aux personnes concernées.",
+    "needs": "Le traiteur a besoin de ses horaires. Le DJ de ses temps forts. Les témoins de leurs missions. Le lieu des informations logistiques. Le couple d’avoir une vision globale. ",
     "assistance": "Attribuez chaque tâche à la bonne personne. Partez de nos conseils et de modèles pré-remplis, ou utilisez l’IA pour générer une première trame adaptée à votre mariage.",
     "mockup": {
       "date": "Samedi 20 juin · Provence",
