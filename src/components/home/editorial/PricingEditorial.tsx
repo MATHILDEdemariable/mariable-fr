@@ -27,9 +27,9 @@ const PricingEditorial: React.FC = () => {
           </h2>
         </header>
 
-        <div className="mx-auto grid max-w-6xl gap-px bg-editorial-noir md:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl gap-px bg-editorial-noir/20 md:grid-cols-3">
           {plans.map((plan, index) => (
-            <article key={plan.name} className={index === 1 ? 'flex flex-col bg-editorial-noir p-7 text-primary-foreground md:p-9' : 'flex flex-col bg-editorial-beige p-7 text-editorial-noir md:p-9'}>
+            <article key={plan.name} className={index === 1 ? 'flex flex-col bg-editorial-olive p-7 text-primary-foreground md:p-9' : 'flex flex-col bg-editorial-beige p-7 text-editorial-noir md:p-9'}>
               <h3 className="font-serif text-2xl">{plan.name}</h3>
               <div className="mt-5 flex min-h-16 items-baseline gap-2">
                 <span className="font-serif text-4xl">{plan.price}</span>
