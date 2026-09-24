@@ -85,12 +85,6 @@ export const JourJProductFocus: React.FC = () => {
             <p className="mt-6 text-base leading-relaxed text-editorial-noir/75 md:text-lg">
               {t('jourJFocus.intro')}
             </p>
-            <p className="mt-4 text-base leading-relaxed text-editorial-noir/75 md:text-lg">
-              {t('jourJFocus.needs')}
-            </p>
-            <p className="mt-4 border-l-2 border-editorial-olive pl-5 text-sm leading-relaxed text-editorial-noir/70 md:text-base">
-              {t('jourJFocus.assistance')}
-            </p>
 
             <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
               {centralizedInformation.map((item) => (
@@ -136,6 +130,12 @@ export const JourJProductFocus: React.FC = () => {
         <div className="mt-16 border-t border-editorial-noir/15 pt-8 md:mt-24">
           <p className="text-center font-serif text-xl text-editorial-noir md:text-2xl">
             {t('jourJFocus.peopleIntro')}
+          </p>
+          <p className="mx-auto mt-5 max-w-4xl text-center text-sm leading-relaxed text-editorial-noir/70 md:text-base">
+            {t('jourJFocus.needs')}
+          </p>
+          <p className="mx-auto mt-4 max-w-3xl border-l-2 border-editorial-olive pl-5 text-left text-sm leading-relaxed text-editorial-noir/70 md:text-center md:text-base">
+            {t('jourJFocus.assistance')}
           </p>
           <div className="mt-7 grid grid-cols-2 gap-px bg-editorial-noir/10 md:grid-cols-5">
             {(['caterer', 'dj', 'witnesses', 'venue', 'couple'] as const).map((person) => (
