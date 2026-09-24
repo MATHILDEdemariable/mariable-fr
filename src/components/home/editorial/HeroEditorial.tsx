@@ -33,8 +33,10 @@ const HeroEditorial: React.FC = () => {
         <p className="mb-6 text-xs uppercase tracking-[0.3em] text-primary-foreground/85">
           {t('hero.eyebrow')}
         </p>
-        <h1 className="max-w-4xl font-serif text-4xl leading-[1.02] sm:text-5xl md:text-7xl lg:text-8xl">
-          {t('hero.title')}
+        <h1 className="max-w-5xl font-serif text-[1.9rem] leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl">
+          {String(t('hero.title')).split(/(?<=\.)\s+/).map((heroTitleLine) => (
+            <span key={heroTitleLine} className="block whitespace-nowrap">{heroTitleLine}</span>
+          ))}
         </h1>
         <p className="mt-7 max-w-3xl font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
         <button
