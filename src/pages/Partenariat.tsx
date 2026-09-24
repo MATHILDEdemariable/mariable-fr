@@ -193,11 +193,11 @@ const Partenariat = () => {
           </div>
         </section>
 
-        <section className="bg-editorial-beige px-4 py-20 md:px-8 md:py-28">
+        <section className="bg-editorial-olive px-4 py-20 md:px-8 md:py-28">
           <div className="mx-auto max-w-7xl">
             <div className="mb-12 max-w-3xl">
-              <p className="mb-4 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("uses.eyebrow")}</p>
-              <h2 className="font-serif text-3xl text-editorial-noir md:text-5xl">{t("uses.title")}</h2>
+              <p className="mb-4 text-xs uppercase tracking-[0.25em] text-primary-foreground/75">{t("uses.eyebrow")}</p>
+              <h2 className="font-serif text-3xl text-primary-foreground md:text-5xl">{t("uses.title")}</h2>
             </div>
             <div className="grid items-stretch lg:grid-cols-[1fr_.8fr_1fr]">
               {[directUse, giftUse].map((useCase, index) => (
