@@ -8,3 +8,4 @@
 - [x] Harmoniser les parcours Couple/Pro et les blocs tarifaires en vert sauge
 - [x] Ajouter le tutoriel d’installation en FAQ et traduire le mockup
 - [x] Vérifier les parcours et affichages FR/EN sur mobile et ordinateur
+- [x] Refondre /partenariat autour de Mariable Pro et Studio avec les nouveaux visuels
