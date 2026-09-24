@@ -42,7 +42,7 @@ const RefonteJuillet: React.FC = () => {
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </SEO>
 
-      <div className="min-h-screen bg-[#F8F5EF] text-editorial-noir">
+      <div className="min-h-screen bg-editorial-beige text-editorial-noir">
         <EditorialHeader transparent />
         <main>
           {/* 1. Hero */}

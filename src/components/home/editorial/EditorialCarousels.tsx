@@ -175,6 +175,11 @@ const EditorialCarousels: React.FC = () => {
 
   return (
     <section className="bg-wedding-olive pt-16 pb-8">
+      <header className="container mx-auto mb-12 max-w-4xl px-4 text-center text-primary-foreground md:px-8">
+        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-primary-foreground/70">{t('carousels.eyebrow')}</p>
+        <h2 className="font-serif text-3xl leading-tight md:text-5xl">{t('carousels.title')}</h2>
+        <p className="mx-auto mt-5 max-w-2xl text-sm leading-relaxed text-primary-foreground/75 md:text-base">{t('carousels.intro')}</p>
+      </header>
       <Carousel label={t('carousels.label')} items={region.data ?? []} loading={region.isLoading} />
     </section>
   );
