@@ -18,6 +18,7 @@ const HeroEditorial: React.FC = () => {
           loop
           playsInline
           preload="metadata"
+          poster="/lovable-uploads/video-poster.webp"
           width={1920}
           height={1080}
           className="w-full h-full object-cover bg-editorial-noir"

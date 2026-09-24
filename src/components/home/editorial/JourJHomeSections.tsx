@@ -132,7 +132,7 @@ export const JourJProductFocus: React.FC = () => {
           </p>
           <div className="mt-7 grid grid-cols-2 gap-px bg-editorial-noir/10 md:grid-cols-5">
             {(['caterer', 'dj', 'witnesses', 'venue', 'couple'] as const).map((person) => (
-              <div key={person} className="bg-editorial-beige px-4 py-5 text-center">
+              <div key={person} className={person === 'couple' ? 'col-span-2 bg-editorial-beige px-4 py-5 text-center md:col-span-1' : 'bg-editorial-beige px-4 py-5 text-center'}>
                 <p className="text-xs uppercase tracking-widest text-editorial-noir/55">{t(`jourJFocus.people.${person}.name`)}</p>
                 <p className="mt-2 text-sm text-editorial-noir">{t(`jourJFocus.people.${person}.need`)}</p>
               </div>
