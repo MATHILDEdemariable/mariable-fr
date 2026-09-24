@@ -79,8 +79,6 @@ const Partenariat = () => {
   const services = t("services.items", { returnObjects: true }) as ServiceItem[];
   const faqItems = t("faq.items", { returnObjects: true }) as FaqItem[];
   const workspaceItems = t("workspace.items", { returnObjects: true }) as EditorialItem[];
-  const coordinationPeople = t("coordination.people", { returnObjects: true }) as string[];
-  const coordinationItems = t("coordination.centralize", { returnObjects: true }) as string[];
   const coordinationBenefits = t("coordination.benefits", { returnObjects: true }) as string[];
   const directUse = t("uses.direct", { returnObjects: true }) as UseCase;
   const giftUse = t("uses.gift", { returnObjects: true }) as UseCase;
@@ -131,41 +129,52 @@ const Partenariat = () => {
         </div>
 
         <section className="bg-editorial-beige px-4 pb-16 pt-8 md:px-8 md:pb-24 md:pt-12">
-          <div className="mx-auto grid max-w-7xl items-stretch lg:grid-cols-[1.05fr_.95fr]">
-            <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col justify-center px-2 py-12 md:px-10 lg:py-20">
-              <p className="mb-5 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("hero.eyebrow")}</p>
-              <h1 className="max-w-3xl font-serif text-4xl leading-tight text-editorial-noir md:text-6xl">{t("hero.tagline")}</h1>
-              <p className="mt-7 max-w-2xl text-lg leading-relaxed text-editorial-noir/80">{t("hero.subtitle")}</p>
-              <p className="mt-4 max-w-2xl leading-relaxed text-editorial-noir/65">{t("hero.body")}</p>
-              <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-                <Button asChild className="rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90">
-                  <Link to="/register-gratuit?type=pro">{t("hero.cta")}<ArrowRight className="ml-2 h-4 w-4" /></Link>
-                </Button>
-                <Button asChild variant="outline" className="rounded-none border-editorial-noir px-7 py-6 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">
-                  <a href="#mariable-studio">{t("hero.studioLabel")}</a>
-                </Button>
-              </div>
-              <div className="mt-10 border-l border-editorial-olive pl-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-editorial-olive">{t("hero.studioLabel")}</p>
-                <h2 className="mt-2 font-serif text-xl text-editorial-noir">{t("hero.studioTitle")}</h2>
-                <p className="mt-2 max-w-xl text-sm leading-relaxed text-editorial-noir/60">{t("hero.studioBody")}</p>
-              </div>
-            </motion.div>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="relative min-h-[420px] lg:min-h-[660px]">
-              <img src={receptionProAsset.url} alt="Réception de mariage dans un jardin" width={768} height={1024} className="absolute inset-0 h-full w-full object-cover" />
-            </motion.div>
+          <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="mx-auto max-w-6xl text-center">
+            <p className="mb-5 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("hero.eyebrow")}</p>
+            <h1 className="mx-auto max-w-5xl font-serif text-4xl leading-tight text-editorial-noir md:text-6xl">{t("hero.tagline")}</h1>
+            <p className="mx-auto mt-7 max-w-3xl text-lg leading-relaxed text-editorial-noir/75">{t("hero.subtitle")}</p>
+          </motion.div>
+          <div className="mx-auto mt-12 grid max-w-6xl border-y border-editorial-noir/20 md:grid-cols-2">
+            <article className="flex flex-col bg-background p-7 text-left md:p-10">
+              <p className="text-xs uppercase tracking-[0.2em] text-editorial-olive">{t("hero.proLabel")}</p>
+              <h2 className="mt-3 font-serif text-3xl text-editorial-noir">Mariable Pro</h2>
+              <p className="mt-5 flex-1 leading-relaxed text-editorial-noir/70">{t("hero.proBody")}</p>
+              <Button asChild variant="outline" className="mt-8 w-fit rounded-none border-editorial-noir px-6 py-5 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">
+                <a href="#mariable-pro">{t("hero.proCta")}<ArrowRight className="ml-2 h-4 w-4" /></a>
+              </Button>
+            </article>
+            <article className="flex flex-col border-t border-editorial-noir/20 bg-editorial-olive p-7 text-left text-primary-foreground md:border-l md:border-t-0 md:p-10">
+              <p className="text-xs uppercase tracking-[0.2em] text-primary-foreground/70">{t("hero.studioLabel")}</p>
+              <h2 className="mt-3 font-serif text-3xl">Mariable Studio</h2>
+              <p className="mt-5 flex-1 leading-relaxed text-primary-foreground/85">{t("hero.studioBody")}</p>
+              <Button asChild variant="outline" className="mt-8 w-fit rounded-none border-primary-foreground bg-transparent px-6 py-5 text-primary-foreground hover:bg-background hover:text-editorial-noir">
+                <a href="#mariable-studio">{t("hero.studioCta")}<ArrowRight className="ml-2 h-4 w-4" /></a>
+              </Button>
+            </article>
           </div>
-          <p className="mx-auto mt-7 max-w-7xl border-t border-editorial-noir/15 pt-5 text-center text-xs uppercase tracking-[0.16em] text-editorial-noir/60">{t("hero.audiences")}</p>
+          <div className="mx-auto max-w-6xl">
+            <div className="relative min-h-[300px] md:min-h-[430px]">
+              <img src={receptionProAsset.url} alt={t("hero.imageAlt")} width={768} height={1024} className="absolute inset-0 h-full w-full object-cover object-center" />
+            </div>
+            <p className="border-b border-editorial-noir/15 py-5 text-center text-xs uppercase tracking-[0.16em] text-editorial-noir/60">{t("hero.audiences")}</p>
+          </div>
         </section>
 
-        <section className="bg-background px-4 py-20 md:px-8 md:py-28">
+        <section id="mariable-pro" className="scroll-mt-24 bg-background px-4 py-20 md:px-8 md:py-28">
           <div className="mx-auto max-w-6xl">
-            <div className="grid gap-10 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
+            <div className="grid gap-12 lg:grid-cols-[.85fr_1.15fr] lg:gap-20">
               <div>
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("workspace.eyebrow")}</p>
                 <h2 className="font-serif text-3xl text-editorial-noir md:text-5xl">{t("workspace.title")}</h2>
                 <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">{t("workspace.intro")}</p>
                 <p className="mt-4 leading-relaxed text-editorial-noir/60">{t("workspace.body")}</p>
+                <div className="mt-8 border-l-2 border-editorial-olive pl-5">
+                  <h3 className="font-serif text-2xl text-editorial-noir">{t("coordination.planningTitle")}</h3>
+                  <p className="mt-3 leading-relaxed text-editorial-noir/65">{t("coordination.share")}</p>
+                  <ul className="mt-5 space-y-2">
+                    {coordinationBenefits.map((item) => <li key={item} className="flex items-center gap-2 text-sm text-editorial-noir/70"><CheckCircle className="h-4 w-4 shrink-0 text-editorial-olive" />{item}</li>)}
+                  </ul>
+                </div>
               </div>
               <div className="border-t border-editorial-noir/20">
                 {workspaceItems.map((item, index) => (
@@ -177,37 +186,9 @@ const Partenariat = () => {
                 ))}
               </div>
             </div>
-            <Button asChild variant="outline" className="mt-10 rounded-none border-editorial-noir px-7 py-6 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">
-              <Link to="/register-gratuit?type=pro">{t("workspace.cta")}</Link>
-            </Button>
-          </div>
-        </section>
-
-        <section className="bg-editorial-olive px-4 py-20 text-primary-foreground md:px-8 md:py-28">
-          <div className="mx-auto max-w-6xl">
-            <div className="grid gap-12 lg:grid-cols-2 lg:gap-20">
-              <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-primary-foreground/70">{t("coordination.eyebrow")}</p>
-                <h2 className="font-serif text-3xl md:text-5xl">{t("coordination.title")}</h2>
-                <div className="mt-8 space-y-3 border-l border-primary-foreground/40 pl-6">
-                  {coordinationPeople.map((person) => <p key={person} className="text-lg text-primary-foreground/90">{person}</p>)}
-                </div>
-                <p className="mt-8 max-w-xl leading-relaxed text-primary-foreground/80">{t("coordination.bridge")}</p>
-              </div>
-              <div className="bg-background p-7 text-editorial-noir md:p-10">
-                <h3 className="font-serif text-3xl">{t("coordination.planningTitle")}</h3>
-                <p className="mt-7 text-xs uppercase tracking-[0.2em] text-editorial-olive">{t("coordination.centralizeLabel")}</p>
-                <ul className="mt-4 grid grid-cols-2 gap-x-5 gap-y-3">
-                  {coordinationItems.map((item) => <li key={item} className="border-b border-editorial-noir/10 pb-2 text-sm text-editorial-noir/75">{item}</li>)}
-                </ul>
-                <p className="mt-7 leading-relaxed text-editorial-noir/75">{t("coordination.share")}</p>
-                <ul className="mt-5 space-y-2">
-                  {coordinationBenefits.map((item) => <li key={item} className="flex items-center gap-2 text-sm"><CheckCircle className="h-4 w-4 text-editorial-olive" />{item}</li>)}
-                </ul>
-                <Button asChild className="mt-8 rounded-none bg-editorial-noir text-primary-foreground hover:bg-editorial-noir/90">
-                  <Link to="/pro/feuille-de-route-jour-j">{t("coordination.cta")}<ArrowRight className="ml-2 h-4 w-4" /></Link>
-                </Button>
-              </div>
+            <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+              <Button asChild className="rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90"><Link to="/register-gratuit?type=pro">{t("workspace.cta")}</Link></Button>
+              <Button asChild variant="outline" className="rounded-none border-editorial-noir px-7 py-6 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground"><Link to="/pro/feuille-de-route-jour-j">{t("coordination.cta")}</Link></Button>
             </div>
           </div>
         </section>
@@ -238,13 +219,14 @@ const Partenariat = () => {
           </div>
         </section>
 
-        <section id="mariable-pro" className="scroll-mt-24 bg-background px-4 py-20 md:px-8 md:py-28">
+        <section id="offre-mariable-pro" className="scroll-mt-24 bg-background px-4 py-20 md:px-8 md:py-28">
           <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-[.8fr_1.2fr] lg:gap-20">
             <div className="lg:sticky lg:top-28 lg:self-start">
               <p className="mb-4 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("proOffer.eyebrow")}</p>
               <h2 className="font-serif text-3xl text-editorial-noir md:text-5xl">{t("proOffer.title")}</h2>
               <p className="mt-8 font-serif text-4xl text-editorial-noir">{t("proOffer.price")}</p>
               <p className="mt-2 text-editorial-noir/60">{t("proOffer.priceNote")}</p>
+              <p className="mt-3 font-medium text-editorial-olive">{t("proOffer.trial")}</p>
               <Button asChild className="mt-8 rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90">
                 <Link to="/register-gratuit?type=pro">{t("proOffer.cta")}</Link>
               </Button>
@@ -263,6 +245,7 @@ const Partenariat = () => {
 
         <section id="mariable-studio" className="scroll-mt-24 bg-editorial-beige px-4 py-20 md:px-8 md:py-28">
           <div className="mx-auto max-w-6xl">
+            <p className="mb-10 border-l-2 border-editorial-olive pl-5 font-serif text-2xl text-editorial-noir md:text-3xl">{t("services.transition")}</p>
             <div className="grid gap-8 border-b border-editorial-noir/20 pb-12 lg:grid-cols-2">
               <div>
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("services.sectionLabel")}</p>
