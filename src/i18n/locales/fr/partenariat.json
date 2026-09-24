@@ -1,19 +1,21 @@
 {
   "seo": {
-    "title": "Mariable Pro — Coordination Jour J pour professionnels",
-    "description": "Wedding planners, coordinateurs et lieux : gérez tous vos mariages, coordonnez chaque Jour J et partagez les bonnes informations avec Mariable Pro."
+    "title": "Mariable Pro & Studio — Solutions pour professionnels",
+    "description": "Wedding planners, coordinateurs et lieux : gagnez du temps avec l’app Jour J Mariable Pro et développez votre communication avec Mariable Studio."
   },
   "backHome": "Retour à l'accueil",
   "hero": {
-    "eyebrow": "Mariable Pro",
-    "tagline": "Coordonnez chaque Jour J, simplement.",
-    "subtitle": "Une plateforme pensée pour les wedding planners, coordinateurs et lieux de réception qui gèrent plusieurs mariages dans l’année.",
-    "body": "Centralisez vos projets, préparez les déroulés, rassemblez les informations clés et partagez-les facilement avec les personnes concernées.",
-    "cta": "Tester Mariable Pro gratuitement",
+    "eyebrow": "Mariable · Pour les professionnels",
+    "tagline": "La solution pensée pour les wedding planners, coordinateurs et lieux de réception qui gèrent plusieurs mariages dans l’année.",
+    "subtitle": "Deux propositions complémentaires pour simplifier vos événements et développer votre activité.",
+    "proLabel": "L’app de coordination",
+    "proBody": "Centralisez vos projets, préparez les déroulés, rassemblez les informations clés et partagez-les facilement avec les personnes concernées grâce à l’app du Jour J.",
+    "proCta": "Découvrir Mariable Pro",
     "audiences": "Wedding planners · Coordinateurs · Domaines · Châteaux · Hôtels · Lieux de réception",
     "studioLabel": "Mariable Studio",
-    "studioTitle": "Votre communication, pensée pour l’événementiel.",
-    "studioBody": "Stratégie, contenus, publicité et outils digitaux sur mesure pour développer votre marque."
+    "studioBody": "L’agence de marketing digital & communication pensée pour les professionnels de l’événementiel.",
+    "studioCta": "Découvrir Mariable Studio",
+    "imageAlt": "Réception de mariage organisée dans un jardin"
   },
   "central": {
     "title": "La transparence qui vous fait gagner du temps.",
@@ -36,7 +38,7 @@
       },
       {
         "title": "Référencement dans la plateforme",
-        "body": "Visible dans les recherches par prestation, localisation, style et budget."
+        "body": "Visible dans l’app par prestation, localisation, style et budget."
       },
       {
         "title": "Mise en avant éditoriale",
@@ -264,9 +266,9 @@
   },
   "workspace": {
     "eyebrow": "Votre espace professionnel",
-    "title": "Un seul espace pour tous vos mariages.",
-    "intro": "Chaque événement a son planning, ses prestataires, ses contacts, ses documents et ses changements de dernière minute.",
-    "body": "Avec Mariable Pro, vous retrouvez tous vos projets depuis un même tableau de bord et gérez chaque mariage dans un espace dédié.",
+    "title": "Un espace dédié au Jour J de chaque mariage.",
+    "intro": "Centralisez et simplifiez la lecture des informations essentielles pour gagner du temps, de la préparation au Jour J.",
+    "body": "Dans l’app Mariable Pro, chaque mariage conserve son propre déroulé, ses prestataires, ses contacts et ses documents, toujours lisibles et à jour.",
     "items": [
       {
         "title": "Multi-projets",
@@ -320,7 +322,7 @@
     "cta": "Découvrir le module Jour J"
   },
   "uses": {
-    "eyebrow": "Une plateforme, deux usages",
+    "eyebrow": "Une app, deux usages",
     "title": "Deux façons d’utiliser Mariable Pro.",
     "direct": {
       "number": "01",
@@ -358,6 +360,7 @@
     "title": "Tous vos mariages. Un seul abonnement.",
     "price": "149 € / an",
     "priceNote": "soit environ 12 € / mois",
+    "trial": "Essai gratuit disponible",
     "includedLabel": "Inclus",
     "items": [
       "Projets illimités",
@@ -367,7 +370,7 @@
       "Collaboration avec vos couples",
       "Fonctionnalités de planification Mariable",
       "Fonctionnalités IA",
-      "Mises à jour de la plateforme",
+      "Mises à jour de l’app",
       "Référencement Mariable inclus en option"
     ],
     "cta": "Tester Mariable Pro gratuitement",
