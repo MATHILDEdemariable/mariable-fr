@@ -269,7 +269,7 @@
     "eyebrow": "Votre espace professionnel",
     "title": "Un espace dédié au Jour J de chaque mariage.",
     "intro": "Centralisez et simplifiez la lecture des informations essentielles pour gagner du temps, de la préparation au Jour J.",
-    "body": "Dans l’app Mariable Pro, chaque mariage conserve son propre déroulé, ses prestataires, ses contacts et ses documents, toujours lisibles et à jour.",
+    "body": "\n",
     "items": [
       {
         "title": "Multi-projets",
@@ -314,7 +314,7 @@
       "Les informations logistiques",
       "Les changements de dernière minute"
     ],
-    "share": "Puis partagez uniquement les informations utiles aux bonnes personnes.",
+    "share": "\n",
     "benefits": [
       "Moins de fichiers à renvoyer.",
       "Moins de versions différentes.",
