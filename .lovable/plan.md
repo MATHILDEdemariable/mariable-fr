@@ -14,10 +14,8 @@ Faire de l’application Jour J la promesse principale de Mariable, tout en cons
    - Conserver la vidéo actuelle.
    - Remplacer le contenu par la nouvelle promesse : « L’application qui simplifie vraiment le Jour J. »
    - Ajouter le texte sur le planning unique, les bonnes informations et les bonnes personnes.
-   - Ajouter deux CTA de segmentation :
-     - « Je suis un couple » → défilement vers le bloc Couple.
-     - « Je suis wedding planner ou lieu de mariage » → défilement vers le bloc Pro.
-   - Afficher « Essai gratuit · Sans carte bancaire » sans prix dans le hero.
+   - Afficher un seul CTA « Découvrir Mariable » → défilement vers le focus produit Jour J.
+   - Ne mentionner ni essai gratuit ni prix dans le hero.
 
 3. **Focus produit — Un seul déroulé, toujours à jour**
    - Mettre en scène le vrai écran du planning Jour J dans un ordinateur et un téléphone, à partir des captures existantes.
@@ -41,7 +39,7 @@ Faire de l’application Jour J la promesse principale de Mariable, tout en cons
 6. **Tarifs — Gratuit, Couple et Pro**
    - Remplacer le comparatif actuel à deux offres par trois niveaux clairs :
      - Gratuit pour commencer.
-     - Couple : 29 € par projet, paiement unique.
+     - Couple : 29 € par mariage, paiement unique.
      - Pro : 149 €/an, projets illimités, collaboration clients et référencement.
    - CTA « Créer mon espace gratuitement » → inscription Couple.
    - CTA « Tester Mariable Pro » → inscription Pro préremplie.
@@ -99,7 +97,7 @@ Faire de l’application Jour J la promesse principale de Mariable, tout en cons
 ## Vérifications
 
 - Tester la home en français et en anglais, sur mobile et ordinateur.
-- Vérifier les deux scrolls du hero, tous les CTA Couple/Pro, les liens Guides/Sélection/Conseils et le changement de langue.
+- Vérifier le scroll du CTA du hero vers le focus produit, tous les CTA Couple/Pro, les liens Guides/Sélection/Conseils et le changement de langue.
 - Vérifier le mockup Jour J, les photos, les états de chargement des contenus dynamiques et l’absence de décalage visuel.
 - Contrôler la hiérarchie H1–H3, les textes alternatifs, le clavier, les contrastes, les métadonnées et la FAQ structurée.
 - Lancer la validation TypeScript et contrôler les erreurs console sur le parcours public.
