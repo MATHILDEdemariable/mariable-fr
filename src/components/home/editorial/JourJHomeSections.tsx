@@ -14,7 +14,11 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const EDITORIAL_WEDDING_IMAGE = '/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png';
+import coupleJardinAsset from '@/assets/home/couple-jardin.png.asset.json';
+import dinerChateauAsset from '@/assets/home/diner-chateau.png.asset.json';
+
+const AUDIENCE_IMAGE = coupleJardinAsset.url;
+const CELEBRATION_IMAGE = dinerChateauAsset.url;
 
 const centralizedInformation = [
   'schedule',
@@ -153,7 +157,7 @@ export const AudiencePaths: React.FC = () => {
           <div className="relative md:col-span-7 lg:col-span-7">
             <div className="aspect-[4/5] overflow-hidden bg-editorial-beige">
               <img
-                src={EDITORIAL_WEDDING_IMAGE}
+                src={AUDIENCE_IMAGE}
                 alt={t('audiences.couple.imageAlt')}
                 width={1080}
                 height={1350}
@@ -178,7 +182,7 @@ export const AudiencePaths: React.FC = () => {
                   <h3 className="mt-3 font-serif text-2xl leading-snug text-editorial-noir">{t('audiences.couple.title')}</h3>
                   <p className="mt-4 text-sm leading-relaxed text-editorial-noir/70">{t('audiences.couple.body')}</p>
                   <p className="mt-3 font-serif text-base text-editorial-noir">{t('audiences.couple.highlight')}</p>
-                  <Button asChild variant="outline" className="mt-6 min-h-12 w-full rounded-none border-editorial-noir bg-transparent px-5 text-xs uppercase tracking-widest text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground sm:w-auto">
+                  <Button asChild className="mt-6 min-h-12 w-full rounded-none bg-editorial-olive px-5 text-xs uppercase tracking-widest text-primary-foreground hover:bg-editorial-olive/90 sm:w-auto">
                     <Link to="/register-gratuit">{t('audiences.couple.cta')}</Link>
                   </Button>
                 </article>
@@ -188,7 +192,7 @@ export const AudiencePaths: React.FC = () => {
                   <h3 className="mt-3 font-serif text-2xl leading-snug text-editorial-noir">{t('audiences.pro.title')}</h3>
                   <p className="mt-4 text-sm leading-relaxed text-editorial-noir/70">{t('audiences.pro.body')}</p>
                   <p className="mt-3 font-serif text-base text-editorial-noir">{t('audiences.pro.highlight')}</p>
-                  <Button asChild variant="outline" className="mt-6 min-h-12 w-full rounded-none border-editorial-noir bg-transparent px-5 text-xs uppercase tracking-widest text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground sm:w-auto">
+                  <Button asChild className="mt-6 min-h-12 w-full rounded-none bg-editorial-olive px-5 text-xs uppercase tracking-widest text-primary-foreground hover:bg-editorial-olive/90 sm:w-auto">
                     <Link to="/register-gratuit?type=pro">{t('audiences.pro.cta')}</Link>
                   </Button>
                 </article>
@@ -254,7 +258,7 @@ export const PreparationTools: React.FC = () => {
         </div>
 
         <div className="mt-16 grid overflow-hidden bg-editorial-olive text-primary-foreground md:grid-cols-[0.7fr_1.3fr]">
-          <img src={EDITORIAL_WEDDING_IMAGE} alt={t('preparation.editorialAlt')} width={1080} height={1350} loading="lazy" className="h-full min-h-64 w-full object-cover" />
+          <img src={CELEBRATION_IMAGE} alt={t('preparation.editorialAlt')} width={1080} height={1350} loading="lazy" className="h-full min-h-64 w-full object-cover" />
           <div className="flex flex-col justify-center p-8 md:p-12">
             <FileText className="h-6 w-6" strokeWidth={1.3} />
             <p className="mt-5 text-xs uppercase tracking-[0.25em] text-primary-foreground/70">{t('preparation.editorialEyebrow')}</p>
