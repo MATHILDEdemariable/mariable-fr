@@ -37,9 +37,6 @@ const HeroEditorial: React.FC = () => {
           {t('hero.title')}
         </h1>
         <p className="mt-7 max-w-3xl font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
-        <p className="mt-6 max-w-3xl whitespace-pre-line text-sm font-light leading-relaxed text-primary-foreground/85 md:text-lg">
-          {t('hero.subtitle')}
-        </p>
         <button
           type="button"
           onClick={handleDiscover}

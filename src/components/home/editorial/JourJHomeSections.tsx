@@ -14,7 +14,6 @@ import {
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const ORGANIZING_WEDDING_IMAGE = '/lovable-uploads/16238829-fdfc-4fe2-ade8-9c49d79851b4.png';
 const BUDGET_WEDDING_IMAGE = '/lovable-uploads/e5ba755e-f57f-420f-8885-014226913bc8.png';
 
 const centralizedInformation = [
@@ -37,24 +36,25 @@ const toolIcons = {
   practical: Wine,
 };
 
-const professionalFeatures = ['schedule', 'contacts', 'documents', 'collaboration', 'sharing', 'projects'] as const;
+const PlanningPreview: React.FC<{ compact?: boolean }> = ({ compact = false }) => {
+  const { t } = useTranslation('refonteJuillet');
+  const scheduleItems = t('jourJFocus.mockup.items', { returnObjects: true }) as Array<{
+    time: string;
+    title: string;
+    person: string;
+  }>;
 
-const PlanningPreview: React.FC<{ compact?: boolean }> = ({ compact = false }) => (
+  return (
   <div className={compact ? 'bg-background p-2 text-[6px]' : 'bg-background p-4 text-[10px] md:p-6 md:text-xs'}>
     <div className="flex items-center justify-between border-b border-editorial-noir/10 pb-3">
       <div>
         <p className="font-serif text-[1.4em] text-editorial-noir">Camille & Thomas</p>
-        <p className="mt-1 text-editorial-noir/50">Samedi 20 juin · Provence</p>
+        <p className="mt-1 text-editorial-noir/50">{t('jourJFocus.mockup.date')}</p>
       </div>
-      <span className="bg-editorial-olive px-2 py-1 text-primary-foreground">Partager</span>
+      <span className="bg-editorial-olive px-2 py-1 text-primary-foreground">{t('jourJFocus.mockup.share')}</span>
     </div>
     <div className="mt-4 grid grid-cols-[auto_1fr] gap-x-3">
-      {[
-        ['14:30', 'Arrivée des prestataires', 'Lieu'],
-        ['16:00', 'Cérémonie laïque', 'Témoins'],
-        ['18:00', 'Cocktail & photos', 'Traiteur'],
-        ['20:15', 'Entrée des mariés', 'DJ'],
-      ].map(([time, title, person]) => (
+      {scheduleItems.map(({ time, title, person }) => (
         <React.Fragment key={time}>
           <p className="border-r border-editorial-olive/40 pr-3 font-medium text-editorial-olive">{time}</p>
           <div className="mb-3 border-b border-editorial-noir/10 pb-3">
@@ -65,7 +65,8 @@ const PlanningPreview: React.FC<{ compact?: boolean }> = ({ compact = false }) =
       ))}
     </div>
   </div>
-);
+  );
+};
 
 export const JourJProductFocus: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
@@ -99,7 +100,7 @@ export const JourJProductFocus: React.FC = () => {
             </p>
 
             <Button asChild className="mt-8 h-12 rounded-none bg-editorial-olive px-7 text-xs uppercase tracking-widest text-primary-foreground hover:bg-editorial-noir">
-              <Link to="/coordination-jour-j">
+              <Link to="/register-gratuit">
                 {t('jourJFocus.cta')}
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
@@ -130,6 +131,12 @@ export const JourJProductFocus: React.FC = () => {
           <p className="text-center font-serif text-xl text-editorial-noir md:text-2xl">
             {t('jourJFocus.peopleIntro')}
           </p>
+          <p className="mx-auto mt-5 max-w-4xl text-center text-sm leading-relaxed text-editorial-noir/70 md:text-base">
+            {t('jourJFocus.needs')}
+          </p>
+          <p className="mx-auto mt-4 max-w-3xl border-l-2 border-editorial-olive pl-5 text-left text-sm leading-relaxed text-editorial-noir/70 md:text-center md:text-base">
+            {t('jourJFocus.assistance')}
+          </p>
           <div className="mt-7 grid grid-cols-2 gap-px bg-editorial-noir/10 md:grid-cols-5">
             {(['caterer', 'dj', 'witnesses', 'venue', 'couple'] as const).map((person) => (
               <div key={person} className={person === 'couple' ? 'col-span-2 bg-editorial-beige px-4 py-5 text-center md:col-span-1' : 'bg-editorial-beige px-4 py-5 text-center'}>
@@ -156,15 +163,7 @@ export const AudiencePaths: React.FC = () => {
         </header>
 
         <div className="grid gap-px bg-editorial-noir/15 lg:grid-cols-2">
-          <article id="couple" className="grid bg-editorial-beige sm:grid-cols-[0.85fr_1.15fr]">
-            <img
-              src={ORGANIZING_WEDDING_IMAGE}
-              alt={t('audiences.couple.imageAlt')}
-              width={900}
-              height={1100}
-              className="h-full min-h-64 w-full object-cover"
-            />
-            <div className="flex flex-col p-7 md:p-10">
+          <article id="couple" className="flex flex-col bg-editorial-beige p-7 md:p-10">
               <p className="text-xs uppercase tracking-[0.25em] text-editorial-olive">{t('audiences.couple.label')}</p>
               <h3 className="mt-3 font-serif text-3xl text-editorial-noir">{t('audiences.couple.title')}</h3>
               <p className="mt-5 flex-1 text-sm leading-relaxed text-editorial-noir/70 md:text-base">{t('audiences.couple.body')}</p>
@@ -172,21 +171,13 @@ export const AudiencePaths: React.FC = () => {
               <Button asChild className="mt-7 h-12 rounded-none bg-editorial-olive px-6 text-xs uppercase tracking-widest text-primary-foreground hover:bg-editorial-noir">
                 <Link to="/register-gratuit">{t('audiences.couple.cta')}</Link>
               </Button>
-            </div>
           </article>
 
-          <article id="professionnel" className="bg-editorial-noir p-7 text-primary-foreground md:p-10">
-            <p className="text-xs uppercase tracking-[0.25em] text-primary-foreground/70">{t('audiences.pro.label')}</p>
+          <article id="professionnel" className="flex flex-col bg-editorial-olive p-7 text-primary-foreground md:p-10">
+            <p className="text-xs uppercase tracking-[0.25em] text-primary-foreground/75">{t('audiences.pro.label')}</p>
             <h3 className="mt-3 font-serif text-3xl">{t('audiences.pro.title')}</h3>
-            <p className="mt-5 text-sm leading-relaxed text-primary-foreground/75 md:text-base">{t('audiences.pro.body')}</p>
-            <ul className="mt-7 grid gap-3 sm:grid-cols-2">
-              {professionalFeatures.map((feature) => (
-                <li key={feature} className="flex gap-3 border-t border-primary-foreground/20 pt-3 text-sm">
-                  <span className="text-editorial-olive-light">+</span>
-                  <span>{t(`audiences.pro.features.${feature}`)}</span>
-                </li>
-              ))}
-            </ul>
+            <p className="mt-5 flex-1 text-sm leading-relaxed text-primary-foreground/80 md:text-base">{t('audiences.pro.body')}</p>
+            <p className="mt-5 font-serif text-lg">{t('audiences.pro.highlight')}</p>
             <Button asChild variant="outline" className="mt-8 h-12 w-full rounded-none border-primary-foreground bg-transparent px-6 text-xs uppercase tracking-widest text-primary-foreground hover:bg-primary-foreground hover:text-editorial-noir">
               <Link to="/register-gratuit?type=pro">{t('audiences.pro.cta')}</Link>
             </Button>

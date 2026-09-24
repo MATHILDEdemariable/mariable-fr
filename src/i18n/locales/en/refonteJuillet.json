@@ -5,61 +5,316 @@
     "keywords": "wedding day app, wedding timeline, wedding coordination, wedding planning, wedding planner software"
   },
   "header": {
-    "menu": { "selection": "OUR RECOMMENDATIONS", "app": "THE APP", "ebooks": "EBOOKS", "pros": "FOR PROFESSIONALS", "contact": "CONTACT" },
-    "instagram": "Instagram", "openMenu": "Open menu", "closeMenu": "Close menu", "login": "Sign in", "prosFooter": "For professionals"
+    "menu": {
+      "selection": "OUR RECOMMENDATIONS",
+      "app": "THE APP",
+      "ebooks": "EBOOKS",
+      "pros": "FOR PROFESSIONALS",
+      "contact": "CONTACT"
+    },
+    "instagram": "Instagram",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "login": "Sign in",
+    "prosFooter": "For professionals"
   },
   "hero": {
     "eyebrow": "Mariable · The wedding-day app",
-    "title": "The app that truly simplifies your wedding day.",
+    "title": "Celebrate love. Wedding day operations, made simple.",
     "promise": "One schedule. The right information. The right people.",
     "subtitle": "Mariable centralizes your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule once, then simply share the right information with the people involved.",
     "cta": "Discover Mariable"
   },
   "jourJFocus": {
-    "eyebrow": "The wedding-day app", "title": "One timeline. Always up to date.",
+    "eyebrow": "The wedding-day app",
+    "title": "One timeline. Always up to date.",
     "intro": "The caterer needs their timings. The DJ needs the key moments. Witnesses need their tasks. The venue needs logistics. The couple needs the full picture.",
-    "items": { "schedule": "Hour-by-hour timeline", "roles": "Roles and responsibilities", "contacts": "Key contacts", "vendors": "Vendors", "briefs": "Briefs", "documents": "Useful documents", "logistics": "Logistics information", "updates": "Last-minute changes" },
+    "items": {
+      "schedule": "Hour-by-hour timeline",
+      "roles": "Assigned tasks, roles and responsibilities",
+      "contacts": "Key contacts",
+      "vendors": "Vendors",
+      "briefs": "Briefs",
+      "documents": "Useful documents",
+      "logistics": "Logistics information",
+      "updates": "Last-minute changes"
+    },
     "sharing": "Each person accesses the information useful to them from their phone, without multiplying files and versions.",
-    "cta": "Discover the wedding-day app", "desktopAlt": "Mariable wedding-day schedule on desktop", "mobileAlt": "Mariable wedding-day schedule on a phone", "peopleIntro": "The right information, at the right time.",
-    "people": { "caterer": { "name": "Caterer", "need": "Timings and constraints" }, "dj": { "name": "DJ", "need": "Key moments" }, "witnesses": { "name": "Witnesses", "need": "Their tasks" }, "venue": { "name": "Venue", "need": "Logistics" }, "couple": { "name": "The couple", "need": "The full picture" } }
+    "cta": "Discover the wedding-day app",
+    "desktopAlt": "Mariable wedding-day schedule on desktop",
+    "mobileAlt": "Mariable wedding-day schedule on a phone",
+    "peopleIntro": "The right information, at the right time.",
+    "people": {
+      "caterer": {
+        "name": "Caterer",
+        "need": "Timings and constraints"
+      },
+      "dj": {
+        "name": "DJ",
+        "need": "Key moments"
+      },
+      "witnesses": {
+        "name": "Witnesses",
+        "need": "Their tasks"
+      },
+      "venue": {
+        "name": "Venue",
+        "need": "Logistics"
+      },
+      "couple": {
+        "name": "The couple",
+        "need": "The full picture"
+      }
+    },
+    "needs": "Mariable centralizes your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule once, then simply share the right information with the people involved.",
+    "assistance": "Assign each task to the right person. Start with our advice and pre-filled templates, or use AI to generate a first timeline tailored to your wedding.",
+    "mockup": {
+      "date": "Saturday, June 20 · Provence",
+      "share": "Share",
+      "items": [
+        {
+          "time": "2:30 PM",
+          "title": "Vendor arrivals",
+          "person": "Venue"
+        },
+        {
+          "time": "4:00 PM",
+          "title": "Wedding ceremony",
+          "person": "Wedding party"
+        },
+        {
+          "time": "6:00 PM",
+          "title": "Cocktail & photos",
+          "person": "Caterer"
+        },
+        {
+          "time": "8:15 PM",
+          "title": "Couple's entrance",
+          "person": "DJ"
+        }
+      ]
+    }
   },
   "audiences": {
-    "eyebrow": "Two spaces, one coordination", "title": "For your wedding or your clients' weddings.",
-    "couple": { "label": "I'm planning my wedding", "title": "Your wedding, perfectly coordinated.", "body": "Build your timeline, assign roles and share it with witnesses, loved ones and vendors.", "highlight": "One wedding. One source of truth.", "cta": "Create my wedding for free", "imageAlt": "A couple planning their wedding with Mariable" },
-    "pro": { "label": "I'm a wedding planner or venue", "title": "All your weddings in one Pro space.", "body": "Manage multiple weddings, collaborate with couples or clients and coordinate every team from Mariable.", "features": { "schedule": "Build and track the wedding-day timeline", "contacts": "Centralize vendors and contacts", "documents": "Add briefs and documents", "collaboration": "Collaborate with couples or clients", "sharing": "Share with teams and vendors", "projects": "Find every wedding in one place" }, "cta": "Try Mariable Pro" }
+    "eyebrow": "Two spaces, one coordination",
+    "title": "For your wedding or your clients' weddings.",
+    "couple": {
+      "label": "I'm getting married",
+      "title": "Your wedding, perfectly coordinated.",
+      "body": "Build your timeline, assign roles and share it with witnesses, loved ones and vendors.",
+      "highlight": "One wedding. One source of truth.",
+      "cta": "Plan my wedding",
+      "imageAlt": "A couple planning their wedding with Mariable"
+    },
+    "pro": {
+      "label": "I'm a wedding planner or venue",
+      "title": "All your weddings in one Pro space.",
+      "body": "Bring every wedding into one space, collaborate with couples or clients, then share the right information with each team.",
+      "features": {
+        "schedule": "Build and track the wedding-day timeline",
+        "contacts": "Centralize vendors and contacts",
+        "documents": "Add briefs and documents",
+        "collaboration": "Collaborate with couples or clients",
+        "sharing": "Share with teams and vendors",
+        "projects": "Find every wedding in one place"
+      },
+      "cta": "Manage multiple weddings",
+      "highlight": "Unlimited weddings. Clear coordination."
+    }
   },
   "preparation": {
-    "eyebrow": "Much more than the wedding day", "title": "A wedding does not start on the morning of the ceremony.", "intro": "Mariable supports your entire preparation with essential tools, right through to final coordination.", "promise": "One platform, from planning to the wedding day.", "cta": "Discover all features",
-    "budgetAlt": "Mariable wedding budget tool", "seatingAlt": "Mariable seating plan tool", "editorialAlt": "Inspiration for calm wedding planning", "editorialEyebrow": "Plan without scattering information", "editorialTitle": "The structure of a tool, the emotion of your story.", "editorialBody": "Practical tools to move forward at your own pace while leaving room for the choices, inspiration and moments that make your wedding unique.",
-    "tools": { "planning": { "title": "Timeline & checklist", "body": "Steps and tasks to follow month by month." }, "budget": { "title": "Budget", "body": "Estimated and actual costs for every category." }, "guests": { "title": "Guests & RSVPs", "body": "Responses and guest information in one place." }, "seating": { "title": "Seating plan", "body": "Visual planning connected to your guest list." }, "vendors": { "title": "Vendors", "body": "Contacts and useful information together." }, "practical": { "title": "Practical tools", "body": "Drinks, documents, shared album and useful resources." } }
+    "eyebrow": "Much more than the wedding day",
+    "title": "A wedding does not start on the morning of the ceremony.",
+    "intro": "Mariable supports your entire preparation with essential tools, right through to final coordination.",
+    "promise": "One platform, from planning to the wedding day.",
+    "cta": "Discover all features",
+    "budgetAlt": "Mariable wedding budget tool",
+    "seatingAlt": "Mariable seating plan tool",
+    "editorialAlt": "Inspiration for calm wedding planning",
+    "editorialEyebrow": "Celebrate love",
+    "editorialTitle": "The structure of a tool, the emotion of your story.",
+    "editorialBody": "Practical tools to move forward at your own pace while leaving room for the choices, inspiration and moments that make your wedding unique.",
+    "tools": {
+      "planning": {
+        "title": "Timeline & checklist",
+        "body": "Steps and tasks to follow month by month."
+      },
+      "budget": {
+        "title": "Budget",
+        "body": "Estimated and actual costs for every category."
+      },
+      "guests": {
+        "title": "Guests & RSVPs",
+        "body": "Responses and guest information in one place."
+      },
+      "seating": {
+        "title": "Seating plan",
+        "body": "Visual planning connected to your guest list."
+      },
+      "vendors": {
+        "title": "Vendors",
+        "body": "Contacts and useful information together."
+      },
+      "practical": {
+        "title": "Practical tools",
+        "body": "Drinks, documents, shared album and useful resources."
+      }
+    }
   },
   "pricing": {
-    "eyebrow": "Simple offers", "title": "Start free. Move forward at your own pace.",
+    "eyebrow": "Simple offers",
+    "title": "Start free. Move forward at your own pace.",
     "plans": [
-      { "name": "Mariable Free", "price": "€0", "frequency": "to get started", "description": "Create your space and discover the essential tools.", "features": ["One wedding", "Essential planning tools", "Access to advice and vendors"], "cta": "Create my free space", "href": "/register-gratuit" },
-      { "name": "Mariable Couple", "price": "€29", "frequency": "per wedding · one-time payment", "description": "Every Mariable tool with no subscription to plan your wedding.", "features": ["Complete wedding-day app", "Extended AI, storage and exports", "Guides and shared photo album"], "cta": "Choose Mariable Couple", "href": "/paiement" },
-      { "name": "Mariable Pro", "price": "€149", "frequency": "per year", "description": "For wedding planners, coordinators and wedding venues.", "features": ["Unlimited weddings", "Client collaboration", "Listings visible to couples"], "cta": "Try Mariable Pro", "href": "/register-gratuit?type=pro" }
+      {
+        "name": "Mariable Free",
+        "price": "€0",
+        "frequency": "to get started",
+        "description": "Create your space and discover the essential tools.",
+        "features": [
+          "One wedding",
+          "Essential planning tools",
+          "Access to advice and vendors"
+        ],
+        "cta": "Create my free space",
+        "href": "/register-gratuit"
+      },
+      {
+        "name": "Mariable Couple",
+        "price": "€29",
+        "frequency": "per wedding · one-time payment",
+        "description": "Every Mariable tool with no subscription to plan your wedding.",
+        "features": [
+          "Complete wedding-day app",
+          "Extended AI, storage and exports",
+          "Guides and shared photo album"
+        ],
+        "cta": "Choose Mariable Couple",
+        "href": "/paiement"
+      },
+      {
+        "name": "Mariable Pro",
+        "price": "€149",
+        "frequency": "per year",
+        "description": "For wedding planners, coordinators and wedding venues.",
+        "features": [
+          "Unlimited weddings",
+          "Client collaboration",
+          "Listings visible to couples"
+        ],
+        "cta": "Try Mariable Pro",
+        "href": "/register-gratuit?type=pro"
+      }
     ]
   },
   "eshop": {
-    "eyebrow": "Guides & resources", "title": "A practical guide for every step.", "note": "INCLUDED WITH COUPLE PREMIUM.", "viewAll": "Discover the guides →", "discover": "Discover →", "priceLabel": "PDF guide 🇫🇷",
-    "items": { "guide-jour-j": { "title": "Ultimate Wedding-Day Guide", "desc": "Orchestrate everything from M-1 to the big day." }, "guide-debutants-mariage": { "title": "Ultimate Beginner's Guide", "desc": "Plan your wedding from scratch." }, "catalogue-prix-mariage-2026": { "title": "Wedding Price Catalogue", "desc": "Real price ranges to build your budget." }, "guide-discours-mariage": { "title": "Wedding Speech Do's & Don'ts", "desc": "Structure and examples for a great speech." } }
+    "eyebrow": "Guides & resources",
+    "title": "A practical guide for every step.",
+    "note": "INCLUDED WITH COUPLE PREMIUM.",
+    "viewAll": "Discover the guides →",
+    "discover": "Discover →",
+    "priceLabel": "PDF guide 🇫🇷",
+    "items": {
+      "guide-jour-j": {
+        "title": "Ultimate Wedding-Day Guide",
+        "desc": "Orchestrate everything from M-1 to the big day."
+      },
+      "guide-debutants-mariage": {
+        "title": "Ultimate Beginner's Guide",
+        "desc": "Plan your wedding from scratch."
+      },
+      "catalogue-prix-mariage-2026": {
+        "title": "Wedding Price Catalogue",
+        "desc": "Real price ranges to build your budget."
+      },
+      "guide-discours-mariage": {
+        "title": "Wedding Speech Do's & Don'ts",
+        "desc": "Structure and examples for a great speech."
+      }
+    }
   },
-  "selection": { "eyebrow": "RECOMMENDATIONS", "title": "The Mariable selection" },
-  "carousels": { "eyebrow": "The Mariable selection", "title": "The right vendors to bring your day to life.", "intro": "A selection of venues and professionals complements your planning tools when you are ready to move from preparation to meeting them.", "label": "Venues, caterers & photographers", "viewAll": "See the full selection →", "prev": "Previous", "next": "Next", "discover": "Discover", "membersBadge": "Members" },
-  "blog": { "eyebrow": "Advice & content", "title": "The Mariable magazine", "discover": "Read more →" },
-  "testimonials": { "eyebrow": "Testimonials", "title": "They celebrated their story", "titleEm": "with Mariable." },
+  "selection": {
+    "eyebrow": "RECOMMENDATIONS",
+    "title": "The Mariable selection"
+  },
+  "carousels": {
+    "eyebrow": "The Mariable selection",
+    "title": "The right vendors to bring your day to life.",
+    "intro": "A selection of venues and professionals complements your planning tools when you are ready to move from preparation to meeting them.",
+    "label": "Venues, caterers & photographers",
+    "viewAll": "See the full selection →",
+    "prev": "Previous",
+    "next": "Next",
+    "discover": "Discover",
+    "membersBadge": "Members"
+  },
+  "blog": {
+    "eyebrow": "Advice & content",
+    "title": "The Mariable magazine",
+    "discover": "Read more →"
+  },
+  "testimonials": {
+    "eyebrow": "Testimonials",
+    "title": "They celebrated their story",
+    "titleEm": "with Mariable."
+  },
   "faq": {
-    "eyebrow": "Frequently asked questions", "title": "Everything to know before you begin.",
+    "eyebrow": "Frequently asked questions",
+    "title": "Everything to know before you begin.",
     "items": [
-      { "q": "What is the difference between Mariable Free and Premium?", "a": "The free space lets you start planning. The €29 Couple offer extends the wedding-day app, AI, storage, exports and Premium resources." },
-      { "q": "Is €29 a one-time payment?", "a": "Yes. Mariable Couple costs €29 per wedding, paid once with no subscription." },
-      { "q": "What is the difference between Couple and Pro?", "a": "Couple is designed for one wedding. Mariable Pro lets professionals manage unlimited weddings, collaborate with clients and gain visibility with couples." },
-      { "q": "Can a couple collaborate with their wedding planner?", "a": "Yes. Wedding information can be centralized and shared so the couple and professional work from the same timeline." },
-      { "q": "Can I share the schedule with my vendors?", "a": "Yes. The wedding-day schedule can be shared by link. Each person can view useful information and use the available filters from their phone." },
-      { "q": "Can Mariable Pro manage multiple weddings?", "a": "Yes. The €149 annual Pro offer includes unlimited weddings in one professional space." },
-      { "q": "Is Mariable a mobile app?", "a": "Mariable is a web app available on computer, tablet and phone, with no mandatory download." }
-    ]
+      {
+        "q": "What is the difference between Mariable Free and Premium?",
+        "a": "The free space lets you start planning. The €29 Couple offer extends the wedding-day app, AI, storage, exports and Premium resources."
+      },
+      {
+        "q": "Is €29 a one-time payment?",
+        "a": "Yes. Mariable Couple costs €29 per wedding, paid once with no subscription."
+      },
+      {
+        "q": "What is the difference between Couple and Pro?",
+        "a": "Couple is designed for one wedding. Mariable Pro lets professionals manage unlimited weddings, collaborate with clients and gain visibility with couples."
+      },
+      {
+        "q": "Can a couple collaborate with their wedding planner?",
+        "a": "Yes. Wedding information can be centralized and shared so the couple and professional work from the same timeline."
+      },
+      {
+        "q": "Can I share the schedule with my vendors?",
+        "a": "Yes. The wedding-day schedule can be shared by link. Each person can view useful information and use the available filters from their phone."
+      },
+      {
+        "q": "Can Mariable Pro manage multiple weddings?",
+        "a": "Yes. The €149 annual Pro offer includes unlimited weddings in one professional space."
+      },
+      {
+        "q": "Is Mariable a mobile app?",
+        "a": "Mariable is a web app available on computer, tablet and phone, with no mandatory download."
+      },
+      {
+        "q": "How do I install Mariable on my phone?",
+        "a": "Mariable works directly in your browser, with no App Store or Google Play download. You can add it to your home screen and open it like an app.",
+        "install": true
+      }
+    ],
+    "installModal": {
+      "open": "View installation tutorial",
+      "title": "Install Mariable on your phone",
+      "intro": "Installation is free and does not require an app store. Follow the instructions for your phone.",
+      "steps": [
+        {
+          "title": "On iPhone or iPad",
+          "body": "Open mariable.fr in Safari, tap Share, choose “Add to Home Screen”, then confirm by tapping “Add”."
+        },
+        {
+          "title": "On Android",
+          "body": "Open mariable.fr in Chrome, open the three-dot menu, then choose “Add to Home screen” or “Install app”."
+        }
+      ]
+    }
   },
-  "finalCta": { "title": "Your wedding day deserves", "titleEm": "one source of truth.", "subtitle": "Create your Mariable space and start building your timeline.", "cta": "Create an account" }
+  "finalCta": {
+    "title": "Your wedding day deserves",
+    "titleEm": "one source of truth.",
+    "subtitle": "Create your Mariable space and start building your timeline.",
+    "cta": "Create an account"
+  }
 }
