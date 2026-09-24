@@ -1,13 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { ArrowDown } from 'lucide-react';
 
 const VIDEO_URL =
   'https://bgidfcqktsttzlwlumtz.supabase.co/storage/v1/object/public/background-videos/freepik__wideangle-shot-a-joyful-couple-dances-at-their-wed__74093%20(1).mp4';
 
 const HeroEditorial: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
+  const handleDiscover = () => document.getElementById('application-jour-j')?.scrollIntoView({ behavior: 'smooth' });
+
   return (
-    <section className="relative h-[90vh] min-h-[600px] w-full overflow-hidden bg-editorial-noir">
+    <section className="relative h-[92svh] min-h-[620px] max-h-[940px] w-full overflow-hidden bg-editorial-noir">
       <div className="absolute inset-0">
         <video
           autoPlay
@@ -15,32 +18,36 @@ const HeroEditorial: React.FC = () => {
           loop
           playsInline
           preload="metadata"
+          poster="/lovable-uploads/video-poster.webp"
           width={1920}
           height={1080}
           className="w-full h-full object-cover bg-editorial-noir"
         >
           <source src={VIDEO_URL} type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/45 to-black/60" />
+        <div className="absolute inset-0 bg-editorial-noir/55" />
       </div>
 
 
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center px-6">
-        <p className="text-xs md:text-sm tracking-[0.3em] uppercase text-white/85 mb-6">
+      <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-16 text-center text-primary-foreground">
+        <p className="mb-6 text-xs uppercase tracking-[0.3em] text-primary-foreground/85">
           {t('hero.eyebrow')}
         </p>
-        <h1 className="font-serif text-3xl sm:text-4xl md:text-6xl text-white leading-[1.1] max-w-4xl">
+        <h1 className="max-w-4xl font-serif text-4xl leading-[1.02] sm:text-5xl md:text-7xl lg:text-8xl">
           {t('hero.title')}
         </h1>
-        <p className="mt-6 md:mt-8 text-base md:text-lg text-white/85 max-w-2xl font-sans leading-relaxed whitespace-pre-line">
+        <p className="mt-7 max-w-3xl font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
+        <p className="mt-6 max-w-3xl whitespace-pre-line text-sm font-light leading-relaxed text-primary-foreground/85 md:text-lg">
           {t('hero.subtitle')}
         </p>
-        <a
-          href="#selection"
-          className="mt-10 inline-block border border-white/70 text-white text-xs tracking-[0.25em] uppercase px-8 py-4 hover:bg-white hover:text-editorial-noir transition-colors duration-200"
+        <button
+          type="button"
+          onClick={handleDiscover}
+          className="mt-10 inline-flex min-h-12 items-center justify-center gap-3 border border-primary-foreground bg-primary-foreground px-8 py-4 text-xs uppercase tracking-[0.2em] text-editorial-noir transition-colors hover:bg-transparent hover:text-primary-foreground"
         >
           {t('hero.cta')}
-        </a>
+          <ArrowDown className="h-4 w-4" />
+        </button>
       </div>
     </section>
   );
