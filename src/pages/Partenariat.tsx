@@ -145,6 +145,11 @@ const Partenariat = () => {
                   <a href="#mariable-studio">{t("hero.studioLabel")}</a>
                 </Button>
               </div>
+              <div className="mt-10 border-l border-editorial-olive pl-5">
+                <p className="text-xs uppercase tracking-[0.2em] text-editorial-olive">{t("hero.studioLabel")}</p>
+                <h2 className="mt-2 font-serif text-xl text-editorial-noir">{t("hero.studioTitle")}</h2>
+                <p className="mt-2 max-w-xl text-sm leading-relaxed text-editorial-noir/60">{t("hero.studioBody")}</p>
+              </div>
             </motion.div>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.15 }} className="relative min-h-[420px] lg:min-h-[660px]">
               <img src={receptionProAsset.url} alt="Réception de mariage dans un jardin" width={768} height={1024} className="absolute inset-0 h-full w-full object-cover" />
@@ -273,7 +278,7 @@ const Partenariat = () => {
                     <Icon className="h-8 w-8 text-editorial-olive" />
                     <h3 className="font-serif text-2xl text-editorial-noir">{service.title}</h3>
                     <div><p className="leading-relaxed text-editorial-noir/65">{service.description}</p><ul className="mt-5 grid gap-2 sm:grid-cols-2">{service.points.map((point) => <li key={point} className="text-sm text-editorial-noir/70">— {point}</li>)}</ul></div>
-                    <Button variant="outline" onClick={() => openContact(service.title)} className="rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">{t("services.contactCta")}</Button>
+                    <div className="space-y-3"><p className="font-serif text-lg text-editorial-noir">{t("services.pricingValue")}</p><Button variant="outline" onClick={() => openContact(service.title)} className="rounded-none border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">{t("services.contactCta")}</Button></div>
                   </article>
                 );
               })}
@@ -284,11 +289,11 @@ const Partenariat = () => {
         <section className="bg-background px-4 py-20 md:px-8">
           <div className="mx-auto max-w-6xl">
             <div className="text-center">
-              <p className="mb-3 text-xs uppercase tracking-[0.25em] text-editorial-olive">Conseils &amp; tips</p>
-              <h2 className="font-serif text-3xl text-editorial-noir">Ressources pour les professionnels du mariage</h2>
+              <p className="mb-3 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("resources.eyebrow")}</p>
+              <h2 className="font-serif text-3xl text-editorial-noir">{t("resources.title")}</h2>
             </div>
             {proPosts.length > 0 && <div className="mt-10 grid gap-8 md:grid-cols-3">{proPosts.map((post) => <Link key={post.id} to={`/conseils-professionnels/${post.slug}`} className="group"><div className="mb-4 aspect-[4/3] overflow-hidden bg-editorial-beige">{post.background_image_url && <img src={post.background_image_url} alt={post.title} loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />}</div><h3 className="line-clamp-2 font-serif text-xl text-editorial-noir group-hover:text-editorial-olive">{post.title}</h3><p className="mt-2 line-clamp-2 text-sm text-editorial-noir/65">{post.meta_description}</p></Link>)}</div>}
-            <div className="mt-10 text-center"><Button asChild variant="outline" className="rounded-none border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-primary-foreground"><Link to="/conseils-professionnels">Voir tous les conseils professionnels</Link></Button></div>
+            <div className="mt-10 text-center"><Button asChild variant="outline" className="rounded-none border-editorial-olive text-editorial-olive hover:bg-editorial-olive hover:text-primary-foreground"><Link to="/conseils-professionnels">{t("resources.cta")}</Link></Button></div>
           </div>
         </section>
 

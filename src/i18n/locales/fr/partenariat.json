@@ -189,8 +189,8 @@
         "answer": "En étant visible là où les couples cherchent réellement : Mariable référence votre activité auprès de futurs mariés qui comparent prestataires, styles et budgets. Votre profil affiche vos prestations et vos tarifs, ce qui filtre naturellement les demandes et vous amène des clients mariage alignés avec votre positionnement."
       },
       {
-        "question": "Combien coûte le référencement sur Mariable ?",
-        "answer": "149 €/an (au lieu de 200 €/an), sans engagement de reconduction. Ce montant couvre le référencement de votre activité, la communication mariage associée (Instagram, LinkedIn, article, sélections SEO) et l'accès à la plateforme Mariable."
+        "question": "Combien coûte Mariable Pro ?",
+        "answer": "Mariable Pro coûte 149 €/an, sans engagement de reconduction. L’abonnement comprend les projets illimités, l’espace professionnel multi-mariages, la coordination Jour J, les fonctionnalités IA et le référencement Mariable en option."
       },
       {
         "question": "Quelle communication mariage est incluse dans Mariable Pro ?",
@@ -198,7 +198,7 @@
       },
       {
         "question": "Que comprend exactement l'offre Mariable Pro à 149 €/an ?",
-        "answer": "Mariable Pro comprend deux volets. D'abord, un référencement et une visibilité sur la plateforme : profil professionnel dédié, référencement dans les recherches par prestation, localisation, style et budget, mise en avant éditoriale sur les réseaux Mariable (post ou carrousel Instagram dédié, sélections thématiques), présence dans les articles et sélections SEO pertinents, et accès au réseau Mariable Pro avec priorité sur les mises en relation qualifiées. Ensuite, un accès à la plateforme Mariable : soit un accès Pro organisateur pour gérer les mariages de vos clients, soit 3 accès Mariable Premium à offrir à vos mariés via un code promo unique. Cet accès inclut la gestion du budget, le planning jour J collaboratif, le plan de table, la checklist, le carnet d'adresses, l'album photo partagé et les autres fonctionnalités de l'app."
+        "answer": "Mariable Pro comprend un espace professionnel pour gérer un nombre illimité de mariages, coordonner chaque Jour J, partager les bonnes informations avec les équipes et prestataires, collaborer avec les couples et utiliser les fonctionnalités IA. Le référencement et la visibilité sur Mariable.fr peuvent compléter cet accès."
       },
       {
         "question": "Pourquoi faut-il publier ses tarifs pour rejoindre Mariable Pro ?",
@@ -206,7 +206,7 @@
       },
       {
         "question": "Quelle différence entre Mariable Pro et Mariable Studio ?",
-        "answer": "Mariable Pro est une offre de référencement et de visibilité sur la plateforme Mariable, à 149 €/an. Mariable Studio est un accompagnement marketing digital sur devis : stratégie réseaux sociaux, création de contenu, community management, Meta Ads et TikTok Ads, sites web et outils de conversion. Les deux sont complémentaires et peuvent être cumulées."
+        "answer": "Mariable Pro est l’outil de travail à 149 €/an pour gérer et coordonner vos mariages, avec un référencement Mariable en option. Mariable Studio est un accompagnement marketing digital sur devis : stratégie, contenus, réseaux sociaux, publicité et projets web."
       },
       {
         "question": "Comment envoyer mes tarifs ?",
@@ -372,5 +372,10 @@
     ],
     "cta": "Tester Mariable Pro gratuitement",
     "eligibility": "Voir les conditions d’éligibilité du référencement"
+  },
+  "resources": {
+    "eyebrow": "Conseils & tips",
+    "title": "Ressources pour les professionnels du mariage",
+    "cta": "Voir tous les conseils professionnels"
   }
 }
