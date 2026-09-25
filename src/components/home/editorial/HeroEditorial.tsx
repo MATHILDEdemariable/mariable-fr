@@ -35,7 +35,7 @@ const HeroEditorial: React.FC = () => {
         </p>
         <h1 className="max-w-5xl font-serif text-[1.9rem] leading-[1.08] sm:text-5xl md:text-6xl lg:text-7xl">
           {String(t('hero.title')).split(/(?<=\.)\s+/).map((heroTitleLine) => (
-            <span key={heroTitleLine} className="block whitespace-nowrap">{heroTitleLine}</span>
+            <span key={heroTitleLine} className="block">{heroTitleLine}</span>
           ))}
         </h1>
         <p className="mt-7 max-w-3xl whitespace-pre-line font-serif text-xl leading-snug md:text-3xl">{t('hero.promise')}</p>
