@@ -21,14 +21,14 @@
   "hero": {
     "eyebrow": "MARIABLE · L'APPLI JOUR J",
     "title": "Célébrer l’amour. Sublimer le Jour J.",
-    "promise": "L'application qui centralise et coordonne\nchaque détail du jour du mariage.",
+    "promise": "\n",
     "subtitle": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning une seule fois, puis partagez simplement les bonnes informations aux personnes concernées.",
     "cta": "Découvrir Mariable"
   },
   "jourJFocus": {
     "eyebrow": "UN SEUL DEROULE. TOUJOURS A JOUR.",
     "title": "L'application du jour-J boostée par l'IA.",
-    "intro": "Mariable centralise le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. \nVous préparez votre planning, puis partagez simplement les bonnes informations aux personnes concernées grâce à lien internet simple.",
+    "intro": "Mariable centralise et coordonne le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents.  Vous préparez votre planning, puis partagez simplement les bonnes informations aux personnes concernées grâce à lien internet simple.",
     "items": {
       "schedule": "Déroulé heure par heure",
       "roles": "Tâches, rôles et responsabilités",
