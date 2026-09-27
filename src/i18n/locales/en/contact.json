@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "title": "Contact & Our story | Mariable",
+    "description": "Mariable, the wedding app born from a young bride's wish and 80% built with AI. Discover Mathilde's journey and get in touch."
+  },
+  "hero": {
+    "eyebrow": "Our story & contact",
+    "title": "Let's get to know each other —",
+    "titleEm": "and talk."
+  },
+  "story": {
+    "eyebrow": "Meet",
+    "title": "Mathilde,",
+    "titleEm": "founder.",
+    "p1": "Mariable was born from a young bride's wish: to make wedding planning simpler, clearer and more joyful.",
+    "p2": "Today, Mariable also serves wedding professionals thanks to Mathilde's expertise in AI. It is a wedding app 80% built with artificial intelligence.",
+    "p3": "Mariable is a passion project, not my main activity: after entrepreneurship, I work as a Growth & AI consultant.",
+    "linkedin": "View my LinkedIn profile",
+    "imageAlt": "Mathilde, founder of Mariable"
+  },
+  "timeline": {
+    "eyebrow": "A journey in 3 steps",
+    "steps": [
+      {
+        "year": "2019",
+        "title": "Business school degree - IESEG",
+        "body": "Master in International Business - finance major."
+      },
+      {
+        "year": "+6 years",
+        "title": "Corporate finance",
+        "body": "Business Analyst & Controller — Pernod Ricard, Sandro, L'Oréal."
+      },
+      {
+        "year": "+2 years",
+        "title": "Entrepreneurship & AI",
+        "body": "Solo founder of mariable.fr · Self-taught in AI & no-code · Growth Marketing certification. Now a Growth & AI consultant."
+      }
+    ]
+  },
+  "mission": {
+    "missionLabel": "Our mission",
+    "missionTitle": "Celebrate love —",
+    "missionEm": "elevate the wedding day.",
+    "missionBody": "Not just making the wedding day easier, but elevating it: everyone gets the right information at the right time, so the couple can fully enjoy it.",
+    "visionLabel": "Our vision",
+    "visionTitle": "A wedding app",
+    "visionEm": "built with AI.",
+    "visionBody": "A simple, modern and accessible app for couples and for the professionals who orchestrate their weddings."
+  },
+  "form": {
+    "eyebrow": "Contact",
+    "title": "We'd love",
+    "titleEm": "to hear from you.",
+    "intro": "A question, a project, a partnership? Write to us.",
+    "typeLabel": "You are",
+    "typePlaceholder": "Select your profile",
+    "types": {
+      "couple": "I'm a couple",
+      "lieu": "I'm a venue",
+      "marque": "I'm a brand",
+      "prestataire": "I'm a vendor"
+    },
+    "email": "Email",
+    "emailPlaceholder": "your@email.com",
+    "phone": "Phone",
+    "message": "Message",
+    "messagePlaceholder": "How can we help?",
+    "submit": "Send message",
+    "sending": "Sending...",
+    "or": "Or directly:",
+    "incompleteTitle": "Incomplete form",
+    "incompleteDesc": "Please fill in all required fields",
+    "successTitle": "Message sent!",
+    "successDesc": "We'll get back to you as soon as possible.",
+    "errorTitle": "Error",
+    "errorDesc": "Something went wrong. Please try again."
+  }
+}

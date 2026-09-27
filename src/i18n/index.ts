@@ -8,6 +8,7 @@ import frHomeV2 from './locales/fr/homeV2.json';
 import frPricing from './locales/fr/pricing.json';
 import frProfessionals from './locales/fr/professionals.json';
 import frPartenariat from './locales/fr/partenariat.json';
+import frContact from './locales/fr/contact.json';
 import frBlog from './locales/fr/blog.json';
 import frAuth from './locales/fr/auth.json';
 import frDashboard from './locales/fr/dashboard.json';
@@ -27,6 +28,7 @@ import enHomeV2 from './locales/en/homeV2.json';
 import enPricing from './locales/en/pricing.json';
 import enProfessionals from './locales/en/professionals.json';
 import enPartenariat from './locales/en/partenariat.json';
+import enContact from './locales/en/contact.json';
 import enBlog from './locales/en/blog.json';
 import enAuth from './locales/en/auth.json';
 import enDashboard from './locales/en/dashboard.json';
@@ -52,6 +54,7 @@ const resources = {
     pricing: frPricing,
     professionals: frProfessionals,
     partenariat: frPartenariat,
+    contact: frContact,
     blog: frBlog,
     auth: frAuth,
     dashboard: frDashboard,
@@ -73,6 +76,7 @@ const resources = {
     pricing: enPricing,
     professionals: enProfessionals,
     partenariat: enPartenariat,
+    contact: enContact,
     blog: enBlog,
     auth: enAuth,
     dashboard: enDashboard,
@@ -119,7 +123,7 @@ i18n
     load: 'languageOnly',
     nonExplicitSupportedLngs: true,
     defaultNS: 'common',
-    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie', 'weddingDay', 'monJourM', 'contentCreator', 'refonteJuillet', 'guides', 'pro'],
+    ns: ['common', 'home', 'homeV2', 'pricing', 'professionals', 'partenariat', 'contact', 'blog', 'auth', 'dashboard', 'budget', 'checklist', 'seating', 'ceremonie', 'weddingDay', 'monJourM', 'contentCreator', 'refonteJuillet', 'guides', 'pro'],
     interpolation: {
       escapeValue: false,
     },
