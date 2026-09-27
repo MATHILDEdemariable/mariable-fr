@@ -102,6 +102,8 @@ const GUIDE_IMAGES: Record<string, string> = {
 };
 
 export default function GuidesShop() {
+  const { i18n } = useTranslation();
+  const isEnglish = i18n.language?.startsWith("en");
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
   const [modalStep, setModalStep] = useState<'preview' | 'checkout'>('preview');
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
