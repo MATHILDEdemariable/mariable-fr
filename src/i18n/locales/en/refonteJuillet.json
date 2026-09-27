@@ -21,14 +21,14 @@
   "hero": {
     "eyebrow": "MARIABLE · THE WEDDING-DAY APP",
     "title": "Celebrate love. Elevate the wedding day.",
-    "promise": "The app that centralizes and coordinates\nevery detail of the wedding day.",
-    "subtitle": "Mariable centralizes your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule, then simply share the right information with the people involved thanks to a simple link.",
+    "promise": "\n",
+    "subtitle": "Mariable centralizes your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule once, then simply share the right information with the people involved.",
     "cta": "Discover Mariable"
   },
   "jourJFocus": {
-    "eyebrow": "The wedding-day app",
-    "title": "One timeline. Always up to date.",
-    "intro": "The caterer needs their timings. The DJ needs the key moments. Witnesses need their tasks. The venue needs logistics. The couple needs the full picture.",
+    "eyebrow": "ONE TIMELINE. ALWAYS UP TO DATE.",
+    "title": "The AI-powered wedding-day app.",
+    "intro": "Mariable centralizes and coordinates your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule, then simply share the right information with the people involved through a simple web link.",
     "items": {
       "schedule": "Hour-by-hour timeline",
       "roles": "Assigned tasks, roles and responsibilities",
@@ -43,7 +43,7 @@
     "cta": "Discover the wedding-day app",
     "desktopAlt": "Mariable wedding-day schedule on desktop",
     "mobileAlt": "Mariable wedding-day schedule on a phone",
-    "peopleIntro": "The right information, at the right time.",
+    "peopleIntro": "The right information, at the right time, to the right people.",
     "people": {
       "caterer": {
         "name": "Caterer",
@@ -66,7 +66,7 @@
         "need": "The full picture"
       }
     },
-    "needs": "Mariable centralizes your wedding timeline: times, roles, contacts, vendors, briefs and documents. Prepare your schedule once, then simply share the right information with the people involved.",
+    "needs": "The caterer needs their timings. The DJ needs the key moments. Witnesses need their tasks. The venue needs logistics information. The couple needs the full picture.",
     "assistance": "Assign each task to the right person. Start with our advice and pre-filled templates, or use AI to generate a first timeline tailored to your wedding.",
     "mockup": {
       "date": "Saturday, June 20 · Provence",
@@ -99,16 +99,16 @@
     "eyebrow": "Two spaces, one coordination",
     "title": "For your wedding or your clients' weddings.",
     "couple": {
-      "label": "I'm getting married",
-      "title": "Your wedding, perfectly coordinated.",
+      "label": "BRIDES & GROOMS-TO-BE",
+      "title": "I'm a couple:",
       "body": "Build your timeline, assign roles and share it with witnesses, loved ones and vendors.",
       "highlight": "One wedding. One source of truth.",
       "cta": "Plan my wedding",
       "imageAlt": "A couple planning their wedding with Mariable"
     },
     "pro": {
-      "label": "I'm a wedding planner or venue",
-      "title": "All your weddings in one Pro space.",
+      "label": "WEDDING PLANNER / COORDINATOR / RECEPTION VENUES",
+      "title": "I'm a professional:",
       "body": "Bring every wedding into one space, collaborate with couples or clients, then share the right information with each team.",
       "features": {
         "schedule": "Build and track the wedding-day timeline",
@@ -124,15 +124,15 @@
   },
   "preparation": {
     "eyebrow": "Much more than the wedding day",
-    "title": "A wedding does not start on the morning of the ceremony.",
+    "title": "One app, from planning to the wedding day",
     "intro": "Mariable supports your entire preparation with essential tools, right through to final coordination.",
-    "promise": "One platform, from planning to the wedding day.",
+    "promise": "\n",
     "cta": "Discover all features",
     "budgetAlt": "Mariable wedding budget tool",
     "seatingAlt": "Mariable seating plan tool",
     "editorialAlt": "Inspiration for calm wedding planning",
     "editorialEyebrow": "Celebrate love",
-    "editorialTitle": "The structure of a tool, the emotion of your story.",
+    "editorialTitle": "The structure of a tool, the emotion of a unique event.",
     "editorialBody": "Practical tools to move forward at your own pace while leaving room for the choices, inspiration and moments that make your wedding unique.",
     "tools": {
       "planning": {
