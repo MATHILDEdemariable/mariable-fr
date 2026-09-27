@@ -379,7 +379,9 @@
       "Optional Mariable listing included"
     ],
     "cta": "Try Mariable Pro for free",
-    "eligibility": "See listing eligibility requirements"
+    "eligibility": "See listing eligibility requirements",
+    "priceOld": "€200 / year",
+    "promo": "Launch offer"
   },
   "resources": {
     "eyebrow": "Advice & tips",

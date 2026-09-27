@@ -259,11 +259,11 @@ const Register = () => {
 
             <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
-                <Label>Je suis</Label>
+                <Label>{t('accountType.label')}</Label>
                 <div className="grid grid-cols-2 gap-3">
                   {([
-                    { value: 'b2c' as const, label: 'Particulier', hint: "J'organise mon mariage" },
-                    { value: 'b2b' as const, label: 'Professionnel', hint: "J'organise pour des couples" },
+                    { value: 'b2c' as const, label: t('accountType.couple'), hint: t('accountType.coupleHint') },
+                    { value: 'b2b' as const, label: t('accountType.pro'), hint: t('accountType.proHint') },
                   ]).map((option) => (
                     <button
                       key={option.value}

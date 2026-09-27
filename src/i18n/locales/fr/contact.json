@@ -1,0 +1,79 @@
+{
+  "meta": {
+    "title": "Contact & Notre histoire | Mariable",
+    "description": "Mariable, la wedding app née d'une envie de jeune mariée et développée à 80 % grâce à l'IA. Découvrez le parcours de Mathilde et contactez-nous."
+  },
+  "hero": {
+    "eyebrow": "Notre histoire & contact",
+    "title": "Faisons connaissance —",
+    "titleEm": "et échangeons."
+  },
+  "story": {
+    "eyebrow": "Rencontre",
+    "title": "Mathilde,",
+    "titleEm": "fondatrice.",
+    "p1": "Mariable est née d'une envie de jeune mariée : rendre l'organisation d'un mariage plus simple, plus claire, plus joyeuse.",
+    "p2": "Aujourd'hui, Mariable s'adresse aussi aux professionnels du mariage grâce à l'expertise de Mathilde en IA. C'est une wedding app développée à 80 % grâce à l'intelligence artificielle.",
+    "p3": "Mariable est un projet de cœur, mais pas mon activité principale : après l'entrepreneuriat, je suis consultante Growth & IA.",
+    "linkedin": "Voir mon profil LinkedIn",
+    "imageAlt": "Mathilde, fondatrice de Mariable"
+  },
+  "timeline": {
+    "eyebrow": "Parcours en 3 temps",
+    "steps": [
+      {
+        "year": "2019",
+        "title": "Diplôme école de commerce - IESEG",
+        "body": "Master International Business - spécialisation finance."
+      },
+      {
+        "year": "+6 ans",
+        "title": "Finance d'entreprise",
+        "body": "Business Analyst & Controller — Pernod Ricard, Sandro, L'Oréal."
+      },
+      {
+        "year": "+2 ans",
+        "title": "Entrepreneuriat & IA",
+        "body": "Solo founder mariable.fr · Autodidacte IA & No-code · Certification Growth Marketing. Aujourd'hui consultante Growth & IA."
+      }
+    ]
+  },
+  "mission": {
+    "missionLabel": "Notre mission",
+    "missionTitle": "Célébrer l'amour —",
+    "missionEm": "sublimer le Jour J.",
+    "missionBody": "Ne pas seulement faciliter le Jour J, mais le sublimer : que chaque personne ait la bonne information au bon moment, pour que le couple profite pleinement.",
+    "visionLabel": "Notre vision",
+    "visionTitle": "Une wedding app",
+    "visionEm": "pensée avec l'IA.",
+    "visionBody": "Une application simple, moderne et accessible, pour les couples comme pour les professionnels qui orchestrent leurs mariages."
+  },
+  "form": {
+    "eyebrow": "Contact",
+    "title": "Au plaisir",
+    "titleEm": "d'échanger avec vous.",
+    "intro": "Une question, un projet, un partenariat ? Écrivez-nous.",
+    "typeLabel": "Vous êtes",
+    "typePlaceholder": "Sélectionnez votre profil",
+    "types": {
+      "couple": "Je suis un couple",
+      "lieu": "Je suis un lieu",
+      "marque": "Je suis une marque",
+      "prestataire": "Je suis un prestataire"
+    },
+    "email": "Email",
+    "emailPlaceholder": "votre@email.com",
+    "phone": "Téléphone",
+    "message": "Message",
+    "messagePlaceholder": "Comment pouvons-nous vous aider ?",
+    "submit": "Envoyer le message",
+    "sending": "Envoi en cours...",
+    "or": "Ou directement :",
+    "incompleteTitle": "Formulaire incomplet",
+    "incompleteDesc": "Veuillez remplir tous les champs obligatoires",
+    "successTitle": "Message envoyé !",
+    "successDesc": "Nous vous répondrons dans les plus brefs délais.",
+    "errorTitle": "Erreur",
+    "errorDesc": "Une erreur est survenue. Veuillez réessayer."
+  }
+}

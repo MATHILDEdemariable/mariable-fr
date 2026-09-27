@@ -224,7 +224,8 @@ const Partenariat = () => {
             <div className="lg:sticky lg:top-28 lg:self-start">
               <p className="mb-4 text-xs uppercase tracking-[0.25em] text-editorial-olive">{t("proOffer.eyebrow")}</p>
               <h2 className="font-serif text-3xl text-editorial-noir md:text-5xl">{t("proOffer.title")}</h2>
-              <p className="mt-8 font-serif text-4xl text-editorial-noir">{t("proOffer.price")}</p>
+              <p className="mt-8 text-xs uppercase tracking-[0.2em] text-editorial-olive">{t("proOffer.promo")}</p>
+              <p className="mt-2 flex items-baseline gap-3 font-serif text-editorial-noir"><span className="text-2xl text-editorial-noir/40 line-through">{t("proOffer.priceOld")}</span><span className="text-4xl">{t("proOffer.price")}</span></p>
               <p className="mt-2 text-editorial-noir/60">{t("proOffer.priceNote")}</p>
               <p className="mt-3 font-medium text-editorial-olive">{t("proOffer.trial")}</p>
               <Button asChild className="mt-8 rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90">

@@ -1,5 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
+import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { ArrowRight, X, ChevronRight, Loader2, Check } from 'lucide-react';
 import PremiumHeader from '@/components/home/PremiumHeader';
@@ -101,6 +102,8 @@ const GUIDE_IMAGES: Record<string, string> = {
 };
 
 export default function GuidesShop() {
+  const { i18n } = useTranslation();
+  const isEnglish = i18n.language?.startsWith("en");
   const [selectedGuide, setSelectedGuide] = useState<Guide | null>(null);
   const [modalStep, setModalStep] = useState<'preview' | 'checkout'>('preview');
   const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
@@ -203,6 +206,11 @@ export default function GuidesShop() {
         <PremiumHeader />
 
         <main className="flex-grow">
+          {isEnglish && (
+            <div role="status" className="bg-editorial-olive px-6 py-3 text-center text-sm text-primary-foreground">
+              🇫🇷 Only the French version of our guides is available for now. English versions are coming soon.
+            </div>
+          )}
           {/* 1. HERO court, conversion first */}
           <section className="bg-white pt-14 pb-10 md:pt-20 md:pb-12 border-b border-editorial-noir/10">
             <div className="container mx-auto px-6 max-w-4xl text-center">
