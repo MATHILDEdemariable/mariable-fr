@@ -189,7 +189,8 @@
           "Guides and shared photo album"
         ],
         "cta": "Choose Mariable Couple",
-        "href": "/paiement"
+        "href": "/paiement",
+        "priceOld": "€59"
       },
       {
         "name": "Mariable Pro",
@@ -202,7 +203,8 @@
           "Listings visible to couples"
         ],
         "cta": "Try Mariable Pro",
-        "href": "/register-gratuit?type=pro"
+        "href": "/register-gratuit?type=pro",
+        "priceOld": "€200"
       }
     ]
   },
@@ -287,7 +289,7 @@
       },
       {
         "q": "Is Mariable a mobile app?",
-        "a": "Mariable is a web app available on computer, tablet and phone, with no mandatory download."
+        "a": "Yes, Mariable works like an app on phone, tablet and computer. However, it is not available on the App Store or Google Play: that's normal, it works without any download. Installing it from the web link is very simple — see the question “How do I install Mariable on my phone?”."
       },
       {
         "q": "How do I install Mariable on my phone?",
