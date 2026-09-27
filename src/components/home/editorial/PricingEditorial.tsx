@@ -7,7 +7,7 @@ const PricingEditorial: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
   const plans = t('pricing.plans', { returnObjects: true }) as Array<{
     name: string;
-    price: string;
+    price: string; priceOld?: string;
     frequency: string;
     description: string;
     features: string[];
