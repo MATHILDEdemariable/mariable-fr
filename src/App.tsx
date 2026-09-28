@@ -76,6 +76,7 @@ const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage")
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const Partenariat = lazy(() => import("./pages/Partenariat"));
+const DemoPro = lazy(() => import("./pages/DemoPro"));
 const Agence = lazy(() => import("./pages/Agence"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
@@ -290,6 +291,7 @@ function App() {
                   {/* Missing routes - Fixed */}
                   <Route path="/professionnels" element={<Navigate to="/partenariat" replace />} />
                   <Route path="/partenariat" element={<Partenariat />} />
+                  <Route path="/demo-pro" element={<DemoPro />} />
                   <Route path="/agence" element={<Agence />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
