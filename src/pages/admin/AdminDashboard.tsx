@@ -355,6 +355,23 @@ const AdminDashboard = () => {
               </Button>
             </CardContent>
           </Card>
+          <Card 
+            className="hover:shadow-lg transition-shadow cursor-pointer" 
+            onClick={() => navigate('/admin/demo-registrations')}
+          >
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Calendar className="h-6 w-6 text-wedding-olive" />
+                Inscrits démo live
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Liste et export CSV des inscrits à la démo Pro</p>
+              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">
+                Accéder
+              </Button>
+            </CardContent>
+          </Card>
         </div>
           </TabsContent>
 
