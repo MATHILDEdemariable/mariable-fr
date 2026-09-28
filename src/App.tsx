@@ -109,6 +109,7 @@ const AdminProfessionalRegistrations = lazy(() => import("./pages/admin/Professi
 const AdminPaymentLeads = lazy(() => import("./pages/admin/PaymentLeads"));
 const AdminPartenariats = lazy(() => import("./pages/admin/Partenariats"));
 const CustomPages = lazy(() => import("./pages/admin/CustomPages"));
+const DemoRegistrations = lazy(() => import("./pages/admin/DemoRegistrations"));
 const AdminCarnetAdresses = lazy(() => import("./pages/admin/CarnetAdresses"));
 const AdminContactRequests = lazy(() => import("./pages/admin/ContactRequests"));
 const CustomPage = lazy(() => import("./pages/CustomPage"));
@@ -350,6 +351,7 @@ function App() {
                    <Route path="/admin/maintenance" element={<AdminMaintenance />} />
                     
                     <Route path="/admin/custom-pages" element={<CustomPages />} />
+                    <Route path="/admin/demo-registrations" element={<DemoRegistrations />} />
                     <Route path="/admin/carnet-adresses" element={<AdminCarnetAdresses />} />
                     <Route path="/admin/contact" element={<AdminContactRequests />} />
                    
