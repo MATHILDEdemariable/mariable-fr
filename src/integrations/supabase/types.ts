@@ -955,6 +955,33 @@ export type Database = {
         }
         Relationships: []
       }
+      demo_registrations: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          job_title: string
+          rgpd_consent: boolean
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          job_title: string
+          rgpd_consent?: boolean
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          job_title?: string
+          rgpd_consent?: boolean
+        }
+        Relationships: []
+      }
       devis_analyses: {
         Row: {
           categorie: string
