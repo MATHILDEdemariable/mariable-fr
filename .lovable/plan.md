@@ -16,6 +16,10 @@
 2. **/partenariat → pilier** : un CTA « Découvrir le logiciel wedding planner » dans la section Mariable Pro.
 3. **Pilier → /partenariat** : le lien existe déjà (fil d'Ariane et bouton bas de page vers Studio) ; ajout d'un CTA clair « Voir l'offre Mariable Pro » dans la section prix.
 4. **/pro/feuille-de-route-jour-j → pilier** : le lien actuel pointe vers un article de conseil ; ajout d'un lien direct vers la page pilier.
+5. **Nouvelle page `/pro/alternative-mariages-net`** (pros, FR/EN) : H1 « L'alternative à Mariages.net pour les wedding planners », réponse courte en haut, tableau comparatif (uniquement les points déjà présents sur la page pilier, formulés en retours de pros, sans prix ni chiffres non vérifiés), ce que Mariable fait en plus (déroulé partagé, lien prestataires sans compte, IA), pour qui, FAQ, CTA « Essayer gratuitement » et lien vers la pilier.
+6. **Nouvelle page `/pro/ia-organisation-mariage`** (pros, FR/EN) : H1 « L'IA pour organiser un mariage : ce qu'elle fait vraiment dans Mariable », réponse courte, cas d'usage concrets (génération du déroulé, check-list, rétroplanning, textes), limites honnêtes, FAQ, CTA essai + lien pilier.
+7. Les deux pages : même style que la pilier, ajoutées au footer (colonne Professionnels), au sitemap et au pré-rendu (titre/description visibles sans JavaScript), liées depuis la pilier.
+
 
 ## Technique
 - `Footer.tsx` + `common.json` FR/EN (nouvelle section `footer.section.pro`, clés liens).
