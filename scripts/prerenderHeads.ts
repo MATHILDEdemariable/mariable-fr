@@ -33,8 +33,8 @@ const buildHead = (page: PageHead) => {
   return [
     `<title>${title}</title>`,
     `<meta name="description" content="${description}" />`,
-    `<link rel="canonical" href="${url}" />`,
-    `<meta property="og:url" content="${url}" />`,
+    `<link rel="canonical" href="${url}" data-rh="true" />`,
+    `<meta property="og:url" content="${url}" data-rh="true" />`,
     `<meta property="og:title" content="${title}" />`,
     `<meta property="og:description" content="${description}" />`,
     `<meta name="twitter:title" content="${title}" />`,
