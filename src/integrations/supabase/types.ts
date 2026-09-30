@@ -4194,6 +4194,33 @@ export type Database = {
         }
         Relationships: []
       }
+      whitepaper_leads: {
+        Row: {
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          job: string
+          resource: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          full_name: string
+          id?: string
+          job: string
+          resource?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          job?: string
+          resource?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
