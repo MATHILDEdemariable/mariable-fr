@@ -189,6 +189,7 @@ const Partenariat = () => {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Button asChild className="rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90"><Link to="/register-gratuit?type=pro">{t("workspace.cta")}</Link></Button>
               <Button asChild variant="outline" className="rounded-none border-editorial-noir px-7 py-6 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground"><Link to="/pro/feuille-de-route-jour-j">{t("coordination.cta")}</Link></Button>
+              <Button asChild variant="link" className="rounded-none px-2 py-6 text-editorial-noir underline underline-offset-4"><Link to="/logiciel-wedding-planner">{i18n.language?.startsWith("en") ? "Discover the wedding planner software →" : "Découvrir le logiciel wedding planner →"}</Link></Button>
             </div>
           </div>
         </section>

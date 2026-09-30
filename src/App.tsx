@@ -78,6 +78,8 @@ const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const Partenariat = lazy(() => import("./pages/Partenariat"));
 const DemoPro = lazy(() => import("./pages/DemoPro"));
+const ProPlaybookIA = lazy(() => import("./pages/pro/ProPlaybookIA"));
+const ProAlternativeMariagesNet = lazy(() => import("./pages/pro/ProAlternativeMariagesNet"));
 const Agence = lazy(() => import("./pages/Agence"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
@@ -295,6 +297,8 @@ function App() {
                   <Route path="/professionnels" element={<Navigate to="/partenariat" replace />} />
                   <Route path="/partenariat" element={<Partenariat />} />
                   <Route path="/demo-pro" element={<DemoPro />} />
+                  <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
+                  <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />
                   <Route path="/agence" element={<Agence />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />

@@ -206,7 +206,8 @@ const CompareTable = ({ head, rows }: { head: string[]; rows: Cell[][] }) => (
 
 const LogicielWeddingPlanner = () => {
   const { i18n } = useTranslation();
-  const content = i18n.language?.startsWith("en") ? CONTENT.en : CONTENT.fr;
+  const isEnglish = i18n.language?.startsWith("en");
+  const content = isEnglish ? CONTENT.en : CONTENT.fr;
 
   const softwareSchema = {
     "@context": "https://schema.org",
@@ -325,8 +326,17 @@ const LogicielWeddingPlanner = () => {
           <div className="mx-auto max-w-5xl">
             <h2 className="text-3xl md:text-4xl">{content.priceTitle}</h2>
             <CompareTable head={content.priceHead} rows={content.priceRows} />
+            <Button asChild variant="outline" className="mt-8 min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
+              <Link to="/partenariat">{isEnglish ? "See the Mariable Pro offer" : "Voir l'offre Mariable Pro"} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+            </Button>
             <h2 className="mt-16 text-3xl md:text-4xl">{content.altTitle}</h2>
             <p className="mt-4 text-lg text-editorial-noir/75">{content.altText}</p>
+            <div className="mt-8 grid gap-4 md:grid-cols-2">
+              {[
+                [isEnglish ? "Mariages.net alternative for pros" : "L'alternative à Mariages.net pour les pros", "/pro/alternative-mariages-net"],
+                [isEnglish ? "Free AI Playbook for wedding planners" : "Le Playbook IA du Wedding Planner (gratuit)", "/pro/ia-organisation-mariage"],
+              ].map(([label, href]) => <Link key={href} to={href} className="flex min-h-11 items-center justify-between border border-editorial-noir/15 p-5 hover:border-editorial-olive"><span>{label}</span><ArrowRight className="h-4 w-4" /></Link>)}
+            </div>
           </div>
         </section>
 

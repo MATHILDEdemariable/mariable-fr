@@ -130,8 +130,10 @@ const ProFeuilleRouteJourJ = () => {
             <h2 className="text-3xl md:text-4xl">Pour aller plus loin</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {[
+                ["Découvrir le logiciel wedding planner Mariable Pro", "/logiciel-wedding-planner"],
                 ["Remplacer Excel pour le déroulé du mariage", "/conseils-professionnels/alternative-excel-deroule-mariage"],
                 ["Comparer les logiciels wedding planner", "/conseils-professionnels/logiciel-wedding-planner"],
+                ["Le Playbook IA du Wedding Planner", "/pro/ia-organisation-mariage"],
                 ["Réussir sa coordination Jour-J", "/conseils-professionnels/coordination-jour-j"],
                 ["Organiser le conducteur d’un lieu de réception", "/conseils-professionnels/lieux-reception"],
               ].map(([label, href]) => <Link key={href} to={href} className="flex items-center justify-between border border-editorial-noir/15 p-5 transition-colors hover:border-editorial-olive"><span>{label}</span><ArrowRight className="h-4 w-4" /></Link>)}
