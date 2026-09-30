@@ -24,7 +24,7 @@ Site officiel : https://www.mariable.fr — Contact : contact@mariable.fr — Zo
 - [Guide débutant](/guide-debutant): Premiers pas dans l'organisation.
 - [Jeunes mariés](/jeunes-maries): Témoignages et inscriptions.
 - [Partenariat agences/prestataires](/partenariat): Offres B2B Mariable Studio.
-- [Professionnels Mariable](/professionnelsmariable): Espace dédié aux pros.
+- [Logiciel wedding planner – Mariable Pro](https://mariable.fr/logiciel-wedding-planner): Application pour wedding planners, coordinatrices jour J et lieux de réception. Déroulé partagé par lien, IA, 149 €/an, essai gratuit.
 
 ## Articles de référence
 

@@ -17,7 +17,7 @@ const staticPages = [
   { url: "/conseilsmariage", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
   { url: "/conseils-professionnels", lastmod: "2026-09-09", priority: "0.8", changefreq: "weekly" },
   { url: "/fonctionnalites", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
-  { url: "/professionnelsmariable", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
+  { url: "/logiciel-wedding-planner", lastmod: "2026-02-16", priority: "0.9", changefreq: "weekly" },
   { url: "/partenariat", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/guide-jour-j", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
   { url: "/guide-debutant", lastmod: "2026-02-16", priority: "0.7", changefreq: "monthly" },
