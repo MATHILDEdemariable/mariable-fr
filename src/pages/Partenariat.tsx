@@ -46,7 +46,7 @@ type UseCase = {
 };
 
 const Partenariat = () => {
-  const { t } = useTranslation("partenariat");
+  const { t, i18n } = useTranslation("partenariat");
   const [openAccordion, setOpenAccordion] = useState<string | null>(null);
   const [contactOpen, setContactOpen] = useState(false);
   const [conditionsOpen, setConditionsOpen] = useState(false);
