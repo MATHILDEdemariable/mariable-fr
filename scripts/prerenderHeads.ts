@@ -69,9 +69,10 @@ export const prerenderHeadsPlugin = (): Plugin => {
       .replace(/<meta name="twitter:(title|description)"[^>]*>/g, "");
     for (const page of PAGES) {
       try {
-        const html = stripped
-          .replace("</head>", `    ${buildHead(page)}\n  </head>`)
-          .replace('<div id="root"></div>', buildBody(page));
+        // dist/index.html sert aussi de repli pour toutes les autres routes :
+        // pas de contenu texte pour "/" afin d'éviter un flash de l'accueil ailleurs.
+        const withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        const html = page.path === "/" ? withHead : withHead.replace('<div id="root"></div>', buildBody(page));
         const outDir = page.path === "/" ? distDir : path.join(distDir, page.path);
         fs.mkdirSync(outDir, { recursive: true });
         fs.writeFileSync(path.join(outDir, "index.html"), html);
