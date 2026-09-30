@@ -372,6 +372,18 @@ const AdminDashboard = () => {
               </Button>
             </CardContent>
           </Card>
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer" onClick={() => navigate('/admin/demo-registrations?source=playbook')}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <Calendar className="h-6 w-6 text-wedding-olive" />
+                Téléchargements Playbook IA
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-gray-600">Liste et export CSV des pros ayant demandé le livre blanc</p>
+              <Button className="mt-4 w-full bg-wedding-olive hover:bg-wedding-olive/80">Accéder</Button>
+            </CardContent>
+          </Card>
         </div>
           </TabsContent>
 
