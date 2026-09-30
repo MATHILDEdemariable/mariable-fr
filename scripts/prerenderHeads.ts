@@ -79,6 +79,5 @@ export const prerenderHeadsPlugin = (): Plugin => {
     }
     console.log(`✅ prerender: ${PAGES.length} pages`);
   },
-},
   };
 };
