@@ -350,7 +350,7 @@ const LogicielWeddingPlanner = () => {
             <p className="mt-6 font-serif text-xl italic">{content.coText}</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild variant="secondary" className="min-h-12 rounded-none px-7"><Link to="/register-gratuit?type=pro">{content.ctaTry}</Link></Button>
-              <Button asChild variant="outline" className="min-h-12 rounded-none border-primary-foreground bg-transparent px-7 text-primary-foreground hover:bg-primary-foreground/10"><Link to="/partenariat#studio">{content.back}</Link></Button>
+              <Button asChild variant="outline" className="min-h-12 rounded-none border-primary-foreground bg-transparent px-7 text-primary-foreground hover:bg-primary-foreground/10"><Link to="/partenariat#mariable-studio">{content.back}</Link></Button>
             </div>
           </div>
         </section>
