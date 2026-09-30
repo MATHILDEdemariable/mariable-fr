@@ -24,7 +24,8 @@
       "plan": "Planifier mon mariage",
       "discover": "Découvrir",
       "regions": "Mariages par région",
-      "about": "À Propos"
+      "about": "À Propos",
+      "pro": "Professionnels"
     },
     "links": {
       "dashboard": "Mon tableau de bord",
@@ -61,7 +62,13 @@
       "compare": "Comparatif",
       "professionals": "Professionnels",
       "partnership": "Partenariat",
-      "proAdvice": "Conseils professionnels"
+      "proAdvice": "Conseils professionnels",
+      "proSoftware": "Logiciel wedding planner",
+      "proRoadmap": "Feuille de route jour J",
+      "proAlternative": "Alternative à Mariages.net",
+      "proPlaybook": "Livre blanc IA",
+      "proOffer": "Mariable Pro & Studio",
+      "proDemo": "Démo live"
     },
     "copyright": "© 2025 Mariable – Tous droits réservés. | Conçu avec joie pour les couples modernes 💍"
   }

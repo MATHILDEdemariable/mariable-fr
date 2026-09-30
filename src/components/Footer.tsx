@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Footer">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {/* Logo et description à gauche */}
           <div>
             <div className="flex items-center gap-2 mb-4">
@@ -33,7 +33,6 @@ const Footer = () => {
               <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.dashboard')}</Link></li>
               <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.checklist')}</Link></li>
               <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.findVendor')}</Link></li>
-              <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.selection')}</Link></li>
               <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.coordination')}</Link></li>
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideJourJ')}</Link></li>
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideBeginner')}</Link></li>
@@ -71,10 +70,24 @@ const Footer = () => {
               <li><Link to="/mariage-bourgogne-franche-comte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.bourgogne')}</Link></li>
               <li><Link to="/mariage-grand-est" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.grandEst')}</Link></li>
               <li><Link to="/mariage-corse" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.corse')}</Link></li>
-              <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">{t('footer.links.allRegions')}</Link></li>
+              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">{t('footer.links.allRegions')}</Link></li>
             </ul>
           </div>
 
+
+          {/* Professionnels */}
+          <div>
+            <h3 className="font-serif text-base mb-3">{t('footer.section.pro')}</h3>
+            <ul className="space-y-1 text-sm">
+              <li><Link to="/logiciel-wedding-planner" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proSoftware')}</Link></li>
+              <li><Link to="/pro/feuille-de-route-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proRoadmap')}</Link></li>
+              <li><Link to="/pro/alternative-mariages-net" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAlternative')}</Link></li>
+              <li><Link to="/pro/ia-organisation-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proPlaybook')}</Link></li>
+              <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proOffer')}</Link></li>
+              <li><Link to="/demo-pro" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proDemo')}</Link></li>
+              <li><Link to="/conseils-professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAdvice')}</Link></li>
+            </ul>
+          </div>
 
           {/* À Propos */}
           <div>
@@ -83,10 +96,6 @@ const Footer = () => {
               <li><Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.contact')}</Link></li>
               <li><Link to="/contact/faq" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.faq')}</Link></li>
               <li><Link to="/comparatif" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.compare')}</Link></li>
-              <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.professionals')}</Link></li>
-              <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.partnership')}</Link></li>
-              <li><Link to="/conseils-professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAdvice')}</Link></li>
-
             </ul>
           </div>
         </div>

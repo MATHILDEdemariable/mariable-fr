@@ -39,6 +39,8 @@ const staticPages: StaticPage[] = [
   { url: "/conseilsmariage", priority: "0.9", changefreq: "weekly" },
   { url: "/fonctionnalites", priority: "0.7", changefreq: "monthly" },
   { url: "/logiciel-wedding-planner", priority: "0.9", changefreq: "weekly" },
+  { url: "/pro/alternative-mariages-net", priority: "0.8", changefreq: "monthly" },
+  { url: "/pro/ia-organisation-mariage", priority: "0.8", changefreq: "monthly" },
   { url: "/partenariat", priority: "0.7", changefreq: "monthly" },
   { url: "/guide-jour-j", priority: "0.7", changefreq: "monthly" },
   { url: "/guide-debutant", priority: "0.7", changefreq: "monthly" },

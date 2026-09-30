@@ -24,7 +24,8 @@
       "plan": "Plan my wedding",
       "discover": "Discover",
       "regions": "Weddings by region",
-      "about": "About"
+      "about": "About",
+      "pro": "Professionals"
     },
     "links": {
       "dashboard": "My dashboard",
@@ -61,7 +62,13 @@
       "compare": "Comparison",
       "professionals": "Professionals",
       "partnership": "Partnership",
-      "proAdvice": "Advice for pros"
+      "proAdvice": "Advice for pros",
+      "proSoftware": "Wedding planner software",
+      "proRoadmap": "Wedding-day run sheet",
+      "proAlternative": "Mariages.net alternative",
+      "proPlaybook": "AI white paper",
+      "proOffer": "Mariable Pro & Studio",
+      "proDemo": "Live demo"
     },
     "copyright": "© 2025 Mariable – All rights reserved. | Crafted with joy for modern couples 💍"
   }
