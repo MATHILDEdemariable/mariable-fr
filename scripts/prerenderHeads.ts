@@ -48,11 +48,15 @@ const buildBody = (page: PageHead) => {
   return `<div id="root"><main><h1>${escapeHtml(page.h1)}</h1><p>${escapeHtml(page.description)}</p>${links ? `<ul>${links}</ul>` : ""}</main></div>`;
 };
 
-export const prerenderHeadsPlugin = (): Plugin => ({
+export const prerenderHeadsPlugin = (): Plugin => {
+  let distDir = path.resolve(process.cwd(), "dist");
+  return {
   name: "mariable-prerender-heads",
   apply: "build",
+  configResolved(config) {
+    distDir = path.resolve(config.root, config.build.outDir);
+  },
   closeBundle() {
-    const distDir = path.resolve(process.cwd(), "dist");
     const templatePath = path.join(distDir, "index.html");
     if (!fs.existsSync(templatePath)) return;
     const template = fs.readFileSync(templatePath, "utf-8");
@@ -75,4 +79,6 @@ export const prerenderHeadsPlugin = (): Plugin => ({
     }
     console.log(`✅ prerender: ${PAGES.length} pages`);
   },
-});
+},
+  };
+};
