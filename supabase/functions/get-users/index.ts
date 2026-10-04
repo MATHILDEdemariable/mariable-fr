@@ -95,15 +95,21 @@ Deno.serve(async (req) => {
       if (allUsers.length > 0) {
         console.log(`✅ Total users fetched: ${allUsers.length}`);
         
-        // Fetch profiles for all users
-        const userIds = allUsers.map(user => user.id);
-        const { data: profiles, error: profilesError } = await supabase
-          .from('profiles')
-          .select('id, first_name, last_name, account_type, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable, registration_purpose, preferred_language')
-          .in('id', userIds);
-
-        if (profilesError) {
-          console.error('⚠️ Error fetching profiles:', profilesError);
+        // Fetch ALL profiles page by page (default limit is 1000 rows)
+        const profiles: any[] = [];
+        const PROFILES_PAGE_SIZE = 1000;
+        for (let from = 0; ; from += PROFILES_PAGE_SIZE) {
+          const { data: profilesPage, error: profilesError } = await supabase
+            .from('profiles')
+            .select('id, first_name, last_name, account_type, subscription_type, subscription_expires_at, wedding_date, guest_count, referral_source, notify_club_mariable, registration_purpose, preferred_language')
+            .order('id')
+            .range(from, from + PROFILES_PAGE_SIZE - 1);
+          if (profilesError) {
+            console.error('⚠️ Error fetching profiles:', profilesError);
+            break;
+          }
+          profiles.push(...(profilesPage || []));
+          if (!profilesPage || profilesPage.length < PROFILES_PAGE_SIZE) break;
         }
 
         console.log(`✅ Fetched ${profiles?.length || 0} profiles`);
