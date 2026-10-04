@@ -2727,6 +2727,41 @@ export type Database = {
         }
         Relationships: []
       }
+      retroplanning_share_tokens: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          is_active: boolean
+          retroplanning_id: string
+          token: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          is_active?: boolean
+          retroplanning_id: string
+          token: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          is_active?: boolean
+          retroplanning_id?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "retroplanning_share_tokens_retroplanning_id_fkey"
+            columns: ["retroplanning_id"]
+            isOneToOne: false
+            referencedRelation: "wedding_retroplanning"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       seating_assignments: {
         Row: {
           created_at: string
@@ -3810,6 +3845,7 @@ export type Database = {
           id: string
           language: string
           milestones: Json
+          mode: string
           progress: Json
           timeline_data: Json
           title: string
@@ -3824,6 +3860,7 @@ export type Database = {
           id?: string
           language?: string
           milestones?: Json
+          mode?: string
           progress?: Json
           timeline_data?: Json
           title: string
@@ -3838,6 +3875,7 @@ export type Database = {
           id?: string
           language?: string
           milestones?: Json
+          mode?: string
           progress?: Json
           timeline_data?: Json
           title?: string
@@ -4230,6 +4268,16 @@ export type Database = {
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
+      }
+      get_public_retroplanning: {
+        Args: { token_value: string }
+        Returns: {
+          categories: Json
+          mode: string
+          timeline_data: Json
+          title: string
+          wedding_date: string
+        }[]
       }
       get_purchases_by_token: {
         Args: { token_value: string }

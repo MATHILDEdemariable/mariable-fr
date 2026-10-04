@@ -36,7 +36,7 @@ import QRCodeGeneratorPage from './QRCodeGenerator';
 import MessagesPage from './MessagesPage';
 import DocumentsPage from './DocumentsPage';
 import SeatingPlan from '../SeatingPlan';
-import WeddingRetroplanningEmbed from './WeddingRetroplanningEmbed';
+import RetroplanningPage from './RetroplanningPage';
 import GuidesPage from './GuidesPage';
 import PanierPage from './PanierPage';
 import MairieCivilPage from './MairieCivilPage';
@@ -77,7 +77,7 @@ const UserDashboard: React.FC = () => {
           <Route index element={<ProjectSummary />} />
           <Route path="mon-mariage" element={<MonMariage />} />
           <Route path="mon-mariage/:projectId" element={<MonMariageDetail />} />
-          <Route path="mon-mariage/retroplanning" element={<WeddingRetroplanningEmbed />} />
+          <Route path="mon-mariage/retroplanning" element={<RetroplanningPage />} />
           <Route path="planning" element={<PlanningPage />} />
           <Route path="tasks" element={<ChecklistPage />} />
           <Route path="budget" element={<BudgetPage />} />
