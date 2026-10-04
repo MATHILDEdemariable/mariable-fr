@@ -428,7 +428,7 @@ const AdminUsers = () => {
         )}
 
         {/* Métriques */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium">Total Utilisateurs</CardTitle>
@@ -438,6 +438,26 @@ const AdminUsers = () => {
               <div className="text-2xl font-bold text-wedding-olive">{users.length}</div>
             </CardContent>
           </Card>
+
+          <Card
+            role="button"
+            tabIndex={0}
+            className="cursor-pointer hover:shadow-md"
+            onClick={() => setAccountTypeFilter('b2b')}
+            onKeyDown={(event) => event.key === 'Enter' && setAccountTypeFilter('b2b')}
+          >
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Professionnels</CardTitle>
+              <Users className="h-4 w-4 text-wedding-olive" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-wedding-olive">
+                {users.filter((user) => user.profile?.account_type === 'b2b').length}
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">Cliquer pour filtrer</p>
+            </CardContent>
+          </Card>
+          
           
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
