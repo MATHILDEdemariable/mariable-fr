@@ -152,9 +152,9 @@ const WeddingRetroplanningEmbed = () => {
     const tasks: { task: string; taskId: string; source: string }[] = [];
     
     // Tâches de la timeline
-    retroplanning.timeline.forEach((item, idx) => {
+    (retroplanning.timeline ?? []).forEach((item, idx) => {
       if (item.monthsBefore >= period.monthsBeforeMin && item.monthsBefore <= period.monthsBeforeMax) {
-        item.tasks.forEach((task, taskIdx) => {
+        (item?.tasks ?? []).forEach((task, taskIdx) => {
           tasks.push({
             task,
             taskId: `timeline-${idx}-${taskIdx}`,
@@ -451,7 +451,7 @@ const WeddingRetroplanningEmbed = () => {
     doc.setFontSize(14);
     doc.setTextColor(40, 40, 40);
     
-    retroplanning.milestones.forEach((milestone, idx) => {
+    (retroplanning.milestones ?? []).forEach((milestone, idx) => {
       if (yPos > 270) {
         doc.addPage();
         yPos = 25;
@@ -759,7 +759,7 @@ const WeddingRetroplanningEmbed = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {retroplanning.milestones.map((milestone, idx) => {
+                {(retroplanning.milestones ?? []).map((milestone, idx) => {
                   const milestoneId = `milestone-${idx}`;
                   const isChecked = checkedMilestones.has(milestoneId);
                   
