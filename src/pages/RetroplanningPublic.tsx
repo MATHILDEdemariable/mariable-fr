@@ -6,7 +6,8 @@ import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Loader2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
-import { MANUAL_STATUS_LABELS, sortManualSteps, type ManualStep } from '@/components/retroplanning/RetroplanningManuel';
+import type { ManualStep } from '@/components/retroplanning/RetroplanningManuel';
+import RetroplanningFrise, { RetroplanningSummary } from '@/components/retroplanning/RetroplanningFrise';
 
 interface PublicRetroplanning {
   title: string;
@@ -62,21 +63,12 @@ const RetroplanningPublic = () => {
             </header>
 
             {retroplanning.mode === 'manual' ? (
-              <section className="space-y-2">
-                {sortManualSteps(timeline as ManualStep[]).map((step) => (
-                  <article key={step.id} className="border border-border bg-card p-4 flex flex-col sm:flex-row sm:items-center gap-2">
-                    <div className="flex-1">
-                      <h2 className="font-medium">{step.title}</h2>
-                      <p className="text-sm text-muted-foreground">
-                        {[step.date && format(new Date(step.date), 'dd MMM yyyy', { locale: dateLocale }), step.period, step.category].filter(Boolean).join(' · ')}
-                      </p>
-                      {step.note && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{step.note}</p>}
-                    </div>
-                    <span className={`text-xs px-2 py-1 w-fit ${MANUAL_STATUS_LABELS[step.status]?.className ?? ''}`}>
-                      {MANUAL_STATUS_LABELS[step.status]?.[isEnglish ? 'en' : 'fr']}
-                    </span>
-                  </article>
-                ))}
+              <section className="space-y-6">
+                {retroplanning.wedding_date && (
+                  <p className="text-center text-muted-foreground -mt-4">{format(new Date(retroplanning.wedding_date), 'dd MMMM yyyy', { locale: dateLocale })}</p>
+                )}
+                <RetroplanningSummary steps={timeline as ManualStep[]} weddingDate={retroplanning.wedding_date} isEnglish={isEnglish} />
+                <RetroplanningFrise steps={timeline as ManualStep[]} weddingDate={retroplanning.wedding_date} isEnglish={isEnglish} />
               </section>
             ) : (
               <section className="space-y-4">

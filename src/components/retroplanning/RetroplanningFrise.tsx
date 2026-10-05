@@ -65,7 +65,7 @@ const RetroplanningFrise = ({ steps, weddingDate, isEnglish }: RetroplanningFris
   return (
     <ol className="relative border-l-2 border-border ml-3 space-y-8">
       {groups.map(([month, monthSteps]) => (
-        <li key={month} className="pl-6">
+        <li key={month} className="pl-6 relative">
           <span className="absolute -left-[9px] mt-1.5 h-4 w-4 rounded-full bg-background border-2 border-primary" aria-hidden />
           <h3 className="font-serif text-lg capitalize mb-3">{month}</h3>
           <div className="space-y-2">
@@ -97,7 +97,7 @@ const RetroplanningFrise = ({ steps, weddingDate, isEnglish }: RetroplanningFris
         </li>
       ))}
       {weddingDate && (
-        <li className="pl-6">
+        <li className="pl-6 relative">
           <span className="absolute -left-[13px] mt-0.5 h-6 w-6 rounded-full bg-primary flex items-center justify-center" aria-hidden>
             <Heart className="h-3 w-3 text-primary-foreground" />
           </span>
