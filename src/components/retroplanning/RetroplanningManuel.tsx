@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,12 +10,13 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import RetroplanningShareButton from './RetroplanningShareButton';
+import RetroplanningFrise, { RetroplanningSummary } from './RetroplanningFrise';
 
 export type ManualStepStatus = 'pending' | 'in_progress' | 'completed';
 
@@ -49,8 +50,12 @@ const RetroplanningManuel = () => {
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [view, setView] = useState<'frise' | 'list' | 'calendar'>('frise');
   const [editingStep, setEditingStep] = useState<ManualStep | null>(null);
+  const [weddingDate, setWeddingDate] = useState('');
+  const [isAiDialogOpen, setIsAiDialogOpen] = useState(false);
+  const [noteText, setNoteText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const db = supabase as any;
 
   useEffect(() => {
@@ -60,10 +65,11 @@ const RetroplanningManuel = () => {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) return;
         const { data, error } = await scopeQuery(
-          db.from('wedding_retroplanning').select('id, timeline_data').eq('user_id', user.id).eq('mode', 'manual')
+          db.from('wedding_retroplanning').select('id, timeline_data, wedding_date').eq('user_id', user.id).eq('mode', 'manual')
         ).order('created_at', { ascending: false }).limit(1).maybeSingle();
         if (error) throw error;
         setRetroplanningId(data?.id ?? null);
+        setWeddingDate(data?.wedding_date ?? '');
         setSteps(Array.isArray(data?.timeline_data) ? data.timeline_data : []);
       } catch (error) {
         console.error('❌ loadManualRetroplanning failed:', error);
@@ -75,18 +81,18 @@ const RetroplanningManuel = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weddingId]);
 
-  const persistSteps = async (nextSteps: ManualStep[]) => {
+  const persistSteps = async (nextSteps: ManualStep[], nextWeddingDate: string = weddingDate) => {
     setSteps(nextSteps);
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
       if (retroplanningId) {
         const { error } = await db.from('wedding_retroplanning')
-          .update({ timeline_data: nextSteps, updated_at: new Date().toISOString() })
+          .update({ timeline_data: nextSteps, ...(nextWeddingDate ? { wedding_date: nextWeddingDate } : {}), updated_at: new Date().toISOString() })
           .eq('id', retroplanningId);
         if (error) throw error;
       } else {
-        const firstDate = nextSteps.find((step) => step.date)?.date || new Date().toISOString().slice(0, 10);
+        const firstDate = nextWeddingDate || nextSteps.find((step) => step.date)?.date || new Date().toISOString().slice(0, 10);
         const { data, error } = await db.from('wedding_retroplanning')
           .insert([withWedding({
             user_id: user.id,
@@ -121,6 +127,29 @@ const RetroplanningManuel = () => {
   const handleDeleteStep = (stepId: string) => {
     if (!confirm(isEnglish ? 'Delete this step?' : 'Supprimer cette étape ?')) return;
     persistSteps(steps.filter((step) => step.id !== stepId));
+  };
+
+  const handleGenerateFromNote = async () => {
+    if (noteText.trim().length < 3) return;
+    setIsGenerating(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('parse-retroplanning-notes', {
+        body: { noteText: noteText.trim(), weddingDate, language: isEnglish ? 'en' : 'fr' },
+      });
+      if (error || data?.error) throw new Error(data?.error || error?.message);
+      const newSteps: ManualStep[] = (data.steps || []).map((step: Omit<ManualStep, 'id' | 'status'>) => ({ ...step, id: uuidv4(), status: 'pending' }));
+      if (!newSteps.length) throw new Error(isEnglish ? 'No steps found' : 'Aucune étape trouvée');
+      await persistSteps([...steps, ...newSteps]);
+      toast({ title: isEnglish ? `${newSteps.length} steps added` : `${newSteps.length} étapes ajoutées` });
+      setNoteText('');
+      setIsAiDialogOpen(false);
+      setView('frise');
+    } catch (error) {
+      console.error('❌ handleGenerateFromNote failed:', error);
+      toast({ title: isEnglish ? 'Error' : 'Erreur', description: (error as Error).message, variant: 'destructive' });
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const sortedSteps = useMemo(() => sortManualSteps(steps), [steps]);
@@ -173,6 +202,18 @@ const RetroplanningManuel = () => {
           <RetroplanningShareButton retroplanningId={retroplanningId} />
         </div>
 
+        <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+          <div className="sm:w-56">
+            <Label htmlFor="retro-wedding-date">{isEnglish ? 'Wedding date' : 'Date du mariage'}</Label>
+            <Input id="retro-wedding-date" type="date" value={weddingDate} onChange={(e) => { setWeddingDate(e.target.value); if (e.target.value) persistSteps(steps, e.target.value); }} />
+          </div>
+          <Button variant="outline" className="sm:ml-auto" onClick={() => setIsAiDialogOpen(true)}>
+            <Sparkles className="h-4 w-4 mr-2" />{isEnglish ? 'Create from a note (AI)' : 'Créer depuis une note (IA)'}
+          </Button>
+        </div>
+
+        {steps.length > 0 && <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />}
+
         <div className="grid grid-cols-3 gap-3">
           {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
             <div key={status} className="border border-border p-3 sm:p-4">
@@ -184,6 +225,7 @@ const RetroplanningManuel = () => {
 
         <div className="flex flex-col sm:flex-row justify-between gap-3">
           <div className="flex gap-1 bg-muted p-1 w-fit">
+            <Button variant={view === 'frise' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('frise')}><GitCommitVertical className="h-4 w-4 mr-1" />{isEnglish ? 'Timeline' : 'Frise'}</Button>
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
             <Button variant={view === 'calendar' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('calendar')}><CalendarDays className="h-4 w-4 mr-1" />{isEnglish ? 'Calendar' : 'Calendrier'}</Button>
           </div>
@@ -191,7 +233,9 @@ const RetroplanningManuel = () => {
         </div>
 
         {steps.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">{isEnglish ? 'No steps yet. Add your first one.' : 'Aucune étape pour le moment. Ajoutez la première.'}</p>
+          <p className="text-center text-muted-foreground py-8">{isEnglish ? 'No steps yet. Paste a note and let AI build your timeline, or add a step.' : 'Aucune étape pour le moment. Collez une note et laissez l\'IA créer votre rétroplanning, ou ajoutez une étape.'}</p>
+        ) : view === 'frise' ? (
+          <RetroplanningFrise steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (
           <div className="space-y-2">{sortedSteps.map(renderStepRow)}</div>
         ) : (
@@ -223,6 +267,28 @@ const RetroplanningManuel = () => {
           <DialogFooter>
             <Button variant="outline" onClick={() => setEditingStep(null)}>{isEnglish ? 'Cancel' : 'Annuler'}</Button>
             <Button onClick={handleSaveStep} disabled={!editingStep?.title.trim()}>{isEnglish ? 'Save' : 'Enregistrer'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isAiDialogOpen} onOpenChange={(isOpen) => !isGenerating && setIsAiDialogOpen(isOpen)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{isEnglish ? 'Create from a note' : 'Créer depuis une note'}</DialogTitle>
+            <DialogDescription>
+              {isEnglish
+                ? 'Paste your notes (e.g. "book venue in Jan, caterer tasting March, send invites 3 months before"). AI turns them into dated steps.'
+                : 'Collez vos notes (ex. « réserver le lieu en janvier, dégustation traiteur en mars, faire-part 3 mois avant »). L\'IA les transforme en étapes datées.'}
+            </DialogDescription>
+          </DialogHeader>
+          {!weddingDate && <p className="text-sm text-muted-foreground">{isEnglish ? 'Tip: set the wedding date first for accurate dates.' : 'Astuce : renseignez d\'abord la date du mariage pour des dates précises.'}</p>}
+          <Textarea rows={8} value={noteText} maxLength={8000} onChange={(e) => setNoteText(e.target.value)} placeholder={isEnglish ? 'Your notes…' : 'Vos notes…'} aria-label={isEnglish ? 'Notes' : 'Notes'} />
+          <DialogFooter>
+            <Button variant="outline" disabled={isGenerating} onClick={() => setIsAiDialogOpen(false)}>{isEnglish ? 'Cancel' : 'Annuler'}</Button>
+            <Button onClick={handleGenerateFromNote} disabled={isGenerating || noteText.trim().length < 3}>
+              {isGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {isEnglish ? 'Generate' : 'Générer'}
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
