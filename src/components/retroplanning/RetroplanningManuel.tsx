@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { format } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -28,7 +28,17 @@ export interface ManualStep {
   category: string;
   status: ManualStepStatus;
   note: string;
+  stakeholder?: string;
 }
+
+export const STAKEHOLDER_LABELS: Record<string, { fr: string; en: string }> = {
+  planner: { fr: 'Wedding planner', en: 'Wedding planner' },
+  couple: { fr: 'Les mariés', en: 'The couple' },
+  bride: { fr: 'La mariée', en: 'The bride' },
+  groom: { fr: 'Le marié', en: 'The groom' },
+  parents: { fr: 'Les parents', en: 'Parents' },
+  witnesses: { fr: 'Les témoins', en: 'Witnesses' },
+};
 
 export const MANUAL_STATUS_LABELS: Record<ManualStepStatus, { fr: string; en: string; className: string }> = {
   pending: { fr: 'À faire', en: 'To do', className: 'bg-muted text-foreground' },
@@ -36,7 +46,7 @@ export const MANUAL_STATUS_LABELS: Record<ManualStepStatus, { fr: string; en: st
   completed: { fr: 'Terminé', en: 'Done', className: 'bg-primary text-primary-foreground' },
 };
 
-const EMPTY_STEP: ManualStep = { id: '', title: '', date: '', period: '', category: '', status: 'pending', note: '' };
+const EMPTY_STEP: ManualStep = { id: '', title: '', date: '', period: '', category: '', status: 'pending', note: '', stakeholder: '' };
 
 export const sortManualSteps = (steps: ManualStep[]) =>
   [...steps].sort((a, b) => (a.date || '9999').localeCompare(b.date || '9999'));
@@ -53,7 +63,12 @@ const RetroplanningManuel = () => {
   const [view, setView] = useState<'frise' | 'list' | 'calendar'>('frise');
   const [editingStep, setEditingStep] = useState<ManualStep | null>(null);
   const [weddingDate, setWeddingDate] = useState('');
-  const [isAiDialogOpen, setIsAiDialogOpen] = useState(false);
+  const [inputMode, setInputMode] = useState<'quick' | 'notes'>('quick');
+  const [quickTitle, setQuickTitle] = useState('');
+  const [quickDate, setQuickDate] = useState('');
+  const [quickStakeholder, setQuickStakeholder] = useState('');
+  const [stakeholderFilter, setStakeholderFilter] = useState('all');
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [noteText, setNoteText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const db = supabase as any;
@@ -142,7 +157,6 @@ const RetroplanningManuel = () => {
       await persistSteps([...steps, ...newSteps]);
       toast({ title: isEnglish ? `${newSteps.length} steps added` : `${newSteps.length} étapes ajoutées` });
       setNoteText('');
-      setIsAiDialogOpen(false);
       setView('frise');
     } catch (error) {
       console.error('❌ handleGenerateFromNote failed:', error);
@@ -159,36 +173,54 @@ const RetroplanningManuel = () => {
     completed: steps.filter((step) => step.status === 'completed').length,
   }), [steps]);
 
-  const stepsByMonth = useMemo(() => {
-    const groups: Record<string, ManualStep[]> = {};
-    sortedSteps.forEach((step) => {
-      const key = step.date ? format(new Date(step.date), 'MMMM yyyy', { locale: dateLocale }) : (isEnglish ? 'No date' : 'Sans date');
-      (groups[key] ||= []).push(step);
-    });
-    return groups;
-  }, [sortedSteps, dateLocale, isEnglish]);
+  // Ajout rapide : Entrée ajoute, un collage multi-lignes ajoute une étape par ligne
+  const handleQuickAdd = () => {
+    const titles = quickTitle.split('\n').map((line) => line.replace(/^[-•*\d.)\s]+/, '').trim()).filter(Boolean);
+    if (!titles.length) return;
+    const newSteps = titles.map((title) => ({ ...EMPTY_STEP, id: uuidv4(), title: title.slice(0, 200), date: quickDate, stakeholder: quickStakeholder }));
+    persistSteps([...steps, ...newSteps]);
+    setQuickTitle('');
+  };
+
+  const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
+    persistSteps(steps.map((item) => (item.id === stepId ? { ...item, ...patch } : item)));
+
+  const visibleSteps = useMemo(
+    () => (stakeholderFilter === 'all' ? sortedSteps : sortedSteps.filter((step) => step.stakeholder === stakeholderFilter)),
+    [sortedSteps, stakeholderFilter]
+  );
+
+  const calendarDays = useMemo(() => eachDayOfInterval({
+    start: startOfWeek(startOfMonth(calendarMonth), { weekStartsOn: 1 }),
+    end: endOfWeek(endOfMonth(calendarMonth), { weekStartsOn: 1 }),
+  }), [calendarMonth]);
+
+  const stakeholderLabel = (key?: string) => (key && STAKEHOLDER_LABELS[key] ? STAKEHOLDER_LABELS[key][isEnglish ? 'en' : 'fr'] : '');
+  const weekDayLabels = isEnglish ? ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] : ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim'];
 
   if (isLoading) return <Loader2 className="h-8 w-8 animate-spin mx-auto my-12" />;
 
   const renderStepRow = (step: ManualStep) => (
-    <div key={step.id} className="flex flex-col sm:flex-row sm:items-center gap-3 border border-border p-4 bg-card">
-      <div className="flex-1 min-w-0">
-        <p className="font-medium">{step.title}</p>
-        <p className="text-sm text-muted-foreground">
-          {[step.date && format(new Date(step.date), 'dd MMM yyyy', { locale: dateLocale }), step.period, step.category].filter(Boolean).join(' · ')}
-        </p>
-        {step.note && <p className="text-sm text-muted-foreground mt-1 whitespace-pre-line">{step.note}</p>}
+    <div key={step.id} className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_150px_160px_auto] items-center gap-2 border-b border-border py-2">
+      <Checkbox checked={step.status === 'completed'} aria-label={isEnglish ? 'Done' : 'Terminé'}
+        onCheckedChange={(checked) => updateStep(step.id, { status: checked ? 'completed' : 'pending' })} />
+      <Input defaultValue={step.title} maxLength={200} aria-label={isEnglish ? 'Title' : 'Titre'}
+        className={`border-0 shadow-none px-1 h-9 focus-visible:ring-1 ${step.status === 'completed' ? 'line-through text-muted-foreground' : ''}`}
+        onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== step.title && updateStep(step.id, { title: e.target.value.trim() })}
+        onKeyDown={(e) => e.key === 'Enter' && (e.target as HTMLInputElement).blur()} />
+      <div className="flex gap-1 sm:hidden row-span-1">
+        <Button variant="ghost" size="icon" aria-label={isEnglish ? 'Edit' : 'Modifier'} onClick={() => setEditingStep(step)}><Pencil className="h-4 w-4" /></Button>
       </div>
-      <Select value={step.status} onValueChange={(value) => persistSteps(steps.map((item) => item.id === step.id ? { ...item, status: value as ManualStepStatus } : item))}>
-        <SelectTrigger className="w-full sm:w-36" aria-label={isEnglish ? 'Status' : 'Statut'}><SelectValue /></SelectTrigger>
+      <Input type="date" value={step.date} aria-label="Date" className="h-9 col-span-3 sm:col-span-1" onChange={(e) => updateStep(step.id, { date: e.target.value })} />
+      <Select value={step.stakeholder || 'none'} onValueChange={(value) => updateStep(step.id, { stakeholder: value === 'none' ? '' : value })}>
+        <SelectTrigger className="h-9 col-span-2 sm:col-span-1" aria-label={isEnglish ? 'Stakeholder' : 'Partie prenante'}><SelectValue /></SelectTrigger>
         <SelectContent>
-          {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
-            <SelectItem key={status} value={status}>{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']}</SelectItem>
-          ))}
+          <SelectItem value="none">{isEnglish ? 'Nobody' : 'Personne'}</SelectItem>
+          {Object.keys(STAKEHOLDER_LABELS).map((key) => <SelectItem key={key} value={key}>{stakeholderLabel(key)}</SelectItem>)}
         </SelectContent>
       </Select>
-      <div className="flex gap-1">
-        <Button variant="ghost" size="icon" aria-label={isEnglish ? 'Edit' : 'Modifier'} onClick={() => setEditingStep(step)}><Pencil className="h-4 w-4" /></Button>
+      <div className="flex gap-1 justify-end">
+        <Button variant="ghost" size="icon" className="hidden sm:inline-flex" aria-label={isEnglish ? 'Edit' : 'Modifier'} onClick={() => setEditingStep(step)}><Pencil className="h-4 w-4" /></Button>
         <Button variant="ghost" size="icon" aria-label={isEnglish ? 'Delete' : 'Supprimer'} onClick={() => handleDeleteStep(step.id)}><Trash2 className="h-4 w-4" /></Button>
       </div>
     </div>
@@ -202,14 +234,51 @@ const RetroplanningManuel = () => {
           <RetroplanningShareButton retroplanningId={retroplanningId} />
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-end gap-3">
-          <div className="sm:w-56">
-            <Label htmlFor="retro-wedding-date">{isEnglish ? 'Wedding date' : 'Date du mariage'}</Label>
-            <Input id="retro-wedding-date" type="date" value={weddingDate} onChange={(e) => { setWeddingDate(e.target.value); if (e.target.value) persistSteps(steps, e.target.value); }} />
+        <div className="sm:w-56">
+          <Label htmlFor="retro-wedding-date">{isEnglish ? 'Wedding date' : 'Date du mariage'}</Label>
+          <Input id="retro-wedding-date" type="date" value={weddingDate} onChange={(e) => { setWeddingDate(e.target.value); if (e.target.value) persistSteps(steps, e.target.value); }} />
+        </div>
+
+        {/* Espace de création unique */}
+        <div className="border border-editorial-olive/30 bg-editorial-beige p-4 space-y-3">
+          <div className="flex gap-1 bg-background p-1 w-fit">
+            <Button variant={inputMode === 'quick' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('quick')}><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Quick add' : 'Saisie rapide'}</Button>
+            <Button variant={inputMode === 'notes' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('notes')}><Sparkles className="h-4 w-4 mr-1" />{isEnglish ? 'Notes → AI' : 'Notes en vrac (IA)'}</Button>
           </div>
-          <Button variant="outline" className="sm:ml-auto" onClick={() => setIsAiDialogOpen(true)}>
-            <Sparkles className="h-4 w-4 mr-2" />{isEnglish ? 'Create from a note (AI)' : 'Créer depuis une note (IA)'}
-          </Button>
+          {inputMode === 'quick' ? (
+            <>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <Textarea rows={1} value={quickTitle} maxLength={4000}
+                  placeholder={isEnglish ? 'Type a step and press Enter (or paste several lines)' : 'Tapez une étape puis Entrée (ou collez plusieurs lignes)'}
+                  aria-label={isEnglish ? 'New step' : 'Nouvelle étape'} className="flex-1 min-h-10 resize-none bg-background"
+                  onChange={(e) => setQuickTitle(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleQuickAdd(); } }} />
+                <Input type="date" value={quickDate} onChange={(e) => setQuickDate(e.target.value)} aria-label="Date" className="sm:w-40 bg-background" />
+                <Select value={quickStakeholder || 'none'} onValueChange={(value) => setQuickStakeholder(value === 'none' ? '' : value)}>
+                  <SelectTrigger className="sm:w-44 bg-background" aria-label={isEnglish ? 'Stakeholder' : 'Partie prenante'}><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">{isEnglish ? 'Who?' : 'Qui ?'}</SelectItem>
+                    {Object.keys(STAKEHOLDER_LABELS).map((key) => <SelectItem key={key} value={key}>{stakeholderLabel(key)}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleQuickAdd} disabled={!quickTitle.trim()}>{isEnglish ? 'Add' : 'Ajouter'}</Button>
+              </div>
+              <p className="text-xs text-muted-foreground">{isEnglish ? 'Date and stakeholder stay selected so you can chain entries.' : 'La date et la partie prenante restent sélectionnées pour enchaîner les saisies.'}</p>
+            </>
+          ) : (
+            <>
+              <Textarea rows={6} value={noteText} maxLength={8000} onChange={(e) => setNoteText(e.target.value)} className="bg-background"
+                placeholder={isEnglish ? 'Paste your meeting notes: "venue in Jan, caterer tasting in March, invites end of May, witnesses organise the bachelor party"…' : 'Collez vos notes : « lieu en janvier, dégustation traiteur en mars, faire-part fin mai, les témoins organisent l\'EVJF »…'}
+                aria-label="Notes" />
+              <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+                {!weddingDate && <p className="text-xs text-muted-foreground">{isEnglish ? 'Tip: set the wedding date first for accurate dates.' : 'Astuce : renseignez la date du mariage pour des dates précises.'}</p>}
+                <Button className="sm:ml-auto" onClick={handleGenerateFromNote} disabled={isGenerating || noteText.trim().length < 3}>
+                  {isGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+                  {isEnglish ? 'Turn into steps' : 'Transformer en étapes'}
+                </Button>
+              </div>
+            </>
+          )}
         </div>
 
         {steps.length > 0 && <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />}
@@ -229,23 +298,49 @@ const RetroplanningManuel = () => {
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
             <Button variant={view === 'calendar' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('calendar')}><CalendarDays className="h-4 w-4 mr-1" />{isEnglish ? 'Calendar' : 'Calendrier'}</Button>
           </div>
-          <Button onClick={() => setEditingStep({ ...EMPTY_STEP })}><Plus className="h-4 w-4 mr-2" />{isEnglish ? 'Add a step' : 'Ajouter une étape'}</Button>
+          <Select value={stakeholderFilter} onValueChange={setStakeholderFilter}>
+            <SelectTrigger className="sm:w-52" aria-label={isEnglish ? 'Filter by stakeholder' : 'Filtrer par partie prenante'}><SelectValue /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">{isEnglish ? 'Everyone' : 'Tout le monde'}</SelectItem>
+              {Object.keys(STAKEHOLDER_LABELS).map((key) => <SelectItem key={key} value={key}>{stakeholderLabel(key)}</SelectItem>)}
+            </SelectContent>
+          </Select>
         </div>
 
         {steps.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">{isEnglish ? 'No steps yet. Paste a note and let AI build your timeline, or add a step.' : 'Aucune étape pour le moment. Collez une note et laissez l\'IA créer votre rétroplanning, ou ajoutez une étape.'}</p>
+          <p className="text-center text-muted-foreground py-8">{isEnglish ? 'No steps yet. Type a step above, or paste your notes and let AI build your timeline.' : 'Aucune étape pour le moment. Tapez une étape ci-dessus, ou collez vos notes et laissez l\'IA créer votre rétroplanning.'}</p>
         ) : view === 'frise' ? (
-          <RetroplanningFrise steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
+          <RetroplanningFrise steps={visibleSteps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (
-          <div className="space-y-2">{sortedSteps.map(renderStepRow)}</div>
+          <div>{visibleSteps.map(renderStepRow)}</div>
         ) : (
-          <div className="space-y-6">
-            {Object.entries(stepsByMonth).map(([month, monthSteps]) => (
-              <div key={month} className="space-y-2">
-                <h3 className="font-serif text-lg capitalize flex items-center gap-2">{month}<Badge variant="secondary">{monthSteps.length}</Badge></h3>
-                {monthSteps.map(renderStepRow)}
-              </div>
-            ))}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Button variant="ghost" size="icon" aria-label={isEnglish ? 'Previous month' : 'Mois précédent'} onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}><ChevronLeft className="h-4 w-4" /></Button>
+              <h3 className="font-serif text-lg capitalize">{format(calendarMonth, 'MMMM yyyy', { locale: dateLocale })}</h3>
+              <Button variant="ghost" size="icon" aria-label={isEnglish ? 'Next month' : 'Mois suivant'} onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}><ChevronRight className="h-4 w-4" /></Button>
+            </div>
+            <div className="grid grid-cols-7 border-l border-t border-border text-xs">
+              {weekDayLabels.map((label) => <div key={label} className="border-r border-b border-border p-1 text-center text-muted-foreground bg-muted">{label}</div>)}
+              {calendarDays.map((day) => {
+                const dayKey = format(day, 'yyyy-MM-dd');
+                const daySteps = visibleSteps.filter((step) => step.date === dayKey);
+                const isWeddingDay = weddingDate === dayKey;
+                return (
+                  <div key={dayKey} className={`border-r border-b border-border min-h-16 sm:min-h-24 p-1 ${isSameMonth(day, calendarMonth) ? '' : 'bg-muted/40 text-muted-foreground'} ${isWeddingDay ? 'bg-editorial-olive/10' : ''}`}>
+                    <p className={`text-right ${isToday(day) ? 'font-bold text-editorial-olive' : ''}`}>{format(day, 'd')}</p>
+                    {isWeddingDay && <p className="font-serif text-editorial-olive truncate">{isEnglish ? 'Wedding' : 'Jour J'}</p>}
+                    {daySteps.map((step) => (
+                      <button key={step.id} type="button" onClick={() => setEditingStep(step)}
+                        className={`block w-full text-left truncate px-1 mt-0.5 bg-editorial-olive/15 hover:bg-editorial-olive/25 ${step.status === 'completed' ? 'line-through opacity-60' : ''}`}>{step.title}</button>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+            {visibleSteps.some((step) => !step.date) && (
+              <p className="text-xs text-muted-foreground">{isEnglish ? 'Undated steps are visible in the List view.' : 'Les étapes sans date sont visibles dans la vue Liste.'}</p>
+            )}
           </div>
         )}
       </CardContent>
@@ -261,6 +356,25 @@ const RetroplanningManuel = () => {
                 <div><Label htmlFor="step-period">{isEnglish ? 'Period' : 'Période'}</Label><Input id="step-period" placeholder={isEnglish ? 'e.g. 6 months before' : 'ex. J-6 mois'} value={editingStep.period} maxLength={50} onChange={(e) => setEditingStep({ ...editingStep, period: e.target.value })} /></div>
               </div>
               <div><Label htmlFor="step-category">{isEnglish ? 'Category' : 'Catégorie'}</Label><Input id="step-category" placeholder={isEnglish ? 'e.g. Venue, Caterer' : 'ex. Lieu, Traiteur'} value={editingStep.category} maxLength={80} onChange={(e) => setEditingStep({ ...editingStep, category: e.target.value })} /></div>
+              <div className="grid grid-cols-2 gap-3">
+                <div><Label>{isEnglish ? 'Stakeholder' : 'Partie prenante'}</Label>
+                  <Select value={editingStep.stakeholder || 'none'} onValueChange={(value) => setEditingStep({ ...editingStep, stakeholder: value === 'none' ? '' : value })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">{isEnglish ? 'Nobody' : 'Personne'}</SelectItem>
+                      {Object.keys(STAKEHOLDER_LABELS).map((key) => <SelectItem key={key} value={key}>{stakeholderLabel(key)}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div><Label>{isEnglish ? 'Status' : 'Statut'}</Label>
+                  <Select value={editingStep.status} onValueChange={(value) => setEditingStep({ ...editingStep, status: value as ManualStepStatus })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => <SelectItem key={status} value={status}>{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
               <div><Label htmlFor="step-note">Note</Label><Textarea id="step-note" value={editingStep.note} maxLength={1000} onChange={(e) => setEditingStep({ ...editingStep, note: e.target.value })} /></div>
             </div>
           )}
@@ -271,27 +385,6 @@ const RetroplanningManuel = () => {
         </DialogContent>
       </Dialog>
 
-      <Dialog open={isAiDialogOpen} onOpenChange={(isOpen) => !isGenerating && setIsAiDialogOpen(isOpen)}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{isEnglish ? 'Create from a note' : 'Créer depuis une note'}</DialogTitle>
-            <DialogDescription>
-              {isEnglish
-                ? 'Paste your notes (e.g. "book venue in Jan, caterer tasting March, send invites 3 months before"). AI turns them into dated steps.'
-                : 'Collez vos notes (ex. « réserver le lieu en janvier, dégustation traiteur en mars, faire-part 3 mois avant »). L\'IA les transforme en étapes datées.'}
-            </DialogDescription>
-          </DialogHeader>
-          {!weddingDate && <p className="text-sm text-muted-foreground">{isEnglish ? 'Tip: set the wedding date first for accurate dates.' : 'Astuce : renseignez d\'abord la date du mariage pour des dates précises.'}</p>}
-          <Textarea rows={8} value={noteText} maxLength={8000} onChange={(e) => setNoteText(e.target.value)} placeholder={isEnglish ? 'Your notes…' : 'Vos notes…'} aria-label={isEnglish ? 'Notes' : 'Notes'} />
-          <DialogFooter>
-            <Button variant="outline" disabled={isGenerating} onClick={() => setIsAiDialogOpen(false)}>{isEnglish ? 'Cancel' : 'Annuler'}</Button>
-            <Button onClick={handleGenerateFromNote} disabled={isGenerating || noteText.trim().length < 3}>
-              {isGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-              {isEnglish ? 'Generate' : 'Générer'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </Card>
   );
 };

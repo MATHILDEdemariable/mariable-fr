@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { differenceInCalendarDays, format, isSameMonth } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Check, Heart } from 'lucide-react';
-import type { ManualStep } from './RetroplanningManuel';
+import { STAKEHOLDER_LABELS, type ManualStep } from './RetroplanningManuel';
 
 interface RetroplanningFriseProps {
   steps: ManualStep[];
@@ -87,6 +87,9 @@ const RetroplanningFrise = ({ steps, weddingDate, isEnglish }: RetroplanningFris
                           isLate ? (isEnglish ? 'Late' : 'En retard') : '',
                         ].filter(Boolean).join(' · ')}
                       </p>
+                      {step.stakeholder && STAKEHOLDER_LABELS[step.stakeholder] && (
+                        <span className="inline-block mt-1 text-[11px] uppercase tracking-wider border border-editorial-olive/40 text-editorial-olive px-2 py-0.5">{STAKEHOLDER_LABELS[step.stakeholder][isEnglish ? 'en' : 'fr']}</span>
+                      )}
                       {step.note && <p className="text-xs text-muted-foreground mt-1 whitespace-pre-line">{step.note}</p>}
                     </div>
                   </div>

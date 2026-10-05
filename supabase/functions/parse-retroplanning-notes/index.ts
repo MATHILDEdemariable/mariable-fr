@@ -22,9 +22,9 @@ Deno.serve(async (req) => {
     const today = new Date().toISOString().slice(0, 10);
     const instructions = `Tu es wedding planner. Transforme la note en étapes de rétroplanning.
 Date du jour : ${today}. Date du mariage : ${weddingDate || 'inconnue'}.
-Pour chaque étape : title (court, verbe d'action), date (yyyy-MM-dd calculée depuis la date du mariage si possible, sinon ""), period (ex. "J-6 mois", "J-2 semaines", "Jour J"), category (ex. Lieu, Traiteur, Photo, Tenue, Invités, Administratif, Déco, Musique), note (détail utile ou "").
+Pour chaque étape : title (court, verbe d'action), date (yyyy-MM-dd calculée depuis la date du mariage si possible, sinon ""), period (ex. "J-6 mois", "J-2 semaines", "Jour J"), category (ex. Lieu, Traiteur, Photo, Tenue, Invités, Administratif, Déco, Musique), note (détail utile ou ""), stakeholder (qui s'en charge, UNIQUEMENT parmi : planner, couple, bride, groom, parents, witnesses, ou "" si non précisé).
 Si la note est vague, propose des étapes réalistes. 30 étapes maximum. Langue de sortie : ${isEnglish ? 'anglais' : 'français'}.
-Réponds UNIQUEMENT avec un JSON : {"steps":[{"title":"","date":"","period":"","category":"","note":""}]}`;
+Réponds UNIQUEMENT avec un JSON : {"steps":[{"title":"","date":"","period":"","category":"","note":"","stakeholder":""}]}`;
 
     const upstream = await fetch('https://ai.gateway.lovable.dev/v1/responses', {
       method: 'POST',
@@ -86,6 +86,7 @@ Réponds UNIQUEMENT avec un JSON : {"steps":[{"title":"","date":"","period":"","
       period: String(step.period ?? '').slice(0, 50),
       category: String(step.category ?? '').slice(0, 80),
       note: String(step.note ?? '').slice(0, 1000),
+      stakeholder: ['planner', 'couple', 'bride', 'groom', 'parents', 'witnesses'].includes(step.stakeholder) ? step.stakeholder : '',
     })).filter((step: any) => step.title);
 
     console.log('✅ parse-retroplanning-notes:', steps.length, 'steps');
