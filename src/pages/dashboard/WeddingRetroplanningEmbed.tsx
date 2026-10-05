@@ -419,7 +419,7 @@ const WeddingRetroplanningEmbed = () => {
 
   const getTotalTasksCount = () => {
     if (!retroplanning) return 0;
-    return retroplanning.timeline.reduce((acc, item) => acc + item.tasks.length, 0);
+    return (Array.isArray(retroplanning.timeline) ? retroplanning.timeline : []).reduce((acc, item) => acc + (item?.tasks?.length ?? 0), 0);
   };
 
   const getProgress = () => {
