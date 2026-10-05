@@ -60,7 +60,7 @@ const RetroplanningManuel = () => {
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'frise' | 'list' | 'calendar'>('frise');
+  const [view, setView] = useState<'frise' | 'list' | 'calendar'>('list');
   const [editingStep, setEditingStep] = useState<ManualStep | null>(null);
   const [weddingDate, setWeddingDate] = useState('');
   const [inputMode, setInputMode] = useState<'quick' | 'notes'>('quick');
@@ -294,9 +294,9 @@ const RetroplanningManuel = () => {
 
         <div className="flex flex-col sm:flex-row justify-between gap-3">
           <div className="flex gap-1 bg-muted p-1 w-fit">
-            <Button variant={view === 'frise' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('frise')}><GitCommitVertical className="h-4 w-4 mr-1" />{isEnglish ? 'Timeline' : 'Frise'}</Button>
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
             <Button variant={view === 'calendar' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('calendar')}><CalendarDays className="h-4 w-4 mr-1" />{isEnglish ? 'Calendar' : 'Calendrier'}</Button>
+            <Button variant={view === 'frise' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('frise')}><GitCommitVertical className="h-4 w-4 mr-1" />{isEnglish ? 'Timeline' : 'Frise'}</Button>
           </div>
           <Select value={stakeholderFilter} onValueChange={setStakeholderFilter}>
             <SelectTrigger className="sm:w-52" aria-label={isEnglish ? 'Filter by stakeholder' : 'Filtrer par partie prenante'}><SelectValue /></SelectTrigger>
