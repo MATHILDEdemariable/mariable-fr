@@ -156,7 +156,7 @@ const WeddingRetroplanningEmbed = () => {
       if (item.monthsBefore >= period.monthsBeforeMin && item.monthsBefore <= period.monthsBeforeMax) {
         (item?.tasks ?? []).forEach((task, taskIdx) => {
           tasks.push({
-            task,
+            task: typeof task === 'string' ? task : String((task as any)?.name ?? (task as any)?.title ?? ''),
             taskId: `timeline-${idx}-${taskIdx}`,
             source: item.period
           });
