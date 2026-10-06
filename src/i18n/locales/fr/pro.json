@@ -54,7 +54,10 @@
     "info": "Mes informations",
     "offer": "Mon offre",
     "settings": "Paramètres",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "addressBook": "Carnet d'adresses",
+    "tutorial": "Tutoriel",
+    "help": "Aide"
   },
   "bar": {
     "home": "Accueil",
@@ -85,5 +88,39 @@
     "updated": "Mariage mis à jour",
     "errorTitle": "Enregistrement impossible",
     "errorDesc": "Les informations n'ont pas pu être enregistrées. Réessayez dans un instant."
+  },
+  "tutorial": {
+    "title": "Bienvenue dans votre espace pro",
+    "intro": "Trois repères pour bien démarrer.",
+    "step1Title": "1. Vos mariages",
+    "step1": "Créez un mariage, puis cliquez dessus pour ouvrir son espace complet : planning Jour J, rétroplanning, budget, invités, prestataires.",
+    "step2Title": "2. Votre carnet d'adresses",
+    "step2": "Vos partenaires habituels et le catalogue Mariable, réunis au même endroit et réutilisables dans tous vos mariages.",
+    "step3Title": "3. Partagez avec vos clients",
+    "step3": "Dans chaque mariage, partagez le planning Jour J ou le rétroplanning par un simple lien, sans compte.",
+    "start": "C'est parti",
+    "reopen": "Vous pouvez rouvrir ce guide à tout moment avec le bouton « Tutoriel »."
+  },
+  "addressBook": {
+    "title": "Carnet d'adresses",
+    "subtitle": "Vos partenaires et le catalogue Mariable, communs à tous vos mariages.",
+    "tabMine": "Mes partenaires",
+    "tabCatalog": "Catalogue Mariable",
+    "add": "Ajouter",
+    "company": "Société *",
+    "contact": "Contact",
+    "category": "Catégorie",
+    "email": "Email",
+    "phone": "Téléphone",
+    "city": "Ville",
+    "notes": "Notes privées",
+    "empty": "Aucun partenaire pour le moment.",
+    "added": "Partenaire ajouté",
+    "deleted": "Partenaire supprimé",
+    "saveFromCatalog": "Enregistrer",
+    "saved": "Enregistré dans votre carnet",
+    "error": "Une erreur est survenue",
+    "deleteConfirm": "Supprimer ce partenaire ?",
+    "search": "Rechercher"
   }
 }

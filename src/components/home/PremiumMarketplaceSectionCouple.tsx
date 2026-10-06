@@ -47,7 +47,7 @@ const PremiumMarketplaceSectionCouple = () => {
               <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple" onClick={() => setIsModalOpen(true)}>
                 Recevoir votre sélection personnalisée
               </Button>
-              <Button size="lg" variant="outline" className="btn-secondary border-premium-sage text-premium-sage hover:bg-premium-sage/5 px-12 py-4 text-lg font-semibold ripple" onClick={() => window.location.href = '/selection'}>
+              <Button size="lg" variant="outline" className="btn-secondary border-premium-sage text-premium-sage hover:bg-premium-sage/5 px-12 py-4 text-lg font-semibold ripple" onClick={() => window.location.href = '/professionnelsmariable'}>
                 Découvrir notre sélection complète
               </Button>
             </div>

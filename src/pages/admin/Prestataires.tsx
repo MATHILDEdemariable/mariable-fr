@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import PrestatairesAdmin from "@/components/admin/FormPrestataires";
 import VendorContactsAdmin from "@/components/admin/VendorContactsAdmin";
-import VendorMessagesAdmin from "@/components/admin/VendorMessagesAdmin";
 import InstagramHighlightsAdmin from "@/components/admin/InstagramHighlightsAdmin";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/toaster";
@@ -46,10 +45,9 @@ const AdminPrestataires = () => {
         </div>
         
         <Tabs defaultValue="prestataires" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="prestataires">Gestion Prestataires</TabsTrigger>
             <TabsTrigger value="contacts">Demandes de Contact</TabsTrigger>
-            <TabsTrigger value="messages">Messages Utilisateurs</TabsTrigger>
             <TabsTrigger value="instagram">Sélection Instagram</TabsTrigger>
           </TabsList>
           
@@ -59,10 +57,6 @@ const AdminPrestataires = () => {
           
           <TabsContent value="contacts" className="mt-6">
             <VendorContactsAdmin />
-          </TabsContent>
-
-          <TabsContent value="messages" className="mt-6">
-            <VendorMessagesAdmin />
           </TabsContent>
 
           <TabsContent value="instagram" className="mt-6">

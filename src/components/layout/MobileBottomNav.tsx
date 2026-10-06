@@ -60,7 +60,6 @@ const drawerNavItems: NavItem[] = [
 
 const bonusItems: NavItem[] = [
   { icon: Sparkles, label: 'Assistant IA', path: '/dashboard/assistant' },
-  { icon: MessageSquare, label: 'Messages', path: '/dashboard/messages' },
 ];
 
 // Routes où on masque la nav (marketing, admin, embeds, auth)

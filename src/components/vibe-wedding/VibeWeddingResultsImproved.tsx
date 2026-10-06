@@ -365,7 +365,7 @@ const VibeWeddingResultsImproved: React.FC<VibeWeddingResultsImprovedProps> = ({
                   variant="outline" 
                   className="w-full mt-4"
                 >
-                  <Link to="/selection">
+                  <Link to="/professionnelsmariable">
                     🔍 Voir la sélection entière
                   </Link>
                 </Button>

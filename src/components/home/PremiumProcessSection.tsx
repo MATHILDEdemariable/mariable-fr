@@ -12,7 +12,7 @@ const PremiumProcessSection = () => {
     title: t('process.steps.inspire.title'),
     description: t('process.steps.inspire.description'),
     cta: t('process.steps.inspire.cta'),
-    link: "/selection",
+    link: "/professionnelsmariable",
     gradient: "from-premium-sage to-premium-sage-medium"
   }, {
     id: 2,

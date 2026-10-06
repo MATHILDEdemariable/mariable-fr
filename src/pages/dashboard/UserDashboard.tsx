@@ -21,7 +21,6 @@ import { useReaderMode } from '@/contexts/ReaderModeContext';
 import ProjectManagement from '@/components/project-management/ProjectManagement';
 import HelpPage from './HelpPage';
 import PremiumBadge from '@/components/premium/PremiumBadge';
-import VendorSelectionPage from './VendorSelectionPage';
 import CoordinatorsPage from './CoordinatorsPage';
 import AvantJourJPage from './AvantJourJPage';
 import ApresJourJPage from './ApresJourJPage';
@@ -33,7 +32,6 @@ import RSVPResponses from './RSVPResponses';
 import ProfessionnelsMariableDashboard from '@/components/dashboard/ProfessionnelsMariableDashboard';
 import AccommodationsPage from './AccommodationsPage';
 import QRCodeGeneratorPage from './QRCodeGenerator';
-import MessagesPage from './MessagesPage';
 import DocumentsPage from './DocumentsPage';
 import SeatingPlan from '../SeatingPlan';
 import RetroplanningPage from './RetroplanningPage';
@@ -90,9 +88,6 @@ const UserDashboard: React.FC = () => {
           <Route path="project-management/*" element={<ProjectManagement />} />
           <Route path="help" element={<HelpPage />} />
           <Route path="settings" element={<UserProfile />} />
-          <Route path="selection" element={<VendorSelectionPage />} />
-          <Route path="selection/:region" element={<VendorSelectionPage />} />
-          <Route path="messages" element={<MessagesPage />} />
           <Route path="suivi" element={<VendorTracking />} />
           <Route path="prestataires" element={<Navigate to="/dashboard/suivi" replace />} />
           <Route path="coordinateurs" element={<CoordinatorsPage />} />

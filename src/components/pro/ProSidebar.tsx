@@ -1,7 +1,8 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut } from 'lucide-react';
+import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut, BookUser, GraduationCap, LifeBuoy } from 'lucide-react';
+import { openProTutorial, openProHelp } from './ProSupportHost';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -37,19 +38,24 @@ const ProSidebar: React.FC = () => {
     );
 
   return (
-    <div className="h-full min-h-screen bg-white border-r border-gray-200" style={{ paddingTop: 'var(--header-h)' }}>
+    <div className="h-full min-h-screen flex flex-col bg-white border-r border-gray-200" style={{ paddingTop: 'var(--header-h)' }}>
       <div className="flex items-center gap-2 px-6 py-4">
         <Building2 className="h-5 w-5 text-wedding-olive" />
         <span className="font-bold text-lg">{t('nav.space')}</span>
       </div>
 
-      <nav className="py-3 px-3 space-y-0.5">
+      <nav className="py-3 px-3 space-y-0.5 flex-1">
         {items.map((item) => (
           <a key={item.hash} href={`/pro${item.hash}`} className={linkClass(false)}>
             {item.icon}
             <span className="ml-3 leading-tight">{item.label}</span>
           </a>
         ))}
+
+        <Link to="/pro/carnet-adresses" className={linkClass(location.pathname.startsWith('/pro/carnet-adresses'))}>
+          <BookUser className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{t('nav.addressBook')}</span>
+        </Link>
 
         <Link to="/dashboard/settings" className={linkClass(location.pathname.startsWith('/dashboard/settings'))}>
           <Settings className="h-4 w-4" />
@@ -61,6 +67,17 @@ const ProSidebar: React.FC = () => {
           <span className="ml-3 leading-tight">{t('nav.logout')}</span>
         </button>
       </nav>
+
+      <div className="sticky bottom-0 px-3 py-3 space-y-2 border-t border-gray-200 bg-white">
+        <button onClick={openProTutorial} className={cn(linkClass(false), 'w-full text-left border border-wedding-olive/30')}>
+          <GraduationCap className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{t('nav.tutorial')}</span>
+        </button>
+        <button onClick={openProHelp} className={cn(linkClass(false), 'w-full text-left border border-wedding-olive/30')}>
+          <LifeBuoy className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{t('nav.help')}</span>
+        </button>
+      </div>
     </div>
   );
 };

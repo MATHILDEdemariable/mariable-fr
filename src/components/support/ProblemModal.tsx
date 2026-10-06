@@ -5,7 +5,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Mail, Instagram, Send, Loader2 } from 'lucide-react';
+import { Mail, Instagram, Send, Loader2, CalendarDays } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -23,6 +23,7 @@ import { useToast } from '@/hooks/use-toast';
 interface ProblemModalProps {
   isOpen: boolean;
   onClose: () => void;
+  showCalendly?: boolean;
 }
 
 const PROBLEM_CATEGORIES = [
@@ -33,7 +34,7 @@ const PROBLEM_CATEGORIES = [
   { value: 'other', label: 'Autre' },
 ];
 
-export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose }) => {
+export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose, showCalendly = false }) => {
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -129,6 +130,18 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose }) =
             </a>
           </p>
         </DialogHeader>
+
+        {showCalendly && (
+          <a
+            href="https://calendly.com/mathilde-mariable/30min?month=2026-10&date=2026-10-01"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 border border-wedding-olive text-wedding-olive hover:bg-wedding-olive/10 min-h-[44px] text-sm font-medium"
+          >
+            <CalendarDays className="h-4 w-4" />
+            Réserver un point de 30 min avec Mathilde
+          </a>
+        )}
         
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">

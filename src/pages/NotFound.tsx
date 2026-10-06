@@ -33,7 +33,7 @@ const NotFound: React.FC = () => {
                 </Button>
               </Link>
               
-              <Link to="/selection">
+              <Link to="/professionnelsmariable">
                 <Button variant="outline" className="w-full">
                   <Search className="mr-2 h-4 w-4" />
                   Rechercher des prestataires

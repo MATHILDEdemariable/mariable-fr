@@ -27,7 +27,6 @@ interface StaticPage {
 const staticPages: StaticPage[] = [
   { url: "/", priority: "1.0", changefreq: "daily" },
   { url: "/accueil", priority: "0.9", changefreq: "weekly" },
-  { url: "/selection", priority: "1.0", changefreq: "daily" },
   { url: "/vibewedding", priority: "0.7", changefreq: "monthly" },
   { url: "/domainedelafontaine", priority: "0.6", changefreq: "monthly" },
   { url: "/services/budget", priority: "0.9", changefreq: "monthly" },

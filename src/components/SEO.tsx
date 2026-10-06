@@ -90,7 +90,7 @@ const SEO: React.FC<SEOProps> = ({
     ];
 
     if (regionPages.includes(path)) {
-      items.push({ name: 'Mariage en Région', url: `${siteUrl}/selection` });
+      items.push({ name: 'Mariage en Région', url: `${siteUrl}/professionnelsmariable` });
     } else if (path.startsWith('about/')) {
       items.push({ name: 'À Propos', url: `${siteUrl}/about/histoire` });
     }
@@ -171,7 +171,7 @@ const SEO: React.FC<SEOProps> = ({
             ],
             "potentialAction": {
               "@type": "SearchAction",
-              "target": "${siteUrl}/selection?q={search_term_string}",
+              "target": "${siteUrl}/professionnelsmariable?q={search_term_string}",
               "query-input": "required name=search_term_string"
             },
             "hasOfferCatalog": {

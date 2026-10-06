@@ -54,7 +54,10 @@
     "info": "My details",
     "offer": "My plan",
     "settings": "Settings",
-    "logout": "Log out"
+    "logout": "Log out",
+    "addressBook": "Address book",
+    "tutorial": "Tutorial",
+    "help": "Help"
   },
   "bar": {
     "home": "Home",
@@ -85,5 +88,39 @@
     "updated": "Wedding updated",
     "errorTitle": "Could not save",
     "errorDesc": "Your changes could not be saved. Please try again in a moment."
+  },
+  "tutorial": {
+    "title": "Welcome to your pro space",
+    "intro": "Three tips to get started.",
+    "step1Title": "1. Your weddings",
+    "step1": "Create a wedding, then click it to open its full space: wedding day schedule, timeline, budget, guests, vendors.",
+    "step2Title": "2. Your address book",
+    "step2": "Your usual partners and the Mariable catalog, in one place and reusable across all your weddings.",
+    "step3Title": "3. Share with your clients",
+    "step3": "In each wedding, share the wedding day schedule or timeline with a simple link, no account needed.",
+    "start": "Let's go",
+    "reopen": "Reopen this guide anytime with the \"Tutorial\" button."
+  },
+  "addressBook": {
+    "title": "Address book",
+    "subtitle": "Your partners and the Mariable catalog, shared across all your weddings.",
+    "tabMine": "My partners",
+    "tabCatalog": "Mariable catalog",
+    "add": "Add",
+    "company": "Company *",
+    "contact": "Contact",
+    "category": "Category",
+    "email": "Email",
+    "phone": "Phone",
+    "city": "City",
+    "notes": "Private notes",
+    "empty": "No partners yet.",
+    "added": "Partner added",
+    "deleted": "Partner deleted",
+    "saveFromCatalog": "Save",
+    "saved": "Saved to your address book",
+    "error": "Something went wrong",
+    "deleteConfirm": "Delete this partner?",
+    "search": "Search"
   }
 }
