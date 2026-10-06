@@ -1,20 +1,24 @@
 import { Helmet } from 'react-helmet-async';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FileText, Download, Lock } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Download, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import { supabase } from '@/integrations/supabase/client';
 import PremiumModal from '@/components/premium/PremiumModal';
-import { GUIDES } from '@/data/guides';
+import { GUIDES, GUIDE_THEMES, type GuideTheme } from '@/data/guides';
+import { GUIDE_IMAGES } from '@/data/guideImages';
 
 const GuidesPage = () => {
   const { toast } = useToast();
   const { t } = useTranslation('guides');
   const [downloadingSlug, setDownloadingSlug] = useState<string | null>(null);
+  const [activeTheme, setActiveTheme] = useState<GuideTheme | 'all'>('all');
+  const filteredGuides = useMemo(
+    () => (activeTheme === 'all' ? GUIDES : GUIDES.filter((guide) => guide.theme === activeTheme)),
+    [activeTheme]
+  );
   const { executeAction, showPremiumModal, closePremiumModal, isPremium, feature, description } = usePremiumAction({
     feature: t('premium.feature'),
     description: t('premium.description')
@@ -80,32 +84,51 @@ const GuidesPage = () => {
         </p>
 
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {GUIDES.map((guide) => (
-            <Card key={guide.slug} className="hover:shadow-lg transition-shadow border border-border">
-              <CardHeader className="text-center">
-                <div className="w-12 h-12 bg-muted text-foreground flex items-center justify-center mx-auto mb-3">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <Badge variant="secondary" className="mx-auto mb-2 rounded-none gap-1 font-normal">
-                  <span aria-hidden="true">🇫🇷</span>
-                  {t('language.badge')}
-                </Badge>
-                <CardTitle className="text-lg font-serif">{guide.title}</CardTitle>
-                <CardDescription>{guide.description}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex justify-center">
+        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+          {[{ value: 'all', label: 'Tous' }, ...GUIDE_THEMES].map((theme) => (
+            <button
+              key={theme.value}
+              type="button"
+              onClick={() => setActiveTheme(theme.value as GuideTheme | 'all')}
+              className={`px-4 py-2 min-h-[44px] text-xs uppercase tracking-[0.15em] border transition-colors shrink-0 whitespace-nowrap ${
+                activeTheme === theme.value
+                  ? 'bg-editorial-noir text-primary-foreground border-editorial-noir'
+                  : 'bg-background text-editorial-noir border-editorial-noir/20 hover:border-editorial-noir'
+              }`}
+            >
+              {theme.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-5">
+          {filteredGuides.map((guide) => (
+            <article key={guide.slug} className="bg-background border border-editorial-noir/10 flex flex-col hover:shadow-md transition-shadow">
+              <div className="aspect-square bg-editorial-beige border-b border-editorial-noir/10 flex flex-col items-center justify-between p-3 md:p-4 text-center overflow-hidden">
+                <img
+                  src={GUIDE_IMAGES[guide.slug]}
+                  alt={`Illustration du guide ${guide.title}`}
+                  loading="lazy"
+                  width="520"
+                  height="520"
+                  className="w-full min-h-0 flex-1 object-contain"
+                />
+                <p className="uppercase tracking-[0.2em] text-[9px] text-editorial-olive mt-1 mb-1">
+                  Mariable · PDF · <span aria-hidden="true">🇫🇷</span>
+                </p>
+                <h3 className="font-serif text-sm md:text-base text-editorial-noir leading-snug line-clamp-3">{guide.title}</h3>
+              </div>
+              <div className="p-3 md:p-4">
                 <Button
                   onClick={() => handleDownload(guide.slug)}
                   disabled={downloadingSlug === guide.slug}
-                  className="w-full bg-primary hover:bg-primary/90 rounded-none"
+                  className="w-full bg-editorial-olive hover:bg-editorial-olive/90 rounded-none text-xs"
                 >
-                  {!isPremium && <Lock className="h-4 w-4 mr-2" />}
-                  <Download className="h-4 w-4 mr-2" />
+                  {!isPremium ? <Lock className="h-3 w-3 mr-1" /> : <Download className="h-3 w-3 mr-1" />}
                   {downloadingSlug === guide.slug ? t('actions.preparing') : t('actions.download')}
                 </Button>
-              </CardContent>
-            </Card>
+              </div>
+            </article>
           ))}
         </div>
 
