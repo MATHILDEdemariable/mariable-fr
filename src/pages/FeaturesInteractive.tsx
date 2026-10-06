@@ -96,14 +96,13 @@ const FeaturesInteractive = () => {
             operatingSystem: "Web, iOS, Android",
             url: "https://www.mariable.fr",
             description:
-              "Application d'organisation de mariage : budget, checklist, plan de table, RSVP, moodboard et coordination du jour J.",
+              "Application d'organisation de mariage : budget, checklist, plan de table, RSVP et coordination du jour J.",
             inLanguage: "fr-FR",
             featureList: [
               "Calculateur de budget mariage",
               "Checklist et rétroplanning",
               "Plan de table",
               "Gestion des invités et RSVP",
-              "Moodboard",
               "Coordination du jour J",
               "Sélection de prestataires",
             ],
