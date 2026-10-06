@@ -54,7 +54,7 @@ const PremiumModal: React.FC<PremiumModalProps> = ({
               </li>
               <li className="flex items-start gap-2">
                 <Bot className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
-                <span>Utilisation IA sans limite pour les checklist, retroplanning, moodboard</span>
+                <span>Utilisation IA sans limite pour les checklist et le rétroplanning</span>
               </li>
             </ul>
           </div>
