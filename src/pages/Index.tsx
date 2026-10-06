@@ -43,7 +43,7 @@ const Index = () => {
                 "@type": "SearchAction",
                 target: {
                   "@type": "EntryPoint",
-                  urlTemplate: "https://www.mariable.fr/selection?q={search_term_string}"
+                  urlTemplate: "https://www.mariable.fr/professionnelsmariable?q={search_term_string}"
                 },
                 "query-input": "required name=search_term_string"
               }
@@ -66,7 +66,7 @@ const Index = () => {
                   position: 2,
                   name: "Lieux de mariage & prestataires",
                   description: "Mariable est la reference des mariages modernes et elegants et propose une selection premium de professionnels",
-                  url: "https://www.mariable.fr/selection"
+                  url: "https://www.mariable.fr/professionnelsmariable"
                 },
                 {
                   "@type": "SiteNavigationElement",
