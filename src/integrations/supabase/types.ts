@@ -2401,6 +2401,57 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_address_book: {
+        Row: {
+          category: string
+          city: string | null
+          company_name: string
+          contact_name: string | null
+          created_at: string
+          email: string | null
+          id: string
+          notes: string | null
+          owner_id: string
+          phone: string | null
+          prestataire_id: string | null
+          source: string
+          updated_at: string
+          website: string | null
+        }
+        Insert: {
+          category?: string
+          city?: string | null
+          company_name: string
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          owner_id: string
+          phone?: string | null
+          prestataire_id?: string | null
+          source?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Update: {
+          category?: string
+          city?: string | null
+          company_name?: string
+          contact_name?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          notes?: string | null
+          owner_id?: string
+          phone?: string | null
+          prestataire_id?: string | null
+          source?: string
+          updated_at?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
       professional_payment_leads: {
         Row: {
           admin_notes: string | null
