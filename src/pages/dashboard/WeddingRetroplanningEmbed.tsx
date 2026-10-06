@@ -206,6 +206,7 @@ const WeddingRetroplanningEmbed = () => {
               .from('wedding_retroplanning')
               .select('*')
               .eq('user_id', user.id)
+              .eq('mode', 'ai')
           )
             .order('updated_at', { ascending: false })
             .limit(1)
