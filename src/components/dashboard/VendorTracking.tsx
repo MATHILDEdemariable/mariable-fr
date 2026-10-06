@@ -848,6 +848,29 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         onOpenChange={setAddDialogOpen} 
         onVendorAdded={fetchVendors}
       />
+
+      <MariableCatalogDialog
+        open={catalogOpen}
+        onOpenChange={setCatalogOpen}
+        title="Sélection Mariable"
+        actionLabel="Ajouter au suivi"
+        onPick={handleAddFromCatalog}
+      />
+
+      <AddressBookPickerDialog
+        open={addressBookOpen}
+        onOpenChange={setAddressBookOpen}
+        onPick={(contact) => addVendorToTracking({
+          vendor_name: contact.company_name,
+          category: contact.category,
+          email: contact.email,
+          phone: contact.phone,
+          website: contact.website,
+          location: contact.city,
+          prestataire_id: contact.prestataire_id,
+          source: 'address_book',
+        })}
+      />
       
       {/* Edit Vendor Modal */}
       <EditVendorModal
