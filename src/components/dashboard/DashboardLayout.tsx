@@ -16,6 +16,7 @@ import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
 import ProPremiumModal from '@/components/pro/ProPremiumModal';
+import ProSupportHost from '@/components/pro/ProSupportHost';
 interface DashboardLayoutProps {
   children?: React.ReactNode;
   /** 'pro' affiche la navigation de l'espace professionnel (pré-dashboard) */
@@ -198,7 +199,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         </div>
 
         {/* Tour d'onboarding */}
-        <OnboardingTour />
+        {variant === 'pro' ? <ProSupportHost /> : <OnboardingTour />}
 
         {/* Modal de satisfaction */}
         {showSatisfactionModal && currentUser && <SatisfactionModal isOpen={showSatisfactionModal} onClose={handleCloseSatisfactionModal} userId={currentUser.id} />}
