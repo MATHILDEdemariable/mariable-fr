@@ -10,6 +10,10 @@ import PremiumModal from '@/components/premium/PremiumModal';
 import { GUIDES, GUIDE_THEMES, type GuideTheme } from '@/data/guides';
 import { GUIDE_IMAGES } from '@/data/guideImages';
 
+const THEME_EMOJIS: Record<string, string> = {
+  all: '📚', organisation: '📋', budget: '💰', prestataires: '🤝', ceremonie: '💒', mariee: '👰', temoins: '🥂',
+};
+
 const GuidesPage = () => {
   const { toast } = useToast();
   const { t } = useTranslation('guides');
@@ -96,7 +100,7 @@ const GuidesPage = () => {
                   : 'bg-background text-editorial-noir border-editorial-noir/20 hover:border-editorial-noir'
               }`}
             >
-              {theme.label}
+              <span aria-hidden="true" className="mr-1">{THEME_EMOJIS[theme.value]}</span>{theme.label}
             </button>
           ))}
         </div>
