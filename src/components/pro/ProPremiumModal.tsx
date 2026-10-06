@@ -62,6 +62,13 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
             <Mail className="h-4 w-4 mr-2" />
             {i18n.language?.startsWith('en') ? 'Request my Pro upgrade' : 'Demander mon passage en Pro'}
           </Button>
+          <button
+            type="button"
+            className="text-center text-xs text-editorial-noir/60 hover:text-editorial-noir"
+            onClick={() => { navigator.clipboard?.writeText('mathilde@mariable.fr'); }}
+          >
+            {i18n.language?.startsWith('en') ? 'Or write to mathilde@mariable.fr (click to copy)' : 'Ou écrivez à mathilde@mariable.fr (clic pour copier)'}
+          </button>
           <a
             href="/partenariat?conditions=1"
             target="_blank"
