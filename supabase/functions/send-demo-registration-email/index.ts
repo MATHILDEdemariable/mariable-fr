@@ -26,17 +26,17 @@ Deno.serve(async (req) => {
     const job = escapeHtml(jobTitle);
 
     const subject = isEnglish
-      ? "You're registered! Mariable Pro live demo — Thu Oct 1, 2:30 pm"
-      : 'Vous êtes bien inscrit ! Démo live Mariable Pro — jeudi 1er octobre, 14h30';
+      ? "Your Mariable Pro demo request is confirmed"
+      : 'Votre demande de démo Mariable Pro est bien reçue';
     const html = `
 <div style="background:#F8F5EF;padding:40px 16px;font-family:Arial,sans-serif;color:#111">
   <div style="max-width:560px;margin:0 auto;background:#fff;padding:40px">
-    <p style="letter-spacing:3px;font-size:11px;color:#63745A;margin:0 0 12px">${isEnglish ? 'LIVE · PRO DEMO' : 'LIVE · DÉMO PRO'}</p>
+    <p style="letter-spacing:3px;font-size:11px;color:#63745A;margin:0 0 12px">${isEnglish ? 'PRO DEMO' : 'DÉMO PRO'}</p>
     <h1 style="font-family:Georgia,serif;font-weight:400;font-size:28px;margin:0 0 20px">${isEnglish ? `You're registered, ${name}!` : `Vous êtes bien inscrit, ${name} !`}</h1>
-    <p style="line-height:1.6">${isEnglish ? 'You will receive the link on the day of the event.' : 'Vous recevrez le lien de connexion le jour J.'}</p>
+    <p style="line-height:1.6">${isEnglish ? "We'll get back to you very soon to suggest a date that suits you." : 'Nous vous recontactons très vite pour vous proposer une date qui vous convient.'}</p>
     <div style="border-left:3px solid #63745A;padding:12px 16px;margin:24px 0;background:#F8F5EF">
-      <strong>${isEnglish ? 'Thursday, October 1 · 2:30 pm (Paris) · 40 min · online' : 'Jeudi 1er octobre · 14h30 · 40 min · en ligne'}</strong><br/>
-      ${isEnglish ? '20 min live demo of the Mariable Pro app + 20 min Q&amp;A between pros' : "20 min de démo de l'appli Mariable Pro + 20 min de questions-réponses entre pros"}
+      <strong>${isEnglish ? '40 min · online' : '40 min · en ligne'}</strong><br/>
+      ${isEnglish ? '20 min live demo of the Mariable Pro app + 20 min Q&amp;A' : "20 min de démo de l'appli Mariable Pro + 20 min de questions-réponses"}
     </div>
     <p style="line-height:1.6">${isEnglish ? 'See you soon,' : 'À très vite,'}<br/><span style="color:#63745A">Mathilde de Mariable</span></p>
   </div>
