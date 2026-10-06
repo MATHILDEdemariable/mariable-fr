@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { z } from 'zod';
@@ -7,34 +7,30 @@ import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 
-const DEMO_START = new Date('2026-10-01T14:30:00+02:00');
-
 const TEXTS = {
   fr: {
-    eyebrow: 'LIVE · DÉMO PRO', title: "Découvrez l'appli Jour J en direct",
-    subtitle: "Une session en ligne pour les wedding planners, coordinateurs et lieux de réception : voyez comment Mariable Pro simplifie vos déroulés, puis échangez entre pros.",
-    date: 'Jeudi 1er octobre', time: '14h30 (Paris)', duration: '40 min · en ligne',
-    days: 'j', hours: 'h', minutes: 'min',
+    eyebrow: 'DÉMO PRO · SUR RENDEZ-VOUS', title: "Découvrez l'appli Jour J en direct",
+    subtitle: "Une démo en ligne pour les wedding planners, coordinateurs et lieux de réception : voyez comment Mariable Pro simplifie vos déroulés, et posez toutes vos questions.",
+    date: 'À la date qui vous convient', time: 'Nous vous recontactons pour fixer un créneau', duration: '40 min · en ligne',
     programTitle: 'Au programme', part1: 'Démo live', part1Text: "Tour complet de l'appli Mariable Pro : déroulé Jour J, équipe, partage par lien, modules d'avant Jour J.",
-    part2: 'Q&A entre pros', part2Text: 'Vos questions, vos cas concrets, et un échange ouvert entre professionnels du mariage.',
-    formTitle: 'Réservez votre place', name: 'Nom complet', email: 'Email', job: 'Métier', jobPlaceholder: 'Wedding planner, lieu de réception…',
-    consent: "J'accepte que mes données soient utilisées pour m'envoyer le lien de la démo.", submit: "JE M'INSCRIS", sending: 'Inscription…',
-    successTitle: 'Vous êtes bien inscrit !', successText: 'Vous recevrez le lien le jour J. Un email de confirmation vient de vous être envoyé.',
+    part2: 'Questions & réponses', part2Text: 'Vos questions, vos cas concrets et votre façon de travailler.',
+    formTitle: 'Demandez votre démo', name: 'Nom complet', email: 'Email', job: 'Métier', jobPlaceholder: 'Wedding planner, lieu de réception…',
+    consent: "J'accepte que mes données soient utilisées pour être recontacté(e) afin de convenir d'une date de démo.", submit: "JE M'INSCRIS", sending: 'Inscription…',
+    successTitle: 'Vous êtes bien inscrit !', successText: 'Nous vous recontactons très vite pour vous proposer une date qui vous convient. Un email de confirmation vient de vous être envoyé.',
     error: 'Une erreur est survenue. Veuillez réessayer.', invalid: 'Merci de vérifier vos informations.', consentRequired: 'Consentement requis',
-    seoTitle: 'Démo live Mariable Pro — jeudi 1er octobre 14h30', seoDescription: "Inscrivez-vous à la démo live de l'appli Jour J Mariable Pro : 20 min de démo et 20 min de Q&A entre pros du mariage, jeudi 1er octobre à 14h30.",
+    seoTitle: 'Démo Mariable Pro — inscription', seoDescription: "Demandez une démo de l'appli Jour J Mariable Pro : 20 min de démo et 20 min de questions. Nous vous recontactons pour fixer une date qui vous convient.",
   },
   en: {
-    eyebrow: 'LIVE · PRO DEMO', title: 'Discover the wedding-day app live',
-    subtitle: 'An online session for wedding planners, coordinators and venues: see how Mariable Pro simplifies your timelines, then chat with other pros.',
-    date: 'Thursday, October 1', time: '2:30 pm (Paris)', duration: '40 min · online',
-    days: 'd', hours: 'h', minutes: 'min',
+    eyebrow: 'PRO DEMO · ON REQUEST', title: 'Discover the wedding-day app live',
+    subtitle: 'An online demo for wedding planners, coordinators and venues: see how Mariable Pro simplifies your timelines, and ask all your questions.',
+    date: 'On a date that suits you', time: "We'll contact you to schedule a slot", duration: '40 min · online',
     programTitle: 'Program', part1: 'Live demo', part1Text: 'A full tour of the Mariable Pro app: wedding-day timeline, team, link sharing, pre-wedding modules.',
-    part2: 'Q&A between pros', part2Text: 'Your questions, your real cases, and an open discussion between wedding professionals.',
-    formTitle: 'Save your seat', name: 'Full name', email: 'Email', job: 'Job', jobPlaceholder: 'Wedding planner, venue…',
-    consent: 'I agree that my data may be used to send me the demo link.', submit: 'REGISTER', sending: 'Registering…',
-    successTitle: "You're registered!", successText: 'You will receive the link on the day. A confirmation email has just been sent.',
+    part2: 'Q&A', part2Text: 'Your questions, your real cases and the way you work.',
+    formTitle: 'Request your demo', name: 'Full name', email: 'Email', job: 'Job', jobPlaceholder: 'Wedding planner, venue…',
+    consent: 'I agree that my data may be used to contact me to schedule a demo.', submit: 'REGISTER', sending: 'Registering…',
+    successTitle: "You're registered!", successText: "We'll contact you shortly to suggest a date that suits you. A confirmation email has just been sent.",
     error: 'Something went wrong. Please try again.', invalid: 'Please check your details.', consentRequired: 'Consent required',
-    seoTitle: 'Mariable Pro live demo — Thursday Oct 1, 2:30 pm', seoDescription: 'Register for the live demo of the Mariable Pro wedding-day app: 20 min demo and 20 min Q&A between wedding pros, Thursday October 1 at 2:30 pm.',
+    seoTitle: 'Mariable Pro demo — registration', seoDescription: "Request a demo of the Mariable Pro wedding-day app: 20 min demo and 20 min Q&A. We'll contact you to schedule a date that suits you.",
   },
 };
 
@@ -44,11 +40,6 @@ const registrationSchema = z.object({
   jobTitle: z.string().trim().min(1).max(100),
 });
 
-const getTimeLeft = () => {
-  const diff = Math.max(0, DEMO_START.getTime() - Date.now());
-  return { days: Math.floor(diff / 86400000), hours: Math.floor((diff / 3600000) % 24), minutes: Math.floor((diff / 60000) % 60) };
-};
-
 const DemoPro = () => {
   const { i18n } = useTranslation();
   const language = i18n.language?.startsWith('en') ? 'en' : 'fr';
@@ -57,12 +48,6 @@ const DemoPro = () => {
   const [formData, setFormData] = useState({ fullName: '', email: '', jobTitle: '', rgpdConsent: false });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isRegistered, setIsRegistered] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(getTimeLeft());
-
-  useEffect(() => {
-    const interval = setInterval(() => setTimeLeft(getTimeLeft()), 30000);
-    return () => clearInterval(interval);
-  }, []);
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -94,13 +79,10 @@ const DemoPro = () => {
     }
   };
 
-  const eventSchema = {
-    '@context': 'https://schema.org', '@type': 'Event', name: text.seoTitle, description: text.seoDescription,
-    startDate: '2026-10-01T14:30:00+02:00', endDate: '2026-10-01T15:10:00+02:00',
-    eventAttendanceMode: 'https://schema.org/OnlineEventAttendanceMode', eventStatus: 'https://schema.org/EventScheduled',
-    location: { '@type': 'VirtualLocation', url: 'https://mariable.fr/demo-pro' },
-    organizer: { '@type': 'Organization', name: 'Mariable', url: 'https://mariable.fr' },
-    isAccessibleForFree: true,
+  const serviceSchema = {
+    '@context': 'https://schema.org', '@type': 'Service', name: text.seoTitle, description: text.seoDescription,
+    provider: { '@type': 'Organization', name: 'Mariable', url: 'https://mariable.fr' },
+    url: 'https://mariable.fr/demo-pro',
   };
 
   const inputClass = 'w-full border-b border-foreground/30 bg-transparent py-3 text-base outline-none focus:border-foreground transition-colors';
@@ -113,7 +95,7 @@ const DemoPro = () => {
         <link rel="canonical" href="https://mariable.fr/demo-pro" />
         <meta property="og:title" content={text.seoTitle} />
         <meta property="og:description" content={text.seoDescription} />
-        <script type="application/ld+json">{JSON.stringify(eventSchema)}</script>
+        <script type="application/ld+json">{JSON.stringify(serviceSchema)}</script>
       </Helmet>
       <EditorialHeader />
 
@@ -132,11 +114,6 @@ const DemoPro = () => {
               <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm tracking-wide opacity-90">
                 <span className="inline-flex items-center gap-2"><Clock className="h-4 w-4" aria-hidden />{text.time}</span>
                 <span className="inline-flex items-center gap-2"><Video className="h-4 w-4" aria-hidden />{text.duration}</span>
-              </div>
-              <div className="flex gap-6 mt-6 pt-6 border-t border-white/25" aria-live="polite">
-                {[[timeLeft.days, text.days], [timeLeft.hours, text.hours], [timeLeft.minutes, text.minutes]].map(([value, label]) => (
-                  <div key={String(label)}><span className="font-serif text-3xl">{value}</span><span className="text-sm ml-1 opacity-80">{label}</span></div>
-                ))}
               </div>
             </div>
 
