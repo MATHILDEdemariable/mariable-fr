@@ -1,6 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Check, Crown, ExternalLink } from 'lucide-react';
+import { Check, Crown, Mail } from 'lucide-react';
+import { openProUpgradeMail } from './proUpgradeMail';
 import {
   Dialog,
   DialogContent,
@@ -21,7 +22,7 @@ interface ProPremiumModalProps {
  * Reprend l'essentiel de la section Mariable Pro de /partenariat sans quitter le dashboard.
  */
 const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange }) => {
-  const { t } = useTranslation('partenariat');
+  const { t, i18n } = useTranslation('partenariat');
   const { t: tPro } = useTranslation('pro');
   const includedItems = t('pro.included', { returnObjects: true }) as string[];
 
@@ -54,11 +55,12 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
         </ul>
 
         <DialogFooter className="flex-col sm:flex-col gap-2 sm:space-x-0">
-          <Button asChild className="w-full rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white">
-            <a href="/partenariat#mariable-pro" target="_blank" rel="noopener noreferrer">
-              {t('pro.cta')}
-              <ExternalLink className="h-4 w-4 ml-2" />
-            </a>
+          <Button
+            className="w-full rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            onClick={() => openProUpgradeMail(i18n.language?.startsWith('en'))}
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            {i18n.language?.startsWith('en') ? 'Request my Pro upgrade' : 'Demander mon passage en Pro'}
           </Button>
           <a
             href="/partenariat?conditions=1"

@@ -15,6 +15,8 @@ import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 import ProQuickActions from '@/components/pro/ProQuickActions';
+import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
+import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 
 interface ProProfileForm {
   first_name: string;
@@ -166,6 +168,8 @@ const MesMariages: React.FC = () => {
             {t('header.incompleteProfile')}
           </div>
         )}
+
+        {!loading && <ProSeasonOverview weddings={weddings} />}
 
         {/* Mes mariages */}
         <section id="mes-mariages" className="scroll-mt-32">
@@ -378,7 +382,7 @@ const MesMariages: React.FC = () => {
                   {t('offer.description')}
                 </p>
               </div>
-              <Button className="rounded-none" onClick={() => navigate('/partenariat#mariable-pro')}>
+              <Button className="rounded-none" onClick={() => openProUpgradeMail(i18n.language?.startsWith('en'))}>
                 {t('offer.cta')}
               </Button>
             </CardContent>
