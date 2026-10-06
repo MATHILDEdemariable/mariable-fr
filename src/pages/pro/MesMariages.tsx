@@ -14,6 +14,7 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
+import ProQuickActions from '@/components/pro/ProQuickActions';
 
 interface ProProfileForm {
   first_name: string;
@@ -157,6 +158,7 @@ const MesMariages: React.FC = () => {
               ? form.company_name
               : t('header.subtitle')}
           </p>
+          <div className="mt-4"><ProQuickActions /></div>
         </header>
 
         {isProfileIncomplete && (

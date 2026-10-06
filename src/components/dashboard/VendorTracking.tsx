@@ -37,6 +37,9 @@ import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AddVendorDialog from './AddVendorDialog';
+import MariableCatalogDialog, { type CatalogVendor } from '@/components/vendors/MariableCatalogDialog';
+import AddressBookPickerDialog from '@/components/pro/AddressBookPickerDialog';
+import { useWedding } from '@/contexts/WeddingContext';
 import EditVendorModal from './EditVendorModal';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { exportVendorTrackingToPDF } from '@/services/vendorTrackingExportService';
@@ -103,6 +106,42 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
+  const { accountType } = useWedding();
+  const isProAccount = accountType === 'b2b';
+  const [catalogOpen, setCatalogOpen] = useState(false);
+  const [addressBookOpen, setAddressBookOpen] = useState(false);
+
+  // Ajoute une ligne au suivi sans quitter la page (catalogue Mariable ou carnet pro)
+  const addVendorToTracking = async (entry: { vendor_name: string; category: string; email: string | null; phone: string | null; website: string | null; location: string | null; prestataire_id: string | null; source: string }) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non connecté');
+      const { error } = await supabase.from('vendors_tracking_preprod').insert({
+        user_id: user.id,
+        ...entry,
+        status: 'à contacter',
+      });
+      if (error) throw error;
+      toast({ title: 'Ajouté au suivi', description: entry.vendor_name });
+      fetchVendors();
+      return true;
+    } catch (error) {
+      console.error('❌ VendorTracking: ajout impossible', error);
+      toast({ title: 'Erreur', description: "Impossible d'ajouter ce prestataire.", variant: 'destructive' });
+      return false;
+    }
+  };
+
+  const handleAddFromCatalog = (vendor: CatalogVendor) => addVendorToTracking({
+    vendor_name: vendor.nom,
+    category: vendor.categorie ?? 'Autre',
+    email: vendor.email,
+    phone: vendor.telephone,
+    website: vendor.site_web,
+    location: vendor.ville,
+    prestataire_id: vendor.id,
+    source: 'mariable',
+  });
   
   console.log('🔍 VendorTracking - isMobile:', isMobile, 'window.innerWidth:', typeof window !== 'undefined' ? window.innerWidth : 'SSR');
 
@@ -369,10 +408,15 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             <Button 
               variant="outline"
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
-              onClick={() => window.location.href = '/dashboard/selection'}
+              onClick={() => setCatalogOpen(true)}
             >
               <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
             </Button>
+            {isProAccount && (
+              <Button variant="outline" onClick={() => setAddressBookOpen(true)}>
+                <Plus className="h-4 w-4 mr-2" /> Depuis mon carnet
+              </Button>
+            )}
             
             <Button 
               className="bg-wedding-olive hover:bg-wedding-olive/90"
@@ -414,10 +458,15 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 variant="outline"
                 size="sm"
                 className="bg-wedding-olive hover:bg-wedding-olive/90 text-white text-xs h-10"
-                onClick={() => window.location.href = '/dashboard/selection'}
+                onClick={() => setCatalogOpen(true)}
               >
                 <Plus className="h-3 w-3 mr-1" /> Mariable
               </Button>
+              {isProAccount && (
+                <Button variant="outline" size="sm" className="text-xs h-10" onClick={() => setAddressBookOpen(true)}>
+                  <Plus className="h-3 w-3 mr-1" /> Mon carnet
+                </Button>
+              )}
               
               <Button 
                 size="sm"
