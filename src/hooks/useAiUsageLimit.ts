@@ -47,6 +47,7 @@ export const useAiUsageLimit = () => {
           .from('wedding_retroplanning')
           .select('id')
           .eq('user_id', user.id)
+          .eq('mode', 'ai')
           .limit(1);
 
         setUsageData({
@@ -101,6 +102,7 @@ export const useAiUsageLimit = () => {
         .from('wedding_retroplanning')
         .select('id')
         .eq('user_id', user.id)
+          .eq('mode', 'ai')
         .limit(1);
 
       setUsageData(prev => ({
