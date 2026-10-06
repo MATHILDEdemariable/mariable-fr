@@ -33,7 +33,6 @@ export default function EspaceApercu() {
     { label: t('apercu.sidebar.dayPlanning'), badge: t('apercu.sidebar.exclusiveBadge') },
     { label: t('apercu.sidebar.rsvp') },
     { label: t('apercu.sidebar.seating') },
-    { label: t('apercu.sidebar.moodboard') },
     { label: t('apercu.sidebar.ceremony') },
   ];
 

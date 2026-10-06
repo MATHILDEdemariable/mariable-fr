@@ -180,7 +180,7 @@ const LandingJourJ = () => {
               <div className="text-center">
                 <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
                 <h3 className="font-medium mb-2">Ajoutez vos documents</h3>
-                <p className="text-gray-700 text-sm">plan de table, moodboard, etc.</p>
+                <p className="text-gray-700 text-sm">plan de table, etc.</p>
               </div>
               
               <div className="text-center">

@@ -25,7 +25,7 @@ const faqItems = [
   },
   {
     question: "Que comprend le Premium et quel est le prix ?",
-    answer: "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés (budget, plan de table, checklist cérémonies, moodboard, suivi prestataires), accès complet aux checklists et guides, utilisation IA sans limite pour les checklist, rétroplanning et moodboard, stockage illimité de documents, et plus de 3 lignes par catégorie de budget. Sans Premium, vous bénéficiez d'1 génération IA par outil et de 2 documents stockables."
+    answer: "Le compte Premium Mariable est disponible à 29€ (paiement unique, accès à vie). Il comprend : export illimité de vos PDF personnalisés (budget, plan de table, checklist cérémonies, suivi prestataires), accès complet aux checklists et guides, utilisation IA sans limite pour les checklist et le rétroplanning, stockage illimité de documents, et plus de 3 lignes par catégorie de budget. Sans Premium, vous bénéficiez d'1 génération IA par outil et de 2 documents stockables."
   },
   {
     question: "Qu'est-ce que Mariable ?",

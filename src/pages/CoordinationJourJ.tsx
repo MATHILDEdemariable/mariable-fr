@@ -231,7 +231,7 @@ const CoordinationJourJ: React.FC = () => {
               <div className="text-center">
                 <div className="bg-wedding-olive text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">4</div>
                 <h3 className="font-medium mb-2">Ajoutez vos documents</h3>
-                <p className="text-gray-700 text-sm">plan de table, moodboard, etc.</p>
+                <p className="text-gray-700 text-sm">plan de table, etc.</p>
               </div>
               
               <div className="text-center">
@@ -308,7 +308,7 @@ const CoordinationJourJ: React.FC = () => {
             <p className="text-editorial-noir/80">
               Un <strong>exemple de planning jour J mariage</strong> aide vos témoins et prestataires à savoir
               exactement quoi faire et quand. Avec Mariable, générez votre déroulé complet, ajoutez vos
-              documents (plan de table, moodboard, contrats) et partagez le tout via un simple lien.
+              documents (plan de table, contrats) et partagez le tout via un simple lien.
             </p>
             <p className="text-editorial-noir/80 mt-4">
               Idéal pour puiser de l'<strong>inspiration d'organisation de journée de mariage</strong> et

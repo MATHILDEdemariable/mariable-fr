@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -16,6 +16,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import RetroplanningShareButton from './RetroplanningShareButton';
+import ImportTaskCatalogDialog, { type CatalogStepDraft } from './ImportTaskCatalogDialog';
 import RetroplanningFrise, { RetroplanningSummary } from './RetroplanningFrise';
 
 export type ManualStepStatus = 'pending' | 'in_progress' | 'completed';
@@ -70,6 +71,7 @@ const RetroplanningManuel = () => {
   const [stakeholderFilter, setStakeholderFilter] = useState('all');
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [noteText, setNoteText] = useState('');
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const db = supabase as any;
 
@@ -182,6 +184,12 @@ const RetroplanningManuel = () => {
     setQuickTitle('');
   };
 
+  const handleImportFromCatalog = (drafts: CatalogStepDraft[]) => {
+    const newSteps = drafts.map((draft) => ({ ...EMPTY_STEP, ...draft, id: uuidv4() }));
+    persistSteps([...steps, ...newSteps]);
+    toast({ title: isEnglish ? `${newSteps.length} tasks added` : `${newSteps.length} tâches ajoutées` });
+  };
+
   const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
     persistSteps(steps.map((item) => (item.id === stepId ? { ...item, ...patch } : item)));
 
@@ -241,9 +249,10 @@ const RetroplanningManuel = () => {
 
         {/* Espace de création unique */}
         <div className="border border-editorial-olive/30 bg-editorial-beige p-4 space-y-3">
-          <div className="flex gap-1 bg-background p-1 w-fit">
+          <div className="flex flex-wrap gap-1 bg-background p-1 w-fit">
             <Button variant={inputMode === 'quick' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('quick')}><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Quick add' : 'Saisie rapide'}</Button>
             <Button variant={inputMode === 'notes' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('notes')}><Sparkles className="h-4 w-4 mr-1" />{isEnglish ? 'Notes → AI' : 'Notes en vrac (IA)'}</Button>
+            <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(true)}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'Catalogue' : 'Catalogue'}</Button>
           </div>
           {inputMode === 'quick' ? (
             <>
@@ -280,6 +289,8 @@ const RetroplanningManuel = () => {
             </>
           )}
         </div>
+
+        <ImportTaskCatalogDialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen} weddingDate={weddingDate} isEnglish={isEnglish} onImport={handleImportFromCatalog} />
 
         {steps.length > 0 && <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />}
 

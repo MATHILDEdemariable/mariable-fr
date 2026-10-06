@@ -5,7 +5,6 @@ import { useUserProfile } from './useUserProfile';
 
 interface AiUsageData {
   checklist: boolean;
-  moodboard: boolean;
   retroplanning: boolean;
 }
 
@@ -14,7 +13,6 @@ export const useAiUsageLimit = () => {
   const { isPremium } = useUserProfile();
   const [usageData, setUsageData] = useState<AiUsageData>({
     checklist: false,
-    moodboard: false,
     retroplanning: false
   });
   const [loading, setLoading] = useState(true);
@@ -35,13 +33,6 @@ export const useAiUsageLimit = () => {
           .eq('user_id', user.id)
           .limit(1);
 
-        // Vérifier si un moodboard a été généré (on vérifie via la table ai_usage_tracking)
-        const { data: usageTracking } = await supabase
-          .from('ai_usage_tracking')
-          .select('*')
-          .eq('user_id', user.id)
-          .maybeSingle();
-
         // Vérifier si un retroplanning existe
         const { data: retroplanningData } = await supabase
           .from('wedding_retroplanning')
@@ -52,7 +43,6 @@ export const useAiUsageLimit = () => {
 
         setUsageData({
           checklist: (checklistData && checklistData.length > 0) || false,
-          moodboard: usageTracking?.total_prompts ? usageTracking.total_prompts > 0 : false,
           retroplanning: (retroplanningData && retroplanningData.length > 0) || false
         });
       } catch (error) {
@@ -66,7 +56,7 @@ export const useAiUsageLimit = () => {
   }, [user]);
 
   // Vérifier si l'utilisateur peut utiliser une feature IA
-  const canUseFeature = useCallback((featureName: 'checklist' | 'moodboard' | 'retroplanning'): boolean => {
+  const canUseFeature = useCallback((featureName: 'checklist' | 'retroplanning'): boolean => {
     // Les utilisateurs premium ont accès illimité
     if (isPremium) return true;
     
@@ -75,12 +65,12 @@ export const useAiUsageLimit = () => {
   }, [isPremium, usageData]);
 
   // Vérifier si la feature a déjà été utilisée
-  const hasUsedFeature = useCallback((featureName: 'checklist' | 'moodboard' | 'retroplanning'): boolean => {
+  const hasUsedFeature = useCallback((featureName: 'checklist' | 'retroplanning'): boolean => {
     return usageData[featureName];
   }, [usageData]);
 
   // Enregistrer l'utilisation d'une feature
-  const recordUsage = useCallback(async (featureName: 'checklist' | 'moodboard' | 'retroplanning') => {
+  const recordUsage = useCallback(async (featureName: 'checklist' | 'retroplanning') => {
     setUsageData(prev => ({
       ...prev,
       [featureName]: true
