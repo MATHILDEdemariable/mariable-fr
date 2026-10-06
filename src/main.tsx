@@ -7,8 +7,9 @@ import './i18n'
 const handleChunkError = (message: string) => {
   if (!/Failed to fetch dynamically imported module|Importing a module script failed/i.test(message)) return;
   const key = 'chunk-reload-attempt';
-  if (sessionStorage.getItem(key)) return;
-  sessionStorage.setItem(key, '1');
+  const lastReloadAt = Number(sessionStorage.getItem(key)) || 0;
+  if (Date.now() - lastReloadAt < 10000) return;
+  sessionStorage.setItem(key, String(Date.now()));
   window.location.reload();
 };
 

@@ -20,9 +20,10 @@ export const lazyWithRetry = <T extends ComponentType<any>>(
         message
       );
 
-      if (isChunkError && !sessionStorage.getItem(RELOAD_KEY)) {
+      const lastReloadAt = Number(sessionStorage.getItem(RELOAD_KEY)) || 0;
+      if (isChunkError && Date.now() - lastReloadAt > 10000) {
         console.warn('⚠️ Chunk obsolète détecté, rechargement de la page');
-        sessionStorage.setItem(RELOAD_KEY, '1');
+        sessionStorage.setItem(RELOAD_KEY, String(Date.now()));
         window.location.reload();
         // Promesse jamais résolue : la page se recharge
         return new Promise<{ default: T }>(() => {});
