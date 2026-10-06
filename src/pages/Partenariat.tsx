@@ -229,9 +229,15 @@ const Partenariat = () => {
               <p className="mt-2 flex items-baseline gap-3 font-serif text-editorial-noir"><span className="text-2xl text-editorial-noir/40 line-through">{t("proOffer.priceOld")}</span><span className="text-4xl">{t("proOffer.price")}</span></p>
               <p className="mt-2 text-editorial-noir/60">{t("proOffer.priceNote")}</p>
               <p className="mt-3 font-medium text-editorial-olive">{t("proOffer.trial")}</p>
-              <Button asChild className="mt-8 rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90">
-                <Link to="/register-gratuit?type=pro">{t("proOffer.cta")}</Link>
-              </Button>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Button onClick={() => openContact("Souscription Mariable Pro — 149€/an")} className="rounded-none bg-editorial-noir px-7 py-6 text-primary-foreground hover:bg-editorial-noir/90">
+                  {i18n.language?.startsWith("en") ? "Subscribe to Mariable Pro" : "Souscrire à Mariable Pro"}
+                </Button>
+                <Button asChild variant="outline" className="rounded-none border-editorial-noir px-7 py-6 text-editorial-noir hover:bg-editorial-noir hover:text-primary-foreground">
+                  <Link to="/register-gratuit?type=pro">{t("proOffer.cta")}</Link>
+                </Button>
+              </div>
+              <a href="mailto:mathilde@mariable.fr?subject=Souscription%20Mariable%20Pro%20(149%E2%82%AC%2Fan)" className="mt-3 block text-sm text-editorial-noir/60 underline underline-offset-4">mathilde@mariable.fr</a>
               <Button variant="link" onClick={() => setConditionsOpen(true)} className="mt-3 block h-auto rounded-none px-0 text-left text-sm text-editorial-olive underline underline-offset-4">
                 {t("proOffer.eligibility")}
               </Button>
