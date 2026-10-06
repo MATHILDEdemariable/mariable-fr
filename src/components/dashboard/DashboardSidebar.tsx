@@ -33,10 +33,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   ];
 
   const prestatairesItems = [
-    { label: t('sidebar.vendorsAll'), icon: <Store className="h-4 w-4" />, path: '/professionnelsmariable' },
-    { label: t('sidebar.vendorsCart'), icon: <ShoppingCart className="h-4 w-4" />, path: '/dashboard/panier' },
     { label: t('sidebar.vendorsTracking'), icon: <Settings className="h-4 w-4" />, path: '/dashboard/suivi' },
-    { label: t('sidebar.vendorsMessages'), icon: <MessageSquare className="h-4 w-4" />, path: '/dashboard/messages' },
+    { label: t('sidebar.vendorsCart'), icon: <ShoppingCart className="h-4 w-4" />, path: '/dashboard/panier' },
   ];
 
   const jourMItems = [
