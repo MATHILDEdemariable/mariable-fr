@@ -48,7 +48,7 @@ const PremiumMarketplaceSection = () => {
         </div>
 
         <div className="text-center">
-          <Link to="/selection">
+          <Link to="/professionnelsmariable">
             <Button size="lg" className="btn-primary text-white px-12 py-4 text-lg font-semibold ripple">
               {t('marketplace.cta')}
             </Button>

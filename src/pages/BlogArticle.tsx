@@ -224,7 +224,7 @@ const BlogArticlePage = () => {
       title: 'Trouvez vos prestataires de mariage',
       description: 'Lieux de réception, traiteurs, photographes : découvrez la sélection éditoriale de Mariable.',
       label: 'Explorer la sélection',
-      href: '/selection',
+      href: '/professionnelsmariable',
     };
   })();
 

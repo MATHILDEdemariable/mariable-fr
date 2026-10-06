@@ -32,7 +32,6 @@ const criticalRoutes = [
   // Routes principales
   { path: '/', component: 'Index', file: 'src/pages/Index.tsx' },
   { path: '/dashboard', component: 'UserDashboard', file: 'src/pages/dashboard/UserDashboard.tsx' },
-  { path: '/selection', component: 'MoteurRecherche', file: 'src/pages/MoteurRecherche.tsx' },
   { path: '/blog', component: 'Blog', file: 'src/pages/Blog.tsx' },
   
   // Auth
@@ -63,7 +62,6 @@ const criticalLinks = [
   '/dashboard',
   '/checklist-mariage', 
   '/planning-personnalise',
-  '/selection',
   '/mon-jour-m',
   '/services/budget',
   '/about/histoire',

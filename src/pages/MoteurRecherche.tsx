@@ -150,7 +150,7 @@ const MoteurRecherche = () => {
   };
 
   const handleChangeRegion = () => {
-    navigate('/selection');
+    navigate('/professionnelsmariable');
   };
 
   if (showRegionSelector) {

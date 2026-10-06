@@ -11,7 +11,7 @@ import Breadcrumbs from '@/components/ui/breadcrumbs';
 const SitemapHTML: React.FC = () => {
   const mainPages = [
     { title: 'Accueil', href: '/', description: 'Page d\'accueil de Mariable' },
-    { title: 'Prestataires', href: '/selection', description: 'Trouvez les meilleurs prestataires de mariage' },
+    { title: 'Prestataires', href: '/professionnelsmariable', description: 'Trouvez les meilleurs prestataires de mariage' },
     { title: 'Conseils mariage', href: '/conseilsmariage', description: 'Conseils et inspiration mariage' },
     { title: 'Coordinateurs', href: '/coordinateurs-mariage', description: 'Wedding planners professionnels' },
     

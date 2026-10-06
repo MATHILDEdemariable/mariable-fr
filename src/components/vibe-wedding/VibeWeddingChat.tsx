@@ -177,7 +177,7 @@ const VibeWeddingChat: React.FC<VibeWeddingChatProps> = ({
                         variant="outline" 
                         className="w-full mt-3"
                       >
-                        <Link to="/selection">
+                        <Link to="/professionnelsmariable">
                           🔍 Voir la sélection entière - {msg.vendorCategory}
                         </Link>
                       </Button>

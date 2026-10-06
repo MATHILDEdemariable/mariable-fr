@@ -72,7 +72,7 @@ const PrestataireContent = () => {
             Découvrez les plus beaux lieux de mariage : châteaux, domaines, salles atypiques, fermes rénovées...
           </p>
           <div className="pl-7">
-            <Link to="/selection?category=lieu" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/professionnelsmariable?category=lieu" className="text-sm text-wedding-olive hover:underline">
               Voir les lieux de réception →
             </Link>
           </div>
@@ -87,7 +87,7 @@ const PrestataireContent = () => {
             Immortalisez vos moments précieux avec nos photographes de mariage professionnels.
           </p>
           <div className="pl-7">
-            <Link to="/selection?category=Photographe" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/professionnelsmariable?category=Photographe" className="text-sm text-wedding-olive hover:underline">
               Voir les photographes →
             </Link>
           </div>
@@ -102,7 +102,7 @@ const PrestataireContent = () => {
             Offrez un festin mémorable avec les meilleurs traiteurs mariage sélectionnés pour leur savoir-faire.
           </p>
           <div className="pl-7">
-            <Link to="/selection?category=traiteur" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/professionnelsmariable?category=traiteur" className="text-sm text-wedding-olive hover:underline">
               Voir les traiteurs →
             </Link>
           </div>
@@ -117,7 +117,7 @@ const PrestataireContent = () => {
             Faites vibrer votre soirée avec les meilleurs DJ et groupes musicaux pour votre mariage.
           </p>
           <div className="pl-7">
-            <Link to="/selection?category=musique" className="text-sm text-wedding-olive hover:underline">
+            <Link to="/professionnelsmariable?category=musique" className="text-sm text-wedding-olive hover:underline">
               Voir les DJ et musiciens →
             </Link>
           </div>

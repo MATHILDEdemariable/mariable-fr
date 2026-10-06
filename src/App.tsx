@@ -213,7 +213,7 @@ function App() {
                   <Route path="/mariable.ambassadeur" element={<MariableAmbassadeur />} />
                   <Route path="/mariable.partenaire" element={<MariablePartenaire />} />
                    
-          <Route path="/selection" element={<ProtectedRoute><VibeWedding /></ProtectedRoute>} />
+                  <Route path="/selection" element={<Navigate to="/professionnelsmariable" replace />} />
           <Route path="/mariage/:region" element={<MoteurRecherche />} />
           <Route path="/coordinateurs-mariage" element={<CoordinateursMarriage />} />
                   <Route path="/planning-personnalise" element={<PlanningPersonnalise />} />

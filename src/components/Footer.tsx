@@ -32,7 +32,7 @@ const Footer = () => {
             <ul className="space-y-1 text-sm">
               <li><Link to="/dashboard" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.dashboard')}</Link></li>
               <li><Link to="/checklist-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.checklist')}</Link></li>
-              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.findVendor')}</Link></li>
+              <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.findVendor')}</Link></li>
               <li><Link to="/mon-jour-m" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.coordination')}</Link></li>
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideJourJ')}</Link></li>
               <li><Link to="/guides" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.guideBeginner')}</Link></li>
@@ -70,7 +70,7 @@ const Footer = () => {
               <li><Link to="/mariage-bourgogne-franche-comte" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.bourgogne')}</Link></li>
               <li><Link to="/mariage-grand-est" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.grandEst')}</Link></li>
               <li><Link to="/mariage-corse" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.corse')}</Link></li>
-              <li><Link to="/selection" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">{t('footer.links.allRegions')}</Link></li>
+              <li><Link to="/professionnelsmariable" className="text-wedding-black/70 hover:text-wedding-black transition-colors font-medium">{t('footer.links.allRegions')}</Link></li>
             </ul>
           </div>
 

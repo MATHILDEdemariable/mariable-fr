@@ -8,7 +8,7 @@ const PremiumSEOSection = () => {
     title: "Recommandations de lieux & prestataires mariage premium",
     description: "Découvrez notre sélection exclusive de prestataires d'exception pour un mariage inoubliable",
     icon: <Star className="h-6 w-6 text-wedding-olive" />,
-    link: "/selection",
+    link: "/professionnelsmariable",
     highlight: true
   }, {
     title: "Organiser un mariage à Paris",

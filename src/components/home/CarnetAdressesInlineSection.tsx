@@ -120,9 +120,9 @@ const CarnetAdressesInlineSection = () => {
         duration: 7000
       });
 
-      // Redirection vers /selection avec filtres pré-remplis
+      // Redirection vers /professionnelsmariable avec filtres pré-remplis
       setTimeout(() => {
-        navigate(`/selection?region=${encodeURIComponent(formData.region)}`);
+        navigate(`/professionnelsmariable?region=${encodeURIComponent(formData.region)}`);
       }, 2000);
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
