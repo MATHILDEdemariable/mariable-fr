@@ -3755,6 +3755,42 @@ export type Database = {
           },
         ]
       }
+      wedding_drinks_plan: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          rows: Json
+          share_active: boolean
+          share_token: string | null
+          title: string | null
+          updated_at: string
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: string
+          rows?: Json
+          share_active?: boolean
+          share_token?: string | null
+          title?: string | null
+          updated_at?: string
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          rows?: Json
+          share_active?: boolean
+          share_token?: string | null
+          title?: string | null
+          updated_at?: string
+          wedding_id?: string
+        }
+        Relationships: []
+      }
       wedding_faq: {
         Row: {
           answer: string
@@ -4319,6 +4355,15 @@ export type Database = {
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
+      }
+      get_public_drinks_plan: {
+        Args: { token_value: string }
+        Returns: {
+          rows: Json
+          title: string
+          wedding_date: string
+          wedding_title: string
+        }[]
       }
       get_public_retroplanning: {
         Args: { token_value: string }
