@@ -125,27 +125,14 @@ const AdminUsers = () => {
     console.log('🚀 handleSetProPremium started:', { userId, enable });
     try {
       setUpdatingUserId(userId);
-      const expiresAt = new Date();
-      expiresAt.setFullYear(expiresAt.getFullYear() + 1);
-
-      const update: Record<string, any> = {
-        subscription_type: enable ? 'pro_premium' : 'free',
-        subscription_expires_at: enable ? expiresAt.toISOString() : null,
-      };
-      // Passer Pro Premium bascule aussi le compte en professionnel
-      if (enable) update.account_type = 'b2b';
-
-      const { error } = await supabase
-        .from('profiles')
-        .update(update)
-        .eq('id', userId);
-
+      // Écriture côté serveur (admin) : un appel direct depuis le navigateur était bloqué par la sécurité de la base
+      const { data, error } = await supabase.functions.invoke('admin-set-pro-premium', {
+        body: { user_id: userId, enable },
+      });
       if (error) throw error;
+      if (!data?.success || !data?.profile) throw new Error(data?.error || 'Mise à jour non enregistrée');
 
-      const patch = {
-        ...update,
-        subscription_expires_at: enable ? expiresAt.toISOString() : undefined,
-      };
+      const patch = data.profile;
       setUsers(prev =>
         prev.map(u => (u.id === userId ? { ...u, profile: { ...u.profile, ...patch } } : u))
       );
@@ -692,7 +679,7 @@ const AdminUsers = () => {
                           ) : (
                             <Button
                               size="sm"
-                              className="bg-premium-sage hover:bg-premium-sage/90 text-white whitespace-nowrap"
+                              className="bg-editorial-olive hover:bg-editorial-olive/90 text-white whitespace-nowrap"
                               disabled={updatingUserId === user.id}
                               onClick={() => handleSetProPremium(user.id, true)}
                             >

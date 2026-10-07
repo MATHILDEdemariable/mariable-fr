@@ -48,7 +48,7 @@ export const getStatusBadgeProps = (status: UserStatus) => {
     case 'pro_premium':
       return {
         variant: 'default' as const,
-        className: 'bg-premium-sage text-white hover:bg-premium-sage/90',
+        className: 'bg-editorial-olive text-white hover:bg-editorial-olive/90',
         text: 'Pro Premium'
       };
     case 'expired':
