@@ -70,6 +70,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     try {
+      // Relie les invitations « mariés » envoyées à l'email de ce compte
+      try {
+        await db.rpc('accept_wedding_invitations');
+      } catch (inviteError) {
+        console.error('❌ WeddingContext: acceptation des invitations impossible', inviteError);
+      }
+
       const [profileRes, weddingsRes] = await Promise.all([
         db
           .from('profiles')
@@ -116,8 +123,13 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       // Un mariage archivé n'est jamais sélectionné automatiquement
       const active = list.filter((w) => !w.archived_at);
 
+      // Un couple invité par son wedding planner ouvre d'abord le mariage partagé
+      const sharedWedding = active.find((w) => w.owner_id !== user.id);
+
       const resolved =
         (fromUrl && active.find((w) => w.id === fromUrl)?.id) ||
+        (stored && active.find((w) => w.id === stored && w.owner_id !== user.id)?.id) ||
+        (type === 'b2c' && sharedWedding?.id) ||
         (type === 'b2b'
           ? stored && active.find((w) => w.id === stored)?.id
           : active.find((w) => w.is_default)?.id || active[0]?.id) ||
