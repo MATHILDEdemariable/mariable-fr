@@ -207,7 +207,8 @@ const SeatingPlan = () => {
       setTables(tables.filter(t => t.id !== tableId));
       setGuests(guests.filter(g => g.table_id !== tableId));
       toast({ title: t('toast.tableDeleted') });
-    });
+    };
+    runDelete();
   };
 
   const handleDeleteGuest = async (guestId: string) => {
