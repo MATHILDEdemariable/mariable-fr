@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -28,7 +28,10 @@ const PlanningPublic: React.FC = () => {
   const [coordinationData, setCoordinationData] = useState<CoordinationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
+  const [searchParams] = useSearchParams();
+  // Lien dédié à un membre de l'équipe : ?membre=<id> n'affiche que ses tâches
+  const dedicatedMemberId = searchParams.get('membre');
+  const [selectedTeamMember, setSelectedTeamMember] = useState<string>(dedicatedMemberId || 'all');
   const [selectedDay, setSelectedDay] = useState<string>('Jour J');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [pinterestLinks, setPinterestLinks] = useState<any[]>([]);
@@ -367,6 +370,7 @@ const PlanningPublic: React.FC = () => {
   }
 
   const { coordination, tasks, teamMembers, documents, planningType } = coordinationData;
+  const dedicatedMember = dedicatedMemberId ? teamMembers.find((m: any) => m.id === dedicatedMemberId) : null;
   const people = teamMembers.filter(m => m.type === 'person' && m.role !== 'Autre prestataire');
   const vendors = teamMembers.filter(m => m.type === 'vendor' || m.role === 'Autre prestataire');
 
@@ -387,7 +391,7 @@ const PlanningPublic: React.FC = () => {
                 {coordination.title}
               </h1>
               <p className="text-sm md:text-base text-gray-600">
-                {t('public.jourMByMariable')}
+                {dedicatedMember ? `${t('public.dedicatedRoadmap', 'Feuille de route')} — ${dedicatedMember.name}${dedicatedMember.role ? ` (${dedicatedMember.role})` : ''}` : t('public.jourMByMariable')}
               </p>
               {coordination.wedding_date && (
                 <p className="text-xs md:text-sm text-wedding-olive font-medium mt-2">
@@ -520,7 +524,7 @@ const PlanningPublic: React.FC = () => {
                       )}
 
                       {/* Filtre par équipe */}
-                      {teamMembers.length > 0 && (
+                      {teamMembers.length > 0 && !dedicatedMember && (
                         <div className="flex items-center gap-2">
                           <Filter className="h-4 w-4 text-gray-500" />
                           <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>
