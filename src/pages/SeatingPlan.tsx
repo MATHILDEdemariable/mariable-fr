@@ -115,7 +115,7 @@ const SeatingPlan = () => {
   };
 
   const handleDragEnd = (result: DropResult) => {
-    executeAction(async () => {
+    (async () => {
       const { source, destination, draggableId } = result;
 
     if (!destination) return;
@@ -171,25 +171,22 @@ const SeatingPlan = () => {
 
       setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: targetTableId } : g));
       toast({ title: 'Invité déplacé avec succès' });
-    });
+    })();
   };
 
+  // Gestion des tables accessible à tous (seuls IA et guides sont premium)
   const handleAddTable = () => {
-    executeAction(() => {
-      setEditingTable(null);
-      setShowTableEditor(true);
-    });
+    setEditingTable(null);
+    setShowTableEditor(true);
   };
 
   const handleEditTable = (table: SeatingTable) => {
-    executeAction(() => {
-      setEditingTable(table);
-      setShowTableEditor(true);
-    });
+    setEditingTable(table);
+    setShowTableEditor(true);
   };
 
   const handleDeleteTable = (tableId: string) => {
-    executeAction(async () => {
+    const runDelete = async () => {
     const tableGuests = guests.filter(g => g.table_id === tableId);
     if (tableGuests.length > 0) {
       if (!confirm(`Cette table contient ${tableGuests.length} invité(s). Voulez-vous vraiment la supprimer ?`)) {
@@ -210,7 +207,8 @@ const SeatingPlan = () => {
       setTables(tables.filter(t => t.id !== tableId));
       setGuests(guests.filter(g => g.table_id !== tableId));
       toast({ title: t('toast.tableDeleted') });
-    });
+    };
+    runDelete();
   };
 
   const handleDeleteGuest = async (guestId: string) => {

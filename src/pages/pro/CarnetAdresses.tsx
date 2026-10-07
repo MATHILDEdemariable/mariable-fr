@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Trash2, Plus, Mail, Phone, MapPin } from 'lucide-react';
+import { Trash2, Plus, Mail, Phone, MapPin, Upload, Download } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -70,6 +70,74 @@ const CarnetAdresses: React.FC = () => {
   };
 
   useEffect(() => { loadContacts(); }, []);
+
+  // Import Excel/CSV : colonnes reconnues FR/EN, enregistrement direct dans le carnet
+  const handleImportExcel = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setIsSaving(true);
+    try {
+      const XLSX = await import('xlsx');
+      const workbook = XLSX.read(await file.arrayBuffer());
+      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
+      const normalize = (s: string) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+      const aliases: Record<string, string[]> = {
+        company_name: ['societe', 'entreprise', 'company', 'nom', 'name', 'prestataire'],
+        contact_name: ['contact', 'nomcontact', 'contactname', 'interlocuteur'],
+        category: ['categorie', 'category', 'metier', 'type'],
+        email: ['email', 'mail', 'courriel'],
+        phone: ['telephone', 'tel', 'phone', 'portable', 'mobile'],
+        city: ['ville', 'city', 'localisation'],
+        website: ['siteweb', 'site', 'website', 'url'],
+        notes: ['notes', 'note', 'commentaire', 'commentaires'],
+      };
+      const pick = (row: Record<string, unknown>, key: string) => {
+        const header = Object.keys(row).find((h) => aliases[key].includes(normalize(h)));
+        const value = header ? String(row[header] ?? '').trim() : '';
+        return value || null;
+      };
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Utilisateur non authentifié');
+      const records = rows
+        .map((row) => ({
+          owner_id: user.id,
+          company_name: pick(row, 'company_name'),
+          contact_name: pick(row, 'contact_name'),
+          category: pick(row, 'category') ?? 'Autre',
+          email: pick(row, 'email'),
+          phone: pick(row, 'phone'),
+          city: pick(row, 'city'),
+          website: pick(row, 'website'),
+          notes: pick(row, 'notes'),
+        }))
+        .filter((r) => r.company_name);
+      if (records.length === 0) {
+        toast({ title: 'Aucun contact trouvé', description: 'Ajoutez au moins une colonne « Société » ou « Nom ».', variant: 'destructive' });
+        return;
+      }
+      const { error } = await addressBookTable().insert(records);
+      if (error) throw error;
+      toast({ title: `${records.length} contact(s) importé(s)` });
+      loadContacts();
+    } catch (error) {
+      console.error('❌ CarnetAdresses: import Excel impossible', error);
+      toast({ title: 'Import impossible', description: 'Vérifiez le format du fichier.', variant: 'destructive' });
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    const XLSX = await import('xlsx');
+    const sheet = XLSX.utils.aoa_to_sheet([
+      ['Société', 'Contact', 'Catégorie', 'Email', 'Téléphone', 'Ville', 'Site web', 'Notes'],
+      ['Fleurs de Lys', 'Julie Martin', 'Fleuriste', 'julie@exemple.fr', '0600000000', 'Lyon', '', ''],
+    ]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, sheet, 'Carnet');
+    XLSX.writeFile(workbook, 'modele-carnet-adresses.xlsx');
+  };
 
   const handleAddContact = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -149,6 +217,17 @@ const CarnetAdresses: React.FC = () => {
           </TabsList>
 
           <TabsContent value="mine" className="space-y-4 mt-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <Button asChild variant="outline" className="rounded-none min-h-[44px]" disabled={isSaving}>
+                <label className="cursor-pointer">
+                  <Upload className="h-4 w-4 mr-1" />Importer un fichier Excel
+                  <input type="file" accept=".xlsx,.xls,.csv" className="sr-only" onChange={handleImportExcel} />
+                </label>
+              </Button>
+              <Button type="button" variant="ghost" className="rounded-none min-h-[44px]" onClick={handleDownloadTemplate}>
+                <Download className="h-4 w-4 mr-1" />Télécharger le modèle
+              </Button>
+            </div>
             <form onSubmit={handleAddContact} className="grid gap-2 sm:grid-cols-3 bg-editorial-beige border border-border p-4">
               {field('company_name')}
               {field('category')}
