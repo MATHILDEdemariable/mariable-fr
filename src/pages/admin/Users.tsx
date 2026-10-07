@@ -128,18 +128,22 @@ const AdminUsers = () => {
       const expiresAt = new Date();
       expiresAt.setFullYear(expiresAt.getFullYear() + 1);
 
+      const update: Record<string, any> = {
+        subscription_type: enable ? 'pro_premium' : 'free',
+        subscription_expires_at: enable ? expiresAt.toISOString() : null,
+      };
+      // Passer Pro Premium bascule aussi le compte en professionnel
+      if (enable) update.account_type = 'b2b';
+
       const { error } = await supabase
         .from('profiles')
-        .update({
-          subscription_type: enable ? 'pro_premium' : 'free',
-          subscription_expires_at: enable ? expiresAt.toISOString() : null,
-        })
+        .update(update)
         .eq('id', userId);
 
       if (error) throw error;
 
       const patch = {
-        subscription_type: enable ? 'pro_premium' : 'free',
+        ...update,
         subscription_expires_at: enable ? expiresAt.toISOString() : undefined,
       };
       setUsers(prev =>
@@ -676,29 +680,25 @@ const AdminUsers = () => {
                           )}
                         </TableCell>
                         <TableCell>
-                          {user.profile?.account_type === 'b2b' ? (
-                            getUserStatus(user.profile) === 'pro_premium' ? (
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                disabled={updatingUserId === user.id}
-                                onClick={() => handleSetProPremium(user.id, false)}
-                              >
-                                Retirer Pro Premium
-                              </Button>
-                            ) : (
-                              <Button
-                                size="sm"
-                                className="bg-premium-sage hover:bg-premium-sage/90 text-white"
-                                disabled={updatingUserId === user.id}
-                                onClick={() => handleSetProPremium(user.id, true)}
-                              >
-                                <Crown className="h-3 w-3 mr-1" />
-                                Passer Pro Premium
-                              </Button>
-                            )
+                          {getUserStatus(user.profile) === 'pro_premium' ? (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              disabled={updatingUserId === user.id}
+                              onClick={() => handleSetProPremium(user.id, false)}
+                            >
+                              Retirer Pro Premium
+                            </Button>
                           ) : (
-                            <span className="text-gray-400 text-sm">—</span>
+                            <Button
+                              size="sm"
+                              className="bg-premium-sage hover:bg-premium-sage/90 text-white whitespace-nowrap"
+                              disabled={updatingUserId === user.id}
+                              onClick={() => handleSetProPremium(user.id, true)}
+                            >
+                              <Crown className="h-3 w-3 mr-1" />
+                              Passer Pro Premium
+                            </Button>
                           )}
                         </TableCell>
                       </TableRow>
