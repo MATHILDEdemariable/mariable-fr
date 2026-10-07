@@ -3652,6 +3652,50 @@ export type Database = {
           },
         ]
       }
+      wedding_collaborators: {
+        Row: {
+          created_at: string
+          id: string
+          invited_by: string
+          invited_email: string
+          role: string
+          status: string
+          updated_at: string
+          user_id: string | null
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          invited_by: string
+          invited_email: string
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          invited_by?: string
+          invited_email?: string
+          role?: string
+          status?: string
+          updated_at?: string
+          user_id?: string | null
+          wedding_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_collaborators_wedding_id_fkey"
+            columns: ["wedding_id"]
+            isOneToOne: false
+            referencedRelation: "weddings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wedding_coordination: {
         Row: {
           created_at: string
@@ -3976,6 +4020,7 @@ export type Database = {
       wedding_rsvp_events: {
         Row: {
           created_at: string | null
+          customization: Json
           event_date: string | null
           event_location: string | null
           event_name: string
@@ -3991,6 +4036,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
+          customization?: Json
           event_date?: string | null
           event_location?: string | null
           event_name?: string
@@ -4006,6 +4052,7 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
+          customization?: Json
           event_date?: string | null
           event_location?: string | null
           event_name?: string
@@ -4351,6 +4398,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_wedding_invitations: { Args: never; Returns: number }
       count_users_with_documents: { Args: never; Returns: number }
       generate_coordination_slug: {
         Args: { coordination_id?: string; title_input: string }
@@ -4403,6 +4451,10 @@ export type Database = {
       is_admin: { Args: never; Returns: boolean }
       is_user_premium: { Args: { user_uuid: string }; Returns: boolean }
       is_valid_share_token: { Args: { token_value: string }; Returns: boolean }
+      is_wedding_collaborator: {
+        Args: { _user_id: string; _wedding_id: string }
+        Returns: boolean
+      }
       validate_apres_jour_j_share_token: {
         Args: { token_value: string }
         Returns: {
