@@ -446,15 +446,15 @@ const RSVPPublicForm: React.FC = () => {
             <CardTitle className="text-4xl" style={{ fontFamily: guestTheme.font.heading, color: guestTheme.palette.accent }}>
               {showSchedule || visibleInfos.length > 0 ? 'Confirmer ma présence' : event.event_name}
             </CardTitle>
-            {event.event_date && (
+            {!(showSchedule || visibleInfos.length > 0) && event.event_date && (
               <p className="text-lg text-muted-foreground">
                 {formatDate(event.event_date)}
               </p>
             )}
-            {event.event_location && (
+            {!(showSchedule || visibleInfos.length > 0) && event.event_location && (
               <p className="text-muted-foreground">{event.event_location}</p>
             )}
-            {event.welcome_message && (
+            {!(showSchedule || visibleInfos.length > 0) && event.welcome_message && (
               <p className="text-muted-foreground italic mt-4">{event.welcome_message}</p>
             )}
           </CardHeader>
