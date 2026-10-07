@@ -43,10 +43,12 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
 
       let importQuery: any = supabase
         .from('wedding_guest_list')
-        .select('id, guest_first_name, guest_last_name, rsvp_status')
-        .eq('user_id', user.id);
+        .select('id, guest_first_name, guest_last_name, rsvp_status');
 
-      if (weddingId) importQuery = importQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) importQuery = importQuery.eq('wedding_id', weddingId);
+else importQuery = importQuery.eq('user_id', user.id);
 
       const { data, error } = await importQuery;
 

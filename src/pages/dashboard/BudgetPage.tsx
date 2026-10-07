@@ -49,10 +49,12 @@ const BudgetPage: React.FC = () => {
 
       let query: any = supabase
         .from('budgets_dashboard')
-        .select('*')
-        .eq('user_id', userData.user.id);
+        .select('*');
 
-      if (weddingId) query = query.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) query = query.eq('wedding_id', weddingId);
+else query = query.eq('user_id', userData.user.id);
 
       const { data, error } = await query.maybeSingle();
         

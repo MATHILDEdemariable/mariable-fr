@@ -46,10 +46,12 @@ const ImportFromDashboardModal: React.FC<Props> = ({
         if (!user) return;
         let docsQuery: any = supabase
           .from('wedding_documents')
-          .select('id, file_name, file_url, file_path, mime_type, file_size, document_type, vendor_name')
-          .eq('user_id', user.id);
+          .select('id, file_name, file_url, file_path, mime_type, file_size, document_type, vendor_name');
 
-        if (weddingId) docsQuery = docsQuery.eq('wedding_id', weddingId);
+        
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) docsQuery = docsQuery.eq('wedding_id', weddingId);
+else docsQuery = docsQuery.eq('user_id', user.id);
 
         const { data, error } = await docsQuery.order('created_at', { ascending: false });
         if (error) throw error;

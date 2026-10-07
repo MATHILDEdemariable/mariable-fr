@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useSearchParams } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -23,7 +23,10 @@ const JourMVue: React.FC = () => {
   const [weddingData, setWeddingData] = useState<WeddingData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedTeamMember, setSelectedTeamMember] = useState<string>('all');
+  const [searchParams] = useSearchParams();
+  // Lien dédié à un membre de l'équipe : ?membre=<id> n'affiche que ses tâches
+  const dedicatedMemberId = searchParams.get('membre');
+  const [selectedTeamMember, setSelectedTeamMember] = useState<string>(dedicatedMemberId || 'all');
   const [filteredTasks, setFilteredTasks] = useState<any[]>([]);
   const [isExporting, setIsExporting] = useState(false);
   const [coordinationId, setCoordinationId] = useState<string | null>(null);
@@ -208,6 +211,7 @@ const JourMVue: React.FC = () => {
   const { coordination, tasks, teamMembers, documents, pinterestLinks } = weddingData;
   
   // Filtrage des équipes avec gestion "Autre prestataire"
+  const dedicatedMember = dedicatedMemberId ? teamMembers.find((m) => m.id === dedicatedMemberId) : null;
   const people = teamMembers.filter(m => m.type === 'person' && m.role !== 'Autre prestataire');
   const vendors = teamMembers.filter(m => m.type === 'vendor' || m.role === 'Autre prestataire');
 
@@ -221,7 +225,7 @@ const JourMVue: React.FC = () => {
               {coordination.title}
             </h1>
             <p className="text-gray-600">
-              Planning partagé du mariage
+              {dedicatedMember ? `Feuille de route — ${dedicatedMember.name} (${dedicatedMember.role})` : 'Planning partagé du mariage'}
             </p>
             {coordination.wedding_date && (
               <p className="text-sm text-wedding-olive font-medium mt-2">
@@ -340,7 +344,7 @@ const JourMVue: React.FC = () => {
                   <CardTitle>Timeline du jour J</CardTitle>
                   
                   {/* Filtre par équipe */}
-                  {teamMembers.length > 0 && (
+                  {teamMembers.length > 0 && !dedicatedMember && (
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                       <Filter className="h-4 w-4 text-gray-500 shrink-0" />
                       <Select value={selectedTeamMember} onValueChange={setSelectedTeamMember}>

@@ -21,10 +21,12 @@ const PanierPage: React.FC = () => {
       if (!userData.user) return null;
       let query: any = supabase
         .from('budgets_dashboard')
-        .select('total_budget, guests_count, service_level')
-        .eq('user_id', userData.user.id);
+        .select('total_budget, guests_count, service_level');
 
-      if (weddingId) query = query.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) query = query.eq('wedding_id', weddingId);
+else query = query.eq('user_id', userData.user.id);
 
       const { data, error } = await query.maybeSingle();
       if (error) return null;

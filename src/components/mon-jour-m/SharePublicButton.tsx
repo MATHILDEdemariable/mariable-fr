@@ -1,5 +1,6 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -15,7 +16,23 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
   const [isOpen, setIsOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const { toast } = useToast();
-  const { t } = useTranslation('monJourM');
+  const { t, i18n } = useTranslation('monJourM');
+  const isEnglish = i18n.language?.startsWith('en');
+  const [teamMembers, setTeamMembers] = useState<Array<{ id: string; name: string; role: string | null }>>([]);
+
+  // Membres de l'équipe : un lien dédié par personne ou prestataire
+  useEffect(() => {
+    if (!isOpen || !coordinationId) return;
+    supabase
+      .from('coordination_team')
+      .select('id, name, role')
+      .eq('coordination_id', coordinationId)
+      .order('name')
+      .then(({ data, error }) => {
+        if (error) console.error('❌ SharePublicButton: chargement équipe impossible', error);
+        setTeamMembers(data ?? []);
+      });
+  }, [isOpen, coordinationId]);
 
   if (!coordinationId) {
     return null;
@@ -30,6 +47,16 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
   };
   
   const publicUrl = `${getPublicDomain()}/planning-public/${coordinationId}`;
+
+  const handleCopyMemberLink = async (memberId: string, memberName: string) => {
+    try {
+      await navigator.clipboard.writeText(`${publicUrl}?membre=${memberId}`);
+      toast({ title: isEnglish ? `Link for ${memberName} copied` : `Lien de ${memberName} copié` });
+    } catch (error) {
+      console.error('❌ handleCopyMemberLink failed:', error);
+      toast({ title: t('share.toasts.error'), variant: 'destructive' });
+    }
+  };
 
   const handleCopy = async () => {
     try {
@@ -91,6 +118,31 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
               {t('share.preview')}
             </Button>
           </div>
+
+          {teamMembers.length > 0 && (
+            <div className="space-y-2">
+              <p className="text-sm font-medium">
+                {isEnglish ? 'Dedicated link per team member' : 'Lien dédié par membre de l’équipe'}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                {isEnglish ? 'Each person only sees their own tasks.' : 'Chacun ne voit que ses propres tâches.'}
+              </p>
+              <ul className="max-h-60 overflow-y-auto divide-y border">
+                {teamMembers.map((member) => (
+                  <li key={member.id} className="flex items-center justify-between gap-2 px-3 py-2 text-sm">
+                    <span className="truncate">
+                      {member.name}
+                      {member.role && <span className="text-muted-foreground"> · {member.role}</span>}
+                    </span>
+                    <Button size="sm" variant="outline" className="min-h-[36px] shrink-0" onClick={() => handleCopyMemberLink(member.id, member.name)}>
+                      <Copy className="h-3 w-3 mr-1" />
+                      {t('share.copy')}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
             <p className="text-sm text-blue-700">

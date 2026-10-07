@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from '@/hooks/use-toast';
 import { Plus, Loader2, Info, Trash2 } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
+import GuestPageCustomizer from '@/components/rsvp/GuestPageCustomizer';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
@@ -34,6 +35,7 @@ interface RSVPEvent {
   require_dietary_restrictions: boolean;
   max_guests_per_invite: number;
   created_at: string;
+  customization?: any;
   sub_events?: SubEvent[];
 }
 
@@ -73,10 +75,12 @@ const RSVPManagement: React.FC = () => {
 
       let eventsQuery: any = supabase
         .from('wedding_rsvp_events')
-        .select('*')
-        .eq('user_id', user.id);
+        .select('*');
 
-      if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+else eventsQuery = eventsQuery.eq('user_id', user.id);
 
       const { data, error } = await eventsQuery.order('created_at', { ascending: false });
 
@@ -535,12 +539,14 @@ const RSVPManagement: React.FC = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {events.map((event) => (
-              <RSVPEventCard
-                key={event.id}
-                event={event}
-                onDelete={handleDelete}
-                onViewResponses={() => navigate(`/dashboard/rsvp/${event.id}/responses`)}
-              />
+              <div key={event.id} className="space-y-2">
+                <RSVPEventCard
+                  event={event}
+                  onDelete={handleDelete}
+                  onViewResponses={() => navigate(`/dashboard/rsvp/${event.id}/responses`)}
+                />
+                <GuestPageCustomizer eventId={event.id} initialCustomization={event.customization} />
+              </div>
             ))}
           </div>
         )}

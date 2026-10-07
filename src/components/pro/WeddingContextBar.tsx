@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeft } from 'lucide-react';
 import { useWedding } from '@/contexts/WeddingContext';
+import InviteCoupleDialog from './InviteCoupleDialog';
 import {
   Select,
   SelectContent,
@@ -32,7 +33,8 @@ const WeddingContextBar: React.FC = () => {
           {t('bar.myWeddings')}
         </Link>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {currentWeddingId && <InviteCoupleDialog weddingId={currentWeddingId} />}
           <span className="text-sm text-muted-foreground hidden sm:inline">{t('bar.currentWedding')}</span>
           <Select value={currentWeddingId ?? undefined} onValueChange={selectWedding}>
             <SelectTrigger className="h-8 w-[220px] rounded-none bg-background text-sm">

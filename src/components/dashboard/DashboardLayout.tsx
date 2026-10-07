@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
+import CollaboratorBanner from './CollaboratorBanner';
 import ProPremiumModal from '@/components/pro/ProPremiumModal';
 import ProSupportHost from '@/components/pro/ProSupportHost';
 interface DashboardLayoutProps {
@@ -191,6 +192,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               </div>
             )}
             <WeddingContextBar />
+            <CollaboratorBanner />
             {children || <Outlet />}
           </main>
         </div>

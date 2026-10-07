@@ -88,10 +88,12 @@ const AlbumPage: React.FC = () => {
 
       let albumQuery: any = supabase
         .from('guest_albums')
-        .select('id, title, welcome_message, share_token, is_active, expires_at, media_limit')
-        .eq('user_id', session.user.id);
+        .select('id, title, welcome_message, share_token, is_active, expires_at, media_limit');
 
-      if (weddingId) albumQuery = albumQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) albumQuery = albumQuery.eq('wedding_id', weddingId);
+else albumQuery = albumQuery.eq('user_id', session.user.id);
 
       const { data, error } = await albumQuery
         .order('created_at', { ascending: false })
