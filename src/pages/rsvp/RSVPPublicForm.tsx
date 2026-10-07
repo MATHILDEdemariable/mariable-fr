@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Loader2, CheckCircle, Heart, Calendar, MapPin } from 'lucide-react';
 import { z } from 'zod';
 import { Helmet } from 'react-helmet-async';
+import { GUEST_PAGE_FONTS_URL, GUEST_PAGE_INFO_FIELDS, GuestPageCustomization, resolveGuestPageTheme } from '@/data/guestPageThemes';
 
 interface SubEvent {
   id: string;
@@ -30,6 +31,7 @@ interface RSVPEvent {
   require_phone: boolean;
   require_dietary_restrictions: boolean;
   max_guests_per_invite: number;
+  customization?: GuestPageCustomization | null;
 }
 
 interface SubEventResponse {
@@ -358,16 +360,92 @@ const RSVPPublicForm: React.FC = () => {
     );
   }
 
+  const guestTheme = resolveGuestPageTheme(event.customization);
+  const showSchedule = event.customization?.showSchedule !== false && subEvents.length > 0;
+  const visibleInfos = GUEST_PAGE_INFO_FIELDS.filter((field) => {
+    const info = event.customization?.infos?.[field.key];
+    return info?.visible !== false && !!info?.text?.trim();
+  });
+
   return (
     <>
       <Helmet>
         <title>RSVP - {event.event_name}</title>
         <meta name="description" content={event.welcome_message || `Confirmez votre présence à ${event.event_name}`} />
       </Helmet>
-      <div className="min-h-screen bg-gradient-to-br from-wedding-olive/5 to-wedding-sage/10 py-12 px-4">
-        <Card className="max-w-2xl mx-auto">
+      <link rel="stylesheet" href={GUEST_PAGE_FONTS_URL} />
+      <div
+        className="min-h-screen py-12 px-4"
+        style={{ backgroundColor: guestTheme.palette.background, color: guestTheme.palette.text, fontFamily: guestTheme.font.body }}
+      >
+        {/* Feuille des mariés : déroulé + infos pratiques, puis formulaire */}
+        {(showSchedule || visibleInfos.length > 0) && (
+          <div className="max-w-2xl mx-auto mb-8 space-y-6">
+            <header className="text-center space-y-2 pt-4">
+              <h1 className="text-4xl sm:text-5xl" style={{ fontFamily: guestTheme.font.heading, color: guestTheme.palette.accent }}>
+                {event.event_name}
+              </h1>
+              {event.event_date && <p className="text-lg">{formatDate(event.event_date)}</p>}
+              {event.event_location && <p className="opacity-80">{event.event_location}</p>}
+              {event.welcome_message && <p className="italic opacity-80 pt-2">{event.welcome_message}</p>}
+            </header>
+
+            {showSchedule && (
+              <section className="p-6 border" style={{ backgroundColor: guestTheme.palette.surface, borderColor: `${guestTheme.palette.accent}33` }}>
+                <h2 className="text-2xl mb-4" style={{ fontFamily: guestTheme.font.heading, color: guestTheme.palette.accent }}>Le déroulé</h2>
+                <ol className="space-y-4">
+                  {subEvents.map((subEvent) => (
+                    <li key={subEvent.id} className="border-l-2 pl-4" style={{ borderColor: guestTheme.palette.accent }}>
+                      <p className="font-semibold">
+                        {subEvent.sub_event_time && `${subEvent.sub_event_time.slice(0, 5)} · `}{subEvent.sub_event_name}
+                      </p>
+                      {subEvent.sub_event_date && <p className="text-sm opacity-80">{formatDate(subEvent.sub_event_date)}</p>}
+                      {subEvent.sub_event_location && (
+                        <a
+                          href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(subEvent.sub_event_location)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-sm underline"
+                          style={{ color: guestTheme.palette.accent }}
+                        >
+                          📍 {subEvent.sub_event_location}
+                        </a>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </section>
+            )}
+
+            {visibleInfos.map((field) => (
+              <section key={field.key} className="p-6 border" style={{ backgroundColor: guestTheme.palette.surface, borderColor: `${guestTheme.palette.accent}33` }}>
+                <h2 className="text-2xl mb-2" style={{ fontFamily: guestTheme.font.heading, color: guestTheme.palette.accent }}>
+                  {field.emoji} {field.labelFr}
+                </h2>
+                <p className="whitespace-pre-line">{event.customization?.infos?.[field.key]?.text}</p>
+                {field.key === 'registry' && /^https?:\/\//.test(event.customization?.registryUrl ?? '') && (
+                  <a href={event.customization!.registryUrl} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 px-4 py-2 text-sm" style={{ backgroundColor: guestTheme.palette.accent, color: guestTheme.palette.surface }}>
+                    Accéder à la cagnotte
+                  </a>
+                )}
+              </section>
+            ))}
+          </div>
+        )}
+
+        <a
+          href="#rsvp-form"
+          className="sm:hidden fixed bottom-4 left-4 right-4 z-40 text-center py-3 shadow-lg"
+          style={{ backgroundColor: guestTheme.palette.accent, color: guestTheme.palette.surface }}
+        >
+          Confirmer ma présence
+        </a>
+
+        <Card id="rsvp-form" className="max-w-2xl mx-auto rounded-none scroll-mt-6" style={{ backgroundColor: guestTheme.palette.surface }}>
           <CardHeader className="text-center space-y-4">
-            <CardTitle className="text-4xl font-serif">{event.event_name}</CardTitle>
+            <CardTitle className="text-4xl" style={{ fontFamily: guestTheme.font.heading, color: guestTheme.palette.accent }}>
+              {showSchedule || visibleInfos.length > 0 ? 'Confirmer ma présence' : event.event_name}
+            </CardTitle>
             {event.event_date && (
               <p className="text-lg text-muted-foreground">
                 {formatDate(event.event_date)}
