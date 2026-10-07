@@ -83,7 +83,7 @@ const RSVPPublicForm: React.FC = () => {
         .single();
 
       if (error) throw error;
-      setEvent(data);
+      setEvent(data as unknown as RSVPEvent);
 
       // Charger les sous-événements
       if (data) {
