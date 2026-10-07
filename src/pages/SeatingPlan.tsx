@@ -174,22 +174,19 @@ const SeatingPlan = () => {
     });
   };
 
+  // Gestion des tables accessible à tous (seuls IA et guides sont premium)
   const handleAddTable = () => {
-    executeAction(() => {
-      setEditingTable(null);
-      setShowTableEditor(true);
-    });
+    setEditingTable(null);
+    setShowTableEditor(true);
   };
 
   const handleEditTable = (table: SeatingTable) => {
-    executeAction(() => {
-      setEditingTable(table);
-      setShowTableEditor(true);
-    });
+    setEditingTable(table);
+    setShowTableEditor(true);
   };
 
   const handleDeleteTable = (tableId: string) => {
-    executeAction(async () => {
+    const runDelete = async () => {
     const tableGuests = guests.filter(g => g.table_id === tableId);
     if (tableGuests.length > 0) {
       if (!confirm(`Cette table contient ${tableGuests.length} invité(s). Voulez-vous vraiment la supprimer ?`)) {

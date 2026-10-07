@@ -868,7 +868,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           website: contact.website,
           location: contact.city,
           prestataire_id: contact.prestataire_id,
-          source: 'address_book',
+          source: contact.prestataire_id ? 'mariable' : 'personal', // contrainte DB : 'mariable' | 'personal'
         })}
       />
       

@@ -71,9 +71,9 @@ export const MariableCatalogList: React.FC<MariableCatalogListProps> = ({ action
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-3 min-w-0 w-full">
       <Input placeholder="Nom, ville…" value={search} onChange={(e) => setSearch(e.target.value)} className="rounded-none" />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex gap-1.5 overflow-x-auto pb-1 min-w-0 [&>button]:shrink-0 [&>button]:whitespace-nowrap">
         {['all', ...categories].map((c) => (
           <button
             key={c}
@@ -122,11 +122,11 @@ interface MariableCatalogDialogProps extends MariableCatalogListProps {
 
 const MariableCatalogDialog: React.FC<MariableCatalogDialogProps> = ({ open, onOpenChange, title, ...listProps }) => (
   <Dialog open={open} onOpenChange={onOpenChange}>
-    <DialogContent className="sm:max-w-2xl rounded-none">
+    <DialogContent className="sm:max-w-2xl w-[calc(100vw-2rem)] rounded-none grid-cols-1 overflow-hidden">
       <DialogHeader>
         <DialogTitle className="font-serif text-xl text-wedding-olive">{title}</DialogTitle>
       </DialogHeader>
-      {open && <MariableCatalogList {...listProps} />}
+      <div className="min-w-0">{open && <MariableCatalogList {...listProps} />}</div>
     </DialogContent>
   </Dialog>
 );
