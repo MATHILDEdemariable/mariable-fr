@@ -55,7 +55,7 @@ const DrinksPlanPublic: React.FC = () => {
       <div className="max-w-4xl mx-auto">
         <header className="flex items-center justify-between gap-4 mb-8">
           <div className="flex items-center gap-3">
-            <img src="/lovable-uploads/cachet_M.webp" alt="Mariable" className="h-12" onError={(e) => (e.currentTarget.style.display = 'none')} />
+            <img src="/cachet_M.webp" alt="Mariable" className="h-12" onError={(e) => (e.currentTarget.style.display = 'none')} />
             <div>
               <h1 className="font-serif text-3xl">{tr('Plan des boissons', 'Drinks plan')}</h1>
               {plan?.wedding_title && (
