@@ -59,6 +59,7 @@ const UserDashboard = lazy(() => import("./pages/dashboard/UserDashboard"));
 const JourMVue = lazy(() => import("./pages/JourMVue"));
 const PlanningPublic = lazy(() => import("./pages/PlanningPublic"));
 const RetroplanningPublic = lazy(() => import("./pages/RetroplanningPublic"));
+const DrinksPlanPublic = lazy(() => import("./pages/DrinksPlanPublic"));
 const PlanningPublicProject = lazy(() => import("./pages/PlanningPublicProject"));
 const MonJourMPlanningPage = lazy(() => import("./pages/MonJourMPlanning"));
 const MonJourMEquipePage = lazy(() => import("./pages/MonJourMEquipe"));
@@ -225,6 +226,7 @@ function App() {
                    <Route path="/dashboard/*" element={<UserDashboard />} />
                    <Route path="/jour-m-vue/:token" element={<JourMVue />} />
                    <Route path="/retroplanning-public/:token" element={<RetroplanningPublic />} />
+                   <Route path="/boissons-partagees/:token" element={<DrinksPlanPublic />} />
                    
                    {/* Nouvelles pages outils */}
           <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
