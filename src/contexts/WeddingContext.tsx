@@ -42,6 +42,8 @@ interface WeddingContextType {
   setWeddingArchived: (weddingId: string, archived: boolean) => Promise<void>;
   archivedWeddings: Wedding[];
   canCreateMoreWeddings: boolean;
+  /** Vrai quand le compte connecté est invité (mariés) sur le mariage d'un pro */
+  isWeddingCollaborator: boolean;
 }
 
 const STORAGE_KEY = 'mariable:current-wedding-id';
@@ -227,6 +229,9 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
   const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || activeWeddings.length < 1;
 
+  const currentOwnerId = activeWeddings.find((w) => w.id === currentWeddingId)?.owner_id;
+  const isWeddingCollaborator = !!user && !!currentOwnerId && currentOwnerId !== user.id;
+
   const value = useMemo<WeddingContextType>(
     () => ({
       accountType,
@@ -241,8 +246,9 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
       updateWedding,
       setWeddingArchived,
       canCreateMoreWeddings,
+      isWeddingCollaborator,
     }),
-    [accountType, activeWeddings, archivedWeddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, updateWedding, setWeddingArchived, canCreateMoreWeddings]
+    [isWeddingCollaborator, accountType, activeWeddings, archivedWeddings, currentWeddingId, loading, selectWedding, loadAll, createWedding, updateWedding, setWeddingArchived, canCreateMoreWeddings]
   );
 
   return <WeddingContext.Provider value={value}>{children}</WeddingContext.Provider>;
