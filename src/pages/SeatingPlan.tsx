@@ -115,7 +115,7 @@ const SeatingPlan = () => {
   };
 
   const handleDragEnd = (result: DropResult) => {
-    executeAction(async () => {
+    (async () => {
       const { source, destination, draggableId } = result;
 
     if (!destination) return;
@@ -171,7 +171,7 @@ const SeatingPlan = () => {
 
       setGuests(guests.map(g => g.id === guestId ? { ...g, table_id: targetTableId } : g));
       toast({ title: 'Invité déplacé avec succès' });
-    });
+    })();
   };
 
   // Gestion des tables accessible à tous (seuls IA et guides sont premium)
