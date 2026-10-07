@@ -66,10 +66,12 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
 
     let eventsQuery: any = supabase
       .from('wedding_rsvp_events')
-      .select('id, event_name, event_date')
-      .eq('user_id', user.id);
+      .select('id, event_name, event_date');
 
-    if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+    
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+else eventsQuery = eventsQuery.eq('user_id', user.id);
 
     const { data } = await eventsQuery.order('event_date', { ascending: false });
 

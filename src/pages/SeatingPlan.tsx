@@ -65,10 +65,12 @@ const SeatingPlan = () => {
       // Charger ou créer le plan de table
       let plansQuery: any = supabase
         .from('seating_plans')
-        .select('id, user_id, name, event_date, venue_name, notes, created_at, updated_at')
-        .eq('user_id', user.id);
+        .select('id, user_id, name, event_date, venue_name, notes, created_at, updated_at');
 
-      if (weddingId) plansQuery = plansQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) plansQuery = plansQuery.eq('wedding_id', weddingId);
+else plansQuery = plansQuery.eq('user_id', user.id);
 
       let { data: plans } = await plansQuery
         .order('created_at', { ascending: false })

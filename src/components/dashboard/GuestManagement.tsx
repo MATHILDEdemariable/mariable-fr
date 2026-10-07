@@ -56,10 +56,12 @@ const GuestManagement: React.FC = () => {
         if (user) {
           let guestQuery: any = supabase
             .from('budgets_dashboard')
-            .select('*')
-            .eq('user_id', user.id);
+            .select('*');
 
-          if (weddingId) guestQuery = guestQuery.eq('wedding_id', weddingId);
+          
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) guestQuery = guestQuery.eq('wedding_id', weddingId);
+else guestQuery = guestQuery.eq('user_id', user.id);
 
           const { data, error } = await guestQuery
             .order('updated_at', { ascending: false })
@@ -101,10 +103,12 @@ const GuestManagement: React.FC = () => {
         // Get existing budgets data first
         let existingQuery: any = supabase
           .from('budgets_dashboard')
-          .select('*')
-          .eq('user_id', user.id);
+          .select('*');
 
-        if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+        
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+else existingQuery = existingQuery.eq('user_id', user.id);
 
         const { data: existingData, error: fetchError } = await existingQuery
           .order('updated_at', { ascending: false })

@@ -73,10 +73,12 @@ const RSVPManagement: React.FC = () => {
 
       let eventsQuery: any = supabase
         .from('wedding_rsvp_events')
-        .select('*')
-        .eq('user_id', user.id);
+        .select('*');
 
-      if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) eventsQuery = eventsQuery.eq('wedding_id', weddingId);
+else eventsQuery = eventsQuery.eq('user_id', user.id);
 
       const { data, error } = await eventsQuery.order('created_at', { ascending: false });
 

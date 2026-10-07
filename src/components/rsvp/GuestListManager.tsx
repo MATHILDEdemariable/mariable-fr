@@ -48,10 +48,12 @@ const GuestListManager: React.FC = () => {
 
       let guestsQuery: any = supabase
         .from('wedding_guest_list')
-        .select('*')
-        .eq('user_id', user.id);
+        .select('*');
 
-      if (weddingId) guestsQuery = guestsQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) guestsQuery = guestsQuery.eq('wedding_id', weddingId);
+else guestsQuery = guestsQuery.eq('user_id', user.id);
 
       const { data, error } = await guestsQuery.order('created_at', { ascending: false });
 

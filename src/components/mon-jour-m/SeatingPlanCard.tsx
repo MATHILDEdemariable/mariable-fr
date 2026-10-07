@@ -33,10 +33,12 @@ const SeatingPlanCard: React.FC = () => {
       // Récupérer le seating plan de l'utilisateur
       let statsPlanQuery: any = supabase
         .from('seating_plans')
-        .select('id')
-        .eq('user_id', user.id);
+        .select('id');
 
-      if (weddingId) statsPlanQuery = statsPlanQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) statsPlanQuery = statsPlanQuery.eq('wedding_id', weddingId);
+else statsPlanQuery = statsPlanQuery.eq('user_id', user.id);
 
       const { data: plan } = await statsPlanQuery.maybeSingle();
 
@@ -80,10 +82,12 @@ const SeatingPlanCard: React.FC = () => {
       // Récupérer le seating plan complet
       let exportPlanQuery: any = supabase
         .from('seating_plans')
-        .select('id')
-        .eq('user_id', user.id);
+        .select('id');
 
-      if (weddingId) exportPlanQuery = exportPlanQuery.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) exportPlanQuery = exportPlanQuery.eq('wedding_id', weddingId);
+else exportPlanQuery = exportPlanQuery.eq('user_id', user.id);
 
       const { data: plan } = await exportPlanQuery.maybeSingle();
 

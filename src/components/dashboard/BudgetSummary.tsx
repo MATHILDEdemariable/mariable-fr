@@ -530,10 +530,12 @@ const BudgetSummary: React.FC = () => {
         if (user) {
           let budgetsQuery: any = supabase
             .from('budgets_dashboard')
-            .select('*')
-            .eq('user_id', user.id);
+            .select('*');
 
-          if (weddingId) budgetsQuery = budgetsQuery.eq('wedding_id', weddingId);
+          
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) budgetsQuery = budgetsQuery.eq('wedding_id', weddingId);
+else budgetsQuery = budgetsQuery.eq('user_id', user.id);
 
           const { data: budgets } = await budgetsQuery
             .order('created_at', { ascending: false })

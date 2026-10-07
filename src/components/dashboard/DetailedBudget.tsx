@@ -116,10 +116,12 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
       
       let query: any = supabase
         .from('budgets_detail')
-        .select('*')
-        .eq('user_id', userData.user.id);
+        .select('*');
 
-      if (weddingId) query = query.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) query = query.eq('wedding_id', weddingId);
+else query = query.eq('user_id', userData.user.id);
 
       const { data, error } = await query;
         
@@ -137,10 +139,12 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
       
       let query: any = supabase
         .from('budgets_dashboard')
-        .select('*')
-        .eq('user_id', userData.user.id);
+        .select('*');
 
-      if (weddingId) query = query.eq('wedding_id', weddingId);
+      
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) query = query.eq('wedding_id', weddingId);
+else query = query.eq('user_id', userData.user.id);
 
       const { data, error } = await query.maybeSingle();
         
@@ -329,10 +333,12 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
         // Check if record already exists
         let existingQuery: any = supabase
           .from('budgets_dashboard')
-          .select('id')
-          .eq('user_id', userData.user.id);
+          .select('id');
 
-        if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+        
+// Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
+if (weddingId) existingQuery = existingQuery.eq('wedding_id', weddingId);
+else existingQuery = existingQuery.eq('user_id', userData.user.id);
 
         const { data: existingData, error: fetchError } = await existingQuery.maybeSingle();
 
