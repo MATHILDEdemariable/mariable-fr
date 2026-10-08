@@ -84,30 +84,16 @@ const PlanningPublicProject: React.FC = () => {
       const coordinationId = tokenData[0].coordination_id;
 
       // Récupérer les données de coordination
-      const { data: coordination, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('id', coordinationId)
-        .maybeSingle();
+      const { data: publicData, error: coordError } = await supabase
+        .rpc('get_public_coordination' as any, { target_coordination_id: coordinationId });
 
+      const coordination = (publicData as any)?.coordination;
       if (coordError || !coordination) {
         throw new Error('Planning Mission Mariage non trouvé');
       }
 
-      // Récupérer les tâches de type 'project'
-      const { data: tasks, error: tasksError } = await supabase
-        .from('coordination_planning')
-        .select('*')
-        .eq('coordination_id', coordinationId)
-        .eq('category', 'project')
-        .order('position');
-
-      // Récupérer l'équipe
-      const { data: teamMembers, error: teamError } = await supabase
-        .from('coordination_team')
-        .select('*')
-        .eq('coordination_id', coordinationId)
-        .order('created_at');
+      const tasks = ((publicData as any)?.tasks || []).filter((task: any) => task.category === 'project');
+      const teamMembers = (publicData as any)?.team || [];
 
       // Récupérer les documents de type 'project' (avec file_url pour vraie visualisation)
       const { data: documents, error: docsError } = await supabase

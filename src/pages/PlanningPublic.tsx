@@ -85,17 +85,16 @@ const PlanningPublic: React.FC = () => {
       console.log('📋 Loading public coordination data for:', id);
 
       // Récupérer les données de coordination
-      const { data: coordination, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('id', id)
-        .maybeSingle();
+      // Lecture sécurisée : uniquement le mariage correspondant au lien
+      const { data: publicData, error: coordError } = await supabase
+        .rpc('get_public_coordination' as any, { target_coordination_id: id });
 
       if (coordError) {
         console.error('❌ Error loading coordination:', coordError);
         throw new Error(t('public.loadError', { message: coordError.message }));
       }
 
+      const coordination = (publicData as any)?.coordination;
       if (!coordination) {
         throw new Error(t('public.planningNotFound'));
       }
@@ -103,20 +102,8 @@ const PlanningPublic: React.FC = () => {
       // Détecter le type de planning basé sur l'URL ou les paramètres
       const planningType = window.location.pathname.includes('/planning-public-project/') ? 'project' : 'jour-m';
       
-      // Récupérer les tâches selon le type
-      const { data: tasks, error: tasksError } = await supabase
-        .from('coordination_planning')
-        .select('*')
-        .eq('coordination_id', id)
-        .eq('category', planningType)
-        .order('position');
-
-      // Récupérer l'équipe
-      const { data: teamMembers, error: teamError } = await supabase
-        .from('coordination_team')
-        .select('*')
-        .eq('coordination_id', id)
-        .order('created_at');
+      const tasks = ((publicData as any)?.tasks || []).filter((task: any) => task.category === planningType);
+      const teamMembers = (publicData as any)?.team || [];
 
       // Récupérer les documents selon le type (avec file_url pour vraie visualisation)
       const { data: documents, error: docsError } = await supabase
