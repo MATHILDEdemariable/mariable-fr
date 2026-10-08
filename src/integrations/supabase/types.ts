@@ -4404,6 +4404,10 @@ export type Database = {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
       }
+      get_public_coordination: {
+        Args: { target_coordination_id: string }
+        Returns: Json
+      }
       get_public_drinks_plan: {
         Args: { token_value: string }
         Returns: {
