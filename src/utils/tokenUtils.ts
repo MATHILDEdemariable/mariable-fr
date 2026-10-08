@@ -71,45 +71,23 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
     console.log('📋 Loading public coordination data for:', coordinationId);
 
     // Récupérer les données de coordination avec maybeSingle()
-    const { data: coordination, error: coordError } = await publicSupabase
-      .from('wedding_coordination')
-      .select('id, title, description, wedding_date, wedding_location, user_id, created_at, updated_at')
-      .eq('id', coordinationId)
-      .maybeSingle();
-
-    console.log('📊 Coordination query result:', { coordination, coordError });
+    // Lecture sécurisée : uniquement le mariage correspondant au lien
+    const { data: publicData, error: coordError } = await publicSupabase
+      .rpc('get_public_coordination', { target_coordination_id: coordinationId });
 
     if (coordError) {
       console.error('❌ Error loading coordination:', coordError);
       throw new Error(`Erreur lors du chargement de la coordination: ${coordError.message}`);
     }
 
+    const coordination = (publicData as any)?.coordination;
     if (!coordination) {
       console.error('❌ No coordination found for ID:', coordinationId);
       throw new Error('Données de coordination non trouvées - ID invalide');
     }
 
-    // Récupérer les tâches
-    const { data: tasks, error: tasksError } = await publicSupabase
-      .from('coordination_planning')
-      .select('id, title, description, category, start_time, end_time, duration, position, priority, assigned_to, parallel_group')
-      .eq('coordination_id', coordinationId)
-      .order('position');
-
-    if (tasksError) {
-      console.error('❌ Error loading tasks:', tasksError);
-    }
-
-    // Récupérer l'équipe
-    const { data: teamMembers, error: teamError } = await publicSupabase
-      .from('coordination_team')
-      .select('id, name, role, type, email, phone, notes, prestataire_id')
-      .eq('coordination_id', coordinationId)
-      .order('created_at');
-
-    if (teamError) {
-      console.error('❌ Error loading team:', teamError);
-    }
+    const tasks = (publicData as any)?.tasks || [];
+    const teamMembers = (publicData as any)?.team || [];
 
     // Récupérer les documents (titres seulement pour la vue publique)
     const { data: documents, error: docsError } = await publicSupabase
