@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { ArrowLeft, Calendar, Users, FileText, Lightbulb, PenTool } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SharePublicButton from './SharePublicButton';
+import { useWedding } from '@/contexts/WeddingContext';
 
 interface MonJourMLayoutProps {
   children?: React.ReactNode;
@@ -14,7 +15,9 @@ interface MonJourMLayoutProps {
 const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationId }) => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const { t } = useTranslation('monJourM');
+  const { t, i18n } = useTranslation('monJourM');
+  const { isWeddingCollaborator } = useWedding();
+  const isEnglish = i18n.language?.startsWith('en');
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -105,7 +108,26 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
       </div>
 
       <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
-        {children}
+        {isWeddingCollaborator ? (
+          <>
+            <div role="status" className="mb-6 border border-border bg-[#F8F5EF] p-4 sm:p-5">
+              <p className="font-serif text-lg">
+                {isEnglish ? 'Managed by your wedding planner: ' : 'Géré par votre wedding planner : '}
+                <span className="break-all">https://mariable.fr/mon-jour-m/planning</span>
+              </p>
+              <p className="mt-1 text-sm text-muted-foreground">
+                {isEnglish
+                  ? 'The minute-by-minute schedule of the big day is coordinated by your wedding planner. You can view the planned steps in read-only mode.'
+                  : 'Le déroulé minute par minute du Jour J est directement coordonné par votre wedding planner. Vous pouvez consulter les étapes prévues en lecture seule.'}
+              </p>
+            </div>
+            <div aria-disabled="true" className="pointer-events-none select-none opacity-60 grayscale">
+              {children}
+            </div>
+          </>
+        ) : (
+          children
+        )}
       </div>
     </div>
   );
