@@ -72,13 +72,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
 
     try {
-      // Relie les invitations « mariés » envoyées à l'email de ce compte
-      try {
-        await db.rpc('accept_wedding_invitations');
-      } catch (inviteError) {
-        console.error('❌ WeddingContext: acceptation des invitations impossible', inviteError);
-      }
-
+      // Les invitations « mariés » sont acceptées explicitement (bandeau du tableau de bord)
       const [profileRes, weddingsRes] = await Promise.all([
         db
           .from('profiles')

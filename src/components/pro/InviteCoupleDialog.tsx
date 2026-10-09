@@ -53,20 +53,26 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('not signed in');
-      const { error } = await db.from('wedding_collaborators').insert({
+      const { data: invitation, error } = await db.from('wedding_collaborators').insert({
         wedding_id: weddingId,
         invited_by: user.id,
         invited_email: email,
         role: 'couple',
-      });
+      }).select('id').single();
       if (error) throw error;
+      // Email : mariés en destinataire, wedding planner en copie, Mariable en copie cachée
+      const { data: emailResult, error: emailError } = await supabase.functions.invoke('send-couple-collaboration-invite', {
+        body: { invitationId: invitation.id },
+      });
+      if (emailError || emailResult?.error) console.error('❌ invitation email failed:', emailError || emailResult?.error);
+      const emailSent = !emailError && !emailResult?.error;
       setCoupleEmail('');
       await loadCollaborators();
       toast({
         title: isEnglish ? 'Couple invited' : 'Mariés invités',
-        description: isEnglish
-          ? 'Send them the link: they sign in or sign up with this email.'
-          : 'Envoyez-leur le lien : ils se connectent ou s’inscrivent avec cet email.',
+        description: emailSent
+          ? (isEnglish ? 'An email was sent to them (you are in copy).' : 'Un email leur a été envoyé (vous êtes en copie).')
+          : (isEnglish ? 'Email could not be sent: send them the link below.' : 'L’email n’a pas pu partir : envoyez-leur le lien ci-dessous.'),
       });
     } catch (error: any) {
       console.error('❌ handleInvite failed:', error);
@@ -130,7 +136,7 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
                 <span className="truncate">{collaborator.invited_email}</span>
                 <span className="flex items-center gap-2 shrink-0">
                   <span className="text-xs text-muted-foreground">
-                    {collaborator.status === 'accepted' ? (isEnglish ? 'Joined' : 'A rejoint') : isEnglish ? 'Pending' : 'En attente'}
+                    {collaborator.status === 'accepted' ? (isEnglish ? 'Joined' : 'A rejoint') : collaborator.status === 'declined' ? (isEnglish ? 'Declined' : 'Refusée') : isEnglish ? 'Pending' : 'En attente'}
                   </span>
                   <button onClick={() => handleRemove(collaborator.id)} aria-label={isEnglish ? 'Remove' : 'Retirer'} className="p-1 text-muted-foreground hover:text-destructive">
                     <Trash2 className="h-4 w-4" />
