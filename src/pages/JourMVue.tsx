@@ -55,7 +55,13 @@ const JourMVue: React.FC = () => {
       .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_documents', filter: `coordination_id=eq.${coordinationId}` }, refreshSharedData)
       .subscribe();
 
+    // Les visiteurs anonymes ne reçoivent plus les événements Realtime des tables
+    // coordination (lecture publique fermée pour sécurité) : rechargement automatique
+    // toutes les 60 s pour que le planning partagé reste à jour le jour J.
+    const refreshInterval = window.setInterval(refreshSharedData, 60000);
+
     return () => {
+      window.clearInterval(refreshInterval);
       supabase.removeChannel(channel);
     };
   }, [coordinationId, token]);
