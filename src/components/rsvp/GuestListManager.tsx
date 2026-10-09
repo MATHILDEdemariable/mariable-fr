@@ -5,9 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users } from 'lucide-react';
+import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users, Sparkles } from 'lucide-react';
 import GuestImportDialog from './GuestImportDialog';
 import GuestManualAdd from './GuestManualAdd';
+import GuestBulkNotesDialog from './GuestBulkNotesDialog';
 import GuestEditDialog from './GuestEditDialog';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 
@@ -32,6 +33,7 @@ const GuestListManager: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [isImportOpen, setIsImportOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [isBulkNotesOpen, setIsBulkNotesOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [editingGuest, setEditingGuest] = useState<Guest | null>(null);
   const { toast } = useToast();
@@ -204,11 +206,15 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
           </Button>
           <Button variant="outline" onClick={() => setIsImportOpen(true)}>
             <Upload className="h-4 w-4 mr-2" />
-            Importer
+            Importer un fichier
+          </Button>
+          <Button variant="outline" onClick={() => setIsBulkNotesOpen(true)}>
+            <Sparkles className="h-4 w-4 mr-2" />
+            Notes en vrac (IA)
           </Button>
           <Button onClick={() => setIsAddOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Ajouter
+            Ajouter un invité
           </Button>
         </div>
       </div>
@@ -239,6 +245,10 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
               <Button variant="outline" onClick={() => setIsImportOpen(true)}>
                 <Upload className="h-4 w-4 mr-2" />
                 Importer un fichier
+              </Button>
+              <Button variant="outline" onClick={() => setIsBulkNotesOpen(true)}>
+                <Sparkles className="h-4 w-4 mr-2" />
+                Notes en vrac (IA)
               </Button>
             </div>
           </CardContent>
@@ -336,6 +346,12 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
         isOpen={isImportOpen}
         onClose={() => setIsImportOpen(false)}
         onImported={loadGuests}
+      />
+
+      <GuestBulkNotesDialog
+        isOpen={isBulkNotesOpen}
+        onClose={() => setIsBulkNotesOpen(false)}
+        onAdded={loadGuests}
       />
 
       <GuestManualAdd

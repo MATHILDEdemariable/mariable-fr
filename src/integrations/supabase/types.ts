@@ -4404,6 +4404,15 @@ export type Database = {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
       }
+      get_my_pending_wedding_invitations: {
+        Args: never
+        Returns: {
+          created_at: string
+          invitation_id: string
+          inviter_name: string
+          wedding_title: string
+        }[]
+      }
       get_public_coordination: {
         Args: { target_coordination_id: string }
         Returns: Json
@@ -4457,6 +4466,10 @@ export type Database = {
       is_valid_share_token: { Args: { token_value: string }; Returns: boolean }
       is_wedding_collaborator: {
         Args: { _user_id: string; _wedding_id: string }
+        Returns: boolean
+      }
+      respond_wedding_invitation: {
+        Args: { accept_invitation: boolean; target_invitation_id: string }
         Returns: boolean
       }
       validate_apres_jour_j_share_token: {
