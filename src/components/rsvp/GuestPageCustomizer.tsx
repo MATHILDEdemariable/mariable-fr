@@ -21,10 +21,12 @@ interface GuestPageCustomizerProps {
   eventId: string;
   initialCustomization?: GuestPageCustomization | null;
   onSaved?: (customization: GuestPageCustomization) => void;
+  /** Affiche les réglages directement dans la page (vue Mini-site) au lieu d'une fenêtre */
+  inline?: boolean;
 }
 
 /** Réglages de la feuille des mariés : couleurs, police et infos pratiques. */
-const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, initialCustomization, onSaved }) => {
+const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, initialCustomization, onSaved, inline = false }) => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith('en');
   const { toast } = useToast();
@@ -63,24 +65,8 @@ const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, init
     }
   };
 
-  return (
+  const settingsContent = (
     <>
-      <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => setOpen(true)}>
-        <Palette className="h-4 w-4 mr-1" />
-        {isEnglish ? 'Customise the guest page' : 'Personnaliser la page invités'}
-      </Button>
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-none">
-          <link rel="stylesheet" href={GUEST_PAGE_FONTS_URL} />
-          <DialogHeader>
-            <DialogTitle className="font-serif">{isEnglish ? 'Your guest page' : 'Votre feuille des mariés'}</DialogTitle>
-            <DialogDescription>
-              {isEnglish
-                ? 'Key information for your guests, with the RSVP form at the bottom.'
-                : 'Les infos clés pour vos invités, avec le formulaire de réponse en bas de page.'}
-            </DialogDescription>
-          </DialogHeader>
-
           <section className="space-y-2">
             <h3 className="text-sm font-medium">{isEnglish ? 'Colours' : 'Couleurs'}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -172,6 +158,37 @@ const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, init
           <Button onClick={handleSave} disabled={saving} className="w-full rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : isEnglish ? 'Save' : 'Enregistrer'}
           </Button>
+    </>
+  );
+
+  if (inline) {
+    return (
+      <div className="space-y-6">
+        <link rel="stylesheet" href={GUEST_PAGE_FONTS_URL} />
+        {settingsContent}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => setOpen(true)}>
+        <Palette className="h-4 w-4 mr-1" />
+        {isEnglish ? 'Customise the guest page' : 'Personnaliser la page invités'}
+      </Button>
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto rounded-none">
+          <link rel="stylesheet" href={GUEST_PAGE_FONTS_URL} />
+          <DialogHeader>
+            <DialogTitle className="font-serif">{isEnglish ? 'Your guest page' : 'Votre feuille des mariés'}</DialogTitle>
+            <DialogDescription>
+              {isEnglish
+                ? 'Key information for your guests, with the RSVP form at the bottom.'
+                : 'Les infos clés pour vos invités, avec le formulaire de réponse en bas de page.'}
+            </DialogDescription>
+          </DialogHeader>
+
+          {settingsContent}
         </DialogContent>
       </Dialog>
     </>
