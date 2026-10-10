@@ -96,23 +96,28 @@ const RSVPTabs: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-serif">{isEnglish ? 'Guest management' : 'Gestion Invités'}</h1>
-          <p className="text-muted-foreground mt-2">
-            {isEnglish ? 'Your list, the response form and the page shared with your guests.' : 'Votre liste, le formulaire réponse et la page partagée à vos invités.'}
-          </p>
-        </div>
-        <Select value={currentView} onValueChange={handleViewChange}>
-          <SelectTrigger className="w-full md:w-80 h-12 rounded-none font-serif text-base" aria-label={isEnglish ? 'Choose a view' : 'Choisir une vue'}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent className="rounded-none">
-            {GUEST_VIEWS.map((view) => (
-              <SelectItem key={view} value={view} className="font-serif text-base min-h-[44px]">{viewLabels[view]}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
+      <div>
+        <h1 className="text-3xl font-serif">{isEnglish ? 'Guest management' : 'Gestion Invités'}</h1>
+        <p className="text-muted-foreground mt-2">
+          {isEnglish ? 'Your list, the response form and the page shared with your guests.' : 'Votre liste, le formulaire réponse et la page partagée à vos invités.'}
+        </p>
+      </div>
+      <div role="tablist" aria-label={isEnglish ? 'Choose a view' : 'Choisir une vue'} className="grid grid-cols-1 sm:grid-cols-3 gap-1 p-1 bg-muted">
+        {GUEST_VIEWS.map((view) => {
+          const isActive = currentView === view;
+          return (
+            <button
+              key={view}
+              type="button"
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => handleViewChange(view)}
+              className={`min-h-[48px] px-3 text-sm sm:text-base font-medium transition-colors ${isActive ? 'bg-foreground text-background' : 'text-muted-foreground hover:bg-background hover:text-foreground'}`}
+            >
+              {viewLabels[view]}
+            </button>
+          );
+        })}
       </div>
 
       {currentView === 'liste' && <GuestListManager />}

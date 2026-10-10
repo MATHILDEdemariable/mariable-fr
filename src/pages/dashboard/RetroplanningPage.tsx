@@ -22,9 +22,13 @@ const RetroplanningPage = () => {
       }}
       className="space-y-6"
     >
-      <TabsList className="grid grid-cols-2 w-full max-w-md mx-auto">
-        <TabsTrigger value="ai">{isEnglish ? 'With AI' : 'Avec l\'IA'}</TabsTrigger>
-        <TabsTrigger value="manual">{isEnglish ? 'Manual' : 'Manuel'}</TabsTrigger>
+      <TabsList className="grid grid-cols-2 w-full h-auto p-1 bg-muted rounded-none">
+        <TabsTrigger value="ai" className="min-h-[48px] rounded-none font-medium text-sm sm:text-base data-[state=active]:bg-foreground data-[state=active]:text-background">
+          ✨ {isEnglish ? 'With AI' : 'Avec l\'IA'}
+        </TabsTrigger>
+        <TabsTrigger value="manual" className="min-h-[48px] rounded-none font-medium text-sm sm:text-base data-[state=active]:bg-foreground data-[state=active]:text-background">
+          ✍️ {isEnglish ? 'Manual' : 'Manuel'}
+        </TabsTrigger>
       </TabsList>
       <TabsContent value="ai" className="space-y-4">
         {aiRetroplanningId && (
