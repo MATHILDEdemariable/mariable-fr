@@ -46,6 +46,7 @@ const RSVPManagement: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingEventId, setEditingEventId] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
 
@@ -230,6 +231,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
   };
 
   const resetForm = () => {
+    setEditingEventId(null);
     setEventName(t('rsvp.defaultEventName'));
     setEventDate('');
     setEventLocation('');
@@ -239,6 +241,55 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
     setMaxGuests(2);
     setCustomSlug('');
     setSubEvents([]);
+  };
+
+  const handleDialogOpenChange = (open: boolean) => {
+    setIsDialogOpen(open);
+    if (!open && editingEventId) resetForm();
+  };
+
+  /** Pré-remplit le formulaire avec un événement existant pour le modifier */
+  const openEditDialog = (event: RSVPEvent) => {
+    setEditingEventId(event.id);
+    setEventName(event.event_name ?? '');
+    setEventDate(event.event_date ?? '');
+    setEventLocation(event.event_location ?? '');
+    setWelcomeMessage(event.welcome_message ?? '');
+    setRequirePhone(!!(event as any).require_phone);
+    setRequireDietary((event as any).require_dietary_restrictions !== false);
+    setMaxGuests(event.max_guests_per_invite ?? 2);
+    setIsDialogOpen(true);
+  };
+
+  const handleUpdateEvent = async () => {
+    if (!editingEventId) return;
+    if (!eventName.trim()) {
+      toast({ title: t('rsvp.errors.title'), description: t('rsvp.errors.nameRequired'), variant: 'destructive' });
+      return;
+    }
+    setCreating(true);
+    try {
+      const updates = {
+        event_name: eventName.trim(),
+        event_date: eventDate || null,
+        event_location: eventLocation || null,
+        welcome_message: welcomeMessage,
+        require_phone: requirePhone,
+        require_dietary_restrictions: requireDietary,
+        max_guests_per_invite: maxGuests,
+      };
+      const { error } = await supabase.from('wedding_rsvp_events').update(updates).eq('id', editingEventId);
+      if (error) throw error;
+      setEvents((prev) => prev.map((item) => (item.id === editingEventId ? { ...item, ...updates } : item)));
+      toast({ title: t('rsvp.updated', { defaultValue: 'Formulaire mis à jour' }) });
+      setIsDialogOpen(false);
+      resetForm();
+    } catch (error) {
+      console.error('❌ handleUpdateEvent failed:', error);
+      toast({ title: t('rsvp.errors.title'), description: t('rsvp.errors.updateEvent', { defaultValue: 'Modification impossible' }), variant: 'destructive' });
+    } finally {
+      setCreating(false);
+    }
   };
 
   const handleDelete = async (eventId: string) => {
@@ -316,7 +367,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+            <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90">
                   <Plus className="h-4 w-4 mr-2" />
@@ -325,7 +376,9 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle>{t('rsvp.createDialogTitle')}</DialogTitle>
+                  <DialogTitle>
+                    {editingEventId ? t('rsvp.editDialogTitle', { defaultValue: 'Modifier le formulaire' }) : t('rsvp.createDialogTitle')}
+                  </DialogTitle>
                 </DialogHeader>
 
 
@@ -499,12 +552,12 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                 <div className="flex gap-3 justify-end pt-4">
                   <Button
                     variant="outline"
-                    onClick={() => setIsDialogOpen(false)}
+                    onClick={() => handleDialogOpenChange(false)}
                   >
                     {t('rsvp.cancel')}
                   </Button>
                   <Button
-                    onClick={handleCreateEvent}
+                    onClick={editingEventId ? handleUpdateEvent : handleCreateEvent}
                     disabled={creating}
                   >
                     {creating ? (
@@ -512,6 +565,8 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                         <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                         {t('rsvp.creating')}
                       </>
+                    ) : editingEventId ? (
+                      t('rsvp.saveChanges', { defaultValue: 'Enregistrer les modifications' })
                     ) : (
                       t('rsvp.createCta')
                     )}
@@ -545,6 +600,9 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                   onDelete={handleDelete}
                   onViewResponses={() => navigate(`/dashboard/rsvp/${event.id}/responses`)}
                 />
+                <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => openEditDialog(event)}>
+                  ✏️ {t('rsvp.editBtn', { defaultValue: 'Modifier' })}
+                </Button>
                 <GuestPageCustomizer eventId={event.id} initialCustomization={event.customization} />
               </div>
             ))}

@@ -23,7 +23,7 @@ const GuestMiniSitePanel: React.FC<{ isEnglish: boolean; onCreateForm: () => voi
     const loadEvents = async () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
-      let query: any = (supabase as any).from('wedding_rsvp_events').select('id, event_name, unique_link_slug, customization');
+      let query: any = (supabase as any).from('wedding_rsvp_events').select('id, event_name, welcome_message, event_date, event_location, unique_link_slug, customization');
       query = weddingId ? query.eq('wedding_id', weddingId) : query.eq('user_id', user.id);
       const { data, error } = await query.order('created_at', { ascending: true });
       if (error) console.error('❌ GuestMiniSitePanel load failed:', error);
@@ -66,7 +66,20 @@ const GuestMiniSitePanel: React.FC<{ isEnglish: boolean; onCreateForm: () => voi
                 </Button>
               </div>
             </div>
-            <GuestPageCustomizer inline eventId={event.id} initialCustomization={event.customization} />
+            <GuestPageCustomizer
+              inline
+              eventId={event.id}
+              initialCustomization={event.customization}
+              initialEventDetails={{
+                event_name: event.event_name ?? '',
+                welcome_message: event.welcome_message ?? '',
+                event_date: event.event_date ?? '',
+                event_location: event.event_location ?? '',
+              }}
+              onSaved={(customization, details) =>
+                setEvents((prev) => (prev ?? []).map((item) => (item.id === event.id ? { ...item, customization, ...(details ?? {}) } : item)))
+              }
+            />
           </section>
         );
       })}
