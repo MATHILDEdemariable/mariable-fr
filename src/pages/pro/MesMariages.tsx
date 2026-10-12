@@ -138,6 +138,34 @@ const MesMariages: React.FC = () => {
   const isProfileIncomplete =
     profileLoaded && (!form.first_name.trim() || !form.last_name.trim() || !form.company_name.trim());
 
+  const isEnglish = i18n.language?.startsWith('en');
+  const dateLocale = isEnglish ? 'en-GB' : 'fr-FR';
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const getDaysUntil = (date: string | null | undefined) =>
+    date ? Math.ceil((new Date(date).getTime() - todayDate.getTime()) / 86400000) : null;
+
+  const toolboxItems = [
+    {
+      icon: GraduationCap,
+      title: isEnglish ? 'Tutorial & guide' : 'Tuto & guide',
+      text: isEnglish ? 'Get started in 3 steps' : 'Prendre en main en 3 étapes',
+      onClick: openProTutorial,
+    },
+    {
+      icon: BookUser,
+      title: t('nav.addressBook'),
+      text: isEnglish ? 'Your trusted vendors' : 'Vos prestataires de confiance',
+      onClick: () => navigate('/pro/carnet-adresses'),
+    },
+    {
+      icon: Settings,
+      title: isEnglish ? 'Account settings' : 'Paramètres du compte',
+      text: isEnglish ? 'Agency details & offer' : 'Coordonnées agence & offre',
+      onClick: () => setSettingsOpen(true),
+    },
+  ];
+
   return (
     <DashboardLayout variant="pro">
       <Helmet>
@@ -146,27 +174,49 @@ const MesMariages: React.FC = () => {
       </Helmet>
 
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* En-tête */}
-        <header>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-3xl text-foreground">{t('header.title')}</h1>
-            <Badge className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
-              <Building2 className="h-3 w-3 mr-1" />
-              {t('header.badge')}
-            </Badge>
+        {/* En-tête cockpit */}
+        <header className="relative overflow-hidden bg-foreground text-background p-6 md:p-8">
+          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-wedding-olive/40 blur-2xl" aria-hidden="true" />
+          <div className="relative">
+            <div className="flex flex-wrap items-center gap-3">
+              <Badge className="rounded-none bg-wedding-olive text-background hover:bg-wedding-olive/90">
+                <Building2 className="h-3 w-3 mr-1" />
+                {t('header.badge')}
+              </Badge>
+              <span className="text-xs uppercase tracking-widest text-background/70">
+                {todayDate.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
+              </span>
+            </div>
+            <h1 className="mt-4 font-serif text-3xl md:text-4xl font-bold">
+              {form.first_name
+                ? (isEnglish ? `Hello ${form.first_name}` : `Bonjour ${form.first_name}`)
+                : t('header.title')}
+            </h1>
+            <p className="mt-2 text-background/80">
+              {form.company_name ? `${form.company_name} · ` : ''}
+              {isEnglish
+                ? `${weddings.length} wedding${weddings.length > 1 ? 's' : ''} under your coordination`
+                : `${weddings.length} mariage${weddings.length > 1 ? 's' : ''} en régie`}
+            </p>
+            <Button
+              onClick={() => setDialogOpen(true)}
+              disabled={!canCreateMoreWeddings && weddings.length > 0}
+              className="mt-5 rounded-none min-h-[44px] bg-background text-foreground hover:bg-background/90"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('weddings.create')}
+            </Button>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            {form.company_name
-              ? form.company_name
-              : t('header.subtitle')}
-          </p>
-          <div className="mt-4"><ProQuickActions /></div>
         </header>
 
         {isProfileIncomplete && (
-          <div className="border border-border bg-background p-4 text-sm text-muted-foreground">
-            {t('header.incompleteProfile')}
-          </div>
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="w-full text-left border border-l-4 border-l-wedding-olive border-border bg-background p-4 text-sm text-muted-foreground hover:text-foreground"
+          >
+            {t('header.incompleteProfile')} →
+          </button>
         )}
 
         {!loading && <ProSeasonOverview weddings={weddings} />}
