@@ -115,6 +115,22 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
             </DialogDescription>
           </DialogHeader>
 
+          <div role="note" className="border-l-4 border-amber-600 bg-amber-50 p-3 text-sm space-y-2">
+            <p className="font-semibold">
+              {isEnglish ? '⚠️ Does your couple already use Mariable?' : '⚠️ Votre couple utilise déjà Mariable ?'}
+            </p>
+            <p>
+              {isEnglish
+                ? 'If they have already entered their budget, schedule or guests on their own account, it is up to them to invite you from their dashboard: you will then get all their data. If you invite them, they will join this wedding and will not see their own data here.'
+                : 'S’ils ont déjà saisi leur budget, planning ou invités sur leur propre compte, c’est à eux de vous inviter depuis leur tableau de bord : vous récupérerez alors toutes leurs données. Si vous les invitez, ils rejoindront ce mariage et n’y retrouveront pas leurs données.'}
+            </p>
+            <p>
+              {isEnglish
+                ? 'No account yet? They will create one from the email and access this wedding directly.'
+                : 'Pas encore de compte ? Ils le créeront depuis l’email et accéderont directement à ce mariage.'}
+            </p>
+          </div>
+
           <div className="flex gap-2">
             <Input
               type="email"
