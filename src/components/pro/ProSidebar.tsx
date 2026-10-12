@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut, BookUser, GraduationCap, LifeBuoy } from 'lucide-react';
+import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone } from 'lucide-react';
 import { openProTutorial, openProHelp } from './ProSupportHost';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -56,6 +56,11 @@ const ProSidebar: React.FC = () => {
           <BookUser className="h-4 w-4" />
           <span className="ml-3 leading-tight">{t('nav.addressBook')}</span>
         </Link>
+
+        <a href="/pro#installer-app" className={linkClass(false)}>
+          <Smartphone className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{t('nav.installApp')}</span>
+        </a>
 
         <Link to="/dashboard/settings" className={linkClass(location.pathname.startsWith('/dashboard/settings'))}>
           <Settings className="h-4 w-4" />
