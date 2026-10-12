@@ -260,11 +260,19 @@ const MesMariages: React.FC = () => {
             </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {weddings.map((wedding) => (
-                <Card key={wedding.id} className="rounded-none border-border bg-background">
+              {weddings.map((wedding) => {
+                const daysUntil = getDaysUntil(wedding.wedding_date);
+                const isSoon = daysUntil !== null && daysUntil >= 0 && daysUntil <= 30;
+                return (
+                <Card key={wedding.id} className="rounded-none border-border border-t-4 border-t-wedding-olive bg-background transition-shadow hover:shadow-lg">
                   <CardContent className="p-5">
+                    {daysUntil !== null && daysUntil >= 0 && (
+                      <span className={`inline-block mb-2 px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${isSoon ? 'bg-foreground text-background' : 'bg-wedding-olive/15 text-wedding-olive'}`}>
+                        {daysUntil === 0 ? (isEnglish ? "Today's the day" : "C'est le Jour J") : `J-${daysUntil}`}
+                      </span>
+                    )}
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-serif text-xl text-foreground">{wedding.title}</h3>
+                      <h3 className="font-serif text-2xl font-bold text-foreground flex-1">{wedding.title}</h3>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -312,14 +320,31 @@ const MesMariages: React.FC = () => {
                         </p>
                       ) : null}
                     </div>
-                    <Button
-                      variant="outline"
-                      className="mt-5 rounded-none w-full"
-                      onClick={() => handleOpenWedding(wedding.id)}
-                    >
-                      {t('weddings.open')}
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Button>
+                    <div className="mt-5 grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
+                        onClick={() => handleOpenWedding(wedding.id, '/mon-jour-m/planning')}
+                      >
+                        <ClipboardList className="h-4 w-4 mr-1.5 text-wedding-olive" />
+                        {isEnglish ? 'Wedding day' : 'Planning Jour J'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
+                        onClick={() => handleOpenWedding(wedding.id, '/dashboard/rsvp')}
+                      >
+                        <Users className="h-4 w-4 mr-1.5 text-wedding-olive" />
+                        {isEnglish ? 'Guests' : 'Invités'}
+                      </Button>
+                      <Button
+                        className="col-span-2 rounded-none min-h-[44px]"
+                        onClick={() => handleOpenWedding(wedding.id)}
+                      >
+                        {t('weddings.open')}
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
