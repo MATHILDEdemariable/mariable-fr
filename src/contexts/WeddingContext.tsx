@@ -224,7 +224,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || activeWeddings.length < 1;
 
   const currentOwnerId = activeWeddings.find((w) => w.id === currentWeddingId)?.owner_id;
-  const isWeddingCollaborator = !!user && !!currentOwnerId && currentOwnerId !== user.id;
+  // Seuls les mariés invités sont en lecture seule sur le Jour J ; un wedding planner invité par le couple garde la main
+  const isWeddingCollaborator = accountType !== 'b2b' && !!user && !!currentOwnerId && currentOwnerId !== user.id;
 
   const value = useMemo<WeddingContextType>(
     () => ({
