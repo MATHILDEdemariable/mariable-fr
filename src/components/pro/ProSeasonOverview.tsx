@@ -93,14 +93,22 @@ const ProSeasonOverview: React.FC<{ weddings: Wedding[] }> = ({ weddings }) => {
       {isDemo && <p className="text-sm text-muted-foreground">{labels.demo}</p>}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {kpis.map((kpi) => (
-          <div key={kpi.label} className="border border-border bg-editorial-beige p-4">
-            <kpi.icon className="h-4 w-4 text-wedding-olive" aria-hidden="true" />
-            <p className="mt-3 font-serif text-2xl text-foreground">{kpi.value}</p>
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">{kpi.label}</p>
-            {kpi.hint && <p className="mt-1 truncate text-xs text-muted-foreground">{kpi.hint}</p>}
-          </div>
-        ))}
+        {kpis.map((kpi, index) => {
+          const isHighlight = index === 2;
+          return (
+            <div
+              key={kpi.label}
+              className={`border p-4 transition-transform hover:-translate-y-0.5 ${
+                isHighlight ? 'border-wedding-olive bg-wedding-olive text-background' : 'border-border border-l-4 border-l-wedding-olive bg-editorial-beige'
+              }`}
+            >
+              <kpi.icon className={`h-5 w-5 ${isHighlight ? 'text-background' : 'text-wedding-olive'}`} aria-hidden="true" />
+              <p className={`mt-3 font-serif text-3xl font-bold ${isHighlight ? 'text-background' : 'text-foreground'}`}>{kpi.value}</p>
+              <p className={`text-xs font-semibold uppercase tracking-wider ${isHighlight ? 'text-background/80' : 'text-muted-foreground'}`}>{kpi.label}</p>
+              {kpi.hint && <p className={`mt-1 truncate text-xs ${isHighlight ? 'text-background/80' : 'text-muted-foreground'}`}>{kpi.hint}</p>}
+            </div>
+          );
+        })}
       </div>
 
       <div className="border border-border bg-background p-4">
