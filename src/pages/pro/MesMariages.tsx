@@ -380,9 +380,40 @@ const MesMariages: React.FC = () => {
           )}
         </section>
 
-        {/* Mes informations */}
-        <section id="mes-informations" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">{t('profile.title')}</h2>
+        {/* Boîte à outils transverse */}
+        <section aria-labelledby="pro-toolbox-title">
+          <h2 id="pro-toolbox-title" className="font-serif text-2xl text-foreground mb-4">
+            {isEnglish ? 'Toolbox' : 'Boîte à outils'}
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {toolboxItems.map((item) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={item.onClick}
+                className="group flex items-center gap-4 border border-border bg-background p-4 text-left min-h-[72px] transition-all hover:border-wedding-olive hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-wedding-olive/10 text-wedding-olive group-hover:bg-wedding-olive group-hover:text-background transition-colors">
+                  <item.icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-semibold text-foreground">{item.title}</span>
+                  <span className="block text-xs text-muted-foreground">{item.text}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">{isEnglish ? 'Account settings' : 'Paramètres du compte'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+        <section id="mes-informations">
+          <h3 className="font-serif text-lg text-foreground mb-3">{t('profile.title')}</h3>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5">
               <form onSubmit={handleSaveProfile} className="grid gap-4 sm:grid-cols-2">
