@@ -49,12 +49,31 @@ export const GUEST_PAGE_INFO_FIELDS: Array<{ key: GuestPageInfoKey; emoji: strin
   { key: 'registry', emoji: '🎁', labelFr: 'Cagnotte / liste de mariage', labelEn: 'Gift registry', placeholderFr: 'Votre présence est notre plus beau cadeau. Cagnotte : lien…' },
 ];
 
+export interface GuestPageProgramItem {
+  time?: string;
+  title?: string;
+  place?: string;
+}
+
+export interface GuestPageContact {
+  visible?: boolean;
+  names?: string;
+  email?: string;
+  phone?: string;
+  postalAddress?: string;
+  showPostalAddress?: boolean;
+}
+
 export interface GuestPageCustomization {
   palette?: string;
   font?: string;
   showSchedule?: boolean;
   infos?: Partial<Record<GuestPageInfoKey, { text?: string; visible?: boolean }>>;
   registryUrl?: string;
+  heroPhotoUrl?: string;
+  showCountdown?: boolean;
+  program?: GuestPageProgramItem[];
+  contact?: GuestPageContact;
 }
 
 export const resolveGuestPageTheme = (customization?: GuestPageCustomization | null) => ({
