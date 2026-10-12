@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,7 +14,8 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
-import ProQuickActions from '@/components/pro/ProQuickActions';
+import { openProTutorial } from '@/components/pro/ProSupportHost';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 
@@ -52,6 +53,7 @@ const MesMariages: React.FC = () => {
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -86,9 +88,9 @@ const MesMariages: React.FC = () => {
     loadProfile();
   }, []);
 
-  const handleOpenWedding = (weddingId: string) => {
+  const handleOpenWedding = (weddingId: string, targetPath = '/dashboard') => {
     selectWedding(weddingId);
-    navigate('/dashboard');
+    navigate(targetPath);
   };
 
   const handleArchive = async (weddingId: string, archived: boolean) => {
@@ -138,6 +140,34 @@ const MesMariages: React.FC = () => {
   const isProfileIncomplete =
     profileLoaded && (!form.first_name.trim() || !form.last_name.trim() || !form.company_name.trim());
 
+  const isEnglish = i18n.language?.startsWith('en');
+  const dateLocale = isEnglish ? 'en-GB' : 'fr-FR';
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+  const getDaysUntil = (date: string | null | undefined) =>
+    date ? Math.ceil((new Date(date).getTime() - todayDate.getTime()) / 86400000) : null;
+
+  const toolboxItems = [
+    {
+      icon: GraduationCap,
+      title: isEnglish ? 'Tutorial & guide' : 'Tuto & guide',
+      text: isEnglish ? 'Get started in 3 steps' : 'Prendre en main en 3 étapes',
+      onClick: openProTutorial,
+    },
+    {
+      icon: BookUser,
+      title: t('nav.addressBook'),
+      text: isEnglish ? 'Your trusted vendors' : 'Vos prestataires de confiance',
+      onClick: () => navigate('/pro/carnet-adresses'),
+    },
+    {
+      icon: Settings,
+      title: isEnglish ? 'Account settings' : 'Paramètres du compte',
+      text: isEnglish ? 'Agency details & offer' : 'Coordonnées agence & offre',
+      onClick: () => setSettingsOpen(true),
+    },
+  ];
+
   return (
     <DashboardLayout variant="pro">
       <Helmet>
@@ -146,27 +176,49 @@ const MesMariages: React.FC = () => {
       </Helmet>
 
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* En-tête */}
-        <header>
-          <div className="flex flex-wrap items-center gap-3">
-            <h1 className="font-serif text-3xl text-foreground">{t('header.title')}</h1>
-            <Badge className="bg-wedding-olive text-white hover:bg-wedding-olive/90">
-              <Building2 className="h-3 w-3 mr-1" />
-              {t('header.badge')}
-            </Badge>
+        {/* En-tête cockpit */}
+        <header className="relative overflow-hidden bg-foreground text-background p-6 md:p-8">
+          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-wedding-olive/40 blur-2xl" aria-hidden="true" />
+          <div className="relative">
+            <div className="flex flex-wrap items-center gap-3">
+              <Badge className="rounded-none bg-wedding-olive text-background hover:bg-wedding-olive/90">
+                <Building2 className="h-3 w-3 mr-1" />
+                {t('header.badge')}
+              </Badge>
+              <span className="text-xs uppercase tracking-widest text-background/70">
+                {todayDate.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
+              </span>
+            </div>
+            <h1 className="mt-4 font-serif text-3xl md:text-4xl font-bold">
+              {form.first_name
+                ? (isEnglish ? `Hello ${form.first_name}` : `Bonjour ${form.first_name}`)
+                : t('header.title')}
+            </h1>
+            <p className="mt-2 text-background/80">
+              {form.company_name ? `${form.company_name} · ` : ''}
+              {isEnglish
+                ? `${weddings.length} wedding${weddings.length > 1 ? 's' : ''} under your coordination`
+                : `${weddings.length} mariage${weddings.length > 1 ? 's' : ''} en régie`}
+            </p>
+            <Button
+              onClick={() => setDialogOpen(true)}
+              disabled={!canCreateMoreWeddings && weddings.length > 0}
+              className="mt-5 rounded-none min-h-[44px] bg-background text-foreground hover:bg-background/90"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              {t('weddings.create')}
+            </Button>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            {form.company_name
-              ? form.company_name
-              : t('header.subtitle')}
-          </p>
-          <div className="mt-4"><ProQuickActions /></div>
         </header>
 
         {isProfileIncomplete && (
-          <div className="border border-border bg-background p-4 text-sm text-muted-foreground">
-            {t('header.incompleteProfile')}
-          </div>
+          <button
+            type="button"
+            onClick={() => setSettingsOpen(true)}
+            className="w-full text-left border border-l-4 border-l-wedding-olive border-border bg-background p-4 text-sm text-muted-foreground hover:text-foreground"
+          >
+            {t('header.incompleteProfile')} →
+          </button>
         )}
 
         {!loading && <ProSeasonOverview weddings={weddings} />}
@@ -210,11 +262,19 @@ const MesMariages: React.FC = () => {
             </Card>
           ) : (
             <div className="grid gap-4 sm:grid-cols-2">
-              {weddings.map((wedding) => (
-                <Card key={wedding.id} className="rounded-none border-border bg-background">
+              {weddings.map((wedding) => {
+                const daysUntil = getDaysUntil(wedding.wedding_date);
+                const isSoon = daysUntil !== null && daysUntil >= 0 && daysUntil <= 30;
+                return (
+                <Card key={wedding.id} className="rounded-none border-border border-t-4 border-t-wedding-olive bg-background transition-shadow hover:shadow-lg">
                   <CardContent className="p-5">
+                    {daysUntil !== null && daysUntil >= 0 && (
+                      <span className={`inline-block mb-2 px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${isSoon ? 'bg-foreground text-background' : 'bg-wedding-olive/15 text-wedding-olive'}`}>
+                        {daysUntil === 0 ? (isEnglish ? "Today's the day" : "C'est le Jour J") : `J-${daysUntil}`}
+                      </span>
+                    )}
                     <div className="flex items-start justify-between gap-3">
-                      <h3 className="font-serif text-xl text-foreground">{wedding.title}</h3>
+                      <h3 className="font-serif text-2xl font-bold text-foreground flex-1">{wedding.title}</h3>
                       <Button
                         variant="ghost"
                         size="icon"
@@ -262,17 +322,35 @@ const MesMariages: React.FC = () => {
                         </p>
                       ) : null}
                     </div>
-                    <Button
-                      variant="outline"
-                      className="mt-5 rounded-none w-full"
-                      onClick={() => handleOpenWedding(wedding.id)}
-                    >
-                      {t('weddings.open')}
-                      <ArrowRight className="h-4 w-4 ml-2" />
-                    </Button>
+                    <div className="mt-5 grid grid-cols-2 gap-2">
+                      <Button
+                        variant="outline"
+                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
+                        onClick={() => handleOpenWedding(wedding.id, '/mon-jour-m/planning')}
+                      >
+                        <ClipboardList className="h-4 w-4 mr-1.5 text-wedding-olive" />
+                        {isEnglish ? 'Wedding day' : 'Planning Jour J'}
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
+                        onClick={() => handleOpenWedding(wedding.id, '/dashboard/rsvp')}
+                      >
+                        <Users className="h-4 w-4 mr-1.5 text-wedding-olive" />
+                        {isEnglish ? 'Guests' : 'Invités'}
+                      </Button>
+                      <Button
+                        className="col-span-2 rounded-none min-h-[44px]"
+                        onClick={() => handleOpenWedding(wedding.id)}
+                      >
+                        {t('weddings.open')}
+                        <ArrowRight className="h-4 w-4 ml-2" />
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -305,9 +383,40 @@ const MesMariages: React.FC = () => {
           )}
         </section>
 
-        {/* Mes informations */}
-        <section id="mes-informations" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">{t('profile.title')}</h2>
+        {/* Boîte à outils transverse */}
+        <section aria-labelledby="pro-toolbox-title">
+          <h2 id="pro-toolbox-title" className="font-serif text-2xl text-foreground mb-4">
+            {isEnglish ? 'Toolbox' : 'Boîte à outils'}
+          </h2>
+          <div className="grid gap-3 sm:grid-cols-3">
+            {toolboxItems.map((item) => (
+              <button
+                key={item.title}
+                type="button"
+                onClick={item.onClick}
+                className="group flex items-center gap-4 border border-border bg-background p-4 text-left min-h-[72px] transition-all hover:border-wedding-olive hover:shadow-md"
+              >
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center bg-wedding-olive/10 text-wedding-olive group-hover:bg-wedding-olive group-hover:text-background transition-colors">
+                  <item.icon className="h-5 w-5" aria-hidden="true" />
+                </span>
+                <span>
+                  <span className="block font-semibold text-foreground">{item.title}</span>
+                  <span className="block text-xs text-muted-foreground">{item.text}</span>
+                </span>
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+        <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">{isEnglish ? 'Account settings' : 'Paramètres du compte'}</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6">
+        <section id="mes-informations">
+          <h3 className="font-serif text-lg text-foreground mb-3">{t('profile.title')}</h3>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5">
               <form onSubmit={handleSaveProfile} className="grid gap-4 sm:grid-cols-2">
@@ -369,8 +478,8 @@ const MesMariages: React.FC = () => {
         </section>
 
         {/* Mon offre */}
-        <section id="mon-offre" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">{t('offer.title')}</h2>
+        <section id="mon-offre">
+          <h3 className="font-serif text-lg text-foreground mb-3">{t('offer.title')}</h3>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5 flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -388,7 +497,9 @@ const MesMariages: React.FC = () => {
             </CardContent>
           </Card>
         </section>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <NouveauMariageDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <ModifierMariageDialog wedding={editingWedding} onOpenChange={(open) => !open && setEditingWedding(null)} />
