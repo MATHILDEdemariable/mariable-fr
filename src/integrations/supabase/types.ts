@@ -4410,6 +4410,7 @@ export type Database = {
           created_at: string
           invitation_id: string
           inviter_name: string
+          role: string
           wedding_title: string
         }[]
       }
@@ -4465,6 +4466,10 @@ export type Database = {
       is_user_premium: { Args: { user_uuid: string }; Returns: boolean }
       is_valid_share_token: { Args: { token_value: string }; Returns: boolean }
       is_wedding_collaborator: {
+        Args: { _user_id: string; _wedding_id: string }
+        Returns: boolean
+      }
+      is_wedding_planner_collaborator: {
         Args: { _user_id: string; _wedding_id: string }
         Returns: boolean
       }
