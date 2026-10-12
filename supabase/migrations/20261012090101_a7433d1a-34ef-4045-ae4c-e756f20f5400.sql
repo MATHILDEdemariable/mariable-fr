@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.is_wedding_planner_collaborator(uuid, uuid) FROM anon, public;
