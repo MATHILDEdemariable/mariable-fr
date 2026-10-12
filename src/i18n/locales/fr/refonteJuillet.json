@@ -144,8 +144,8 @@
         "body": "Les coûts estimés et réels, poste par poste."
       },
       "guests": {
-        "title": "Invités & RSVP",
-        "body": "Les réponses et informations de vos invités centralisées."
+        "title": "Invités, RSVP et Mini Site.",
+        "body": "Les réponses et informations de vos invités centralisées sur un mini site incluant un formulaire de réponse en ligne."
       },
       "seating": {
         "title": "Plan de table",
@@ -157,7 +157,7 @@
       },
       "practical": {
         "title": "Outils pratiques",
-        "body": "Boissons, documents, album partagé et ressources utiles."
+        "body": "Calculatrice de boissons,  stockage des documents, album photo partagé."
       }
     }
   },
