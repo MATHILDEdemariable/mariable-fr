@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
@@ -14,7 +14,8 @@ import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
-import ProQuickActions from '@/components/pro/ProQuickActions';
+import { openProTutorial } from '@/components/pro/ProSupportHost';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 
@@ -52,6 +53,7 @@ const MesMariages: React.FC = () => {
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -86,9 +88,9 @@ const MesMariages: React.FC = () => {
     loadProfile();
   }, []);
 
-  const handleOpenWedding = (weddingId: string) => {
+  const handleOpenWedding = (weddingId: string, targetPath = '/dashboard') => {
     selectWedding(weddingId);
-    navigate('/dashboard');
+    navigate(targetPath);
   };
 
   const handleArchive = async (weddingId: string, archived: boolean) => {
@@ -347,7 +349,8 @@ const MesMariages: React.FC = () => {
                     </div>
                   </CardContent>
                 </Card>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -475,8 +478,8 @@ const MesMariages: React.FC = () => {
         </section>
 
         {/* Mon offre */}
-        <section id="mon-offre" className="scroll-mt-32">
-          <h2 className="font-serif text-2xl text-foreground mb-4">{t('offer.title')}</h2>
+        <section id="mon-offre">
+          <h3 className="font-serif text-lg text-foreground mb-3">{t('offer.title')}</h3>
           <Card className="rounded-none border-border bg-background">
             <CardContent className="p-5 flex flex-wrap items-center justify-between gap-4">
               <div>
@@ -494,7 +497,9 @@ const MesMariages: React.FC = () => {
             </CardContent>
           </Card>
         </section>
-      </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <NouveauMariageDialog open={dialogOpen} onOpenChange={setDialogOpen} />
       <ModifierMariageDialog wedding={editingWedding} onOpenChange={(open) => !open && setEditingWedding(null)} />
