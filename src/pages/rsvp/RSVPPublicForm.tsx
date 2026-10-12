@@ -781,6 +781,7 @@ const RSVPPublicForm: React.FC = () => {
             </form>
           </CardContent>
         </Card>
+        <GuestPageContactCard theme={guestTheme} customization={event.customization} />
       </div>
     </>
   );
