@@ -415,7 +415,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className={`space-y-2 ${editingEventId ? 'hidden' : ''}`}>
                     <Label htmlFor="custom_slug">{t('rsvp.customSlugLabel')}</Label>
                     <div className="flex items-center gap-2">
                       <span className="text-sm text-muted-foreground">/rsvp/</span>
@@ -439,7 +439,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                     />
                   </div>
 
-                  <div className="border-t pt-6 space-y-4">
+                  <div className={`border-t pt-6 space-y-4 ${editingEventId ? 'hidden' : ''}`}>
                     <div className="flex items-center justify-between">
                       <div>
                         <Label className="text-base font-semibold">{t('rsvp.subEventsLabel')}</Label>
