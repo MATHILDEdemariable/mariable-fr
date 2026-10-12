@@ -2,12 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, ClipboardList } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, ClipboardList, Sparkles, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
@@ -166,7 +167,21 @@ const MesMariages: React.FC = () => {
       text: isEnglish ? 'Agency details & offer' : 'Coordonnées agence & offre',
       onClick: () => setSettingsOpen(true),
     },
+    {
+      icon: Sparkles,
+      title: isEnglish ? 'AI white paper' : 'Livre blanc IA',
+      text: isEnglish ? 'Save 2 to 4 hours a week with AI' : 'Gagner 2 à 4 h par semaine avec l’IA',
+      onClick: () => navigate('/pro/ia-organisation-mariage'),
+    },
   ];
+  const installSteps = {
+    ios: isEnglish
+      ? ['Open mariable.fr in Safari', 'Tap the Share icon', 'Choose “Add to Home Screen”', 'Tap “Add”']
+      : ['Ouvrez mariable.fr dans Safari', 'Touchez l’icône Partager', 'Choisissez « Sur l’écran d’accueil »', 'Touchez « Ajouter »'],
+    android: isEnglish
+      ? ['Open mariable.fr in Chrome', 'Tap the 3-dot menu', 'Choose “Add to Home screen” or “Install app”', 'Confirm']
+      : ['Ouvrez mariable.fr dans Chrome', 'Touchez le menu 3 points', 'Choisissez « Ajouter à l’écran d’accueil » ou « Installer »', 'Confirmez'],
+  };
 
   return (
     <DashboardLayout variant="pro">
@@ -388,7 +403,7 @@ const MesMariages: React.FC = () => {
           <h2 id="pro-toolbox-title" className="font-serif text-2xl text-foreground mb-4">
             {isEnglish ? 'Toolbox' : 'Boîte à outils'}
           </h2>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {toolboxItems.map((item) => (
               <button
                 key={item.title}
@@ -406,6 +421,37 @@ const MesMariages: React.FC = () => {
               </button>
             ))}
           </div>
+        </section>
+
+        {/* Installation mobile */}
+        <section id="installer-app" aria-labelledby="pro-install-title" className="scroll-mt-24">
+          <h2 id="pro-install-title" className="font-serif text-2xl text-foreground mb-2 flex items-center gap-2">
+            <Smartphone className="h-6 w-6 text-wedding-olive" aria-hidden="true" />
+            {isEnglish ? 'How to install the app on your phone (no download)' : 'Comment installer l’application sur son téléphone (sans téléchargement)'}
+          </h2>
+          <p className="text-sm text-muted-foreground mb-4">
+            {isEnglish
+              ? 'No App Store or Google Play download: the app installs directly from your browser.'
+              : 'Aucun téléchargement sur les stores : l’application s’installe directement depuis le navigateur.'}
+          </p>
+          <Tabs defaultValue="ios">
+            <TabsList className="rounded-none">
+              <TabsTrigger value="ios" className="rounded-none">🍏 iPhone / iPad (Safari)</TabsTrigger>
+              <TabsTrigger value="android" className="rounded-none">🤖 Android (Chrome)</TabsTrigger>
+            </TabsList>
+            {(['ios', 'android'] as const).map((platform) => (
+              <TabsContent key={platform} value={platform}>
+                <ol className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {installSteps[platform].map((step, index) => (
+                    <li key={step} className="flex items-start gap-3 border border-border bg-background p-4">
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center bg-wedding-olive text-background font-bold">{index + 1}</span>
+                      <span className="text-sm text-foreground">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+              </TabsContent>
+            ))}
+          </Tabs>
         </section>
       </div>
 

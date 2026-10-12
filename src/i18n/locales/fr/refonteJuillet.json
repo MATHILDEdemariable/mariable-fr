@@ -101,7 +101,7 @@
     "couple": {
       "label": "FUTUR(E)S  MARIÉ(E)S",
       "title": "Je suis un couple : ",
-      "body": "Construisez votre déroulé, attribuez les rôles et partagez-le avec vos témoins, proches et prestataires.",
+      "body": "L’application collaborative pour organiser votre grand jour et coordonner en direct vos témoins, votre famille et tous vos prestataires.",
       "highlight": "Un seul mariage. Une seule source d’information.",
       "cta": "Je prépare mon mariage",
       "imageAlt": "Couple préparant son mariage avec Mariable"
@@ -171,9 +171,9 @@
         "frequency": "pour commencer",
         "description": "Créez votre espace et découvrez les outils essentiels.",
         "features": [
-          "Un mariage",
-          "Outils de préparation essentiels",
-          "Accès aux conseils et prestataires"
+          "1 mariage",
+          "Outil de préparation essentiel",
+          "Accès aux guides de prestataires"
         ],
         "cta": "Créer mon espace gratuitement",
         "href": "/register-gratuit"
@@ -184,9 +184,9 @@
         "frequency": "par mariage · paiement unique",
         "description": "Tous les outils Mariable sans abonnement pour organiser votre mariage.",
         "features": [
-          "Application Jour J complète",
-          "IA, stockage et exports étendus",
-          "Guides et album photo partagé"
+          "Tout ce qui est inclus dans le gratuit, plus :",
+          "Fonctionnalités IA, stockage et exports illimités",
+          "8 e-books / guides mariage inclus"
         ],
         "cta": "Choisir Mariable Couple",
         "href": "/paiement",

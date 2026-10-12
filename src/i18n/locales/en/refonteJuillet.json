@@ -101,7 +101,7 @@
     "couple": {
       "label": "BRIDES & GROOMS-TO-BE",
       "title": "I'm a couple:",
-      "body": "Build your timeline, assign roles and share it with witnesses, loved ones and vendors.",
+      "body": "The collaborative app to plan your big day and coordinate your witnesses, family and all your vendors in real time.",
       "highlight": "One wedding. One source of truth.",
       "cta": "Plan my wedding",
       "imageAlt": "A couple planning their wedding with Mariable"
@@ -171,9 +171,9 @@
         "frequency": "to get started",
         "description": "Create your space and discover the essential tools.",
         "features": [
-          "One wedding",
-          "Essential planning tools",
-          "Access to advice and vendors"
+          "1 wedding",
+          "Essential planning tool",
+          "Access to vendor guides"
         ],
         "cta": "Create my free space",
         "href": "/register-gratuit"
@@ -184,9 +184,9 @@
         "frequency": "per wedding · one-time payment",
         "description": "Every Mariable tool with no subscription to plan your wedding.",
         "features": [
-          "Complete wedding-day app",
-          "Extended AI, storage and exports",
-          "Guides and shared photo album"
+          "Everything in Free, plus:",
+          "AI features, unlimited storage and exports",
+          "8 e-books / wedding guides included"
         ],
         "cta": "Choose Mariable Couple",
         "href": "/paiement",
