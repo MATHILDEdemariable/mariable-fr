@@ -43,50 +43,57 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
     return !localStorage.getItem('dashboard_mobile_banner_dismissed');
   });
 
-  // Vérifier si l'utilisateur doit voir la modal de satisfaction
+  // Modal d'avis : une seule proposition, jamais répétée à chaque page.
   useEffect(() => {
+    let satisfactionTimer: ReturnType<typeof setTimeout> | undefined;
+    let isCancelled = false;
     const checkSatisfactionModal = async () => {
       try {
-        // Vérifier si l'utilisateur est connecté
-        const {
-          data: {
-            user
-          }
-        } = await supabase.auth.getUser();
-        if (!user) return;
-        setCurrentUser(user);
+        if (localStorage.getItem('satisfaction_feedback_completed')) return;
+        if (sessionStorage.getItem('satisfaction_checked_this_session')) return;
+        sessionStorage.setItem('satisfaction_checked_this_session', 'true');
 
-        // Vérifier si l'utilisateur a déjà donné son feedback
-        const feedbackCompleted = localStorage.getItem('satisfaction_feedback_completed');
-        if (feedbackCompleted) return;
-
-        // Vérifier si l'utilisateur a déjà vu la modal récemment (éviter spam)
+        // Déjà proposée (fermée ou affichée) il y a moins de 90 jours → on ne redemande pas
         const lastShown = localStorage.getItem('satisfaction_modal_last_shown');
         if (lastShown) {
-          const lastShownDate = new Date(lastShown);
-          const now = new Date();
-          const daysSinceLastShown = (now.getTime() - lastShownDate.getTime()) / (1000 * 3600 * 24);
-          if (daysSinceLastShown < 7) return; // Attendre 7 jours avant de re-proposer
+          const daysSinceLastShown = (Date.now() - new Date(lastShown).getTime()) / 86400000;
+          if (daysSinceLastShown < 90) return;
         }
 
-        // Vérifier depuis quand l'utilisateur est inscrit (attendre au moins 7 jours)
-        const userCreatedAt = new Date(user.created_at);
-        const now = new Date();
-        const daysSinceRegistration = (now.getTime() - userCreatedAt.getTime()) / (1000 * 3600 * 24);
-        if (daysSinceRegistration >= 7 && location.pathname.includes('/dashboard')) {
-          // Attendre 30 secondes après le chargement de la page
-          setTimeout(() => {
-            setShowSatisfactionModal(true);
-            localStorage.setItem('satisfaction_modal_last_shown', now.toISOString());
-          }, 30000);
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user || isCancelled) return;
+        setCurrentUser(user);
+
+        // Déjà répondu (autre appareil) → plus jamais
+        const { data: existingFeedback } = await supabase
+          .from('user_satisfaction_feedback')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+        if (existingFeedback && existingFeedback.length > 0) {
+          localStorage.setItem('satisfaction_feedback_completed', 'true');
+          return;
         }
+
+        const daysSinceRegistration = (Date.now() - new Date(user.created_at).getTime()) / 86400000;
+        if (daysSinceRegistration < 7 || isCancelled) return;
+
+        satisfactionTimer = setTimeout(() => {
+          setShowSatisfactionModal(true);
+          localStorage.setItem('satisfaction_modal_last_shown', new Date().toISOString());
+        }, 30000);
       } catch (error) {
         console.error('Erreur lors de la vérification de la modal de satisfaction:', error);
       }
     };
     checkSatisfactionModal();
-  }, [location.pathname]);
+    return () => {
+      isCancelled = true;
+      if (satisfactionTimer) clearTimeout(satisfactionTimer);
+    };
+  }, []);
   const handleCloseSatisfactionModal = () => {
+    localStorage.setItem('satisfaction_modal_last_shown', new Date().toISOString());
     setShowSatisfactionModal(false);
   };
   

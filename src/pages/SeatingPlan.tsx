@@ -18,7 +18,6 @@ import ImportGuestListDialog from '@/components/seating-plan/ImportGuestListDial
 import ManualGuestDialog from '@/components/seating-plan/ManualGuestDialog';
 import { ImportExcelDialog } from '@/components/seating-plan/ImportExcelDialog';
 import ExportPDFButton from '@/components/seating-plan/ExportPDFButton';
-import ExportVisualPDFButton from '@/components/seating-plan/ExportVisualPDFButton';
 import SeatingPlanVisual from '@/components/seating-plan/SeatingPlanVisual';
 import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from '@/types/seating';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
@@ -362,7 +361,6 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                     <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
-                  <ExportVisualPDFButton />
                 </div>
 
                 <SeatingPlanStats 
