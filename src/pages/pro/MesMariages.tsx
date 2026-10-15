@@ -19,6 +19,7 @@ import { openProTutorial } from '@/components/pro/ProSupportHost';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
+import guideJourJImage from '@/assets/guides/guide-jour-j.png';
 
 interface ProProfileForm {
   first_name: string;
@@ -147,6 +148,11 @@ const MesMariages: React.FC = () => {
   todayDate.setHours(0, 0, 0, 0);
   const getDaysUntil = (date: string | null | undefined) =>
     date ? Math.ceil((new Date(date).getTime() - todayDate.getTime()) / 86400000) : null;
+  const nextWedding = weddings
+    .filter((wedding) => (getDaysUntil(wedding.wedding_date) ?? -1) >= 0)
+    .sort((a, b) => new Date(a.wedding_date!).getTime() - new Date(b.wedding_date!).getTime())[0];
+  const nextWeddingDays = nextWedding ? getDaysUntil(nextWedding.wedding_date) : null;
+
 
   const toolboxItems = [
     {
@@ -234,6 +240,44 @@ const MesMariages: React.FC = () => {
           >
             {t('header.incompleteProfile')} →
           </button>
+        )}
+
+        {/* Prochain Jour J — carte vedette */}
+        {!loading && nextWedding && (
+          <section aria-labelledby="next-wedding-title" className="grid overflow-hidden border border-border bg-background shadow-sm md:grid-cols-[1fr_auto] animate-fade-in">
+            <div className="p-6 md:p-8">
+              <p className="text-xs font-bold uppercase tracking-widest text-wedding-olive">
+                {isEnglish ? 'Next wedding day' : 'Prochain Jour J'}
+              </p>
+              <h2 id="next-wedding-title" className="mt-2 font-serif text-3xl md:text-4xl font-bold text-foreground">
+                {nextWedding.title}
+              </h2>
+              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
+                <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4" />
+                  {new Date(nextWedding.wedding_date!).toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+                </span>
+                {nextWedding.wedding_location && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{nextWedding.wedding_location}</span>}
+                {!!nextWedding.guest_count && <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{nextWedding.guest_count} {isEnglish ? 'guests' : 'invités'}</span>}
+              </div>
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Button className="rounded-none min-h-[44px] bg-wedding-olive text-background hover:bg-wedding-olive/90" onClick={() => handleOpenWedding(nextWedding.id, '/mon-jour-m/planning')}>
+                  <ClipboardList className="h-4 w-4 mr-2" />{isEnglish ? 'Open the day-of schedule' : 'Ouvrir le planning Jour J'}
+                </Button>
+                <Button variant="outline" className="rounded-none min-h-[44px]" onClick={() => handleOpenWedding(nextWedding.id, '/dashboard/rsvp')}>
+                  <Users className="h-4 w-4 mr-2" />{isEnglish ? 'Guests & RSVP' : 'Invités & RSVP'}
+                </Button>
+              </div>
+            </div>
+            <div className="flex items-center justify-center gap-4 bg-editorial-beige px-8 py-6 md:flex-col">
+              <img src={guideJourJImage} alt="" aria-hidden="true" className="h-20 w-20 object-contain md:h-28 md:w-28" loading="lazy" />
+              <div className="text-center">
+                <p className="font-serif text-5xl font-bold text-foreground">
+                  {nextWeddingDays === 0 ? (isEnglish ? 'Today' : 'Jour J') : `J-${nextWeddingDays}`}
+                </p>
+                <p className="text-xs uppercase tracking-wider text-muted-foreground">{isEnglish ? 'countdown' : 'décompte'}</p>
+              </div>
+            </div>
+          </section>
         )}
 
         {!loading && <ProSeasonOverview weddings={weddings} />}
