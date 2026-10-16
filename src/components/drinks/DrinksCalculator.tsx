@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { DrinkTier, DrinkMoment } from '@/types/drinks';
 import { calculateBottles, calculatePrice } from '@/utils/drinkCalculator';
 import { exportDrinksCalculatorToPDF } from '@/services/drinksExportService';
+import { useWedding } from '@/contexts/WeddingContext';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useUserProfile } from '@/hooks/useUserProfile';
@@ -31,6 +32,7 @@ const DrinksCalculator = () => {
   const [isExporting, setIsExporting] = useState(false);
   const { toast } = useToast();
   const { isPremium } = useUserProfile();
+  const { isWeddingCollaborator } = useWedding();
   const {
     executeAction,
     showPremiumModal,
@@ -38,6 +40,8 @@ const DrinksCalculator = () => {
     feature,
     description
   } = usePremiumAction({
+    // Couple invité par son wedding planner : module partagé, jamais bloqué
+    alwaysAllow: isWeddingCollaborator,
     feature: t('drinks.premiumFeature'),
     description: t('drinks.premiumDesc')
   });
