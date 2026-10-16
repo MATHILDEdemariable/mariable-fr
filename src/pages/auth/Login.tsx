@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
@@ -13,6 +13,9 @@ import { supabase } from '@/integrations/supabase/client';
 import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
+
+// Survit au démontage de la page : bloque une boucle /login ↔ page protégée
+const lastLoginRedirect = { userId: null as string | null, at: 0 };
 
 const Login = () => {
   const { t } = useTranslation('auth');
@@ -41,12 +44,12 @@ const Login = () => {
 
   // Une seule redirection par utilisateur : évite une boucle /login ↔ /dashboard
   // quand une session expirée apparaît puis disparaît (réseau instable).
-  const redirectedUserIdRef = useRef<string | null>(null);
-
   useEffect(() => {
     if (!user) return;
-    if (redirectedUserIdRef.current === user.id) return;
-    redirectedUserIdRef.current = user.id;
+    const now = Date.now();
+    if (lastLoginRedirect.userId === user.id && now - lastLoginRedirect.at < 5000) return;
+    lastLoginRedirect.userId = user.id;
+    lastLoginRedirect.at = now;
 
     // Un compte professionnel arrive sur son espace pro, pas sur un mariage
     const resolveDestination = async () => {
