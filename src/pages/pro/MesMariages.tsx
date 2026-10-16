@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, ClipboardList, Sparkles, Smartphone } from 'lucide-react';
+import { Plus, CalendarDays, MapPin, Users, ArrowRight, Building2, Crown, Save, Pencil, Archive, RotateCcw, GraduationCap, BookUser, Settings, Sparkles, Smartphone } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
