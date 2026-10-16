@@ -111,7 +111,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
   const [subscribeSubject, setSubscribeSubject] = useState<string | null>(null);
   const text = isEnglish ? TEXT.en : TEXT.fr;
   const compareRows = getCompareRows(isEnglish);
-  const planIds: PlanId[] = ["jour-j", "organisation", "agence"];
+  const planIds: PlanId[] = ["jour-j", "organisation"];
 
   return (
     <div>
@@ -128,7 +128,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-px bg-editorial-noir/20 md:grid-cols-3">
+      <div className="mt-8 grid gap-px bg-editorial-noir/20 md:grid-cols-2">
         {planIds.map((planId) => {
           const plan = text.plans[planId];
           const price = planId === "agence" ? null : PRICES[planId];
