@@ -4,9 +4,9 @@ export type CguLanguageContent = { title: string; intro: string[]; articles: Cgu
 
 export const CGU_CONTENT: Record<"fr" | "en", CguLanguageContent> = {
  "fr": {
-  "title": "Version française — Conditions Générales d'Utilisation de la",
+  "title": "Conditions Générales d'Utilisation de la plateforme Mariable",
   "intro": [
-   "plateforme Mariable Version en vigueur au 15 octobre 2026."
+   "Version en vigueur au 15 octobre 2026."
   ],
   "articles": [
    {
@@ -14,8 +14,7 @@ export const CGU_CONTENT: Record<"fr" | "en", CguLanguageContent> = {
     "paragraphs": [
      "La plateforme accessible à l'adresse mariable.fr (la « Plateforme ») est éditée par MARIABLE, société par actions simplifiée unipersonnelle (SASU) au capital de 8 000 €, immatriculée au RCS de Nanterre sous le numéro 944 762 756, dont le siège est situé 99 avenue Achille Peretti, 92200 Neuilly-sur-Seine (« Mariable », « nous »).",
      "Directrice de la publication : Mathilde Lambert. Contact : mathilde@mariable.fr.",
-     "Hébergement du site : OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — téléphone :",
-     "09 72 10 10 07.",
+     "Hébergement du site : OVH SAS, 2 rue Kellermann, 59100 Roubaix, France — téléphone : 09 72 10 10 07.",
      "Hébergement de la base de données : Supabase Pte. Ltd, 65 Chulia Street #38-02/03, OCBC Centre, Singapour 049513 — contact : privacy@supabase.io. Les données sont stockées dans l'Union européenne, en Allemagne."
     ]
    },
