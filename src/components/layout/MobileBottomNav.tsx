@@ -53,7 +53,7 @@ const drawerNavItems: NavItem[] = [
   { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie' },
   { icon: Building2, label: 'Mairie', path: '/dashboard/mairie-civil' },
   { icon: Users, label: 'Prestataires', path: '/dashboard/suivi' },
-  { icon: FileText, label: 'Documents', path: '/dashboard/documents' },
+  { icon: FileText, label: 'Documents', path: '/mon-jour-m/documents' },
   { icon: QrCode, label: 'QR Code', path: '/dashboard/qr-code' },
   { icon: BookOpen, label: 'Guides', path: '/dashboard/guides' },
 ];
