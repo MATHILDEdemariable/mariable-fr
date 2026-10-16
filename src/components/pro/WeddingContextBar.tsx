@@ -22,7 +22,7 @@ const WeddingContextBar: React.FC = () => {
   const location = useLocation();
   const isProHome = location.pathname === '/pro';
 
-  if (accountType !== 'b2b' || !currentWedding) return null;
+  if (accountType !== 'b2b' || !currentWedding || isProHome) return null;
 
   return (
     <div className="border-b border-border bg-editorial-beige mb-4">
