@@ -21,7 +21,17 @@ interface DashboardSidebarProps {
 const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = false }) => {
   const location = useLocation();
   const search = location.search;
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
+  const isEnglish = i18n.language?.startsWith('en');
+  // Mode d'affichage uniquement visuel : masquer un module ne supprime aucune donnée.
+  const [dashboardMode, setDashboardMode] = useState<'organisation' | 'jourJ'>(
+    () => (localStorage.getItem('mariable_dashboard_mode') === 'jourJ' ? 'jourJ' : 'organisation')
+  );
+  const isJourJMode = dashboardMode === 'jourJ';
+  const handleChangeDashboardMode = (mode: 'organisation' | 'jourJ') => {
+    setDashboardMode(mode);
+    localStorage.setItem('mariable_dashboard_mode', mode);
+  };
   const [showProblemModal, setShowProblemModal] = useState(false);
   const [showCallModal, setShowCallModal] = useState(false);
   const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
@@ -90,6 +100,20 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         <span className="font-bold text-lg sm:text-xl">{t('header.myWorkspace')}</span>
       </div>
 
+      <div className="mx-2 sm:mx-3 grid grid-cols-2 border border-wedding-olive/30" role="group" aria-label={isEnglish ? 'Dashboard mode' : 'Mode du tableau de bord'}>
+        {(['organisation', 'jourJ'] as const).map((mode) => (
+          <button
+            key={mode}
+            type="button"
+            aria-pressed={dashboardMode === mode}
+            onClick={() => handleChangeDashboardMode(mode)}
+            className={cn('min-h-[44px] px-2 text-xs font-semibold transition-colors', dashboardMode === mode ? 'bg-wedding-olive text-white' : 'text-gray-600 hover:bg-wedding-olive/10')}
+          >
+            {mode === 'organisation' ? (isEnglish ? 'Full planning' : 'Organisation complète') : (isEnglish ? 'Wedding day' : 'Coordination Jour J')}
+          </button>
+        ))}
+      </div>
+
       <nav className="py-2 sm:py-3 px-2 sm:px-3 space-y-0.5">
         {/* ORGANISATION */}
         <SectionLabel label={t('sidebar.sections.organisation')} />
@@ -99,6 +123,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.dashboardHome')}</span>
         </Link>
 
+        {!isJourJMode && (<>
         <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={preventReader} className={linkClass(isActive('/dashboard/mon-mariage/retroplanning'))}>
           <Calendar className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.retroplanning')}</span>
@@ -154,6 +179,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        </>)}
 
         {/* JOUR-J */}
         <SectionLabel label={t('sidebar.sections.jourJ')} />
@@ -211,6 +237,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
 
         {/* ADMIN */}
+        {!isJourJMode && (<>
         <SectionLabel label={t('sidebar.sections.admin')} />
 
         <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
@@ -230,6 +257,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <Globe className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.website')}</span>
         </button>
+        </>)}
 
         {/* BONUS */}
         <SectionLabel label={t('sidebar.sections.bonus')} />

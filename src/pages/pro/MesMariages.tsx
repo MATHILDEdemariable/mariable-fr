@@ -18,6 +18,7 @@ import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 import { openProTutorial } from '@/components/pro/ProSupportHost';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
+import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 import guideJourJImage from '@/assets/guides/guide-jour-j.png';
 
@@ -56,6 +57,22 @@ const MesMariages: React.FC = () => {
   const [savingProfile, setSavingProfile] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isProPremium, setIsProPremium] = useState(false);
+
+  useEffect(() => {
+    const loadPremiumStatus = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data, error } = await supabase.rpc('is_user_premium', { user_uuid: user.id });
+        if (error) throw error;
+        setIsProPremium(!!data);
+      } catch (error) {
+        console.error('❌ EspacePro: statut premium illisible', error);
+      }
+    };
+    loadPremiumStatus();
+  }, []);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -206,6 +223,10 @@ const MesMariages: React.FC = () => {
                 <Building2 className="h-3 w-3 mr-1" />
                 {t('header.badge')}
               </Badge>
+              <a href="/pro#mon-offre" className="text-xs font-semibold uppercase tracking-wider border border-background/40 px-2 py-0.5 hover:bg-background/10">
+                <Crown className="inline h-3 w-3 mr-1" />
+                {isProPremium ? 'Premium Pro' : (isEnglish ? 'Free plan' : 'Offre gratuite')}
+              </a>
               <span className="text-xs uppercase tracking-widest text-background/70">
                 {todayDate.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
@@ -279,6 +300,8 @@ const MesMariages: React.FC = () => {
             </div>
           </section>
         )}
+
+        {!loading && <ProFeuilleDeRoute weddings={weddings} onOpenWedding={handleOpenWedding} />}
 
         {!loading && <ProSeasonOverview weddings={weddings} />}
 

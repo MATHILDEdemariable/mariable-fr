@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone } from 'lucide-react';
+import { Building2, CalendarHeart, IdCard, Crown, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone, Home } from 'lucide-react';
 import { openProTutorial, openProHelp } from './ProSupportHost';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -82,6 +82,10 @@ const ProSidebar: React.FC = () => {
           <LifeBuoy className="h-4 w-4" />
           <span className="ml-3 leading-tight">{t('nav.help')}</span>
         </button>
+        <a href="/" className={cn(linkClass(false), 'w-full text-left')}>
+          <Home className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{t('nav.backHome', { defaultValue: 'Retour à Mariable' })}</span>
+        </a>
       </div>
     </div>
   );
