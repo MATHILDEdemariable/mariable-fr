@@ -82,7 +82,7 @@ const CONTENT = {
     altLink: "Voir la feuille de route jour J partagée",
     faqTitle: "Questions fréquentes",
     faq: [
-      ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Agence ou plusieurs wedding planners : sur devis. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète. Renouvellement à date anniversaire de la souscription."],
+      ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète. Renouvellement à date anniversaire de la souscription."],
       ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
       ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
       ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
@@ -167,7 +167,7 @@ const CONTENT = {
     altLink: "See the shared wedding-day run sheet",
     faqTitle: "Frequently asked questions",
     faq: [
-      ["How much does Mariable Pro cost?", "Wedding-day coordination: €149/year. Full planning (includes Wedding-day coordination): €259/year. Agency or several planners: on quote. Pay yearly, or in 3 instalments: €200 (3 × €66.67) for Wedding-day and €310 (3 × €103.33) for Full planning."],
+      ["How much does Mariable Pro cost?", "Wedding-day coordination: €149/year. Full planning (includes Wedding-day coordination): €259/year. Pay yearly, or in 3 instalments: €200 (3 × €66.67) for Wedding-day and €310 (3 × €103.33) for Full planning."],
       ["Is there a free trial?", "Yes: one wedding free for 2 months, no commitment."],
       ["What do all plans include?", "Multiple weddings, collaboration with your couples and a Mariable listing."],
       ["Does Mariable Pro handle invoicing and lead generation?", "No. Mariable Pro is an event management tool: wedding-day timeline, vendors, couples, planning and logistics."],
