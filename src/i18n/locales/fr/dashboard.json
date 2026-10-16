@@ -148,7 +148,7 @@
     "selectionTitle": "🛒 Votre sélection mariage",
     "selectionSubtitle": "Découvrez nos prestataires certifiés et composez votre équipe de rêve",
     "explore": "Explorer",
-    "arsenalHeading": "Les outils disponibles\u00a0",
+    "arsenalHeading": "Les outils disponibles ",
     "finalStretchHeading": "Dernière ligne droite",
     "items": {
       "quiz": {
@@ -281,5 +281,8 @@
     "manualDesc": "Ajoutez et gérez vos invités directement dans l'application. Idéal pour suivre les confirmations, notes personnelles et régimes alimentaires. Vous pouvez importer un fichier Excel ou ajouter les invités un par un.",
     "formTitle": "Collecte automatique des réponses",
     "formDesc": "Créez un formulaire RSVP personnalisé et partagez-le avec vos invités par email ou lien. Les réponses sont automatiquement collectées et centralisées ici pour un suivi en temps réel."
+  },
+  "editorialHero": {
+    "title": "votre plus beau jour se prépare ici."
   }
 }
