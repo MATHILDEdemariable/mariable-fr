@@ -136,6 +136,8 @@ const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const CarnetAdresses = lazy(() => import("./pages/pro/CarnetAdresses"));
+const ApercuEspacePro = lazy(() => import("./pages/pro/ApercuEspacePro"));
+const ApercuMariage = lazy(() => import("./pages/pro/ApercuMariage"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
@@ -304,6 +306,8 @@ function App() {
                   <Route path="/demo-pro" element={<DemoPro />} />
                   <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
                   <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />
+                  <Route path="/pro/apercu-espace-pro" element={<ApercuEspacePro />} />
+                  <Route path="/pro/apercu-mariage" element={<ApercuMariage />} />
                   <Route path="/agence" element={<Agence />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
