@@ -127,8 +127,8 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
       const resolved =
         (fromUrl && active.find((w) => w.id === fromUrl)?.id) ||
-        (stored && active.find((w) => w.id === stored && w.owner_id !== user.id)?.id) ||
         (type === 'b2c' && sharedWedding?.id) ||
+        (stored && active.find((w) => w.id === stored && w.owner_id !== user.id)?.id) ||
         (type === 'b2b'
           ? stored && active.find((w) => w.id === stored)?.id
           : active.find((w) => w.is_default)?.id || active[0]?.id) ||
@@ -222,7 +222,15 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
     [currentWeddingId]
   );
 
-  const activeWeddings = useMemo(() => weddings.filter((w) => !w.archived_at), [weddings]);
+  const activeWeddings = useMemo(() => {
+    const active = weddings.filter((w) => !w.archived_at);
+    // Couple invité par son wedding planner : une seule vue, le mariage partagé (la coquille vide est masquée, rien n'est supprimé)
+    if (accountType === 'b2c' && user) {
+      const sharedWeddings = active.filter((w) => w.owner_id !== user.id);
+      if (sharedWeddings.length > 0) return sharedWeddings;
+    }
+    return active;
+  }, [weddings, accountType, user]);
   const archivedWeddings = useMemo(() => weddings.filter((w) => !!w.archived_at), [weddings]);
 
   const canCreateMoreWeddings = accountType !== 'b2b' ? false : isPremium || activeWeddings.length < 1;

@@ -35,6 +35,7 @@ import {
   useDeleteAccommodation,
   Accommodation,
 } from '@/hooks/useAccommodations';
+import { useWedding } from '@/contexts/WeddingContext';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 
@@ -60,11 +61,14 @@ export default function AccommodationsPage() {
   const updateMutation = useUpdateAccommodation();
   const deleteMutation = useDeleteAccommodation();
 
+  const { isWeddingCollaborator } = useWedding();
   const {
     executeAction,
     showPremiumModal,
     closePremiumModal
   } = usePremiumAction({
+    // Couple invité par son wedding planner : module partagé, jamais bloqué
+    alwaysAllow: isWeddingCollaborator,
     feature: t('accommodations.premiumFeature'),
     description: t('accommodations.premiumDescription')
   });

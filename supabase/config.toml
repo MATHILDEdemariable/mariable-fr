@@ -82,3 +82,6 @@ verify_jwt = false
 
 [functions.album-media-url]
 verify_jwt = false
+
+[functions.send-welcome-pro-email]
+verify_jwt = false

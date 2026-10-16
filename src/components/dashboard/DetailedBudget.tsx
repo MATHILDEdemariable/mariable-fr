@@ -14,6 +14,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useCart } from '@/components/cart/CartProvider';
 import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
+import { useWedding } from '@/contexts/WeddingContext';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
 import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
@@ -85,7 +86,10 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   const { t, i18n } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { isPremium, loading: loadingProfile } = useUserProfile();
+  const { isPremium: isPremiumProfile, loading: loadingProfile } = useUserProfile();
+  const { isWeddingCollaborator } = useWedding();
+  // Le couple invité par son wedding planner modifie librement le budget partagé
+  const isPremium = isPremiumProfile || isWeddingCollaborator;
   const { items: cartItems } = useCart();
   const { weddingId } = useWeddingScope();
   const isEnglishBudget = i18n.language.startsWith('en');
@@ -195,6 +199,19 @@ else query = query.eq('user_id', userData.user.id);
 
       if (weddingId) itemData.wedding_id = weddingId;
 
+      // Mariage partagé : la ligne peut appartenir à l'autre membre, on la met à jour sans la dupliquer
+      const existingRow = weddingId ? budgetDetailsData?.find((row: any) => row.item_id === item.id) : null;
+      if (existingRow && (existingRow as any).user_id !== userData.user.id) {
+        const { user_id: _ignoredUserId, ...sharedUpdate } = itemData;
+        const { data, error } = await supabase
+          .from('budgets_detail')
+          .update(sharedUpdate)
+          .eq('id', (existingRow as any).id)
+          .select();
+        if (error) throw error;
+        return data;
+      }
+
       const { data, error } = await supabase
         .from('budgets_detail')
         .upsert(itemData, {
@@ -222,10 +239,10 @@ else query = query.eq('user_id', userData.user.id);
       let query: any = supabase
         .from('budgets_detail')
         .delete()
-        .eq('user_id', userData.user.id)
         .eq('item_id', itemId);
 
-      if (weddingId) query = query.eq('wedding_id', weddingId);
+      // Mariage partagé : on supprime la ligne du mariage, quel que soit son auteur
+      query = weddingId ? query.eq('wedding_id', weddingId) : query.eq('user_id', userData.user.id);
 
       const { error } = await query;
 
@@ -406,7 +423,7 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
           // Update existing record
           const { data, error } = await supabase
             .from('budgets_dashboard')
-            .update(budgetPayload)
+            .update({ ...budgetPayload, user_id: undefined })
             .eq('id', existingData.id)
             .select();
           if (error) throw error;

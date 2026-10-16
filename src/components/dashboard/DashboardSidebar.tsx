@@ -28,9 +28,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const [dashboardMode, setDashboardMode] = useState<'organisation' | 'jourJ'>(
     () => (localStorage.getItem('mariable_dashboard_mode') === 'jourJ' ? 'jourJ' : 'organisation')
   );
-  const { accountType, currentWedding } = useWedding();
-  // Pro : la formule du mariage (choisie à la création) impose la vue, sans commutateur.
-  const isProWeddingView = accountType === 'b2b' && !!currentWedding;
+  const { accountType, currentWedding, isWeddingCollaborator } = useWedding();
+  // Pro ou couple invité par son pro : la formule du mariage (choisie par le pro) impose la vue, sans commutateur.
+  const isProWeddingView = (accountType === 'b2b' || isWeddingCollaborator) && !!currentWedding;
   const isJourJMode = isProWeddingView ? currentWedding?.prestation_type === 'jourJ' : dashboardMode === 'jourJ';
   const handleChangeDashboardMode = (mode: 'organisation' | 'jourJ') => {
     setDashboardMode(mode);
@@ -91,6 +91,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   );
 
   const preventReader = (e: React.MouseEvent) => { if (isReaderMode) e.preventDefault(); };
+  // Couple invité par son wedding planner : seuls budget, invités/RSVP, plan de table, boissons et hébergements sont ouverts
+  const coupleLockedClass = isWeddingCollaborator ? 'pointer-events-none opacity-40' : '';
 
   const SectionLabel: React.FC<{ label: string }> = ({ label }) => (
     <div className="px-3 pt-4 pb-1 text-[10px] uppercase tracking-wider text-gray-400 font-semibold">
@@ -134,7 +136,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </Link>
 
         {!isJourJMode && (<>
-        <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={preventReader} className={linkClass(isActive('/dashboard/mon-mariage/retroplanning'))}>
+        <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mon-mariage/retroplanning')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
           <Calendar className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.retroplanning')}</span>
         </Link>
@@ -156,7 +158,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         {/* Prestataires (dropdown) */}
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn(linkClass(isPrestatairesActive()), 'w-full justify-start')} disabled={isReaderMode}>
+          <DropdownMenuTrigger className={cn(linkClass(isPrestatairesActive()), 'w-full justify-start', coupleLockedClass)} disabled={isReaderMode || isWeddingCollaborator}>
             <Store className="h-4 w-4" />
             <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.vendors')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
@@ -174,7 +176,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         {/* Checklist (dropdown) */}
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn(linkClass(isChecklistActive()), 'w-full justify-start')} disabled={isReaderMode}>
+          <DropdownMenuTrigger className={cn(linkClass(isChecklistActive()), 'w-full justify-start', coupleLockedClass)} disabled={isReaderMode || isWeddingCollaborator}>
             <CheckSquare className="h-4 w-4" />
             <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.checklist')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
@@ -229,7 +231,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.drinksCalculator')}</span>
         </Link>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={preventReader} className={linkClass(isActive('/dashboard/ceremonie'))}>
+        <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/ceremonie')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
           <Heart className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
         </Link>
@@ -259,7 +261,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         {!isJourJMode && (<>
         <SectionLabel label={t('sidebar.sections.admin')} />
 
-        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
+        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mairie-civil')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
           <Building2 className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
         </Link>
@@ -267,7 +269,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         <button
           onClick={() => !isReaderMode && setShowSiteInternetModal(true)}
-          className={cn(linkClass(false), 'w-full text-left')}
+          className={cn(linkClass(false), 'w-full text-left', coupleLockedClass)} disabled={isWeddingCollaborator}
         >
           <Globe className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.website')}</span>

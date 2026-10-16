@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
+import ProPricingPlans from '@/components/pro/ProPricingPlans';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 import { openProTutorial } from '@/components/pro/ProSupportHost';
@@ -52,6 +53,7 @@ const MesMariages: React.FC = () => {
     setWeddingArchived,
   } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [offerOpen, setOfferOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -275,7 +277,7 @@ const MesMariages: React.FC = () => {
           {accountType === 'b2b' && !canCreateMoreWeddings && weddings.length > 0 && (
             <div className="mb-4 border border-border bg-background p-4 text-sm text-muted-foreground">
               {t('weddings.limit')}{' '}
-              <button className="underline" onClick={() => navigate('/partenariat#mariable-pro')}>
+              <button className="underline" onClick={() => setOfferOpen(true)}>
                 {t('weddings.limitCta')}
               </button>
             </div>
@@ -466,6 +468,16 @@ const MesMariages: React.FC = () => {
           </Tabs>
         </section>
       </div>
+
+      {/* L'offre Mariable Pro s'ouvre ici, sans quitter l'espace pro */}
+      <Dialog open={offerOpen} onOpenChange={setOfferOpen}>
+        <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-5xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">{isEnglish ? 'The Mariable Pro offer' : "L'offre Mariable Pro"}</DialogTitle>
+          </DialogHeader>
+          <ProPricingPlans isEnglish={!!isEnglish} />
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-xl">
