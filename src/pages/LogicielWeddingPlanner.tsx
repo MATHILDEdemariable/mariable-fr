@@ -15,7 +15,7 @@ const CONTENT = {
     seoTitle: "Application & logiciel wedding planner – Mariable Pro",
     seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 2 mois.",
     eyebrow: "Mariable Pro · Logiciel wedding planner",
-    h1: "L'application des wedding planners qui fait tenir le jour J dans un seul document",
+    h1: "L'application des wedding planners boostée à l'IA.",
     answer: "L'outil des wedding planners et organisateurs de mariage : une application pour centraliser toutes les informations d'un mariage et collaborer facilement avec vos couples et prestataires, boostée à l'IA.",
     ctaPrices: "Voir les prix",
     ctaTry: "Essayer gratuitement",
