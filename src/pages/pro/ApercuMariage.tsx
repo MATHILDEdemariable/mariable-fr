@@ -131,7 +131,7 @@ const ApercuMariage: React.FC = () => {
 
           {/* Modules */}
           <section aria-labelledby="modules">
-            <h2 id="modules" className="font-serif text-xl mb-3">{mode === 'jourj' ? 'Vos 6 outils Jour J' : 'Tous vos outils'}</h2>
+            <h2 id="modules" className="font-serif text-xl mb-3">{mode === 'jourj' ? `Vos ${JOURJ_MODULES.length} outils Jour J` : 'Tous vos outils'}</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {modules.map((module) => (
                 <div key={module.label} className="bg-white border border-[#E8DFD0] p-4 hover:shadow-md transition-shadow cursor-pointer">
