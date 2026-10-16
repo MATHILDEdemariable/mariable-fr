@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2, Eye, EyeOff, AlertCircle, Mail } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -22,6 +23,9 @@ const ResetPassword = () => {
   const [sendingReset, setSendingReset] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { i18n } = useTranslation();
+  // Traduction inline FR/EN de la page
+  const tr = (frText: string, enText: string) => (i18n.language?.startsWith('en') ? enText : frText);
 
   useEffect(() => {
     const initializeSession = async () => {
@@ -124,8 +128,8 @@ const ResetPassword = () => {
     
     if (password !== confirmPassword) {
       toast({
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas.",
+        title: tr("Erreur", "Error"),
+        description: tr("Les mots de passe ne correspondent pas.", "Passwords do not match."),
         variant: "destructive",
       });
       return;
@@ -133,8 +137,8 @@ const ResetPassword = () => {
 
     if (password.length < 6) {
       toast({
-        title: "Erreur",
-        description: "Le mot de passe doit contenir au moins 6 caractères.",
+        title: tr("Erreur", "Error"),
+        description: tr("Le mot de passe doit contenir au moins 6 caractères.", "Password must be at least 6 characters."),
         variant: "destructive",
       });
       return;
@@ -152,8 +156,8 @@ const ResetPassword = () => {
       }
 
       toast({
-        title: "Mot de passe mis à jour",
-        description: "Votre mot de passe a été mis à jour avec succès.",
+        title: tr("Mot de passe mis à jour", "Password updated"),
+        description: tr("Votre mot de passe a été mis à jour avec succès.", "Your password has been updated successfully."),
       });
 
       navigate('/dashboard');
@@ -161,15 +165,15 @@ const ResetPassword = () => {
       console.error('[reset-password] Update error:', error);
       
       // Traduire les messages d'erreur courants en français
-      let errorMessage = "Une erreur est survenue lors de la mise à jour du mot de passe.";
+      let errorMessage = tr("Une erreur est survenue lors de la mise à jour du mot de passe.", "An error occurred while updating your password.");
       if (error.message?.includes("different from the old password")) {
-        errorMessage = "Le nouveau mot de passe doit être différent de l'ancien.";
+        errorMessage = tr("Le nouveau mot de passe doit être différent de l'ancien.", "The new password must be different from the old one.");
       } else if (error.message) {
         errorMessage = error.message;
       }
       
       toast({
-        title: "Erreur",
+        title: tr("Erreur", "Error"),
         description: errorMessage,
         variant: "destructive",
       });
@@ -181,8 +185,8 @@ const ResetPassword = () => {
   const handleResendResetEmail = async () => {
     if (!resetEmail) {
       toast({
-        title: "Email requis",
-        description: "Veuillez saisir votre adresse email.",
+        title: tr("Email requis", "Email required"),
+        description: tr("Veuillez saisir votre adresse email.", "Please enter your email address."),
         variant: "destructive",
       });
       return;
@@ -196,21 +200,21 @@ const ResetPassword = () => {
 
       if (error) {
         toast({
-          title: "Erreur",
+          title: tr("Erreur", "Error"),
           description: error.message,
           variant: "destructive",
         });
       } else {
         toast({
-          title: "Email envoyé",
-          description: "Vérifiez votre boîte mail pour réinitialiser votre mot de passe.",
+          title: tr("Email envoyé", "Email sent"),
+          description: tr("Vérifiez votre boîte mail pour réinitialiser votre mot de passe.", "Check your inbox to reset your password."),
         });
       }
     } catch (err) {
       console.error('[reset-password] Resend error:', err);
       toast({
-        title: "Erreur",
-        description: "Une erreur est survenue. Veuillez réessayer.",
+        title: tr("Erreur", "Error"),
+        description: tr("Une erreur est survenue. Veuillez réessayer.", "Something went wrong. Please try again."),
         variant: "destructive",
       });
     } finally {
@@ -232,8 +236,8 @@ const ResetPassword = () => {
     return (
       <>
         <Helmet>
-          <title>Lien invalide - Mariable</title>
-          <meta name="description" content="Le lien de réinitialisation a expiré ou est invalide" />
+          <title>{tr("Lien invalide - Mariable", "Invalid link - Mariable")}</title>
+          <meta name="description" content={tr("Le lien de réinitialisation a expiré ou est invalide", "The reset link has expired or is invalid")} />
         </Helmet>
         
         <div className="min-h-screen flex items-center justify-center bg-editorial-beige px-4">
@@ -243,12 +247,12 @@ const ResetPassword = () => {
                 <AlertCircle className="h-12 w-12 text-red-500" />
               </div>
               <CardTitle className="text-2xl font-serif text-editorial-noir">
-                {errorType === 'expired' ? 'Lien expiré' : 'Lien invalide'}
+                {errorType === 'expired' ? tr('Lien expiré', 'Link expired') : tr('Lien invalide', 'Invalid link')}
               </CardTitle>
               <CardDescription className="text-editorial-gray">
                 {errorType === 'expired' 
-                  ? 'Ce lien a expiré. Demandez un nouveau lien ci-dessous.'
-                  : 'Ce lien de réinitialisation n\'est plus valide. Veuillez en demander un nouveau.'}
+                  ? tr('Ce lien a expiré. Demandez un nouveau lien ci-dessous.', 'This link has expired. Request a new one below.')
+                  : tr('Ce lien de réinitialisation n\'est plus valide. Veuillez en demander un nouveau.', 'This reset link is no longer valid. Please request a new one.')}
               </CardDescription>
             </CardHeader>
             
@@ -256,7 +260,7 @@ const ResetPassword = () => {
               <div className="space-y-3">
                 <Input
                   type="email"
-                  placeholder="Votre adresse email"
+                  placeholder={tr("Votre adresse email", "Your email address")}
                   value={resetEmail}
                   onChange={(e) => setResetEmail(e.target.value)}
                   className="border-editorial-border rounded-none"
@@ -271,7 +275,7 @@ const ResetPassword = () => {
                   ) : (
                     <Mail className="w-4 h-4 mr-2" />
                   )}
-                  Envoyer un nouveau lien
+                  {tr("Envoyer un nouveau lien", "Send a new link")}
                 </Button>
               </div>
               
@@ -280,7 +284,7 @@ const ResetPassword = () => {
                 onClick={() => navigate('/login')}
                 className="w-full border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white rounded-none"
               >
-                Retour à la connexion
+                {tr("Retour à la connexion", "Back to sign in")}
               </Button>
             </CardContent>
           </Card>
@@ -292,30 +296,30 @@ const ResetPassword = () => {
   return (
     <>
       <Helmet>
-        <title>Nouveau mot de passe - Mariable</title>
-        <meta name="description" content="Définissez votre nouveau mot de passe pour votre compte Mariable" />
+        <title>{tr("Nouveau mot de passe - Mariable", "New password - Mariable")}</title>
+        <meta name="description" content={tr("Définissez votre nouveau mot de passe pour votre compte Mariable", "Set a new password for your Mariable account")} />
       </Helmet>
       
       <div className="min-h-screen flex items-center justify-center bg-editorial-beige px-4">
         <Card className="w-full max-w-md border-editorial-border">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-serif text-editorial-noir">Nouveau mot de passe</CardTitle>
+            <CardTitle className="text-2xl font-serif text-editorial-noir">{tr("Nouveau mot de passe", "New password")}</CardTitle>
             <CardDescription className="text-editorial-gray">
-              Choisissez un nouveau mot de passe sécurisé pour votre compte
+              {tr("Choisissez un nouveau mot de passe sécurisé pour votre compte", "Choose a new secure password for your account")}
             </CardDescription>
           </CardHeader>
           
           <CardContent>
             <form onSubmit={handleResetPassword} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-editorial-noir">Nouveau mot de passe</Label>
+                <Label htmlFor="password" className="text-editorial-noir">{tr("Nouveau mot de passe", "New password")}</Label>
                 <div className="relative">
                   <Input
                     id="password"
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Entrez votre nouveau mot de passe"
+                    placeholder={tr("Entrez votre nouveau mot de passe", "Enter your new password")}
                     required
                     minLength={6}
                     className="pr-10 border-editorial-border rounded-none"
@@ -337,14 +341,14 @@ const ResetPassword = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-editorial-noir">Confirmer le mot de passe</Label>
+                <Label htmlFor="confirmPassword" className="text-editorial-noir">{tr("Confirmer le mot de passe", "Confirm password")}</Label>
                 <div className="relative">
                   <Input
                     id="confirmPassword"
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    placeholder="Confirmez votre nouveau mot de passe"
+                    placeholder={tr("Confirmez votre nouveau mot de passe", "Confirm your new password")}
                     required
                     minLength={6}
                     className="pr-10 border-editorial-border rounded-none"
@@ -373,10 +377,10 @@ const ResetPassword = () => {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Mise à jour en cours...
+                    {tr("Mise à jour en cours...", "Updating...")}
                   </>
                 ) : (
-                  'Mettre à jour le mot de passe'
+                  tr('Mettre à jour le mot de passe', 'Update password')
                 )}
               </Button>
             </form>
@@ -387,7 +391,7 @@ const ResetPassword = () => {
                 onClick={() => navigate('/login')}
                 className="text-sm text-editorial-olive hover:text-editorial-noir"
               >
-                Retour à la connexion
+                {tr("Retour à la connexion", "Back to sign in")}
               </Button>
             </div>
           </CardContent>

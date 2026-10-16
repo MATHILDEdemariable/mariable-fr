@@ -53,23 +53,24 @@ const Login = () => {
 
     // Un compte professionnel arrive sur son espace pro, pas sur un mariage
     const resolveDestination = async () => {
-      if (hasExplicitRedirect) {
-        navigate(redirectPath);
-        return;
-      }
-
+      let isProfessionalAccount = user.user_metadata?.account_type === 'b2b';
       try {
         const { data } = await (supabase as any)
           .from('profiles')
           .select('account_type')
           .eq('id', user.id)
           .maybeSingle();
-
-        navigate(data?.account_type === 'b2b' ? '/pro' : redirectPath);
+        if (data?.account_type) isProfessionalAccount = data.account_type === 'b2b';
       } catch (error) {
         console.error('❌ Login: type de compte illisible', error);
-        navigate(redirectPath);
       }
+
+      // Un pro arrive toujours sur /pro, sauf lien explicite vers son espace pro
+      if (isProfessionalAccount) {
+        navigate(hasExplicitRedirect && redirectPath.startsWith('/pro') ? redirectPath : '/pro');
+        return;
+      }
+      navigate(redirectPath);
     };
 
     resolveDestination();

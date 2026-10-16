@@ -64,17 +64,13 @@ const ProjectSummary = () => {
     documents: false,      // 10% - au moins 1 document
   });
 
-  // Initialize local state from profile
+  // Date et invités : la fiche mariage (renseignée par le wedding planner si partagée) prime sur le profil
   useEffect(() => {
-    if (profile) {
-      if (profile.wedding_date) {
-        setLocalWeddingDate(new Date(profile.wedding_date));
-      }
-      if (profile.guest_count) {
-        setLocalGuestCount(profile.guest_count.toString());
-      }
-    }
-  }, [profile]);
+    const sharedWeddingDate = currentWedding?.wedding_date || profile?.wedding_date;
+    const sharedGuestCount = currentWedding?.guest_count ?? profile?.guest_count;
+    if (sharedWeddingDate) setLocalWeddingDate(new Date(sharedWeddingDate));
+    if (sharedGuestCount) setLocalGuestCount(sharedGuestCount.toString());
+  }, [profile, currentWedding?.wedding_date, currentWedding?.guest_count]);
 
   // Load all module progress data
   useEffect(() => {

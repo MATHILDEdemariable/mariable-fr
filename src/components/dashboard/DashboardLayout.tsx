@@ -17,6 +17,7 @@ import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
 import CollaboratorBanner from './CollaboratorBanner';
 import CollaborationInviteBanner from './CollaborationInviteBanner';
+import { useWedding } from '@/contexts/WeddingContext';
 import ProPremiumModal from '@/components/pro/ProPremiumModal';
 import ProSupportHost from '@/components/pro/ProSupportHost';
 interface DashboardLayoutProps {
@@ -32,6 +33,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   const { t } = useTranslation('dashboard');
   const { t: tPro } = useTranslation('pro');
   const { isPremium, isProAccount } = useUserProfile();
+  // Couple invité par son wedding planner : accès inclus, pas d'incitation Premium
+  const { isWeddingCollaborator } = useWedding();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
   const [showProPremiumModal, setShowProPremiumModal] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -141,7 +144,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
               {tPro('bar.upgrade')}
             </Button>
           )}
-          {!isPremium && !isProAccount && (
+          {!isPremium && !isProAccount && !isWeddingCollaborator && (
             <Link to="/paiement">
               <Button
                 size="sm"
