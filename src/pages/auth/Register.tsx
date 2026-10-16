@@ -208,11 +208,6 @@ const Register = () => {
                   ? (preferredLanguage === 'en' ? 'Every wedding you run, beautifully calm.' : 'Chaque mariage que vous orchestrez, en toute sérénité.')
                   : (preferredLanguage === 'en' ? 'Your wedding day, fully lived.' : 'Votre Jour J, vécu pleinement.')}
               </p>
-              <p className="mt-3 text-sm md:text-base opacity-90 max-w-md">
-                {preferredLanguage === 'en'
-                  ? 'Plan without stress, coordinate every minute, enjoy your loved ones.'
-                  : 'Organisez sans stress, coordonnez chaque minute, profitez de vos proches.'}
-              </p>
             </figcaption>
           </figure>
 
