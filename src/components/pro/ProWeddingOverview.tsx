@@ -14,7 +14,7 @@ type OverviewModule = { labelFr: string; labelEn: string; hintFr: string; hintEn
 // Outils Jour J : Planning et Équipe sont deux onglets du module « Mon Jour M ».
 const JOUR_J_MODULES: OverviewModule[] = [
   { labelFr: 'Planning Jour J', labelEn: 'Day-of schedule', hintFr: 'Conducteur minute par minute', hintEn: 'Minute-by-minute run sheet', icon: Calendar, path: '/mon-jour-m/planning' },
-  { labelFr: 'Équipe & contacts', labelEn: 'Team & contacts', hintFr: 'Témoins, prestataires', hintEn: 'Witnesses, vendors', icon: Users, path: '/mon-jour-m/coordination' },
+  { labelFr: 'Équipe & contacts', labelEn: 'Team & contacts', hintFr: 'Témoins, prestataires', hintEn: 'Witnesses, vendors', icon: Users, path: '/mon-jour-m/equipe' },
   { labelFr: 'Cérémonie', labelEn: 'Ceremony', hintFr: 'Cortège, textes, musiques', hintEn: 'Procession, readings, music', icon: Heart, path: '/dashboard/ceremonie' },
   { labelFr: 'Plan de table & menus', labelEn: 'Seating & menus', hintFr: 'Placement, régimes', hintEn: 'Seating, diets', icon: Table, path: '/dashboard/seating-plan' },
   { labelFr: 'Boissons', labelEn: 'Drinks', hintFr: 'Quantités selon invités', hintEn: 'Quantities per guest', icon: Wine, path: '/dashboard/drinks' },
