@@ -14,7 +14,7 @@ interface ExportPDFButtonProps {
 }
 
 /** Dessine le plan de salle complet sur une page A4 paysage, à partir des positions des tables. */
-const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[], guests: SeatingAssignment[]) => {
+const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[], guests: SeatingAssignment[], showGuestNames = true) => {
   doc.addPage('a4', 'landscape');
   const pageWidth = 297;
   doc.setFillColor(127, 148, 116);
@@ -71,6 +71,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
     doc.setFontSize(6);
     doc.text(`${tableGuests.length}/${table.capacity}`, cx, cy + 3, { align: 'center' });
 
+    if (!showGuestNames) return;
     doc.setFontSize(5);
     doc.setTextColor(90, 90, 90);
     tableGuests.slice(0, 12).forEach((guest, index) => {
@@ -83,7 +84,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
 
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
-  doc.text('Généré par Mariable.fr — Plan visuel · Listing détaillé par table dans les pages suivantes', pageWidth / 2, 203, { align: 'center' });
+  doc.text('Généré par Mariable.fr — Plan global des tables', pageWidth / 2, 203, { align: 'center' });
 };
 
 const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
@@ -106,169 +107,86 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
       
       try {
         const doc = new jsPDF();
-        let yPos = 20;
+        const tableNameById = new Map(tables.map((table) => [table.id, table.table_name]));
+        const formatMenu = (guest: SeatingAssignment) =>
+          [guest.dietary_restrictions, guest.notes].filter(Boolean).join(' · ') || 'Menu standard';
 
-        // === PAGE 1 - Header avec branding Mariable ===
-        doc.setFillColor(127, 148, 116); // wedding-olive
-        doc.rect(0, 0, 210, 35, 'F');
-        
-        doc.setTextColor(255, 255, 255);
-        doc.setFontSize(24);
-        doc.setFont(undefined, 'bold');
-        doc.text('Plan de Table', 105, 18, { align: 'center' });
-        
-        doc.setFontSize(11);
-        doc.setFont(undefined, 'normal');
-        doc.text(plan.name || 'Mon mariage', 105, 28, { align: 'center' });
-
-        yPos = 45;
-        doc.setTextColor(60, 60, 60);
-
-        // Informations du mariage
-        if (plan.event_date || plan.venue_name) {
-          doc.setFontSize(10);
-          if (plan.event_date) {
-            doc.text(`Date : ${new Date(plan.event_date).toLocaleDateString('fr-FR', { 
-              weekday: 'long', 
-              year: 'numeric', 
-              month: 'long', 
-              day: 'numeric' 
-            })}`, 20, yPos);
-            yPos += 6;
-          }
-          if (plan.venue_name) {
-            doc.text(`Lieu : ${plan.venue_name}`, 20, yPos);
-            yPos += 6;
-          }
-          yPos += 4;
-        }
-
-        // Encadré statistiques
-        const statsBoxY = yPos;
-        doc.setDrawColor(127, 148, 116);
-        doc.setLineWidth(0.5);
-        doc.roundedRect(20, statsBoxY, 170, 25, 3, 3);
-        
-        const assignedGuests = guests.filter(g => g.table_id).length;
-        const unassignedGuests = guests.filter(g => !g.table_id).length;
-        const totalCapacity = tables.reduce((sum, t) => sum + t.capacity, 0);
-        const fillRate = totalCapacity > 0 ? Math.round((assignedGuests / totalCapacity) * 100) : 0;
-
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'bold');
-        doc.text(`${guests.length}`, 55, statsBoxY + 10, { align: 'center' });
-        doc.text(`${tables.length}`, 105, statsBoxY + 10, { align: 'center' });
-        doc.text(`${fillRate}%`, 155, statsBoxY + 10, { align: 'center' });
-        
-        doc.setFont(undefined, 'normal');
-        doc.setFontSize(8);
-        doc.setTextColor(100, 100, 100);
-        doc.text('Invités', 55, statsBoxY + 17, { align: 'center' });
-        doc.text('Tables', 105, statsBoxY + 17, { align: 'center' });
-        doc.text('Taux remplissage', 155, statsBoxY + 17, { align: 'center' });
-
-        yPos = statsBoxY + 35;
-
-        // Ligne de séparation
-        doc.setDrawColor(200, 200, 200);
-        doc.setLineWidth(0.3);
-        doc.line(20, yPos, 190, yPos);
-        yPos += 10;
-
-        // Liste des tables avec invités
-        doc.setFontSize(14);
-        doc.setTextColor(127, 148, 116);
-        doc.setFont(undefined, 'bold');
-        doc.text('Répartition des invités', 20, yPos);
-        yPos += 10;
-
-        tables.forEach(table => {
-          const tableGuests = guests.filter(g => g.table_id === table.id);
-          
-          if (yPos > 250) {
-            doc.addPage();
-            yPos = 20;
-          }
-
-          // Badge de table
+        const drawPageHeader = (title: string) => {
           doc.setFillColor(127, 148, 116);
-          doc.roundedRect(20, yPos - 5, 50, 8, 2, 2, 'F');
-          
-          doc.setFontSize(10);
+          doc.rect(0, 0, 210, 28, 'F');
           doc.setTextColor(255, 255, 255);
+          doc.setFontSize(18);
           doc.setFont(undefined, 'bold');
-          doc.text(`${table.table_name}`, 22, yPos);
-          
-          doc.setTextColor(60, 60, 60);
+          doc.text(title, 105, 13, { align: 'center' });
+          doc.setFontSize(10);
           doc.setFont(undefined, 'normal');
-          doc.text(`(${tableGuests.length}/${table.capacity})`, 75, yPos);
-          yPos += 8;
+          const subtitle = [plan.name || 'Mon mariage', plan.event_date ? new Date(plan.event_date).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '', plan.venue_name || ''].filter(Boolean).join(' · ');
+          doc.text(subtitle, 105, 22, { align: 'center' });
+          doc.setTextColor(60, 60, 60);
+          return 40;
+        };
 
-          doc.setFontSize(9);
-          tableGuests.forEach((guest, idx) => {
-            if (yPos > 280) {
-              doc.addPage();
-              yPos = 20;
-            }
-            
-            let guestText = `  ${idx + 1}. ${guest.guest_name}`;
-            
-            // Indicateurs
-            const indicators: string[] = [];
-            if (guest.guest_type === 'vip') indicators.push('VIP');
-            if (guest.dietary_restrictions) indicators.push('🍽️');
-            
-            if (indicators.length > 0) {
-              guestText += ` [${indicators.join(' ')}]`;
-            }
-            
-            doc.text(guestText, 25, yPos);
-            yPos += 5;
-          });
-
-          yPos += 8;
+        // === Section 1 : liste nominative alphabétique ===
+        let yPos = drawPageHeader('Liste nominative des invités');
+        const sortedGuests = [...guests].sort((a, b) => a.guest_name.localeCompare(b.guest_name, 'fr', { sensitivity: 'base' }));
+        doc.setFontSize(9);
+        doc.setFont(undefined, 'bold');
+        doc.text('Invité', 20, yPos);
+        doc.text('Table', 150, yPos);
+        yPos += 3;
+        doc.setDrawColor(200, 200, 200);
+        doc.line(20, yPos, 190, yPos);
+        yPos += 5;
+        doc.setFont(undefined, 'normal');
+        if (sortedGuests.length === 0) doc.text('Aucun invité pour le moment.', 20, yPos);
+        sortedGuests.forEach((guest) => {
+          if (yPos > 280) { doc.addPage(); yPos = 20; }
+          doc.text(guest.guest_name.slice(0, 70), 20, yPos);
+          doc.text(guest.table_id ? (tableNameById.get(guest.table_id) || '-').slice(0, 25) : 'Non placé', 150, yPos);
+          yPos += 5.5;
         });
 
-        // Invités non assignés s'il y en a
-        if (unassignedGuests > 0) {
-          if (yPos > 250) {
-            doc.addPage();
-            yPos = 20;
-          }
-
-          doc.setFontSize(12);
-          doc.setTextColor(200, 100, 100);
+        // === Section 2 : table par table avec menus ===
+        doc.addPage();
+        yPos = drawPageHeader('Plan de table par table & menus');
+        const tablesWithUnassigned = [
+          ...tables.map((table) => ({ label: `${table.table_name} (${guests.filter(g => g.table_id === table.id).length}/${table.capacity})`, list: guests.filter(g => g.table_id === table.id) })),
+          ...(guests.some(g => !g.table_id) ? [{ label: 'Invités non placés', list: guests.filter(g => !g.table_id) }] : []),
+        ];
+        tablesWithUnassigned.forEach(({ label, list }) => {
+          if (yPos > 255) { doc.addPage(); yPos = 20; }
+          doc.setFillColor(248, 245, 239);
+          doc.rect(20, yPos - 5, 170, 8, 'F');
+          doc.setFontSize(11);
           doc.setFont(undefined, 'bold');
-          doc.text(`Invités non assignés (${unassignedGuests})`, 20, yPos);
+          doc.setTextColor(99, 116, 90);
+          doc.text(label, 22, yPos);
           yPos += 8;
-
-          const unassigned = guests.filter(g => !g.table_id);
           doc.setFontSize(9);
-          doc.setTextColor(100, 100, 100);
-          doc.setFont(undefined, 'normal');
-          
-          unassigned.forEach((guest, idx) => {
-            if (yPos > 280) {
-              doc.addPage();
-              yPos = 20;
-            }
-            doc.text(`  • ${guest.guest_name}`, 25, yPos);
-            yPos += 5;
+          doc.setTextColor(60, 60, 60);
+          list.forEach((guest) => {
+            if (yPos > 280) { doc.addPage(); yPos = 20; }
+            doc.setFont(undefined, 'normal');
+            doc.text(guest.guest_name.slice(0, 50), 24, yPos);
+            doc.setTextColor(110, 110, 110);
+            doc.text(formatMenu(guest).slice(0, 55), 110, yPos);
+            doc.setTextColor(60, 60, 60);
+            yPos += 5.5;
           });
-        }
+          yPos += 6;
+        });
 
-        // Footer sur chaque page du listing
+        // Pied de page
         const totalPages = doc.getNumberOfPages();
         for (let i = 1; i <= totalPages; i++) {
           doc.setPage(i);
           doc.setFontSize(8);
           doc.setTextColor(150, 150, 150);
-          doc.text(`Généré par Mariable.fr - Listing ${i}/${totalPages}`, 105, 290, { align: 'center' });
+          doc.text(`Généré par Mariable.fr - ${i}/${totalPages + 1}`, 105, 290, { align: 'center' });
         }
 
-        // === One-pager visuel (paysage), placé en page 1 ===
-        drawVisualOnePager(doc, plan, tables, guests);
-        doc.movePage(doc.getNumberOfPages(), 1);
+        // === Section 3 : plan global sans noms ===
+        drawVisualOnePager(doc, plan, tables, guests, false);
 
         doc.save('plan-de-table.pdf');
         toast({ title: 'PDF exporté avec succès' });
@@ -297,7 +215,7 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
             <Download className="h-4 w-4 mr-2" />
           </>
         )}
-        {isExporting ? 'Export...' : 'Export PDF complet (plan + listing)'}
+        {isExporting ? 'Export...' : 'Export PDF (liste, tables & menus, plan)'}
       </Button>
 
       <PremiumModal

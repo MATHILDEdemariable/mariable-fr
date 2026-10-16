@@ -9,7 +9,7 @@ const RetroplanningPage = () => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language.startsWith('en');
   const [searchParams, setSearchParams] = useSearchParams();
-  const activeTab = searchParams.get('mode') === 'manual' ? 'manual' : 'ai';
+  const activeTab = searchParams.get('mode') === 'ai' || searchParams.get('id') ? 'ai' : 'manual';
   const aiRetroplanningId = searchParams.get('id');
 
   return (
@@ -17,17 +17,17 @@ const RetroplanningPage = () => {
       value={activeTab}
       onValueChange={(value) => {
         const next = new URLSearchParams(searchParams);
-        if (value === 'manual') next.set('mode', 'manual'); else next.delete('mode');
+        if (value === 'ai') next.set('mode', 'ai'); else { next.delete('mode'); next.delete('id'); }
         setSearchParams(next, { replace: true });
       }}
       className="space-y-6"
     >
       <TabsList className="grid grid-cols-2 w-full h-auto p-1 bg-muted rounded-none">
-        <TabsTrigger value="ai" className="min-h-[48px] rounded-none font-medium text-sm sm:text-base data-[state=active]:bg-foreground data-[state=active]:text-background">
-          ✨ {isEnglish ? 'With AI' : 'Avec l\'IA'}
-        </TabsTrigger>
         <TabsTrigger value="manual" className="min-h-[48px] rounded-none font-medium text-sm sm:text-base data-[state=active]:bg-foreground data-[state=active]:text-background">
           ✍️ {isEnglish ? 'Manual' : 'Manuel'}
+        </TabsTrigger>
+        <TabsTrigger value="ai" className="min-h-[48px] rounded-none font-medium text-sm sm:text-base data-[state=active]:bg-foreground data-[state=active]:text-background">
+          ✨ {isEnglish ? 'With AI' : 'Avec l\'IA'}
         </TabsTrigger>
       </TabsList>
       <TabsContent value="ai" className="space-y-4">

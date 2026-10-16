@@ -143,6 +143,19 @@
         "description": "All cart vendors are already in the budget"
       }
     },
-    "cartImportNote": "Imported from cart ({{category}})"
+    "cartImportNote": "Imported from cart ({{category}})",
+    "categoryNames": {
+      "Lieu de réception": "Venue",
+      "Traiteur & Boissons": "Catering & Drinks",
+      "Tenues & Accessoires": "Outfits & Accessories",
+      "Décoration & Fleurs": "Decor & Flowers",
+      "Photo & Vidéo": "Photo & Video",
+      "Musique & Animation": "Music & Entertainment",
+      "Transport": "Transport",
+      "Papeterie": "Stationery",
+      "Cadeaux": "Gifts",
+      "Divers": "Miscellaneous",
+      "Wedding planner": "Wedding planner"
+    }
   }
 }

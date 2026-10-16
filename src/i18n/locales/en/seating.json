@@ -14,6 +14,7 @@
   },
   "actions": {
     "newTable": "New Table",
+    "addGuestManually": "Add a guest (name, menu, allergies)",
     "importRsvp": "Import from RSVP",
     "importManual": "Import manual list",
     "importCsv": "Import CSV",
