@@ -152,21 +152,22 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
       console.error('❌ useMonJourMCoordination: Error initializing coordination:', error);
       
       if (mountedRef.current) {
-        setError(error.message || 'Erreur d\'initialisation');
-        setIsLoading(false);
-        
-        toast({
-          title: "Erreur d'initialisation",
-          description: "Impossible d'initialiser votre espace Mon Jour-M. Rechargement...",
-          variant: "destructive",
-        });
-        
-        // Retry automatique après 2 secondes
-        setTimeout(() => {
-          if (mountedRef.current) {
-            initializeCoordination();
-          }
-        }, 2000);
+        retryCountRef.current += 1;
+        // Échec souvent transitoire (session pas encore prête) : relance silencieuse, message calme seulement si ça persiste
+        if (retryCountRef.current <= 2) {
+          setTimeout(() => {
+            if (mountedRef.current) {
+              initializeCoordination();
+            }
+          }, 1500);
+        } else {
+          setError(error.message || 'Erreur d\'initialisation');
+          setIsLoading(false);
+          toast({
+            title: "Petit problème de connexion",
+            description: "Merci de recharger la page.",
+          });
+        }
       }
       
       throw error;
