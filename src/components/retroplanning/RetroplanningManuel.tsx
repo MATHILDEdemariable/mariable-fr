@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
