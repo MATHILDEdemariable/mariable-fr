@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
-import guideJourJImage from '@/assets/guides/guide-jour-j.png';
+import proHeroPhoto from '@/assets/editorial/toast-champagne.png.asset.json';
 
 interface ProProfileForm {
   first_name: string;
@@ -58,6 +58,10 @@ const MesMariages: React.FC = () => {
   const [profileLoaded, setProfileLoaded] = useState(false);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isProPremium, setIsProPremium] = useState(false);
+
+  useEffect(() => {
+    if (['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
+  }, []);
 
   useEffect(() => {
     const loadPremiumStatus = async () => {
@@ -165,10 +169,6 @@ const MesMariages: React.FC = () => {
   todayDate.setHours(0, 0, 0, 0);
   const getDaysUntil = (date: string | null | undefined) =>
     date ? Math.ceil((new Date(date).getTime() - todayDate.getTime()) / 86400000) : null;
-  const nextWedding = weddings
-    .filter((wedding) => (getDaysUntil(wedding.wedding_date) ?? -1) >= 0)
-    .sort((a, b) => new Date(a.wedding_date!).getTime() - new Date(b.wedding_date!).getTime())[0];
-  const nextWeddingDays = nextWedding ? getDaysUntil(nextWedding.wedding_date) : null;
 
 
   const toolboxItems = [
@@ -214,42 +214,35 @@ const MesMariages: React.FC = () => {
       </Helmet>
 
       <div className="max-w-5xl mx-auto space-y-8">
-        {/* En-tête cockpit */}
-        <header className="relative overflow-hidden bg-foreground text-background p-6 md:p-8">
-          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-wedding-olive/40 blur-2xl" aria-hidden="true" />
-          <div className="relative">
+        {/* En-tête éditorial */}
+        <header id="aujourdhui" className="relative overflow-hidden min-h-[300px] flex items-end scroll-mt-32">
+          <img src={proHeroPhoto.url} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_30%]" />
+          <div className="absolute inset-0 bg-gradient-to-r from-editorial-noir/85 via-editorial-noir/50 to-editorial-noir/5" aria-hidden="true" />
+          <div className="relative p-6 md:p-10 text-editorial-beige">
             <div className="flex flex-wrap items-center gap-3">
               <Badge className="rounded-none bg-wedding-olive text-background hover:bg-wedding-olive/90">
                 <Building2 className="h-3 w-3 mr-1" />
                 {t('header.badge')}
               </Badge>
-              <a href="/pro#mon-offre" className="text-xs font-semibold uppercase tracking-wider border border-background/40 px-2 py-0.5 hover:bg-background/10">
+              <a href="/pro#mon-offre" className="text-xs font-semibold uppercase tracking-wider border border-editorial-beige/50 px-2 py-0.5 hover:bg-editorial-beige/10">
                 <Crown className="inline h-3 w-3 mr-1" />
                 {isProPremium ? 'Premium Pro' : (isEnglish ? 'Free plan' : 'Offre gratuite')}
               </a>
-              <span className="text-xs uppercase tracking-widest text-background/70">
+              <span className="text-xs uppercase tracking-widest opacity-80">
                 {todayDate.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
               </span>
             </div>
-            <h1 className="mt-4 font-serif text-3xl md:text-4xl font-bold">
+            <h1 className="mt-4 font-serif text-4xl md:text-5xl">
               {form.first_name
                 ? (isEnglish ? `Hello ${form.first_name}` : `Bonjour ${form.first_name}`)
                 : t('header.title')}
             </h1>
-            <p className="mt-2 text-background/80">
+            <p className="mt-2 opacity-90 max-w-xl">
               {form.company_name ? `${form.company_name} · ` : ''}
               {isEnglish
-                ? `${weddings.length} wedding${weddings.length > 1 ? 's' : ''} under your coordination`
-                : `${weddings.length} mariage${weddings.length > 1 ? 's' : ''} en régie`}
+                ? `${weddings.length} wedding${weddings.length > 1 ? 's' : ''} under your coordination. Here is your day.`
+                : `${weddings.length} mariage${weddings.length > 1 ? 's' : ''} en cours. Voici votre feuille de route du jour.`}
             </p>
-            <Button
-              onClick={() => setDialogOpen(true)}
-              disabled={!canCreateMoreWeddings && weddings.length > 0}
-              className="mt-5 rounded-none min-h-[44px] bg-background text-foreground hover:bg-background/90"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              {t('weddings.create')}
-            </Button>
           </div>
         </header>
 
@@ -263,47 +256,7 @@ const MesMariages: React.FC = () => {
           </button>
         )}
 
-        {/* Prochain Jour J — carte vedette */}
-        {!loading && nextWedding && (
-          <section aria-labelledby="next-wedding-title" className="grid overflow-hidden border border-border bg-background shadow-sm md:grid-cols-[1fr_auto] animate-fade-in">
-            <div className="p-6 md:p-8">
-              <p className="text-xs font-bold uppercase tracking-widest text-wedding-olive">
-                {isEnglish ? 'Next wedding day' : 'Prochain Jour J'}
-              </p>
-              <h2 id="next-wedding-title" className="mt-2 font-serif text-3xl md:text-4xl font-bold text-foreground">
-                {nextWedding.title}
-              </h2>
-              <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1.5"><CalendarDays className="h-4 w-4" />
-                  {new Date(nextWedding.wedding_date!).toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
-                </span>
-                {nextWedding.wedding_location && <span className="flex items-center gap-1.5"><MapPin className="h-4 w-4" />{nextWedding.wedding_location}</span>}
-                {!!nextWedding.guest_count && <span className="flex items-center gap-1.5"><Users className="h-4 w-4" />{nextWedding.guest_count} {isEnglish ? 'guests' : 'invités'}</span>}
-              </div>
-              <div className="mt-6 flex flex-wrap gap-3">
-                <Button className="rounded-none min-h-[44px] bg-wedding-olive text-background hover:bg-wedding-olive/90" onClick={() => handleOpenWedding(nextWedding.id, '/mon-jour-m/planning')}>
-                  <ClipboardList className="h-4 w-4 mr-2" />{isEnglish ? 'Open the day-of schedule' : 'Ouvrir le planning Jour J'}
-                </Button>
-                <Button variant="outline" className="rounded-none min-h-[44px]" onClick={() => handleOpenWedding(nextWedding.id, '/dashboard/rsvp')}>
-                  <Users className="h-4 w-4 mr-2" />{isEnglish ? 'Guests & RSVP' : 'Invités & RSVP'}
-                </Button>
-              </div>
-            </div>
-            <div className="flex items-center justify-center gap-4 bg-editorial-beige px-8 py-6 md:flex-col">
-              <img src={guideJourJImage} alt="" aria-hidden="true" className="h-20 w-20 object-contain md:h-28 md:w-28" loading="lazy" />
-              <div className="text-center">
-                <p className="font-serif text-5xl font-bold text-foreground">
-                  {nextWeddingDays === 0 ? (isEnglish ? 'Today' : 'Jour J') : `J-${nextWeddingDays}`}
-                </p>
-                <p className="text-xs uppercase tracking-wider text-muted-foreground">{isEnglish ? 'countdown' : 'décompte'}</p>
-              </div>
-            </div>
-          </section>
-        )}
-
         {!loading && <ProFeuilleDeRoute weddings={weddings} onOpenWedding={handleOpenWedding} />}
-
-        {!loading && <ProSeasonOverview weddings={weddings} />}
 
         {/* Mes mariages */}
         <section id="mes-mariages" className="scroll-mt-32">
@@ -350,6 +303,9 @@ const MesMariages: React.FC = () => {
                 return (
                 <Card key={wedding.id} className="rounded-none border-border border-t-4 border-t-wedding-olive bg-background transition-shadow hover:shadow-lg">
                   <CardContent className="p-5">
+                    <span className="inline-block mb-2 mr-2 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider border border-wedding-olive/40 text-wedding-olive">
+                      {wedding.prestation_type === 'jourJ' ? (isEnglish ? 'Wedding day' : 'Coordination Jour J') : (isEnglish ? 'Full planning' : 'Organisation complète')}
+                    </span>
                     {daysUntil !== null && daysUntil >= 0 && (
                       <span className={`inline-block mb-2 px-2 py-0.5 text-xs font-bold uppercase tracking-wider ${isSoon ? 'bg-foreground text-background' : 'bg-wedding-olive/15 text-wedding-olive'}`}>
                         {daysUntil === 0 ? (isEnglish ? "Today's the day" : "C'est le Jour J") : `J-${daysUntil}`}
@@ -404,31 +360,13 @@ const MesMariages: React.FC = () => {
                         </p>
                       ) : null}
                     </div>
-                    <div className="mt-5 grid grid-cols-2 gap-2">
-                      <Button
-                        variant="outline"
-                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
-                        onClick={() => handleOpenWedding(wedding.id, '/mon-jour-m/planning')}
-                      >
-                        <ClipboardList className="h-4 w-4 mr-1.5 text-wedding-olive" />
-                        {isEnglish ? 'Wedding day' : 'Planning Jour J'}
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="rounded-none min-h-[44px] border-wedding-olive/40 hover:bg-wedding-olive/10"
-                        onClick={() => handleOpenWedding(wedding.id, '/dashboard/rsvp')}
-                      >
-                        <Users className="h-4 w-4 mr-1.5 text-wedding-olive" />
-                        {isEnglish ? 'Guests' : 'Invités'}
-                      </Button>
-                      <Button
-                        className="col-span-2 rounded-none min-h-[44px]"
-                        onClick={() => handleOpenWedding(wedding.id)}
-                      >
-                        {t('weddings.open')}
-                        <ArrowRight className="h-4 w-4 ml-2" />
-                      </Button>
-                    </div>
+                    <Button
+                      className="mt-5 w-full rounded-none min-h-[44px]"
+                      onClick={() => handleOpenWedding(wedding.id)}
+                    >
+                      {isEnglish ? 'Open the wedding' : 'Ouvrir le mariage'}
+                      <ArrowRight className="h-4 w-4 ml-2" />
+                    </Button>
                   </CardContent>
                 </Card>
                 );
@@ -464,6 +402,13 @@ const MesMariages: React.FC = () => {
             </div>
           )}
         </section>
+
+        {/* Ma saison */}
+        {!loading && (
+          <section id="ma-saison" className="scroll-mt-32">
+            <ProSeasonOverview weddings={weddings} />
+          </section>
+        )}
 
         {/* Boîte à outils transverse */}
         <section aria-labelledby="pro-toolbox-title">
