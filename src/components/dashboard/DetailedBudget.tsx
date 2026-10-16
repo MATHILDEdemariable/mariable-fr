@@ -82,12 +82,29 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   pendingCatalogSelections = [],
   onPendingCatalogConsumed,
 }) => {
-  const { t } = useTranslation('budget');
+  const { t, i18n } = useTranslation('budget');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const { isPremium, loading: loadingProfile } = useUserProfile();
   const { items: cartItems } = useCart();
   const { weddingId } = useWeddingScope();
+  const isEnglishBudget = i18n.language.startsWith('en');
+  const plannerFeeStorageKey = `mariable-planner-fee-${weddingId || 'perso'}`;
+  const [plannerFee, setPlannerFee] = useState<{ mode: 'percent' | 'fixed'; value: number }>({ mode: 'percent', value: 0 });
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(plannerFeeStorageKey);
+      setPlannerFee(saved ? JSON.parse(saved) : { mode: 'percent', value: 0 });
+    } catch (error) {
+      console.error('❌ load planner fee failed:', error);
+    }
+  }, [plannerFeeStorageKey]);
+  const updatePlannerFee = (nextFee: { mode: 'percent' | 'fixed'; value: number }) => {
+    setPlannerFee(nextFee);
+    localStorage.setItem(plannerFeeStorageKey, JSON.stringify(nextFee));
+  };
+  const computePlannerFee = (baseTotal: number) =>
+    plannerFee.mode === 'percent' ? (baseTotal * (plannerFee.value || 0)) / 100 : plannerFee.value || 0;
   const { 
     executeAction, 
     showPremiumModal, 
@@ -808,6 +825,12 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
     );
   }
 
+  const dayEnvelopes = categories.flatMap((category) =>
+    category.items
+      .filter((item) => item.remaining > 0)
+      .map((item) => ({ id: item.id, name: item.name || '-', category: t(`detailed.categoryNames.${category.name}`, { defaultValue: category.name }), remaining: item.remaining }))
+  );
+
   return (
     <>
       <PremiumModal
@@ -1061,8 +1084,68 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
                 <td className="px-4 py-3"></td>
                 <td className="px-4 py-3"></td>
               </tr>
+              {/* Wedding planner (fixe ou commission) */}
+              <tr className="border-t bg-wedding-cream/20">
+                <td className="px-4 py-3 font-medium">Wedding planner</td>
+                <td className="px-4 py-3" colSpan={2}>
+                  <div className="flex items-center gap-2">
+                    <select
+                      aria-label={isEnglishBudget ? 'Fee type' : 'Type d\'honoraires'}
+                      value={plannerFee.mode}
+                      onChange={(e) => updatePlannerFee({ ...plannerFee, mode: e.target.value as 'percent' | 'fixed' })}
+                      className="h-8 border border-gray-200 bg-background px-2 text-sm"
+                    >
+                      <option value="percent">% {isEnglishBudget ? 'commission' : 'commission'}</option>
+                      <option value="fixed">{isEnglishBudget ? 'Fixed €' : 'Forfait €'}</option>
+                    </select>
+                    <Input
+                      type="number"
+                      min={0}
+                      step="0.01"
+                      value={plannerFee.value || ''}
+                      onChange={(e) => updatePlannerFee({ ...plannerFee, value: Number(e.target.value) || 0 })}
+                      className="h-8 w-24 text-right border-gray-200"
+                      placeholder="0"
+                    />
+                  </div>
+                </td>
+                <td className="px-4 py-3 text-right">{computePlannerFee(totalEstimated).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{computePlannerFee(totalActual).toFixed(2)}</td>
+                <td className="px-4 py-3" colSpan={4}></td>
+              </tr>
+              <tr className="border-t-2 border-t-wedding-olive font-bold">
+                <td className="px-4 py-3">{isEnglishBudget ? 'GRAND TOTAL (incl. planner)' : 'TOTAL GÉNÉRAL (avec wedding planner)'}</td>
+                <td className="px-4 py-3" colSpan={2}></td>
+                <td className="px-4 py-3 text-right">{(totalEstimated + computePlannerFee(totalEstimated)).toFixed(2)}</td>
+                <td className="px-4 py-3 text-right">{(totalActual + computePlannerFee(totalActual)).toFixed(2)}</td>
+                <td className="px-4 py-3" colSpan={4}></td>
+              </tr>
             </tbody>
           </table>
+        </div>
+
+        {/* Enveloppes Jour J : reste à payer par prestataire */}
+        <div className="p-4 sm:p-6 border-t">
+          <h3 className="font-serif text-xl mb-1">{isEnglishBudget ? 'Wedding-day envelopes' : 'Enveloppes Jour J'}</h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            {isEnglishBudget ? 'Remaining amounts to hand over on the day, per vendor.' : 'Soldes restant à remettre le jour J, par prestataire.'}
+          </p>
+          {dayEnvelopes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{isEnglishBudget ? 'Nothing left to pay.' : 'Rien à régler le jour J.'}</p>
+          ) : (
+            <ul className="divide-y border">
+              {dayEnvelopes.map((envelope) => (
+                <li key={envelope.id} className="flex justify-between gap-3 px-3 py-2 text-sm">
+                  <span>{envelope.name} <span className="text-muted-foreground">· {envelope.category}</span></span>
+                  <span className="font-medium">{envelope.remaining.toFixed(2)} €</span>
+                </li>
+              ))}
+              <li className="flex justify-between px-3 py-2 text-sm font-bold bg-wedding-cream/20">
+                <span>Total</span>
+                <span>{dayEnvelopes.reduce((sum, envelope) => sum + envelope.remaining, 0).toFixed(2)} €</span>
+              </li>
+            </ul>
+          )}
         </div>
       </CardContent>
     </Card>
