@@ -19,7 +19,21 @@ const NousContacter = () => {
   const { toast } = useToast();
   const { t } = useTranslation('contact');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [formData, setFormData] = useState({ type: '', email: '', phone: '', message: '' });
+  const [formData, setFormData] = useState(() => {
+    const selectedFormula = new URLSearchParams(window.location.search).get('formule');
+    const formulaLabels: Record<string, string> = {
+      'jour-j': 'Coordination Jour J (149 €/an)',
+      organisation: 'Organisation complète (259 €/an)',
+      agence: 'Agence / multi wedding planners (sur devis)',
+    };
+    const formulaLabel = selectedFormula ? formulaLabels[selectedFormula] : undefined;
+    return {
+      type: formulaLabel ? 'prestataire' : '',
+      email: '',
+      phone: '',
+      message: formulaLabel ? `Bonjour Mathilde, je souhaite souscrire à Mariable Pro – formule ${formulaLabel}.` : '',
+    };
+  });
 
   const typeOptions = [
     { value: 'couple', icon: Heart },
