@@ -14,7 +14,7 @@ interface ExportPDFButtonProps {
 }
 
 /** Dessine le plan de salle complet sur une page A4 paysage, à partir des positions des tables. */
-const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[], guests: SeatingAssignment[]) => {
+const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[], guests: SeatingAssignment[], showGuestNames = true) => {
   doc.addPage('a4', 'landscape');
   const pageWidth = 297;
   doc.setFillColor(127, 148, 116);
@@ -71,6 +71,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
     doc.setFontSize(6);
     doc.text(`${tableGuests.length}/${table.capacity}`, cx, cy + 3, { align: 'center' });
 
+    if (!showGuestNames) return;
     doc.setFontSize(5);
     doc.setTextColor(90, 90, 90);
     tableGuests.slice(0, 12).forEach((guest, index) => {
@@ -83,7 +84,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
 
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
-  doc.text('Généré par Mariable.fr — Plan visuel · Listing détaillé par table dans les pages suivantes', pageWidth / 2, 203, { align: 'center' });
+  doc.text('Généré par Mariable.fr — Plan global des tables', pageWidth / 2, 203, { align: 'center' });
 };
 
 const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
@@ -214,7 +215,7 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
             <Download className="h-4 w-4 mr-2" />
           </>
         )}
-        {isExporting ? 'Export...' : 'Export PDF complet (plan + listing)'}
+        {isExporting ? 'Export...' : 'Export PDF (liste, tables & menus, plan)'}
       </Button>
 
       <PremiumModal
