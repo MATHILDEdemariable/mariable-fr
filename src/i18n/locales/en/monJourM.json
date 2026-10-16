@@ -593,7 +593,7 @@
   },
   "importExcel": {
     "tab": "Excel import",
-    "intro": "Import several steps at once from an Excel or CSV file. Download the template, fill it in, then drop it here.",
+    "intro": "Import several steps at once from a spreadsheet file. Download the template, fill it in, then drop it here.",
     "downloadTemplate": "Download template",
     "chooseFile": "Choose a file",
     "reading": "Reading…",
