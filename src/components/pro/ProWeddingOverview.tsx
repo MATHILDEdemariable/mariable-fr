@@ -18,7 +18,7 @@ const JOUR_J_MODULES: OverviewModule[] = [
   { labelFr: 'Cérémonie', labelEn: 'Ceremony', hintFr: 'Cortège, textes, musiques', hintEn: 'Procession, readings, music', icon: Heart, path: '/dashboard/ceremonie' },
   { labelFr: 'Plan de table & menus', labelEn: 'Seating & menus', hintFr: 'Placement, régimes', hintEn: 'Seating, diets', icon: Table, path: '/dashboard/seating-plan' },
   { labelFr: 'Boissons', labelEn: 'Drinks', hintFr: 'Quantités selon invités', hintEn: 'Quantities per guest', icon: Wine, path: '/dashboard/drinks' },
-  { labelFr: 'Documents', labelEn: 'Documents', hintFr: 'Contrats, plans techniques', hintEn: 'Contracts, plans', icon: FileText, path: '/dashboard/documents' },
+  { labelFr: 'Documents', labelEn: 'Documents', hintFr: 'Contrats, plans techniques', hintEn: 'Contracts, plans', icon: FileText, path: '/mon-jour-m/documents' },
   { labelFr: 'Hébergements', labelEn: 'Accommodation', hintFr: 'Sur place et alentours', hintEn: 'On site and nearby', icon: Home, path: '/dashboard/accommodations' },
 ];
 
