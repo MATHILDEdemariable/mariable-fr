@@ -196,16 +196,14 @@ export const CGU_CONTENT: Record<"fr" | "en", CguLanguageContent> = {
    {
     "heading": "Article 24 — Droit applicable et juridiction",
     "paragraphs": [
-     "Les présentes CGU sont soumises au droit français. Pour les Couples, tout litige relève des tribunaux compétents selon les règles légales, le consommateur pouvant saisir la juridiction de son domicile. Pour les Pros, tout litige est soumis à la compétence exclusive des tribunaux de Nanterre, y compris en cas de référé ou de pluralité de défendeurs.",
-     "Version in force as of 15 October 2026.",
-     "This English version is provided for information purposes only. In the event of any discrepancy, the French version shall prevail."
+     "Les présentes CGU sont soumises au droit français. Pour les Couples, tout litige relève des tribunaux compétents selon les règles légales, le consommateur pouvant saisir la juridiction de son domicile. Pour les Pros, tout litige est soumis à la compétence exclusive des tribunaux de Nanterre, y compris en cas de référé ou de pluralité de défendeurs."
     ]
    }
   ]
  },
  "en": {
   "title": "Terms of Use of the Mariable Platform",
-  "intro": [],
+  "intro": ["Version in force as of 15 October 2026.", "This English version is provided for information purposes only. In the event of any discrepancy, the French version shall prevail."],
   "articles": [
    {
     "heading": "Article 1 — Publisher and hosting providers",
