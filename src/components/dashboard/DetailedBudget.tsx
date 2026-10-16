@@ -423,7 +423,7 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
           // Update existing record
           const { data, error } = await supabase
             .from('budgets_dashboard')
-            .update(budgetPayload)
+            .update({ ...budgetPayload, user_id: undefined })
             .eq('id', existingData.id)
             .select();
           if (error) throw error;
