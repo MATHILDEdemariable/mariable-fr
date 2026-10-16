@@ -71,7 +71,7 @@
     "save": "Save",
     "saving": "Saving...",
     "pdf": "PDF",
-    "csv": "CSV",
+    "csv": "Spreadsheet",
     "loading": "Loading detailed budget...",
     "premiumFeature": "Detailed Budget",
     "premiumDescription": "Add and edit your budget line items with a Premium subscription",
@@ -124,11 +124,11 @@
       },
       "csvSuccess": {
         "title": "Export successful",
-        "description": "Your budget has been exported to CSV"
+        "description": "Your budget has been exported to a spreadsheet"
       },
       "csvError": {
         "title": "Export error",
-        "description": "Something went wrong while exporting to CSV"
+        "description": "Something went wrong while exporting to a spreadsheet"
       },
       "cartEmpty": {
         "title": "Empty cart",

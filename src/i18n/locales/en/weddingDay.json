@@ -101,7 +101,7 @@
       "searchPlaceholder": "Search a guest...",
       "exportCsv": "Export Spreadsheet",
       "exportSuccess": "Export successful",
-      "exportSuccessDesc": "The CSV file has been downloaded",
+      "exportSuccessDesc": "The spreadsheet file has been downloaded",
       "loadError": "Unable to load RSVP responses",
       "confirmed": "Confirmed",
       "declined": "Declined",
