@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Check, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -183,7 +183,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
           </thead>
           <tbody>
             {compareRows.map((row) => (
-              <>
+              <Fragment key={row.label}>
                 {row.group && (
                   <tr key={`group-${row.group}`}>
                     <td colSpan={6} className="pb-2 pt-6 text-xs font-semibold uppercase tracking-widest text-editorial-olive">
@@ -191,7 +191,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                     </td>
                   </tr>
                 )}
-                <tr key={row.label} className="border-b border-editorial-noir/15 align-top">
+                <tr className="border-b border-editorial-noir/15 align-top">
                   <td className="py-3 pr-4 font-medium">{row.label}</td>
                   {row.cells.map((cell, index) => {
                     const mark = typeof cell === "string" ? cell : cell.mark;
@@ -204,7 +204,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                     );
                   })}
                 </tr>
-              </>
+              </Fragment>
             ))}
           </tbody>
         </table>

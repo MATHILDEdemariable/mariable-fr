@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight, Check, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
+import ProPricingPlans from "@/components/pro/ProPricingPlans";
 
 const PAGE_PATH = "/logiciel-wedding-planner";
 const SITE_URL = "https://mariable.fr";
@@ -12,10 +13,10 @@ const SITE_URL = "https://mariable.fr";
 const CONTENT = {
   fr: {
     seoTitle: "Application & logiciel wedding planner – Mariable Pro",
-    seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. 149 €/an, essai gratuit.",
+    seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 2 mois.",
     eyebrow: "Mariable Pro · Logiciel wedding planner",
     h1: "L'application des wedding planners qui fait tenir le jour J dans un seul document",
-    answer: "Mariable Pro est une application pour wedding planners, coordinatrices jour J et lieux de réception. Elle centralise dans un espace par mariage le déroulé du jour J, les contacts prestataires, le rétroplanning et les échanges avec les mariés, sur ordinateur comme sur mobile. Quand vous modifiez le planning, couples et prestataires voient la même version, tout de suite. L'IA vous aide à mettre en forme et à anticiper les questions. Mariable Pro vous rend aussi visible auprès des couples qui préparent un mariage haut de gamme, via la plateforme Mariable et son compte Instagram. L'abonnement coûte 149 € par an pour tous vos mariages, avec un essai gratuit.",
+    answer: "Mariable Pro est une application pour wedding planners, coordinatrices jour J et lieux de réception. Elle centralise dans un espace par mariage le déroulé du jour J, les contacts prestataires, le rétroplanning et les échanges avec les mariés, sur ordinateur comme sur mobile. Quand vous modifiez le planning, couples et prestataires voient la même version, tout de suite. L'IA vous aide à mettre en forme et à anticiper les questions. Mariable Pro vous rend aussi visible auprès des couples qui préparent un mariage haut de gamme, via la plateforme Mariable et son compte Instagram. Trois formules dès 149 € par an (Coordination Jour J, Organisation complète, Agence), toutes avec multi-mariages, collaboration avec vos couples et référencement Mariable. Un mariage offert pendant 2 mois pour essayer.",
     ctaTry: "Essayer gratuitement",
     ctaTalk: "Échanger avec Mathilde",
     painTitle: "Ce que les wedding planners nous disent le plus souvent",
@@ -80,13 +81,14 @@ const CONTENT = {
     altLink: "Voir la feuille de route jour J partagée",
     faqTitle: "Questions fréquentes",
     faq: [
-      ["Quelle est la meilleure application pour wedding planner en 2026 ?", "Ça dépend de votre activité. Si votre priorité est la facturation et la gestion de stock, un logiciel de gestion tout-en-un conviendra. Si votre priorité est la coordination du jour J et la collaboration avec couples et prestataires, Mariable Pro est conçu pour ça, pour 149 €/an."],
+      ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Agence ou plusieurs wedding planners : sur devis. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète."],
+      ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
+      ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
+      ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
       ["Mes prestataires doivent-ils créer un compte ?", "Non, ils accèdent au déroulé par un lien."],
       ["L'application fonctionne-t-elle sur mobile le jour J ?", "Oui. Mariable s'installe depuis le navigateur sur iPhone et Android, sans passer par les stores."],
-      ["Puis-je gérer plusieurs mariages en même temps ?", "Oui, sans limite de projets."],
-      ["Existe-t-il un essai gratuit ?", "Oui, vous pouvez créer un compte professionnel et essayer l'application gratuitement."],
-      ["Mariable Pro m'apporte-t-il des clients ?", "En plus de l'outil, vous êtes référencé sur la plateforme Mariable, qui s'adresse aux couples préparant un mariage haut de gamme, et mis en avant sur son compte Instagram. C'est une visibilité ciblée, pas un annuaire généraliste."],
-      ["Quelle différence avec Mariages.net ?", "Mariages.net vend de la visibilité dans un annuaire tous budgets. Mariable Pro combine un outil de coordination du jour J et une visibilité auprès de couples premium, pour 149 €/an."],
+      ["Mariable Pro m'apporte-t-il des clients ?", "En plus de l'outil, vous êtes référencé sur Mariable, qui s'adresse aux couples préparant un mariage haut de gamme, et mis en avant sur son compte Instagram."],
+      ["Quelle différence avec Wedding Plan, Mariages.net ou Notion ?", "Wedding Plan propose outils événement et admin, sans référencement et avec une prise en main plus lourde. Mariages.net vend surtout de la visibilité, sans outils pro. Notion ou Google sont gratuits au départ mais demandent un abonnement pour l'illimité, sans appli jour J ni plan de table."],
     ],
     coTitle: "Construisons l'outil avec vous",
     coText: "« Mariable est né de mon propre mariage. La version Pro, ce sont des wedding planners qui me l'ont demandée. Si vous voulez tester et nous dire ce qui manque, c'est exactement ce qu'on cherche. » — Mathilde",
@@ -95,10 +97,10 @@ const CONTENT = {
   },
   en: {
     seoTitle: "Wedding planner app & software – Mariable Pro",
-    seoDescription: "The app for wedding planners and day-of coordinators: one shared timeline for couples and vendors, powered by AI. €149/year, free trial.",
+    seoDescription: "The app for wedding planners and day-of coordinators: one shared timeline for couples and vendors, powered by AI. From €149/year, 2-month free trial.",
     eyebrow: "Mariable Pro · Wedding planner software",
     h1: "The wedding planner app that keeps the whole wedding day in one document",
-    answer: "Mariable Pro is an app for wedding planners, day-of coordinators and reception venues. It gathers, in one space per wedding, the wedding-day timeline, vendor contacts, the planning schedule and exchanges with the couple, on desktop and mobile. When you update the timeline, couples and vendors see the same version instantly. AI helps you format it and anticipate questions. Mariable Pro also makes you visible to couples planning a high-end wedding, through the Mariable platform and its Instagram account. The subscription costs €149 per year for all your weddings, with a free trial.",
+    answer: "Mariable Pro is an app for wedding planners, day-of coordinators and reception venues. It gathers, in one space per wedding, the wedding-day timeline, vendor contacts, the planning schedule and exchanges with the couple, on desktop and mobile. When you update the timeline, couples and vendors see the same version instantly. AI helps you format it and anticipate questions. Mariable Pro also makes you visible to couples planning a high-end wedding, through the Mariable platform and its Instagram account. Three plans from €149 per year (Wedding-day coordination, Full planning, Agency), all with multiple weddings, couple collaboration and a Mariable listing. One wedding free for 2 months to try it.",
     ctaTry: "Try it for free",
     ctaTalk: "Talk with Mathilde",
     painTitle: "What wedding planners tell us most often",
@@ -163,13 +165,14 @@ const CONTENT = {
     altLink: "See the shared wedding-day run sheet",
     faqTitle: "Frequently asked questions",
     faq: [
-      ["What is the best wedding planner app in 2026?", "It depends on your business. If your priority is invoicing and stock, an all-in-one management tool fits. If your priority is wedding-day coordination and collaboration with couples and vendors, Mariable Pro is built for that, for €149/year."],
+      ["How much does Mariable Pro cost?", "Wedding-day coordination: €149/year. Full planning (includes Wedding-day coordination): €259/year. Agency or several planners: on quote. Pay yearly, or in 3 instalments: €200 (3 × €66.67) for Wedding-day and €310 (3 × €103.33) for Full planning."],
+      ["Is there a free trial?", "Yes: one wedding free for 2 months, no commitment."],
+      ["What do all plans include?", "Multiple weddings, collaboration with your couples and a Mariable listing."],
+      ["Does Mariable Pro handle invoicing and lead generation?", "No. Mariable Pro is an event management tool: wedding-day timeline, vendors, couples, planning and logistics."],
       ["Do my vendors need an account?", "No, they access the timeline by link."],
       ["Does the app work on mobile on the day?", "Yes. Mariable installs from the browser on iPhone and Android, without app stores."],
-      ["Can I manage several weddings at once?", "Yes, with unlimited projects."],
-      ["Is there a free trial?", "Yes, you can create a professional account and try the app for free."],
-      ["Does Mariable Pro bring me clients?", "Besides the tool, you're listed on the Mariable platform for couples planning high-end weddings and featured on its Instagram account. Targeted visibility, not a general directory."],
-      ["What's the difference with Mariages.net?", "Mariages.net sells visibility in an all-budget directory. Mariable Pro combines a wedding-day coordination tool and visibility with premium couples, for €149/year."],
+      ["Does Mariable Pro bring me clients?", "Besides the tool, you're listed on Mariable for couples planning high-end weddings and featured on its Instagram account."],
+      ["How is it different from Wedding Plan, Mariages.net or Notion?", "Wedding Plan offers event and admin tools, with no listing and a steeper learning curve. Mariages.net mainly sells visibility, with no pro tools. Notion or Google start free but need a subscription for unlimited use, with no day-of app or seating plan."],
     ],
     coTitle: "Let's build the tool together",
     coText: "“Mariable was born from my own wedding. The Pro version was requested by wedding planners. If you want to test it and tell us what's missing, that's exactly what we're looking for.” — Mathilde",
@@ -177,32 +180,6 @@ const CONTENT = {
     home: "Home",
   },
 };
-
-type Cell = string | boolean;
-
-const renderCell = (cell: Cell) =>
-  typeof cell === "boolean"
-    ? cell ? <Check className="h-5 w-5 text-editorial-olive" aria-label="Oui" /> : <X className="h-5 w-5 text-editorial-noir/40" aria-label="Non" />
-    : cell;
-
-const CompareTable = ({ head, rows }: { head: string[]; rows: Cell[][] }) => (
-  <div className="mt-8 overflow-x-auto">
-    <table className="w-full min-w-[560px] border-collapse text-left text-sm">
-      <thead>
-        <tr className="border-b border-editorial-noir">
-          {head.map((headCell, index) => <th key={index} className="py-3 pr-4 font-serif text-base font-normal">{headCell}</th>)}
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((row) => (
-          <tr key={String(row[0])} className="border-b border-editorial-noir/15 align-top">
-            {row.map((cell, index) => <td key={index} className={`py-3 pr-4 ${index === 0 ? "font-medium" : "text-editorial-noir/75"}`}>{renderCell(cell)}</td>)}
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  </div>
-);
 
 const LogicielWeddingPlanner = () => {
   const { i18n } = useTranslation();
@@ -217,7 +194,7 @@ const LogicielWeddingPlanner = () => {
     operatingSystem: "Web, iOS, Android (PWA)",
     url: `${SITE_URL}${PAGE_PATH}`,
     description: content.seoDescription,
-    offers: { "@type": "Offer", price: "149", priceCurrency: "EUR", url: `${SITE_URL}${PAGE_PATH}`, description: "Abonnement annuel, mariages illimités, essai gratuit" },
+    offers: { "@type": "Offer", price: "149", priceCurrency: "EUR", url: `${SITE_URL}${PAGE_PATH}#tarifs`, description: "À partir de 149 €/an, mariages illimités, essai gratuit 2 mois" },
     publisher: { "@type": "Organization", name: "Mariable", url: SITE_URL },
   };
   const faqSchema = {
@@ -300,10 +277,6 @@ const LogicielWeddingPlanner = () => {
                 <div key={heading}><h3 className="font-serif text-xl">{heading}</h3><p className="mt-2 text-editorial-noir/70">{copy}</p></div>
               ))}
             </div>
-            <h3 className="mt-16 text-2xl md:text-3xl">{content.compareTitle}</h3>
-            <p className="mt-4 text-editorial-noir/75">{content.compareIntro}</p>
-            <CompareTable head={content.compareHead} rows={content.compareRows} />
-            <p className="mt-8 font-serif text-xl italic">{content.compareQuote}</p>
           </div>
         </section>
 
@@ -324,11 +297,7 @@ const LogicielWeddingPlanner = () => {
 
         <section className="bg-editorial-beige/40 px-4 py-16 md:py-20">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-3xl md:text-4xl">{content.priceTitle}</h2>
-            <CompareTable head={content.priceHead} rows={content.priceRows} />
-            <Button asChild variant="outline" className="mt-8 min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
-              <Link to="/partenariat">{isEnglish ? "See the Mariable Pro offer" : "Voir l'offre Mariable Pro"} <ArrowRight className="ml-2 h-4 w-4" /></Link>
-            </Button>
+            <section id="tarifs" aria-label={content.priceTitle}><ProPricingPlans isEnglish={isEnglish} /></section>
             <h2 className="mt-16 text-3xl md:text-4xl">{content.altTitle}</h2>
             <p className="mt-4 text-lg text-editorial-noir/75">{content.altText}</p>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
