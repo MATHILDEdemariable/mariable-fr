@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
-import proHeroPhoto from '@/assets/editorial/toast-champagne.png.asset.json';
+import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
 
 interface ProProfileForm {
   first_name: string;
@@ -216,7 +216,7 @@ const MesMariages: React.FC = () => {
       <div className="max-w-5xl mx-auto space-y-8">
         {/* En-tête éditorial */}
         <header id="aujourdhui" className="relative overflow-hidden min-h-[300px] flex items-end scroll-mt-32">
-          <img src={proHeroPhoto.url} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_30%]" />
+          <img src={proHeroPhoto.url} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_40%]" />
           <div className="absolute inset-0 bg-gradient-to-r from-editorial-noir/85 via-editorial-noir/50 to-editorial-noir/5" aria-hidden="true" />
           <div className="relative p-6 md:p-10 text-editorial-beige">
             <div className="flex flex-wrap items-center gap-3">
