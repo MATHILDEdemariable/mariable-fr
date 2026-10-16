@@ -14,6 +14,9 @@ import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 
+// Survit au démontage de la page : bloque une boucle /login ↔ page protégée
+const lastLoginRedirect = { userId: null as string | null, at: 0 };
+
 const Login = () => {
   const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
@@ -39,8 +42,14 @@ const Login = () => {
 
   const hasExplicitRedirect = Boolean(safeNext || location.state?.redirectAfterLogin);
 
+  // Une seule redirection par utilisateur : évite une boucle /login ↔ /dashboard
+  // quand une session expirée apparaît puis disparaît (réseau instable).
   useEffect(() => {
     if (!user) return;
+    const now = Date.now();
+    if (lastLoginRedirect.userId === user.id && now - lastLoginRedirect.at < 5000) return;
+    lastLoginRedirect.userId = user.id;
+    lastLoginRedirect.at = now;
 
     // Un compte professionnel arrive sur son espace pro, pas sur un mariage
     const resolveDestination = async () => {
@@ -64,7 +73,7 @@ const Login = () => {
     };
 
     resolveDestination();
-  }, [user, navigate, redirectPath, hasExplicitRedirect]);
+  }, [user?.id, navigate, redirectPath, hasExplicitRedirect]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
