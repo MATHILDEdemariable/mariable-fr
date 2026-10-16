@@ -138,6 +138,7 @@ const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const CarnetAdresses = lazy(() => import("./pages/pro/CarnetAdresses"));
 const ApercuEspacePro = lazy(() => import("./pages/pro/ApercuEspacePro"));
 const ApercuMariage = lazy(() => import("./pages/pro/ApercuMariage"));
+const ApercuEspaceCouple = lazy(() => import("./pages/ApercuEspaceCouple"));
 const GuideDuJourJ = lazy(() => import("./pages/GuideDuJourJ"));
 const GuideDebutant = lazy(() => import("./pages/GuideDebutant"));
 const CGVCouples = lazy(() => import("./pages/CGVCouples"));
@@ -308,6 +309,7 @@ function App() {
                   <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />
                   <Route path="/pro/apercu-espace-pro" element={<ApercuEspacePro />} />
                   <Route path="/pro/apercu-mariage" element={<ApercuMariage />} />
+                  <Route path="/apercu-espace-couple" element={<ApercuEspaceCouple />} />
                   <Route path="/agence" element={<Agence />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />

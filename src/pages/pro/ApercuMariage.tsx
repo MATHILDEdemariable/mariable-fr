@@ -11,22 +11,25 @@ import { ModeBadge, MockupBanner } from './ApercuEspacePro';
 
 type WeddingMode = 'jourj' | 'complet';
 
-const JOURJ_MODULES = [
-  { label: 'Planning Jour J', icon: Calendar, stat: '11 étapes', hint: 'Conducteur minute par minute' },
-  { label: 'Équipe & contacts', icon: Users, stat: '7 personnes', hint: 'Témoins, prestataires' },
+type MockModule = { label: string; icon: typeof Calendar; stat: string; hint: string; parent?: string };
+
+// Planning et Équipe sont deux onglets du module existant « Mon Jour M » (/mon-jour-m).
+const JOURJ_MODULES: MockModule[] = [
+  { label: 'Planning Jour J', icon: Calendar, stat: '11 étapes', hint: 'Conducteur minute par minute', parent: 'Mon Jour M' },
+  { label: 'Équipe & contacts', icon: Users, stat: '7 personnes', hint: 'Témoins, prestataires', parent: 'Mon Jour M' },
+  { label: 'Cérémonie', icon: Heart, stat: '2 / 4', hint: 'Cortège, textes, musiques' },
   { label: 'Plan de table & menus', icon: Table, stat: '48 / 50 placés', hint: '3 régimes à signaler' },
   { label: 'Boissons', icon: Wine, stat: '120 bouteilles', hint: 'Calcul selon invités' },
   { label: 'Documents', icon: FileText, stat: '5 fichiers', hint: 'Contrats, plans techniques' },
   { label: 'Hébergements', icon: Home, stat: '18 couchages', hint: 'Sur place et alentours' },
 ];
 
-const COMPLET_EXTRA = [
+const COMPLET_EXTRA: MockModule[] = [
   { label: 'Rétroplanning', icon: CalendarRange, stat: '12 / 18 tâches', hint: 'Kanban de M-12 à J-1' },
   { label: 'Budget', icon: Calculator, stat: '34 500 €', hint: '8 200 € restant à payer' },
   { label: 'Invités & RSVP', icon: UserCheck, stat: '42 oui · 6 en attente', hint: 'Liste, formulaire, mini-site' },
   { label: 'Prestataires', icon: Store, stat: '9 réservés', hint: 'Suivi des devis' },
   { label: 'Mini-site', icon: Globe, stat: 'En ligne', hint: 'Page des invités' },
-  { label: 'Cérémonie & mairie', icon: Heart, stat: '2 / 4', hint: 'Textes, dossier civil' },
   { label: 'Album & après Jour J', icon: Images, stat: 'QR code prêt', hint: 'Photos des invités' },
 ];
 
@@ -37,14 +40,14 @@ const TODAY_ITEMS: Record<WeddingMode, string[]> = {
 
 const ApercuMariage: React.FC = () => {
   const [mode, setMode] = useState<WeddingMode>('complet');
-  const modules = mode === 'jourj' ? JOURJ_MODULES : [...COMPLET_EXTRA.slice(0, 3), ...JOURJ_MODULES.slice(0, 3), ...COMPLET_EXTRA.slice(3), ...JOURJ_MODULES.slice(3)];
+  const modules = mode === 'jourj' ? JOURJ_MODULES : [...COMPLET_EXTRA.slice(0, 3), ...JOURJ_MODULES.slice(0, 4), ...COMPLET_EXTRA.slice(3), ...JOURJ_MODULES.slice(4)];
 
   const menu = mode === 'jourj'
     ? [{ section: 'Jour J', items: JOURJ_MODULES }]
     : [
         { section: 'Préparatifs', items: COMPLET_EXTRA.slice(0, 4) },
-        { section: 'Jour J', items: JOURJ_MODULES.slice(0, 4) },
-        { section: 'Invités & extras', items: [...COMPLET_EXTRA.slice(4), ...JOURJ_MODULES.slice(4)] },
+        { section: 'Jour J', items: JOURJ_MODULES.slice(0, 5) },
+        { section: 'Invités & extras', items: [...COMPLET_EXTRA.slice(4), ...JOURJ_MODULES.slice(5)] },
       ];
 
   return (
@@ -84,7 +87,10 @@ const ApercuMariage: React.FC = () => {
               <div key={group.section}>
                 <p className="text-[10px] uppercase tracking-wider text-gray-400 font-semibold px-3 pt-3 pb-1">{group.section}</p>
                 {group.items.map((item) => (
-                  <span key={item.label} className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600"><item.icon className="h-4 w-4" /> {item.label}</span>
+                  <span key={item.label} className="flex items-center gap-3 px-3 py-2 text-sm text-gray-600">
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span>{item.label}{item.parent && <span className="block text-[10px] text-gray-400">dans {item.parent}</span>}</span>
+                  </span>
                 ))}
               </div>
             ))}
@@ -125,7 +131,7 @@ const ApercuMariage: React.FC = () => {
 
           {/* Modules */}
           <section aria-labelledby="modules">
-            <h2 id="modules" className="font-serif text-xl mb-3">{mode === 'jourj' ? 'Vos 6 outils Jour J' : 'Tous vos outils'}</h2>
+            <h2 id="modules" className="font-serif text-xl mb-3">{mode === 'jourj' ? `Vos ${JOURJ_MODULES.length} outils Jour J` : 'Tous vos outils'}</h2>
             <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
               {modules.map((module) => (
                 <div key={module.label} className="bg-white border border-[#E8DFD0] p-4 hover:shadow-md transition-shadow cursor-pointer">
