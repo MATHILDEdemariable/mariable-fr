@@ -40,6 +40,7 @@ export const useMonJourMCoordination = (): UseMonJourMCoordinationReturn => {
 
   // Ref pour éviter les setState sur composant démonté
   const mountedRef = useRef(true);
+  const retryCountRef = useRef(0);
 
   // Cleanup function
   useEffect(() => {
