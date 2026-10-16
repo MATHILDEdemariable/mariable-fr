@@ -167,7 +167,7 @@ const Callback = () => {
         // Check if user is logged in
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          navigate('/dashboard', { replace: true });
+          navigate(session.user?.user_metadata?.account_type === 'b2b' ? '/pro' : '/dashboard', { replace: true });
         } else {
           navigate('/login', { replace: true });
         }
