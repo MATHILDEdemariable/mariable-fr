@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import SiteInternetModal from './SiteInternetModal';
+import { useWedding } from '@/contexts/WeddingContext';
 
 interface DashboardSidebarProps {
   isReaderMode?: boolean;
@@ -27,7 +28,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const [dashboardMode, setDashboardMode] = useState<'organisation' | 'jourJ'>(
     () => (localStorage.getItem('mariable_dashboard_mode') === 'jourJ' ? 'jourJ' : 'organisation')
   );
-  const isJourJMode = dashboardMode === 'jourJ';
+  const { accountType, currentWedding } = useWedding();
+  // Pro : la formule du mariage (choisie à la création) impose la vue, sans commutateur.
+  const isProWeddingView = accountType === 'b2b' && !!currentWedding;
+  const isJourJMode = isProWeddingView ? currentWedding?.prestation_type === 'jourJ' : dashboardMode === 'jourJ';
   const handleChangeDashboardMode = (mode: 'organisation' | 'jourJ') => {
     setDashboardMode(mode);
     localStorage.setItem('mariable_dashboard_mode', mode);
@@ -100,6 +104,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         <span className="font-bold text-lg sm:text-xl">{t('header.myWorkspace')}</span>
       </div>
 
+      {isProWeddingView ? (
+        <div className="mx-2 sm:mx-3 px-3 py-2 border border-wedding-olive/30 text-xs font-semibold text-wedding-olive">
+          {isJourJMode ? (isEnglish ? 'Wedding day coordination' : 'Coordination Jour J') : (isEnglish ? 'Full planning' : 'Organisation complète')}
+        </div>
+      ) : (
       <div className="mx-2 sm:mx-3 grid grid-cols-2 border border-wedding-olive/30" role="group" aria-label={isEnglish ? 'Dashboard mode' : 'Mode du tableau de bord'}>
         {(['organisation', 'jourJ'] as const).map((mode) => (
           <button
@@ -113,6 +122,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </button>
         ))}
       </div>
+      )}
 
       <nav className="py-2 sm:py-3 px-2 sm:px-3 space-y-0.5">
         {/* ORGANISATION */}
@@ -222,6 +232,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.accommodations')}</span>
         </Link>
 
+        {!isProWeddingView && (<>
         {/* APRÈS JOUR-J */}
         <SectionLabel label={t('sidebar.sections.apres')} />
 
@@ -234,7 +245,15 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <Images className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">Album invités</span>
         </Link>
+        </>)}
 
+        {/* Documents partagés : outil Jour J pour les pros */}
+        {isProWeddingView && isJourJMode && (
+        <Link to={isReaderMode ? '#' : '/dashboard/documents'} onClick={preventReader} className={linkClass(isActive('/dashboard/documents'))}>
+          <FileText className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.documents')}</span>
+        </Link>
+        )}
 
         {/* ADMIN */}
         {!isJourJMode && (<>
@@ -259,6 +278,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </button>
         </>)}
 
+        {!isProWeddingView && (<>
         {/* BONUS */}
         <SectionLabel label={t('sidebar.sections.bonus')} />
 
@@ -294,6 +314,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
             ))}
           </DropdownMenuContent>
         </DropdownMenu>
+        </>)}
 
         {/* Divider */}
         <div className="pt-4" />
