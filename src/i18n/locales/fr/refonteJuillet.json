@@ -196,15 +196,15 @@
         "name": "Mariable Pro",
         "price": "149 €",
         "frequency": "par an",
-        "description": "Pour les wedding planners, coordinatrices et lieux de mariage. Tout ce qui est inclus dans la formule Maribale Couple et :",
+        "description": "Pour les wedding planners, coordinatrices et lieux de mariage. Plusieurs formules selon votre activité, à partir de :",
         "features": [
-          "Nombre de mariages illimité",
-          "Collaboration avec les clients",
-          "Référencement auprès des couples"
+          "Multi-mariages",
+          "Collaboration avec vos couples",
+          "Référencement Mariable"
         ],
-        "cta": "Tester Mariable Pro",
-        "href": "/register-gratuit?type=pro",
-        "priceOld": "200 €"
+        "cta": "Voir les formules Pro",
+        "href": "/logiciel-wedding-planner",
+        "priceOld": "À partir de"
       }
     ]
   },
