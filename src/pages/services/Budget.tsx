@@ -387,8 +387,8 @@ const Budget = () => {
         document.body.removeChild(link);
 
         toast({
-          title: "Export CSV réussi",
-          description: "Le PDF n'était pas disponible, votre estimation a été exportée au format CSV",
+          title: "Export tableur réussi",
+          description: "Le PDF n'était pas disponible, votre estimation a été exportée au format tableur",
         });
       } catch (csvError) {
         toast({

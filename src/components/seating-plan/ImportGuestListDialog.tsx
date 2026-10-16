@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -118,7 +119,7 @@ else importQuery = importQuery.eq('user_id', user.id);
         {loading ? (
           <div className="flex items-center justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
         ) : guests.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground"><Users className="h-12 w-12 mx-auto mb-3 opacity-50" /><p>Aucun invité dans votre liste</p></div>
+          <div className="text-center py-8 text-muted-foreground"><Users className="h-12 w-12 mx-auto mb-3 opacity-50" /><p>Aucun invité dans votre liste</p><Button asChild variant="outline" className="mt-4"><Link to="/dashboard/rsvp">Créer ma liste d'invités</Link></Button><p className="text-xs mt-3">Ou fermez cette fenêtre et utilisez « Ajouter un invité ».</p></div>
         ) : (
           <>
             <div className="flex items-center justify-between py-2 border-b">

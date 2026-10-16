@@ -211,7 +211,7 @@ else existingQuery = existingQuery.eq('user_id', user.id);
       
       toast({
         title: "Export réussi",
-        description: "Vos données ont été exportées en format CSV"
+        description: "Vos données ont été exportées en format tableur"
       });
     } catch (error) {
       console.error("Erreur lors de l'export:", error);
@@ -230,7 +230,7 @@ else existingQuery = existingQuery.eq('user_id', user.id);
         <div className="flex gap-2">
           <Button variant="outline" size="sm" onClick={exportToCSV} className="gap-1">
             <FileText className="h-4 w-4" />
-            <span>Exporter CSV</span>
+            <span>Exporter en tableur</span>
           </Button>
           <Button size="sm" variant="wedding" onClick={saveGuestData} disabled={isLoading}>
             {isLoading ? "Sauvegarde..." : "Sauvegarder"}

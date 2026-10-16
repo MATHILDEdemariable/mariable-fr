@@ -26,7 +26,7 @@ const PricingContent = () => {
 
   const faqItems = [
     { question: "Mariable est-il vraiment gratuit ?", answer: "Oui, toutes les fonctionnalités sont accessibles gratuitement. Seuls les exports PDF, les guides, l'IA illimitée et le budget illimité nécessitent le Premium." },
-    { question: "Que contient le Premium à 29 € ?", answer: "Un achat unique qui lève toutes les limitations : exports PDF/CSV illimités, IA illimitée, budget sans limite, + 10 guides mariage & checklists PDF, stockage illimité et support prioritaire." },
+    { question: "Que contient le Premium à 29 € ?", answer: "Un achat unique qui lève toutes les limitations : exports PDF/tableur illimités, IA illimitée, budget sans limite, + 10 guides mariage & checklists PDF, stockage illimité et support prioritaire." },
     { question: "Est-ce un abonnement ?", answer: "Non, c'est un paiement unique de 29 €. Pas de renouvellement automatique." },
     { question: "Puis-je utiliser l'app avec ma famille ?", answer: "Oui, l'application est collaborative. Chacun peut accéder au planning et aux informations importantes." },
   ];
@@ -102,7 +102,7 @@ const PricingContent = () => {
               <hr className="border-border" />
               <div className="flex items-start gap-2">
                 <Check className="w-4 h-4 text-foreground mt-0.5 flex-shrink-0" />
-                <span className="text-xs text-foreground">Exports PDF/CSV illimités</span>
+                <span className="text-xs text-foreground">Exports PDF/tableur illimités</span>
               </div>
               <div className="flex items-start gap-2">
               <span className="text-xs text-foreground">+ 10 guides mariage & checklists PDF</span>

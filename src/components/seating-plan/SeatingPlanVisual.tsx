@@ -289,18 +289,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                     "absolute rounded-full border-2 shadow-sm flex items-center justify-center font-medium cursor-pointer transition-all duration-200 hover:scale-110",
                     isSelected 
                       ? "bg-premium-sage text-white border-white ring-2 ring-premium-sage ring-offset-1 scale-110 z-20 px-2 py-1 min-w-max text-[10px]" 
-                      : "bg-premium-sage-light text-premium-sage-dark border-white hover:bg-premium-sage hover:text-white w-7 h-7 text-[9px]"
+                      : "bg-premium-sage-light text-premium-sage-dark border-white hover:bg-premium-sage hover:text-white px-2 py-0.5 min-w-max text-[9px] z-10"
                   )}
                   style={{
-                    left: isSelected 
-                      ? size.width / 2 + guestX 
-                      : size.width / 2 + guestX - 14,
-                    top: size.height / 2 + guestY - 14,
-                    transform: isSelected ? `translateX(-50%)` : undefined
+                    left: size.width / 2 + guestX,
+                    top: size.height / 2 + guestY - 10,
+                    transform: 'translateX(-50%)'
                   }}
                   title={`${guest.guest_name}${guest.seat_number ? ` (Place ${guest.seat_number})` : ''} - Cliquez pour échanger`}
                 >
-                  {isSelected ? getFirstName(guest.guest_name) : guest.guest_name.charAt(0).toUpperCase()}
+                  {guest.guest_name}
                 </div>
               );
             })}

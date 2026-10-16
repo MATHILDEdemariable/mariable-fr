@@ -163,7 +163,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
 
     toast({
       title: 'Export réussi',
-      description: 'Le fichier CSV a été téléchargé',
+      description: 'Le fichier tableur a été téléchargé',
     });
   };
 

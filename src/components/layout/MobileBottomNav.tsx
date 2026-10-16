@@ -45,6 +45,12 @@ const mainNavItems: NavItem[] = [
   { icon: Calendar, label: 'Jour-J', path: '/mon-jour-m/planning' },
 ];
 
+const proNavItems: NavItem[] = [
+  { icon: LayoutDashboard, label: 'Aujourd\'hui', path: '/pro' },
+  { icon: Calendar, label: 'Mariages', path: '/pro#mes-mariages' },
+  { icon: BookOpen, label: 'Carnet', path: '/pro/carnet-adresses' },
+];
+
 const drawerNavItems: NavItem[] = [
   { icon: ClipboardList, label: 'Rétroplanning', path: '/dashboard/mon-mariage/retroplanning' },
   { icon: Users, label: 'RSVP', path: '/dashboard/rsvp' },
@@ -95,7 +101,12 @@ const MobileBottomNav: React.FC = () => {
   if (loading || !isAuthenticated) return null;
   if (HIDDEN_PATTERNS.some((r) => r.test(location.pathname))) return null;
 
+  const isProSpace = location.pathname.startsWith('/pro');
+  const bottomItems = isProSpace ? proNavItems : mainNavItems;
+
   const isActive = (path: string) => {
+    if (path === '/pro') return location.pathname === '/pro' && !location.hash;
+    if (path.includes('#')) return location.pathname + location.hash === path;
     if (path === '/dashboard') return location.pathname === '/dashboard';
     if (path === '/mon-jour-m/planning') return location.pathname.startsWith('/mon-jour-m');
     return location.pathname.startsWith(path);
@@ -116,7 +127,7 @@ const MobileBottomNav: React.FC = () => {
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex items-center justify-around h-16">
-          {mainNavItems.map((item) => {
+          {bottomItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             return (

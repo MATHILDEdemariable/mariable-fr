@@ -211,7 +211,7 @@ const BudgetSummary: React.FC = () => {
   // Handle direct CSV export
   const handleDirectExport = () => {
     toast({
-      title: "Export CSV en cours",
+      title: "Export tableur en cours",
       description: "Préparation de votre document...",
     });
     
@@ -239,7 +239,7 @@ const BudgetSummary: React.FC = () => {
       
       toast({
         title: "Export réussi",
-        description: "Votre résumé budgétaire a été exporté au format CSV",
+        description: "Votre résumé budgétaire a été exporté au format tableur",
       });
     }, 500);
   };
@@ -247,7 +247,7 @@ const BudgetSummary: React.FC = () => {
   const handleExportExcel = () => {
     toast({
       title: "Export Excel en cours",
-      description: "Préparation de votre document CSV...",
+      description: "Préparation de votre document tableur...",
     });
     
     setTimeout(() => {
@@ -270,7 +270,7 @@ const BudgetSummary: React.FC = () => {
       
       toast({
         title: "Export réussi",
-        description: "Votre résumé budgétaire a été exporté au format CSV",
+        description: "Votre résumé budgétaire a été exporté au format tableur",
       });
     }, 500);
   };
