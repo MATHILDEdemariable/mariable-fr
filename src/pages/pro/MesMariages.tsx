@@ -20,7 +20,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
-import proHeroPhoto from '@/assets/editorial/toast-champagne.png.asset.json';
+import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
 
 interface ProProfileForm {
   first_name: string;
