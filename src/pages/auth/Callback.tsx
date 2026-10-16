@@ -19,11 +19,11 @@ const Callback = () => {
   const { toast } = useToast();
 
   // Send welcome email to new couples
-  const sendWelcomeEmail = async (email: string, firstName: string) => {
+  const sendWelcomeEmail = async (email: string, firstName: string, isProfessional = false, category = '') => {
     try {
-      console.log('📧 Sending welcome email to:', email);
-      await supabase.functions.invoke('send-welcome-couple-email', {
-        body: { email, firstName }
+      console.log('📧 Sending welcome email:', { isProfessional });
+      await supabase.functions.invoke(isProfessional ? 'send-welcome-pro-email' : 'send-welcome-couple-email', {
+        body: { email, firstName, category }
       });
       console.log('✅ Welcome email sent');
     } catch (err) {
@@ -118,12 +118,13 @@ const Callback = () => {
           
           // Get user info and send welcome email for new signups
           const { data: { user } } = await supabase.auth.getUser();
+          const isProfessionalAccount = user?.user_metadata?.account_type === 'b2b';
           if (user && type === 'signup') {
             const firstName = user.user_metadata?.first_name || '';
-            await sendWelcomeEmail(user.email || '', firstName);
+            await sendWelcomeEmail(user.email || '', firstName, isProfessionalAccount, user.user_metadata?.professional_category || user.user_metadata?.categorie || '');
           }
           
-          navigate('/dashboard', { replace: true });
+          navigate(isProfessionalAccount ? '/pro' : '/dashboard', { replace: true });
           return;
         }
 
@@ -143,12 +144,13 @@ const Callback = () => {
 
           // Get user info and send welcome email for new signups (email confirmation)
           const { data: { user } } = await supabase.auth.getUser();
+          const isProfessionalAccount = user?.user_metadata?.account_type === 'b2b';
           if (user && type === 'signup') {
             const firstName = user.user_metadata?.first_name || '';
-            await sendWelcomeEmail(user.email || '', firstName);
+            await sendWelcomeEmail(user.email || '', firstName, isProfessionalAccount, user.user_metadata?.professional_category || user.user_metadata?.categorie || '');
           }
 
-          navigate('/dashboard', { replace: true });
+          navigate(isProfessionalAccount ? '/pro' : '/dashboard', { replace: true });
           return;
         }
 

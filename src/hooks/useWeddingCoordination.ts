@@ -87,9 +87,8 @@ export const useWeddingCoordination = () => {
     } catch (error) {
       console.error('❌ useWeddingCoordination: Error initializing coordination:', error);
       toast({
-        title: "Erreur d'initialisation",
-        description: "Impossible d'initialiser votre espace Mon Jour-M",
-        variant: "destructive",
+        title: "Petit problème de connexion",
+        description: "Merci de recharger la page.",
       });
       throw error;
     } finally {
