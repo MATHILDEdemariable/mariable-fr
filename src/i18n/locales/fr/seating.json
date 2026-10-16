@@ -17,7 +17,7 @@
     "addGuestManually": "Ajouter un invité (nom, menu, allergies)",
     "importRsvp": "Importer depuis RSVP",
     "importManual": "Importer liste manuelle",
-    "importCsv": "Importer CSV",
+    "importCsv": "Importer un tableur",
     "tutorial": "Tuto vidéo"
   },
   "premium": {

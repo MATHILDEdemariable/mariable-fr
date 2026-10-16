@@ -101,7 +101,7 @@
       "searchPlaceholder": "Rechercher un invité...",
       "exportCsv": "Export Tableur",
       "exportSuccess": "Export réussi",
-      "exportSuccessDesc": "Le fichier CSV a été téléchargé",
+      "exportSuccessDesc": "Le fichier tableur a été téléchargé",
       "loadError": "Impossible de charger les réponses RSVP",
       "confirmed": "Confirmés",
       "declined": "Absents",
