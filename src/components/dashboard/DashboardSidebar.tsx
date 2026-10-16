@@ -247,13 +247,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </Link>
         </>)}
 
-        {/* Documents partagés : outil Jour J pour les pros */}
-        {isProWeddingView && isJourJMode && (
-        <Link to={isReaderMode ? '#' : '/dashboard/documents'} onClick={preventReader} className={linkClass(isActive('/dashboard/documents'))}>
-          <FileText className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.documents')}</span>
-        </Link>
-        )}
 
         {/* ADMIN */}
         {!isJourJMode && (<>
@@ -264,10 +257,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
         </Link>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/documents'} onClick={preventReader} className={linkClass(isActive('/dashboard/documents'))}>
-          <FileText className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.documents')}</span>
-        </Link>
 
         <button
           onClick={() => !isReaderMode && setShowSiteInternetModal(true)}
