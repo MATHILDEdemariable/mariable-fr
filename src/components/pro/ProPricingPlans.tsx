@@ -72,7 +72,7 @@ const getCompareRows = (isEnglish: boolean): { group?: string; label: string; ce
   return [
     { group: "price", label: fr ? "Prix" : "Price", cells: [
       { mark: "yes", note: fr ? "Dès 149 €/an" : "From €149/yr" },
-      { mark: "partial", note: fr ? "Abonnement mensuel" : "Monthly plan" },
+      { mark: "partial", note: fr ? ">500 € par an selon formules" : ">€500 per year depending on plan" },
       { mark: "partial", note: fr ? "Abonnement visibilité" : "Visibility plan" },
       { mark: "partial", note: fr ? "Abonnement" : "Subscription" },
       { mark: "partial", note: fr ? "Gratuit, premium pour l'illimité" : "Free, premium for unlimited" },
