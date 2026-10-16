@@ -81,7 +81,7 @@ const getCompareRows = (isEnglish: boolean): { group?: string; label: string; ce
       { mark: "yes", note: fr ? "Premium, qualifié" : "Premium, qualified" }, "no",
       { mark: "partial", note: fr ? "Pas toujours qualifié" : "Not always qualified" }, "no", "no",
     ] },
-    { group: "event", label: fr ? "Appli Jour J collaborative" : "Collaborative day-of app", cells: ["yes", "yes", "no", "no", "no"] },
+    { group: "event", label: fr ? "Appli Jour J collaborative" : "Collaborative day-of app", cells: ["yes", "no", "no", "no", "no"] },
     { label: fr ? "Multi-mariages" : "Multiple weddings", cells: ["yes", "yes", "no", "partial", "yes"] },
     { label: fr ? "Collaboration couples" : "Couple collaboration", cells: ["yes", "yes", "no", "partial", { mark: "partial", note: fr ? "Limitée" : "Limited" }] },
     { label: fr ? "Plan de table" : "Seating plan", cells: ["yes", "yes", "no", "yes", "no"] },
