@@ -100,7 +100,7 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
 
   return (
     <>
-      <Button size="sm" variant="outline" className="h-8 rounded-none" onClick={() => setOpen(true)}>
+      <Button size="sm" className="h-8 rounded-none bg-editorial-olive text-primary-foreground hover:bg-editorial-olive/90" onClick={() => setOpen(true)}>
         <UserPlus className="h-4 w-4 mr-1" />
         {isEnglish ? 'Invite the couple' : 'Inviter les mariés'}
       </Button>
