@@ -10,8 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import CGVCouplesContent from '@/components/legal/CGVCouplesContent';
-import CGVProContent from '@/components/legal/CGVProContent';
+import CguMariableContent from '@/components/legal/CguMariableContent';
 import { Loader2, Mail, Lock, User, Smartphone, CheckCircle } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 import PremiumHeader from '@/components/home/PremiumHeader';
@@ -451,7 +450,7 @@ const Register = () => {
             <DialogTitle className="font-serif text-2xl">{t('register.termsModalTitle')}</DialogTitle>
           </DialogHeader>
           <div className="text-sm">
-            {isPro ? <CGVProContent /> : <CGVCouplesContent />}
+            <CguMariableContent />
           </div>
           <Button type="button" variant="outline" onClick={() => setTermsOpen(false)}>
             {t('register.termsModalClose')}

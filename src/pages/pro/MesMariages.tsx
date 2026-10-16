@@ -324,15 +324,17 @@ const MesMariages: React.FC = () => {
                       >
                         <Pencil className="h-4 w-4" />
                       </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="rounded-none h-8 w-8 shrink-0"
-                        aria-label={t('weddings.archive')}
-                        onClick={() => handleArchive(wedding.id, true)}
-                      >
-                        <Archive className="h-4 w-4" />
-                      </Button>
+                      {isProPremium && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="rounded-none h-8 w-8 shrink-0"
+                          aria-label={t('weddings.archive')}
+                          onClick={() => handleArchive(wedding.id, true)}
+                        >
+                          <Archive className="h-4 w-4" />
+                        </Button>
+                      )}
                     </div>
                     <div className="mt-3 space-y-1 text-sm text-muted-foreground">
                       <p className="flex items-center gap-2">
@@ -376,7 +378,7 @@ const MesMariages: React.FC = () => {
             </div>
           )}
 
-          {archivedWeddings.length > 0 && (
+          {isProPremium && archivedWeddings.length > 0 && (
             <div className="mt-8">
               <h3 className="font-serif text-lg text-foreground mb-3">{t('weddings.archivedTitle')}</h3>
               <div className="space-y-2">
