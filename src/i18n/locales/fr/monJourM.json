@@ -593,7 +593,7 @@
   },
   "importExcel": {
     "tab": "Import Excel",
-    "intro": "Importez plusieurs étapes d'un coup depuis un fichier Excel ou CSV. Téléchargez le modèle, remplissez-le, puis déposez-le ici.",
+    "intro": "Importez plusieurs étapes d'un coup depuis un fichier Excel ou tableur. Téléchargez le modèle, remplissez-le, puis déposez-le ici.",
     "downloadTemplate": "Télécharger le modèle",
     "chooseFile": "Choisir un fichier",
     "reading": "Lecture…",

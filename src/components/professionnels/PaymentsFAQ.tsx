@@ -25,7 +25,7 @@ const PaymentsFAQ = () => {
     },
     {
       question: "La facturation est-elle fournie ?",
-      answer: "Reçus automatiques pour chaque paiement + export CSV pour votre comptabilité. Facturation intégrée prévue lors du lancement officiel."
+      answer: "Reçus automatiques pour chaque paiement + export tableur pour votre comptabilité. Facturation intégrée prévue lors du lancement officiel."
     },
     {
       question: "Quels sont les frais ?",

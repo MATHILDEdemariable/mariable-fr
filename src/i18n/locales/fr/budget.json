@@ -71,7 +71,7 @@
     "save": "Enregistrer",
     "saving": "Enregistrement...",
     "pdf": "PDF",
-    "csv": "CSV",
+    "csv": "Tableur",
     "loading": "Chargement du budget détaillé...",
     "premiumFeature": "Budget Détaillé",
     "premiumDescription": "Ajoutez et modifiez vos postes de budget avec l'abonnement Premium",
@@ -124,11 +124,11 @@
       },
       "csvSuccess": {
         "title": "Export réussi",
-        "description": "Le budget a été exporté en CSV"
+        "description": "Le budget a été exporté en tableur"
       },
       "csvError": {
         "title": "Erreur d'export",
-        "description": "Une erreur s'est produite lors de l'export en CSV"
+        "description": "Une erreur s'est produite lors de l'export en tableur"
       },
       "cartEmpty": {
         "title": "Panier vide",

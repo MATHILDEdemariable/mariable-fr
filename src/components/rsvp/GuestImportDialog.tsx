@@ -183,9 +183,9 @@ const GuestImportDialog: React.FC<GuestImportDialogProps> = ({ isOpen, onClose, 
             <>
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <h3 className="font-medium">📋 Format CSV uniquement</h3>
+                  <h3 className="font-medium">📋 Format tableur (.csv)</h3>
                   <div className="text-sm text-muted-foreground space-y-2">
-                    <p className="font-medium">Comment créer votre fichier CSV :</p>
+                    <p className="font-medium">Comment créer votre fichier tableur :</p>
                     <ol className="list-decimal list-inside space-y-1 ml-2">
                       <li>Créez votre liste dans Excel ou Google Sheets avec les colonnes suivantes :<br/>
                         <span className="font-mono text-xs">Prénom | Nom | Email | Téléphone | Adresse | Type (adulte/enfant)</span>

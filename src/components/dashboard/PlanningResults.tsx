@@ -180,7 +180,7 @@ const PlanningResults: React.FC = () => {
 
     toast({
       title: "Export réussi",
-      description: "Votre planning a été exporté au format CSV"
+      description: "Votre planning a été exporté au format tableur"
     });
   };
 

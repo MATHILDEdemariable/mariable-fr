@@ -26,7 +26,7 @@
       "price": "29 €",
       "tagline": "Achat unique · Accès à vie",
       "all": "Tout le Gratuit, sans aucune limitation",
-      "feature1": "Exports PDF/CSV illimités",
+      "feature1": "Exports PDF/tableur illimités",
       "feature2": "Accès complet au guide en ligne Mariable. Une fois, pour toujours.",
       "feature2Detail": "Mises à jour incluses pendant toute la durée de ton projet. Accès immédiat · Aucune installation — disponible sur navigateur (ordinateur, tablette, mobile).",
       "vsWeddingPlanner": "vs un wedding planner à partir de 2000€ — 10× moins cher, 10× plus de contrôle",
@@ -41,7 +41,7 @@
   "comparison": {
     "rows": [
       { "name": "Toutes les fonctionnalités (checklist, RSVP, plan de table, coordination jour-J…)", "free": "✓", "premium": "✓" },
-      { "name": "Exports PDF/CSV des modules", "free": "Non inclus", "premium": "Illimités" },
+      { "name": "Exports PDF/tableur des modules", "free": "Non inclus", "premium": "Illimités" },
       { "name": "Guides mariage & checklists PDF (10 guides)", "free": "Non inclus", "premium": "+ 10 guides inclus" },
       { "name": "Utilisation IA (checklist, rétroplanning, moodboard)", "free": "1 génération par outil", "premium": "Illimitée" },
       { "name": "Gestion budget (lignes par catégorie)", "free": "3 lignes max", "premium": "Illimitée" },
@@ -53,7 +53,7 @@
     "title": "Questions fréquentes sur nos tarifs",
     "items": [
       { "question": "Mariable est-il vraiment gratuit ?", "answer": "Oui, toutes les fonctionnalités sont accessibles gratuitement : checklist, budget, RSVP, plan de table, coordination jour-J, guide prestataires. Seuls les exports PDF, les guides, l'IA illimitée et le budget illimité nécessitent le Premium." },
-      { "question": "Que contient le compte Premium à 29 € ?", "answer": "Le Premium est un achat unique à 29 € qui lève toutes les limitations : exports PDF/CSV illimités, IA illimitée, gestion budget sans limite de lignes, guides mariage PDF, stockage documents illimité et support prioritaire." },
+      { "question": "Que contient le compte Premium à 29 € ?", "answer": "Le Premium est un achat unique à 29 € qui lève toutes les limitations : exports PDF/tableur illimités, IA illimitée, gestion budget sans limite de lignes, guides mariage PDF, stockage documents illimité et support prioritaire." },
       { "question": "Est-ce un abonnement ou un paiement unique ?", "answer": "C'est un paiement unique de 29 €. Pas d'abonnement, pas de renouvellement automatique. Vous payez une seule fois et gardez l'accès à vie." },
       { "question": "Puis-je utiliser l'app avec ma famille ?", "answer": "Oui, l'application est faite pour être collaborative. Chacun peut accéder au planning et aux informations importantes grâce au partage en temps réel." },
       { "question": "Puis-je passer au Premium plus tard ?", "answer": "Oui, vous pouvez passer au Premium à tout moment. Votre compte gratuit est conservé et toutes vos données sont préservées lors de l'upgrade." }

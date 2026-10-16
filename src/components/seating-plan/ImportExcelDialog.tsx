@@ -118,7 +118,7 @@ export const ImportExcelDialog = ({ open, onOpenChange, planId, onImported }: Im
             />
             <label htmlFor="file-upload" className="cursor-pointer">
               <Button variant="outline" asChild>
-                <span>Choisir un fichier CSV</span>
+                <span>Choisir un fichier tableur</span>
               </Button>
             </label>
             <p className="text-sm text-muted-foreground mt-2">
