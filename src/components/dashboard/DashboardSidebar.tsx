@@ -28,9 +28,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const [dashboardMode, setDashboardMode] = useState<'organisation' | 'jourJ'>(
     () => (localStorage.getItem('mariable_dashboard_mode') === 'jourJ' ? 'jourJ' : 'organisation')
   );
-  const { accountType, currentWedding } = useWedding();
-  // Pro : la formule du mariage (choisie à la création) impose la vue, sans commutateur.
-  const isProWeddingView = accountType === 'b2b' && !!currentWedding;
+  const { accountType, currentWedding, isWeddingCollaborator } = useWedding();
+  // Pro ou couple invité par son pro : la formule du mariage (choisie par le pro) impose la vue, sans commutateur.
+  const isProWeddingView = (accountType === 'b2b' || isWeddingCollaborator) && !!currentWedding;
   const isJourJMode = isProWeddingView ? currentWedding?.prestation_type === 'jourJ' : dashboardMode === 'jourJ';
   const handleChangeDashboardMode = (mode: 'organisation' | 'jourJ') => {
     setDashboardMode(mode);
