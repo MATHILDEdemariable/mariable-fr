@@ -204,7 +204,7 @@ export const CGU_CONTENT: Record<"fr" | "en", CguLanguageContent> = {
   ]
  },
  "en": {
-  "title": "English version — Terms of Use of the Mariable Platform",
+  "title": "Terms of Use of the Mariable Platform",
   "intro": [],
   "articles": [
    {
