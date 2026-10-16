@@ -245,7 +245,6 @@ else plansQuery = plansQuery.eq('user_id', user.id);
   };
 
   const unassignedGuests = guests.filter(g => !g.table_id);
-  const assignedGuests = guests.filter(g => g.table_id);
 
   if (loading) {
     return (

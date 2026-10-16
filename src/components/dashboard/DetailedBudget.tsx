@@ -920,7 +920,7 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
                 <React.Fragment key={`category-${categoryIndex}`}>
                   {/* Category row */}
                   <tr className="bg-wedding-cream/20 border-t">
-                    <td className="px-4 py-2 font-medium text-base">{category.name}</td>
+                    <td className="px-4 py-2 font-medium text-base">{t(`detailed.categoryNames.${category.name}`, { defaultValue: category.name })}</td>
                     <td className="px-4 py-2"></td>
                     <td className="px-4 py-2"></td>
                     <td className="px-4 py-2 text-right font-medium">

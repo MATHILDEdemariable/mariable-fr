@@ -143,6 +143,19 @@
         "description": "Tous les prestataires du panier sont déjà dans le budget"
       }
     },
-    "cartImportNote": "Importé depuis le panier ({{category}})"
+    "cartImportNote": "Importé depuis le panier ({{category}})",
+    "categoryNames": {
+      "Lieu de réception": "Lieu de réception",
+      "Traiteur & Boissons": "Traiteur & Boissons",
+      "Tenues & Accessoires": "Tenues & Accessoires",
+      "Décoration & Fleurs": "Décoration & Fleurs",
+      "Photo & Vidéo": "Photo & Vidéo",
+      "Musique & Animation": "Musique & Animation",
+      "Transport": "Transport",
+      "Papeterie": "Papeterie",
+      "Cadeaux": "Cadeaux",
+      "Divers": "Divers",
+      "Wedding planner": "Wedding planner"
+    }
   }
 }
