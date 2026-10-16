@@ -1,3 +1,4 @@
+import { useWedding } from '@/contexts/WeddingContext';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
@@ -58,6 +59,7 @@ const RetroplanningManuel = () => {
   const dateLocale = isEnglish ? enUS : fr;
   const { toast } = useToast();
   const { weddingId, scopeQuery, withWedding } = useWeddingScope();
+  const { currentWedding } = useWedding();
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -86,7 +88,7 @@ const RetroplanningManuel = () => {
         ).order('created_at', { ascending: false }).limit(1).maybeSingle();
         if (error) throw error;
         setRetroplanningId(data?.id ?? null);
-        setWeddingDate(data?.wedding_date ?? '');
+        setWeddingDate(data?.wedding_date || currentWedding?.wedding_date || '');
         setSteps(Array.isArray(data?.timeline_data) ? data.timeline_data : []);
       } catch (error) {
         console.error('❌ loadManualRetroplanning failed:', error);
@@ -239,7 +241,10 @@ const RetroplanningManuel = () => {
       <CardContent className="p-4 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h2 className="text-2xl font-serif">{isEnglish ? 'Build your own timeline' : 'Créez votre rétroplanning'}</h2>
-          <RetroplanningShareButton retroplanningId={retroplanningId} />
+          <div className="flex flex-wrap gap-2 print:hidden">
+            <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
+            <RetroplanningShareButton retroplanningId={retroplanningId} />
+          </div>
         </div>
 
         <div className="sm:w-56">
