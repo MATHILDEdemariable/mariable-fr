@@ -20,6 +20,7 @@ import SEO from '@/components/SEO';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { trackUserRegistration, trackMetaRegistration } from '@/utils/analytics';
 import { useAuth } from '@/contexts/AuthContext';
+import registerHeroPhoto from '@/assets/editorial/mariee-bouquet-mer.png.asset.json';
 
 const Register = () => {
   const { t, i18n } = useTranslation('auth');
@@ -175,7 +176,6 @@ const Register = () => {
     }
   };
 
-  const sideFeatures = (t('register.features', { returnObjects: true }) as { title: string; description: string }[]) || [];
 
   return (
     <div className="min-h-screen bg-[#F8F5EF]">
@@ -193,61 +193,29 @@ const Register = () => {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-          {/* Colonne gauche : descriptif */}
-          <Card className="shadow-lg order-2 lg:order-1">
-            <CardHeader className="space-y-3">
-              <div className="inline-flex w-fit items-center gap-2 rounded-full bg-wedding-olive/10 text-wedding-olive px-4 py-1.5 text-xs font-medium tracking-wide">
-                ✨ 100% gratuit — Sans carte bancaire
-              </div>
-              <CardTitle className="text-2xl md:text-3xl font-serif uppercase tracking-wide">
-                {t('register.sideTitle')}
-              </CardTitle>
-              <CardDescription className="text-base text-foreground/80">
-                {t('register.sideSubtitle')}
-              </CardDescription>
-              <div className="flex items-start gap-2 p-3 bg-wedding-olive/5 rounded-lg border border-wedding-olive/15 text-sm text-muted-foreground">
-                <Smartphone className="h-4 w-4 mt-0.5 flex-shrink-0 text-wedding-olive" />
-                <p>{t('register.sideIntro')}</p>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-5">
-              <div className="space-y-4">
-                {Array.isArray(sideFeatures) && sideFeatures.filter((feature) => (feature.title || '').trim() || (feature.description || '').trim()).map((feature) => (
-                  <div key={feature.title} className="flex items-start gap-3">
-                    <CheckCircle className="h-5 w-5 text-wedding-olive mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="text-sm font-medium text-foreground">{feature.title}</p>
-                      <p className="text-sm text-muted-foreground">{feature.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="p-4 bg-wedding-olive/5 border border-wedding-olive/15 rounded-lg">
-                <p className="text-sm font-semibold text-wedding-olive mb-1">{t('register.includedTitle')}</p>
-                <p className="text-sm text-muted-foreground">{t('register.includedText')}</p>
-              </div>
-
-              {isPro ? (
-                <div className="p-4 border border-wedding-olive/30 rounded-lg bg-wedding-olive/5">
-                  <p className="text-sm font-semibold text-wedding-olive mb-1">{t('register.proBlockTitle')}</p>
-                  <p className="text-sm text-muted-foreground">{t('register.proBlockText')}</p>
-                  <p className="text-lg font-serif text-wedding-olive mt-2">{t('register.proBlockPrice')}</p>
-                  <Link to="/partenariat" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
-                    {t('register.proBlockCta')}
-                  </Link>
-                </div>
-              ) : (
-                <div className="p-4 border border-border rounded-lg bg-background/60">
-                  <p className="text-sm font-medium text-foreground mb-1">{t('register.limitsTitle')}</p>
-                  <p className="text-sm text-muted-foreground">{t('register.limitsText')}</p>
-                  <Link to="/paiement" className="inline-block mt-2 text-sm text-wedding-olive hover:underline font-medium">
-                    {t('register.limitsCta')}
-                  </Link>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+          {/* Colonne gauche : photo éditoriale */}
+          <figure className="relative order-2 lg:order-1 overflow-hidden min-h-[360px] lg:min-h-[720px] lg:sticky lg:top-32">
+            <img
+              src={registerHeroPhoto.url}
+              alt={preferredLanguage === 'en' ? 'Joyful bride raising her bouquet by the sea' : 'Mariée rayonnante levant son bouquet face à la mer'}
+              className="absolute inset-0 h-full w-full object-cover"
+              loading="eager"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-editorial-noir/80 via-editorial-noir/20 to-transparent" aria-hidden="true" />
+            <figcaption className="absolute bottom-0 left-0 right-0 p-6 md:p-10 text-editorial-beige">
+              <p className="text-xs uppercase tracking-[0.25em] opacity-80">✨ {preferredLanguage === 'en' ? 'Free · No credit card' : 'Gratuit · Sans carte bancaire'}</p>
+              <p className="mt-3 font-serif text-3xl md:text-4xl leading-tight">
+                {isPro
+                  ? (preferredLanguage === 'en' ? 'Every wedding you run, beautifully calm.' : 'Chaque mariage que vous orchestrez, en toute sérénité.')
+                  : (preferredLanguage === 'en' ? 'Your wedding day, fully lived.' : 'Votre Jour J, vécu pleinement.')}
+              </p>
+              <p className="mt-3 text-sm md:text-base opacity-90 max-w-md">
+                {preferredLanguage === 'en'
+                  ? 'Plan without stress, coordinate every minute, enjoy your loved ones.'
+                  : 'Organisez sans stress, coordonnez chaque minute, profitez de vos proches.'}
+              </p>
+            </figcaption>
+          </figure>
 
           {/* Colonne droite : formulaire */}
           <Card className="w-full shadow-lg order-1 lg:order-2">

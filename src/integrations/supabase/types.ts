@@ -4335,6 +4335,7 @@ export type Database = {
           id: string
           is_default: boolean
           owner_id: string
+          prestation_type: string
           title: string
           updated_at: string
           wedding_date: string | null
@@ -4347,6 +4348,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           owner_id: string
+          prestation_type?: string
           title?: string
           updated_at?: string
           wedding_date?: string | null
@@ -4359,6 +4361,7 @@ export type Database = {
           id?: string
           is_default?: boolean
           owner_id?: string
+          prestation_type?: string
           title?: string
           updated_at?: string
           wedding_date?: string | null

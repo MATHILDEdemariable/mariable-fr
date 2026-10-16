@@ -18,6 +18,9 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 import HeroStats from './gaming/HeroStats';
 import ToolsGrid from './gaming/ToolsGrid';
 import QuickActions from './gaming/QuickActions';
+import { useWedding } from '@/contexts/WeddingContext';
+import ProWeddingOverview from '@/components/pro/ProWeddingOverview';
+import coupleHeroPhoto from '@/assets/editorial/baiser-arche-oliviers.png.asset.json';
 
 interface Task {
   id: string;
@@ -34,6 +37,7 @@ const ProjectSummary = () => {
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
   const { toast } = useToast();
   const { weddingId } = useWeddingScope();
+  const { accountType, currentWedding } = useWedding();
   const scope = <T,>(query: T): T =>
     weddingId ? ((query as any).eq('wedding_id', weddingId) as T) : query;
   const [tasks, setTasks] = useState<Task[]>([]);
@@ -228,6 +232,11 @@ const ProjectSummary = () => {
 
   const completionPercentage = calculateCompletionPercentage();
 
+  // Pro : vue d'ensemble dédiée au mariage ouvert (pas la vue couple).
+  if (accountType === 'b2b' && currentWedding) {
+    return <ProWeddingOverview wedding={currentWedding} />;
+  }
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-12">
@@ -238,6 +247,18 @@ const ProjectSummary = () => {
 
   return (
     <div className="space-y-6 pb-8">
+      {/* Bandeau éditorial */}
+      <section className="relative overflow-hidden min-h-[220px] sm:min-h-[280px] flex items-end">
+        <img src={coupleHeroPhoto.url} alt="" aria-hidden="true" className="absolute inset-0 h-full w-full object-cover object-[center_35%]" />
+        <div className="absolute inset-0 bg-gradient-to-t from-editorial-noir/80 via-editorial-noir/30 to-transparent" aria-hidden="true" />
+        <div className="relative p-6 sm:p-8 text-editorial-beige">
+          <p className="text-xs uppercase tracking-[0.25em] opacity-80">Mariable · {t('header.myWorkspace')}</p>
+          <h1 className="mt-2 font-serif text-3xl sm:text-5xl leading-tight">
+            {profile?.first_name ? `${profile.first_name}, ` : ''}{t('editorialHero.title', { defaultValue: 'votre plus beau jour se prépare ici.' })}
+          </h1>
+        </div>
+      </section>
+
       {/* Hero Section with Stats */}
       <HeroStats
         firstName={profile?.first_name}

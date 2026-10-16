@@ -148,7 +148,7 @@
     "selectionTitle": "🛒 Your wedding selection",
     "selectionSubtitle": "Discover our certified vendors and build your dream team",
     "explore": "Explore",
-    "arsenalHeading": "Available tools\u00a0",
+    "arsenalHeading": "Available tools ",
     "finalStretchHeading": "The final stretch",
     "items": {
       "quiz": {
@@ -281,5 +281,8 @@
     "manualDesc": "Add and manage your guests directly in the app. Ideal to track confirmations, personal notes and dietary preferences. You can import an Excel file or add guests one by one.",
     "formTitle": "Automatic response collection",
     "formDesc": "Create a custom RSVP form and share it with your guests by email or link. Responses are automatically collected and centralized here for real-time tracking."
+  },
+  "editorialHero": {
+    "title": "your most beautiful day starts here."
   }
 }

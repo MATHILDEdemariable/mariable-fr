@@ -21,6 +21,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
   const [weddingDate, setWeddingDate] = useState('');
   const [location, setLocation] = useState('');
   const [guestCount, setGuestCount] = useState('');
+  const [prestationType, setPrestationType] = useState<'organisation' | 'jourJ'>('jourJ');
   const [saving, setSaving] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -37,6 +38,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
         wedding_date: weddingDate || null,
         wedding_location: location.trim() || null,
         guest_count: guestCount ? Number(guestCount) : null,
+        prestation_type: prestationType,
       });
       onOpenChange(false);
       setTitle('');
@@ -64,6 +66,28 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <fieldset className="space-y-1.5">
+            <legend className="text-sm font-medium mb-1.5">Formule</legend>
+            <div className="grid grid-cols-2 gap-2" role="radiogroup">
+              {([
+                { value: 'jourJ', label: 'Coordination Jour J', hint: 'Planning, équipe, plan de table' },
+                { value: 'organisation', label: 'Organisation complète', hint: 'Budget, rétroplanning, RSVP + Jour J' },
+              ] as const).map((option) => (
+                <button
+                  key={option.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={prestationType === option.value}
+                  onClick={() => setPrestationType(option.value)}
+                  className={`min-h-[64px] border p-3 text-left text-sm transition-colors ${prestationType === option.value ? 'border-wedding-olive bg-wedding-olive text-background' : 'border-border bg-background hover:border-wedding-olive'}`}
+                >
+                  <span className="block font-semibold">{option.label}</span>
+                  <span className="block text-xs opacity-80">{option.hint}</span>
+                </button>
+              ))}
+            </div>
+          </fieldset>
+
           <div className="space-y-1.5">
             <Label htmlFor="wedding-title">Couple / titre</Label>
             <Input
