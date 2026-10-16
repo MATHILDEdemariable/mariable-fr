@@ -19,6 +19,7 @@ const ExportVisualPDFButton = ({ visualContainerId = 'seating-plan-visual' }: Ex
     closePremiumModal, 
     isPremium 
   } = usePremiumAction({
+    alwaysAllow: true,
     feature: "Export visuel PDF",
     description: "Exportez la disposition visuelle de vos tables en PDF"
   });

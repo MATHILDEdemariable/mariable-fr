@@ -4,10 +4,13 @@ import { useUserProfile } from './useUserProfile';
 interface UsePremiumActionOptions {
   feature: string;
   description?: string;
+  /** Module ouvert à tous (ex. plan de table) : jamais bloqué par le Premium */
+  alwaysAllow?: boolean;
 }
 
-export const usePremiumAction = ({ feature, description }: UsePremiumActionOptions) => {
-  const { isPremium, loading } = useUserProfile();
+export const usePremiumAction = ({ feature, description, alwaysAllow = false }: UsePremiumActionOptions) => {
+  const { isPremium: isPremiumProfile, loading } = useUserProfile();
+  const isPremium = isPremiumProfile || alwaysAllow;
   const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const executeAction = useCallback((action: () => void) => {

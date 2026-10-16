@@ -95,6 +95,7 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
     closePremiumModal, 
     isPremium 
   } = usePremiumAction({
+    alwaysAllow: true,
     feature: "Export PDF Plan de table",
     description: "Exportez votre plan de table complet en PDF"
   });

@@ -43,6 +43,7 @@ const SeatingPlan = () => {
     showPremiumModal, 
     closePremiumModal 
   } = usePremiumAction({
+    alwaysAllow: true,
     feature: t('premium.feature'),
     description: t('premium.description')
   });
