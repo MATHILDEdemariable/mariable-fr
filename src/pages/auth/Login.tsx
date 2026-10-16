@@ -39,8 +39,14 @@ const Login = () => {
 
   const hasExplicitRedirect = Boolean(safeNext || location.state?.redirectAfterLogin);
 
+  // Une seule redirection par utilisateur : évite une boucle /login ↔ /dashboard
+  // quand une session expirée apparaît puis disparaît (réseau instable).
+  const redirectedUserIdRef = useRef<string | null>(null);
+
   useEffect(() => {
     if (!user) return;
+    if (redirectedUserIdRef.current === user.id) return;
+    redirectedUserIdRef.current = user.id;
 
     // Un compte professionnel arrive sur son espace pro, pas sur un mariage
     const resolveDestination = async () => {
@@ -64,7 +70,7 @@ const Login = () => {
     };
 
     resolveDestination();
-  }, [user, navigate, redirectPath, hasExplicitRedirect]);
+  }, [user?.id, navigate, redirectPath, hasExplicitRedirect]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
