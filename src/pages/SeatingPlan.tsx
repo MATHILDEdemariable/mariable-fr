@@ -9,7 +9,6 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play, List, LayoutGrid } from 'lucide-react';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
-import SeatingPlanStats from '@/components/seating-plan/SeatingPlanStats';
 import TablesList from '@/components/seating-plan/TablesList';
 import GuestList from '@/components/seating-plan/GuestList';
 import TableEditor from '@/components/seating-plan/TableEditor';
@@ -303,6 +302,9 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                         <Plus className="h-4 w-4 mr-2" />{t('actions.newTable')}
                       </Button>
                     </div>
+                    <Button onClick={() => setShowGuestDialog(true)} variant="outline" className="w-full">
+                      <UserPlus className="h-4 w-4 mr-2" />{t('actions.addGuestManually')}
+                    </Button>
                     <Button onClick={() => executeAction(() => setShowImportDialog(true))} variant="outline" className="w-full">
                       <Users className="h-4 w-4 mr-2" />{t('actions.importRsvp')}
                     </Button>
@@ -319,14 +321,6 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                       <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                     </div>
                   </div>
-
-                  <SeatingPlanStats 
-                    totalGuests={guests.length}
-                    assignedGuests={assignedGuests.length}
-                    tablesCount={tables.length}
-                    tables={tables}
-                    guests={guests}
-                  />
                 </div>
 
                 {/* Colonne 2: Zone des tables (55%) */}
@@ -362,14 +356,6 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                 </div>
-
-                <SeatingPlanStats 
-                  totalGuests={guests.length}
-                  assignedGuests={assignedGuests.length}
-                  tablesCount={tables.length}
-                  tables={tables}
-                  guests={guests}
-                />
               </div>
 
               {/* Visual canvas */}
