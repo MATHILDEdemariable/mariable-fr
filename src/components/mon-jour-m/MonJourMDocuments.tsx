@@ -612,10 +612,10 @@ const MonJourMDocuments: React.FC = () => {
         </div>
       </div>
 
-      <Tabs defaultValue="standard" className="w-full">
+      <Tabs defaultValue="documents" className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.standard")}</TabsTrigger>
           <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.mine")}</TabsTrigger>
+          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.standard")}</TabsTrigger>
         </TabsList>
 
         {/* Onglet Documents Standard */}
