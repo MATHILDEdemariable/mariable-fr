@@ -5,3 +5,4 @@
 - Per-member Jour J links reuse the public planning URL with `?membre=<team id>`; no extra token — keeps the simple clickable-link sharing.
 - Guest page (RSVP) theming lives in `wedding_rsvp_events.customization` with preset palettes/fonts from `src/data/guestPageThemes.ts`; never free-form CSS, to keep mobile layout safe.
 - Collaboration direction is encoded in wedding_collaborators.role: 'couple' (pro invites couple, Jour J read-only for the couple) or 'planner' (couple invites pro onto the couple's wedding, full edit via is_wedding_planner_collaborator) — so existing couple data is shared, never overwritten.
+- Invited couples (role 'couple') see only the pro's shared wedding; they edit budget, guests/RSVP, seating, drinks and accommodations, other modules are greyed — keeps one coherent view without deleting their own default wedding.
