@@ -196,15 +196,15 @@
         "name": "Mariable Pro",
         "price": "€149",
         "frequency": "per year",
-        "description": "For wedding planners, coordinators and wedding venues.",
+        "description": "For wedding planners, coordinators and venues. Several plans for your business, starting at:",
         "features": [
-          "Unlimited weddings",
-          "Client collaboration",
-          "Listings visible to couples"
+          "Multiple weddings",
+          "Collaboration with your couples",
+          "Mariable listing"
         ],
-        "cta": "Try Mariable Pro",
-        "href": "/register-gratuit?type=pro",
-        "priceOld": "€200"
+        "cta": "See Pro plans",
+        "href": "/logiciel-wedding-planner",
+        "priceOld": "From"
       }
     ]
   },
