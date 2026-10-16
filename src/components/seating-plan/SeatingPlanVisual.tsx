@@ -38,9 +38,6 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   };
 
   // Extract first name from full name
-  const getFirstName = (fullName: string) => {
-    return fullName.split(' ')[0];
-  };
 
   // Handle guest click for seat swapping
   const handleGuestClick = async (guestId: string, tableId: string) => {
