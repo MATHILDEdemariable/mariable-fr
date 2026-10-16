@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -16,7 +16,8 @@ const CONTENT = {
     seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 2 mois.",
     eyebrow: "Mariable Pro · Logiciel wedding planner",
     h1: "L'application des wedding planners qui fait tenir le jour J dans un seul document",
-    answer: "Mariable Pro est une application pour wedding planners, coordinatrices jour J et lieux de réception. Elle centralise dans un espace par mariage le déroulé du jour J, les contacts prestataires, le rétroplanning et les échanges avec les mariés, sur ordinateur comme sur mobile. Quand vous modifiez le planning, couples et prestataires voient la même version, tout de suite. L'IA vous aide à mettre en forme et à anticiper les questions. Mariable Pro vous rend aussi visible auprès des couples qui préparent un mariage haut de gamme, via la plateforme Mariable et son compte Instagram. Trois formules dès 149 € par an (Coordination Jour J, Organisation complète, Agence), toutes avec multi-mariages, collaboration avec vos couples et référencement Mariable. Un mariage offert pendant 2 mois pour essayer.",
+    answer: "L'outil des wedding planners et organisateurs de mariage : une application pour centraliser toutes les informations d'un mariage et collaborer facilement avec vos couples et prestataires, boostée à l'IA.",
+    ctaPrices: "Voir les prix",
     ctaTry: "Essayer gratuitement",
     ctaTalk: "Échanger avec Mathilde",
     painTitle: "Ce que les wedding planners nous disent le plus souvent",
@@ -81,7 +82,7 @@ const CONTENT = {
     altLink: "Voir la feuille de route jour J partagée",
     faqTitle: "Questions fréquentes",
     faq: [
-      ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Agence ou plusieurs wedding planners : sur devis. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète."],
+      ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Agence ou plusieurs wedding planners : sur devis. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète. Renouvellement à date anniversaire de la souscription."],
       ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
       ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
       ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
@@ -100,7 +101,8 @@ const CONTENT = {
     seoDescription: "The app for wedding planners and day-of coordinators: one shared timeline for couples and vendors, powered by AI. From €149/year, 2-month free trial.",
     eyebrow: "Mariable Pro · Wedding planner software",
     h1: "The wedding planner app that keeps the whole wedding day in one document",
-    answer: "Mariable Pro is an app for wedding planners, day-of coordinators and reception venues. It gathers, in one space per wedding, the wedding-day timeline, vendor contacts, the planning schedule and exchanges with the couple, on desktop and mobile. When you update the timeline, couples and vendors see the same version instantly. AI helps you format it and anticipate questions. Mariable Pro also makes you visible to couples planning a high-end wedding, through the Mariable platform and its Instagram account. Three plans from €149 per year (Wedding-day coordination, Full planning, Agency), all with multiple weddings, couple collaboration and a Mariable listing. One wedding free for 2 months to try it.",
+    answer: "The tool for wedding planners and organisers: one app to centralise all of a wedding's information and collaborate easily with your couples and vendors, powered by AI.",
+    ctaPrices: "See pricing",
     ctaTry: "Try it for free",
     ctaTalk: "Talk with Mathilde",
     painTitle: "What wedding planners tell us most often",
@@ -203,16 +205,6 @@ const LogicielWeddingPlanner = () => {
     mainEntity: content.faq.map(([question, answer]) => ({ "@type": "Question", name: question, acceptedAnswer: { "@type": "Answer", text: answer } })),
   };
 
-  const ctaButtons = (
-    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-      <Button asChild className="min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
-        <Link to="/register-gratuit?type=pro">{content.ctaTry} <ArrowRight className="ml-2 h-4 w-4" /></Link>
-      </Button>
-      <Button asChild variant="outline" className="min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
-        <Link to="/contact">{content.ctaTalk}</Link>
-      </Button>
-    </div>
-  );
 
   return (
     <>
@@ -223,7 +215,7 @@ const LogicielWeddingPlanner = () => {
       </SEO>
       <PremiumHeader />
       <main className="page-content bg-background text-editorial-noir">
-        <section className="bg-editorial-beige/40 px-4 pb-16 pt-10 md:pb-24 md:pt-16">
+        <section className="bg-editorial-beige/40 px-4 pb-12 pt-10 md:pb-16 md:pt-16">
           <div className="mx-auto max-w-4xl">
             <nav aria-label="Fil d'Ariane" className="mb-6 text-sm text-editorial-noir/60">
               <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / <Link to="/partenariat" className="hover:text-editorial-olive">Mariable Pro</Link>
@@ -231,85 +223,17 @@ const LogicielWeddingPlanner = () => {
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{content.eyebrow}</p>
             <h1 className="text-4xl leading-tight md:text-6xl">{content.h1}</h1>
             <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">{content.answer}</p>
-            {ctaButtons}
+            <Button asChild className="mt-8 min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
+              <a href="#tarifs">{content.ctaPrices} <ArrowDown className="ml-2 h-4 w-4" /></a>
+            </Button>
           </div>
         </section>
 
-        <section className="px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl">{content.painTitle}</h2>
-            <ul className="mt-8 space-y-4">
-              {content.pains.map((pain) => <li key={pain} className="border-l-2 border-editorial-olive pl-4 text-lg text-editorial-noir/75">{pain}</li>)}
-            </ul>
-            <p className="mt-8 font-serif text-xl italic">{content.painOutro}</p>
-          </div>
-        </section>
-
-        <section className="bg-editorial-olive px-4 py-16 text-primary-foreground md:py-20">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-3xl md:text-4xl">{content.featuresTitle}</h2>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {content.features.map(([heading, copy]) => (
-                <div key={heading} className="border-t border-primary-foreground/35 pt-5">
-                  <h3 className="font-serif text-xl">{heading}</h3>
-                  <p className="mt-2 text-sm leading-relaxed opacity-85">{copy}</p>
-                </div>
-              ))}
-            </div>
-            <Link to="/pro/feuille-de-route-jour-j" className="mt-10 inline-flex min-h-11 items-center gap-2 underline underline-offset-4">{content.altLink} <ArrowRight className="h-4 w-4" /></Link>
-          </div>
-        </section>
-
-        <section className="px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-4xl">
-            <h2 className="text-3xl md:text-4xl">{content.aiTitle}</h2>
-            <p className="mt-6 text-lg text-editorial-noir/75">{content.aiText}</p>
-            <p className="mt-6 font-serif text-2xl italic">{content.aiQuote}</p>
-          </div>
+        <section id="tarifs" aria-label={content.priceTitle} className="scroll-mt-24 px-4 py-16 md:py-20">
+          <div className="mx-auto max-w-5xl"><ProPricingPlans isEnglish={isEnglish} /></div>
         </section>
 
         <section className="bg-editorial-beige/40 px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-3xl md:text-4xl">{content.visTitle}</h2>
-            <p className="mt-4 text-lg text-editorial-noir/75">{content.visIntro}</p>
-            <div className="mt-10 grid gap-8 sm:grid-cols-2">
-              {content.vis.map(([heading, copy]) => (
-                <div key={heading}><h3 className="font-serif text-xl">{heading}</h3><p className="mt-2 text-editorial-noir/70">{copy}</p></div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-5xl">
-            <h2 className="text-3xl md:text-4xl">{content.whoTitle}</h2>
-            <div className="mt-8 grid gap-px bg-editorial-noir/15 sm:grid-cols-2">
-              {content.who.map(([heading, copy]) => (
-                <div key={heading} className="bg-background p-6"><h3 className="font-serif text-xl">{heading}</h3><p className="mt-2 text-sm text-editorial-noir/70">{copy}</p></div>
-              ))}
-            </div>
-            <h2 className="mt-16 text-3xl md:text-4xl">{content.usesTitle}</h2>
-            <ol className="mt-6 space-y-3">
-              {content.uses.map((use, index) => <li key={use} className="text-lg"><span className="mr-3 text-editorial-olive">0{index + 1}</span>{use}</li>)}
-            </ol>
-          </div>
-        </section>
-
-        <section className="bg-editorial-beige/40 px-4 py-16 md:py-20">
-          <div className="mx-auto max-w-5xl">
-            <section id="tarifs" aria-label={content.priceTitle}><ProPricingPlans isEnglish={isEnglish} /></section>
-            <h2 className="mt-16 text-3xl md:text-4xl">{content.altTitle}</h2>
-            <p className="mt-4 text-lg text-editorial-noir/75">{content.altText}</p>
-            <div className="mt-8 grid gap-4 md:grid-cols-2">
-              {[
-                [isEnglish ? "Mariages.net alternative for pros" : "L'alternative à Mariages.net pour les pros", "/pro/alternative-mariages-net"],
-                [isEnglish ? "Free AI Playbook for wedding planners" : "Le Playbook IA du Wedding Planner (gratuit)", "/pro/ia-organisation-mariage"],
-              ].map(([label, href]) => <Link key={href} to={href} className="flex min-h-11 items-center justify-between border border-editorial-noir/15 p-5 hover:border-editorial-olive"><span>{label}</span><ArrowRight className="h-4 w-4" /></Link>)}
-            </div>
-          </div>
-        </section>
-
-        <section className="px-4 py-16 md:py-20">
           <div className="mx-auto max-w-4xl">
             <h2 className="text-3xl md:text-4xl">{content.faqTitle}</h2>
             <div className="mt-8 divide-y divide-editorial-noir/15 border-y border-editorial-noir/15">
@@ -323,13 +247,27 @@ const LogicielWeddingPlanner = () => {
           </div>
         </section>
 
-        <section className="bg-editorial-olive px-4 py-16 text-primary-foreground md:py-20">
-          <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl md:text-4xl">{content.coTitle}</h2>
-            <p className="mt-6 font-serif text-xl italic">{content.coText}</p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <Button asChild variant="secondary" className="min-h-12 rounded-none px-7"><Link to="/register-gratuit?type=pro">{content.ctaTry}</Link></Button>
-              <Button asChild variant="outline" className="min-h-12 rounded-none border-primary-foreground bg-transparent px-7 text-primary-foreground hover:bg-primary-foreground/10"><Link to="/partenariat#mariable-studio">{content.back}</Link></Button>
+        <section className="px-4 py-16 md:py-20">
+          <div className="mx-auto max-w-5xl">
+            <h2 className="text-2xl md:text-3xl">{content.aiTitle}</h2>
+            <p className="mt-4 text-editorial-noir/75">{content.aiText}</p>
+            <h2 className="mt-12 text-2xl md:text-3xl">{content.visTitle}</h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              {content.vis.map(([heading, copy]) => (
+                <div key={heading}><h3 className="font-serif text-lg">{heading}</h3><p className="mt-1 text-sm text-editorial-noir/70">{copy}</p></div>
+              ))}
+            </div>
+            <h2 className="mt-12 text-2xl md:text-3xl">{content.whoTitle}</h2>
+            <div className="mt-6 grid gap-6 sm:grid-cols-2">
+              {content.who.map(([heading, copy]) => (
+                <div key={heading}><h3 className="font-serif text-lg">{heading}</h3><p className="mt-1 text-sm text-editorial-noir/70">{copy}</p></div>
+              ))}
+            </div>
+            <div className="mt-12 grid gap-4 md:grid-cols-2">
+              {[
+                [isEnglish ? "Mariages.net alternative for pros" : "L'alternative à Mariages.net pour les pros", "/pro/alternative-mariages-net"],
+                [isEnglish ? "Free AI Playbook for wedding planners" : "Le Playbook IA du Wedding Planner (gratuit)", "/pro/ia-organisation-mariage"],
+              ].map(([label, href]) => <Link key={href} to={href} className="flex min-h-11 items-center justify-between border border-editorial-noir/15 p-5 hover:border-editorial-olive"><span>{label}</span><ArrowRight className="h-4 w-4" /></Link>)}
             </div>
           </div>
         </section>

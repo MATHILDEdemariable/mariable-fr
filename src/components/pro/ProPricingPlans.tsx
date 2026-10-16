@@ -1,5 +1,6 @@
 import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import ContactProModal from "@/components/partenariat/ContactProModal";
 import { ArrowRight, Check, Minus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -19,6 +20,7 @@ const TEXT = {
     instalments: (value: string) => `3 × ${value} €`,
     onQuote: "Sur devis",
     subscribe: "Souscrire",
+    renewal: "Abonnement annuel, renouvelé à date anniversaire de votre souscription.",
     trial: "Offre gratuite : 1 mariage pendant 2 mois pour essayer, sans engagement.",
     trialCta: "Démarrer l'essai gratuit",
     scope: "Mariable Pro est un outil de gestion d'événement : déroulé du jour J, coordination des prestataires, relation avec les mariés, rétroplanning et logistique.",
@@ -41,6 +43,7 @@ const TEXT = {
     instalments: (value: string) => `3 × €${value}`,
     onQuote: "On quote",
     subscribe: "Subscribe",
+    renewal: "Yearly subscription, renewed on the anniversary of your sign-up date.",
     trial: "Free offer: 1 wedding for 2 months to try it, no commitment.",
     trialCta: "Start the free trial",
     scope: "Mariable Pro is an event management tool: wedding-day timeline, vendor coordination, couple relationship, planning schedule and logistics.",
@@ -105,6 +108,7 @@ const MarkIcon = ({ mark }: { mark: Mark }) => {
 
 const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
   const [isSplitPayment, setIsSplitPayment] = useState(false);
+  const [subscribeSubject, setSubscribeSubject] = useState<string | null>(null);
   const text = isEnglish ? TEXT.en : TEXT.fr;
   const compareRows = getCompareRows(isEnglish);
   const planIds: PlanId[] = ["jour-j", "organisation", "agence"];
@@ -136,8 +140,8 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                 {price ? (
                   isSplitPayment ? (
                     <>
-                      <p className="font-serif text-4xl">{text.instalments(formatEuro(price.split / 3))}</p>
-                      <p className="mt-1 text-sm opacity-75">{price.split} € {text.total} · {text.monthly(formatEuro(price.split / 12))}</p>
+                      <p className="font-serif text-4xl">{price.split} €<span className="text-base opacity-70">{text.perYear}</span></p>
+                      <p className="mt-1 text-sm opacity-75">{text.instalments(formatEuro(price.split / 3))}</p>
                     </>
                   ) : (
                     <>
@@ -155,13 +159,14 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                 ))}
               </ul>
               <Button asChild className={`min-h-12 rounded-none ${isHighlighted ? "bg-primary-foreground text-editorial-noir hover:bg-primary-foreground/90" : "bg-editorial-noir text-primary-foreground hover:bg-editorial-olive"}`}>
-                <Link to={`/contact?formule=${planId}`}>{text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <button type="button" onClick={() => setSubscribeSubject(`Souscription Mariable Pro — ${plan.name}${price ? ` (${isSplitPayment ? `${price.split} € en 3 fois` : `${price.annual} €/an`})` : ""}`)}>{text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></button>
               </Button>
             </article>
           );
         })}
       </div>
 
+      <p className="mt-4 text-sm text-editorial-noir/70">{text.renewal}</p>
       <div className="mt-6 flex flex-col gap-4 border border-editorial-olive p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-medium">{text.trial}</p>
         <Button asChild variant="outline" className="min-h-11 rounded-none border-editorial-noir bg-transparent">
@@ -209,6 +214,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
           </tbody>
         </table>
       </div>
+      <ContactProModal open={subscribeSubject !== null} onOpenChange={(open) => !open && setSubscribeSubject(null)} defaultSubject={subscribeSubject ?? undefined} />
     </div>
   );
 };
