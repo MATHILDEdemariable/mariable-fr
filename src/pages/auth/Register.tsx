@@ -176,7 +176,6 @@ const Register = () => {
     }
   };
 
-  const sideFeatures = (t('register.features', { returnObjects: true }) as { title: string; description: string }[]) || [];
 
   return (
     <div className="min-h-screen bg-[#F8F5EF]">

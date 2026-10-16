@@ -104,29 +104,33 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
         {/* Quick navigation bar - desktop only */}
         {!isMobile && (
         <div className="fixed top-[88px] left-4 z-40 flex items-center gap-2">
+          {!isProAccount && (
           <Link to="/">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Home className="h-4 w-4 mr-1" />
               {t('header.home')}
             </Button>
           </Link>
-          {isProAccount && (
+          )}
+          {isProAccount && variant !== 'pro' && (
             <>
               <Link to="/pro">
                 <Button size="sm" className="bg-wedding-olive hover:bg-wedding-olive/90 text-white shadow-sm">
                   <Heart className="h-4 w-4 mr-1" />
-                  {tPro('bar.myWeddings')}
+                  {tPro('bar.myProSpace', { defaultValue: 'Mon espace pro' })}
                 </Button>
               </Link>
               <span className="h-6 w-px bg-editorial-noir/20 mx-1" aria-hidden="true" />
             </>
           )}
+          {!isProAccount && (
           <Link to="/professionnelsmariable">
             <Button variant="outline" size="sm" className="bg-white/90 backdrop-blur-sm shadow-sm hover:bg-premium-sage hover:text-white">
               <Users className="h-4 w-4 mr-1" />
               {t('header.vendorSelection')}
             </Button>
           </Link>
+          )}
           {!isPremium && isProAccount && (
             <Button
               size="sm"
@@ -179,12 +183,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 </button>
               </div>
             )}
-            {isMobile && isProAccount && (
+            {isMobile && isProAccount && variant !== 'pro' && (
               <div className="mb-4 flex flex-wrap gap-2">
                 <Link to="/pro" className="flex-1 min-w-[140px]">
                   <Button size="sm" className="w-full bg-wedding-olive hover:bg-wedding-olive/90 text-white">
                     <Heart className="h-4 w-4 mr-1" />
-                    {tPro('bar.myWeddings')}
+                    {tPro('bar.myProSpace', { defaultValue: 'Mon espace pro' })}
                   </Button>
                 </Link>
                 {!isPremium && (
