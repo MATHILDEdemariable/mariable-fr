@@ -62,8 +62,20 @@ const MesMariages: React.FC = () => {
   const [isProPremium, setIsProPremium] = useState(false);
 
   useEffect(() => {
-    if (['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
+    const openSettingsFromHash = () => {
+      if (['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
+    };
+    openSettingsFromHash();
+    window.addEventListener('hashchange', openSettingsFromHash);
+    return () => window.removeEventListener('hashchange', openSettingsFromHash);
   }, []);
+
+  // À la fermeture, on retire le hash pour qu'un nouveau clic rouvre la fenêtre
+  useEffect(() => {
+    if (!settingsOpen && ['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search);
+    }
+  }, [settingsOpen]);
 
   useEffect(() => {
     const loadPremiumStatus = async () => {
