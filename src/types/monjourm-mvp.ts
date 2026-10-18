@@ -30,6 +30,7 @@ export interface TeamMember {
   role: string; // Un des rôles prédéfinis
   email?: string;
   phone?: string;
+  instagram?: string;
   notes?: string;
 }
 

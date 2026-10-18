@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Users, Plus, Edit2, Trash2, Mail, Phone, Building2, User } from 'lucide-react';
+import { Users, Plus, Edit2, Trash2, Mail, Phone, Building2, User, Instagram } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
@@ -36,6 +36,12 @@ interface SimpleTeamManagerProps {
   coordination: WeddingCoordination;
 }
 
+// Garde seulement le nom Instagram, sans @ ni lien
+const normalizeInstagram = (value: string): string | null => {
+  const cleaned = value.trim().replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/^@/, '').replace(/\/.*$/, '');
+  return cleaned || null;
+};
+
 const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) => {
   const { t } = useTranslation('monJourM');
   const { toast } = useToast();
@@ -51,6 +57,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
     role: '',
     email: '',
     phone: '',
+    instagram: '',
     notes: ''
   });
 
@@ -85,6 +92,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         role: item.role,
         email: item.email,
         phone: item.phone,
+        instagram: item.instagram,
         notes: item.notes
       }));
 
@@ -114,6 +122,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
       role: '',
       email: '',
       phone: '',
+      instagram: '',
       notes: ''
     });
   };
@@ -140,6 +149,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
             role: formData.role,
             email: formData.email || null,
             phone: formData.phone || null,
+            instagram: normalizeInstagram(formData.instagram),
             notes: formData.notes || null,
             type: formData.role.startsWith('Prestataires :') || formData.role === 'Autre prestataire' ? 'vendor' : 'person'
           });
@@ -185,6 +195,7 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
             role: editingMember.role,
             email: editingMember.email || null,
             phone: editingMember.phone || null,
+            instagram: normalizeInstagram(editingMember.instagram || ''),
             notes: editingMember.notes || null
           })
           .eq('id', editingMember.id);
@@ -350,6 +361,12 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                         <span>{member.phone}</span>
                       </div>
                     )}
+                    {member.instagram && (
+                      <a href={`https://instagram.com/${member.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-wedding-olive hover:underline">
+                        <Instagram className="h-3 w-3" />
+                        <span>@{member.instagram}</span>
+                      </a>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -409,6 +426,16 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   placeholder={t('team.modal.phonePlaceholder')}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="instagram">Instagram</Label>
+                <Input
+                  id="instagram"
+                  value={formData.instagram}
+                  onChange={(e) => setFormData({ ...formData, instagram: e.target.value })}
+                  placeholder="@nomdupro"
                 />
               </div>
 
@@ -491,6 +518,16 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                     id="edit-phone"
                     value={editingMember.phone || ''}
                     onChange={(e) => setEditingMember({ ...editingMember, phone: e.target.value })}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="edit-instagram">Instagram</Label>
+                  <Input
+                    id="edit-instagram"
+                    value={editingMember.instagram || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, instagram: e.target.value })}
+                    placeholder="@nomdupro"
                   />
                 </div>
 

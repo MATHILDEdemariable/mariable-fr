@@ -12,13 +12,16 @@ import ChecklistIntelligente from '@/components/dashboard/ChecklistIntelligente'
 import TasksTab from '@/components/dashboard/checklist/TasksTab';
 
 import { useIsMobile } from '@/hooks/use-mobile';
+import { useWedding } from '@/contexts/WeddingContext';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
 
 const ChecklistMariagePage: React.FC = () => {
   const { t } = useTranslation('checklist');
   const isMobile = useIsMobile();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [activeTab, setActiveTab] = useState('etapes');
+  const { accountType } = useWedding();
+  // Les pros arrivent directement sur la check-list professionnelle
+  const [activeTab, setActiveTab] = useState(accountType === 'b2b' ? 'pro' : 'etapes');
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Synchroniser avec les paramètres URL
@@ -26,8 +29,10 @@ const ChecklistMariagePage: React.FC = () => {
     const tabParam = searchParams.get('tab');
     if (tabParam && ['etapes', 'manuelle', 'intelligente', 'pro'].includes(tabParam)) {
       setActiveTab(tabParam);
+    } else if (accountType === 'b2b') {
+      setActiveTab('pro');
     }
-  }, [searchParams]);
+  }, [searchParams, accountType]);
 
   const handleTabChange = (value: string) => {
     setActiveTab(value);

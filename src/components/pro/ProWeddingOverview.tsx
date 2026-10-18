@@ -24,7 +24,7 @@ const JOUR_J_MODULES: OverviewModule[] = [
 
 const ORGANISATION_MODULES: OverviewModule[] = [
   { labelFr: 'Rétroplanning', labelEn: 'Timeline', hintFr: 'De M-12 à J-1', hintEn: 'From M-12 to D-1', icon: CalendarRange, path: '/dashboard/mon-mariage/retroplanning' },
-  { labelFr: 'Checklist', labelEn: 'Checklist', hintFr: 'Tâches et échéances', hintEn: 'Tasks and deadlines', icon: ListChecks, path: '/dashboard/checklist-mariage?tab=manuelle' },
+  { labelFr: 'Checklist', labelEn: 'Checklist', hintFr: 'Tâches et échéances', hintEn: 'Tasks and deadlines', icon: ListChecks, path: '/dashboard/checklist-mariage?tab=pro' },
   { labelFr: 'Budget & acomptes', labelEn: 'Budget & deposits', hintFr: 'Suivi détaillé', hintEn: 'Detailed tracking', icon: Calculator, path: '/dashboard/budget?tab=detailed' },
   { labelFr: 'Invités & RSVP', labelEn: 'Guests & RSVP', hintFr: 'Liste, réponses, mini-site', hintEn: 'List, replies, mini-site', icon: UserCheck, path: '/dashboard/rsvp' },
   { labelFr: 'Prestataires', labelEn: 'Vendors', hintFr: 'Suivi des devis', hintEn: 'Quote tracking', icon: Store, path: '/dashboard/suivi' },

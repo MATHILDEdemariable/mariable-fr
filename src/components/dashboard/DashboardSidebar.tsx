@@ -40,7 +40,9 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const [showCallModal, setShowCallModal] = useState(false);
   const [showSiteInternetModal, setShowSiteInternetModal] = useState(false);
 
-  const checklistItems = [
+  const checklistItems = accountType === 'b2b' ? [
+    { label: isEnglish ? 'Pro checklist' : 'Check-list pro', icon: <ListChecks className="h-4 w-4" />, path: '/dashboard/checklist-mariage?tab=pro' },
+  ] : [
     { label: t('sidebar.checklistSteps'), icon: <CheckSquare className="h-4 w-4" />, path: '/dashboard/checklist-mariage?tab=etapes' },
     { label: t('sidebar.checklistManual'), icon: <ListChecks className="h-4 w-4" />, path: '/dashboard/checklist-mariage?tab=manuelle' },
     { label: t('sidebar.checklistSmart'), icon: <Lightbulb className="h-4 w-4" />, path: '/dashboard/checklist-mariage?tab=intelligente' },

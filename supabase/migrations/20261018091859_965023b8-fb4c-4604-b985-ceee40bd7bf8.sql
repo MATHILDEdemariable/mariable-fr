@@ -1,0 +1,1 @@
+ALTER TABLE public.coordination_team ADD COLUMN IF NOT EXISTS instagram text;
