@@ -487,6 +487,12 @@ const JourMVue: React.FC = () => {
                                  </a>
                                </div>
                              )}
+                             {member.instagram && (
+                               <a href={`https://instagram.com/${member.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-wedding-olive hover:underline">
+                                 <Camera className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                 @{member.instagram}
+                               </a>
+                             )}
                            </div>
                          </div>
                        ))}
@@ -531,6 +537,12 @@ const JourMVue: React.FC = () => {
                                    {member.phone}
                                  </a>
                                </div>
+                             )}
+                             {member.instagram && (
+                               <a href={`https://instagram.com/${member.instagram}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-wedding-olive hover:underline">
+                                 <Camera className="h-3 w-3 md:h-4 md:w-4 flex-shrink-0" />
+                                 @{member.instagram}
+                               </a>
                              )}
                              {member.notes && (
                                <div className="mt-2 p-2 bg-gray-50 rounded text-xs leading-relaxed">

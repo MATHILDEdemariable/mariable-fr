@@ -522,6 +522,16 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
                 </div>
 
                 <div>
+                  <Label htmlFor="edit-instagram">Instagram</Label>
+                  <Input
+                    id="edit-instagram"
+                    value={editingMember.instagram || ''}
+                    onChange={(e) => setEditingMember({ ...editingMember, instagram: e.target.value })}
+                    placeholder="@nomdupro"
+                  />
+                </div>
+
+                <div>
                   <Label htmlFor="edit-notes">{t('team.modal.notesLabel')}</Label>
                   <Textarea
                     id="edit-notes"

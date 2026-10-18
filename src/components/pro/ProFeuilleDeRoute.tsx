@@ -102,7 +102,7 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
                   <li key={task.id}>
                     <button
                       type="button"
-                      onClick={() => task.wedding_id && onOpenWedding(task.wedding_id, '/dashboard/checklist-mariage?tab=manuelle')}
+                      onClick={() => task.wedding_id && onOpenWedding(task.wedding_id, '/dashboard/checklist-mariage?tab=pro')}
                       className="w-full min-h-[44px] text-left text-sm hover:text-wedding-olive"
                     >
                       <span className="block font-medium">{task.title}</span>
