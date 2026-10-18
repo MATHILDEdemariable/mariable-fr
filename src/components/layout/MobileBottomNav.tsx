@@ -20,6 +20,7 @@ import {
   X,
   Sparkles,
   MessageSquare,
+  ArrowLeft,
 } from 'lucide-react';
 import {
   Drawer,
@@ -31,6 +32,7 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWedding } from '@/contexts/WeddingContext';
 
 interface NavItem {
   icon: React.ElementType;
@@ -49,6 +51,14 @@ const proNavItems: NavItem[] = [
   { icon: LayoutDashboard, label: 'Aujourd\'hui', path: '/pro' },
   { icon: Calendar, label: 'Mariages', path: '/pro#mes-mariages' },
   { icon: BookOpen, label: 'Carnet', path: '/pro/carnet-adresses' },
+];
+
+// Pro à l'intérieur d'un mariage : retour aux mariages + outils clés du dossier
+const proWeddingNavItems: NavItem[] = [
+  { icon: ArrowLeft, label: 'Mariages', path: '/pro#mes-mariages' },
+  { icon: Calendar, label: 'Jour J', path: '/mon-jour-m/planning' },
+  { icon: Users, label: 'Invités', path: '/dashboard/rsvp' },
+  { icon: Calculator, label: 'Budget', path: '/dashboard/budget' },
 ];
 
 const drawerNavItems: NavItem[] = [
@@ -96,13 +106,15 @@ const MobileBottomNav: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
+  const { accountType } = useWedding();
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   if (loading || !isAuthenticated) return null;
   if (HIDDEN_PATTERNS.some((r) => r.test(location.pathname))) return null;
 
   const isProSpace = location.pathname.startsWith('/pro');
-  const bottomItems = isProSpace ? proNavItems : mainNavItems;
+  const isProAccount = accountType === 'b2b';
+  const bottomItems = isProSpace ? proNavItems : isProAccount ? proWeddingNavItems : mainNavItems;
 
   const isActive = (path: string) => {
     if (path === '/pro') return location.pathname === '/pro' && !location.hash;
