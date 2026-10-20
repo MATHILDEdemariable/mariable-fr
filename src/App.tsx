@@ -85,6 +85,7 @@ const ProAlternativeMariagesNet = lazy(() => import("./pages/pro/ProAlternativeM
 const Agence = lazy(() => import("./pages/Agence"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
+const ImmersionMariage = lazy(() => import("./pages/ImmersionMariage"));
 const Approche = lazy(() => import("./pages/about/Approche"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
@@ -383,6 +384,7 @@ function App() {
                    <Route path="/services/budget" element={<Budget />} />
                    
                    {/* Salon du Mariage 2025 routes */}
+                   <Route path="/immersion-mariage" element={<ImmersionMariage />} />
                    <Route path="/salon-du-mariage-2025/jeu-concours" element={<SalonJeuConcours />} />
                    
                    {/* Content Creator Mariage route */}
