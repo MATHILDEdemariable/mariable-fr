@@ -28,7 +28,8 @@ interface ReferenceTimeParams {
 const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({ 
   coordinationId 
 }) => {
-  const { t } = useTranslation('monJourM');
+  const { t, i18n } = useTranslation('monJourM');
+  const formatDayLabel = (day: string) => (i18n.language?.startsWith('en') ? day.replace('Jour J', 'Wedding day').replace(/^J([+-])/, 'D$1') : day);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [events, setEvents] = useState<PlanningEvent[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -620,7 +621,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                     onClick={() => setActiveDay(d)}
                     className={activeDay === d ? 'bg-wedding-olive hover:bg-wedding-olive/90' : ''}
                   >
-                    {d} {count > 0 && <Badge variant="secondary" className="ml-2">{count}</Badge>}
+                    {formatDayLabel(d)} {count > 0 && <Badge variant="secondary" className="ml-2">{count}</Badge>}
                   </Button>
                 );
               })}
@@ -642,7 +643,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center justify-between">
-                  <span>{t('planning.planningDay', { day: activeDay })}</span>
+                  <span>{t('planning.planningDay', { day: formatDayLabel(activeDay) })}</span>
                   {filtered.length > 0 && (
                     <Badge variant="secondary">
                       {filtered.length > 1
@@ -657,7 +658,7 @@ const MonJourMPlanningContent: React.FC<MonJourMPlanningContentProps> = ({
                   <div className="text-center py-12">
                     <Calendar className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                     <h3 className="text-lg font-medium text-gray-900 mb-2">
-                      {t('planning.emptyDay', { day: activeDay })}
+                      {t('planning.emptyDay', { day: formatDayLabel(activeDay) })}
                     </h3>
                     <p className="text-gray-500 mb-4">
                       {t('planning.emptyDayHint')}

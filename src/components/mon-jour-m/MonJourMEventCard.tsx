@@ -10,6 +10,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Edit2, Check, X, GripVertical, Users, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { PlanningEvent } from '../wedding-day/types/planningTypes';
 import { addMinutes } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 interface MonJourMEventCardProps {
   event: PlanningEvent;
@@ -32,6 +33,8 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
   onSelectionChange,
   selectionMode = false
 }) => {
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(event.title);
   const [editedNotes, setEditedNotes] = useState(event.notes || '');
@@ -264,12 +267,12 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                     {showDetails ? (
                       <>
                         <ChevronUp className="h-3 w-3 mr-1" />
-                        Voir moins
+                        {tr('Voir moins', 'Show less')}
                       </>
                     ) : (
                       <>
                         <ChevronDown className="h-3 w-3 mr-1" />
-                        Voir détails
+                        {tr('Voir détails', 'Show details')}
                       </>
                     )}
                   </Button>
@@ -282,7 +285,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                     <div className="text-xs text-muted-foreground">
                       {isEditing ? (
                         <div className="flex items-center gap-2">
-                          <span>Durée:</span>
+                          <span>{tr('Durée :', 'Duration:')}</span>
                           <Input
                             type="number"
                             value={editedDuration}
@@ -302,7 +305,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                       <div className="space-y-1">
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                           <Users className="h-3 w-3" />
-                          <span>Équipe assignée:</span>
+                          <span>{tr('Équipe assignée :', 'Assigned team:')}</span>
                           <Button
                             variant="ghost"
                             size="sm"
@@ -471,7 +474,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                 <div className="text-sm text-gray-600 mb-3">
                   {isEditing ? (
                     <div className="flex items-center gap-2">
-                      <span>Durée:</span>
+                      <span>{tr('Durée :', 'Duration:')}</span>
                       <Input
                         type="number"
                         value={editedDuration}
@@ -484,7 +487,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                     </div>
                   ) : (
                     <span className="font-medium">
-                      Durée: {event.duration} minutes
+                      {tr('Durée :', 'Duration:')} {event.duration} minutes
                     </span>
                   )}
                 </div>
@@ -493,7 +496,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                 <div className="mb-3">
                   <div className="flex items-center gap-2 mb-2">
                     <Users className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">Assigné à:</span>
+                    <span className="text-sm font-medium text-gray-700">{tr('Assigné à :', 'Assigned to:')}</span>
                     {!selectionMode && (
                       <Button
                         variant="ghost"
@@ -530,7 +533,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                       </Badge>
                     ))}
                     {(!event.assignedTo || event.assignedTo.length === 0) && (
-                      <span className="text-xs text-gray-500 italic">Non assigné</span>
+                      <span className="text-xs text-gray-500 italic">{tr('Non assigné', 'Unassigned')}</span>
                     )}
                   </div>
 

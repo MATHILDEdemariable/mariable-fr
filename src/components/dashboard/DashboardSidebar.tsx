@@ -238,6 +238,14 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
         </Link>
 
+        {isProWeddingView && (
+        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mairie-civil')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
+          <Building2 className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
+        </Link>
+        )}
+
+
         <Link to={isReaderMode ? '#' : '/dashboard/accommodations'} onClick={preventReader} className={linkClass(isActive('/dashboard/accommodations'))}>
           <Home className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.accommodations')}</span>
@@ -260,7 +268,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
 
         {/* ADMIN */}
-        {!isJourJMode && (<>
+        {!isJourJMode && !isProWeddingView && (<>
         <SectionLabel label={t('sidebar.sections.admin')} />
 
         <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mairie-civil')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
