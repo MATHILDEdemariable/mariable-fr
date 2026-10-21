@@ -11,6 +11,7 @@ import GuestManualAdd from './GuestManualAdd';
 import GuestBulkNotesDialog from './GuestBulkNotesDialog';
 import GuestEditDialog from './GuestEditDialog';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { useTranslation } from 'react-i18next';
 
 interface Guest {
   id: string;
@@ -28,6 +29,9 @@ interface Guest {
 
 const GuestListManager: React.FC = () => {
   const { weddingId } = useWeddingScope();
+  const { i18n } = useTranslation();
+  const isEn = i18n.language?.startsWith('en');
+  const tr = (fr: string, en: string) => (isEn ? en : fr);
   const [guests, setGuests] = useState<Guest[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -128,9 +132,9 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
 
   const getStatusBadge = (status: 'pending' | 'confirmed' | 'declined') => {
     const config = {
-      pending: { label: 'En attente', variant: 'secondary' as const, color: 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20' },
-      confirmed: { label: 'Confirmé', variant: 'default' as const, color: 'bg-green-500/10 text-green-700 border-green-500/20' },
-      declined: { label: 'Absent', variant: 'destructive' as const, color: 'bg-red-500/10 text-red-700 border-red-500/20' },
+      pending: { label: tr('En attente', 'Pending'), variant: 'secondary' as const, color: 'bg-yellow-500/10 text-yellow-700 border-yellow-500/20' },
+      confirmed: { label: tr('Confirmé', 'Confirmed'), variant: 'default' as const, color: 'bg-green-500/10 text-green-700 border-green-500/20' },
+      declined: { label: tr('Absent', 'Declined'), variant: 'destructive' as const, color: 'bg-red-500/10 text-red-700 border-red-500/20' },
     };
     return config[status];
   };
@@ -186,35 +190,35 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Liste d'invités</h2>
+          <h2 className="text-2xl font-bold">{tr("Liste d'invités", 'Guest list')}</h2>
           <p className="text-muted-foreground">
-            {guests.length} invité{guests.length > 1 ? 's' : ''} • 
-            {guests.filter(g => g.guest_type === 'adult').length} adulte{guests.filter(g => g.guest_type === 'adult').length > 1 ? 's' : ''} • 
-            {guests.filter(g => g.guest_type === 'child').length} enfant{guests.filter(g => g.guest_type === 'child').length > 1 ? 's' : ''}
+            {guests.length} {tr('invité', 'guest')}{guests.length > 1 ? 's' : ''} • 
+            {guests.filter(g => g.guest_type === 'adult').length} {tr('adulte', 'adult')}{guests.filter(g => g.guest_type === 'adult').length > 1 ? 's' : ''} • 
+            {guests.filter(g => g.guest_type === 'child').length} {tr('enfant', 'child')}{guests.filter(g => g.guest_type === 'child').length > 1 ? tr('s', 'ren') : ''}
           </p>
           <p className="text-sm text-muted-foreground mt-1">
-            ✅ {guests.filter(g => g.rsvp_status === 'confirmed').length} confirmé{guests.filter(g => g.rsvp_status === 'confirmed').length > 1 ? 's' : ''} • 
-            ⏳ {guests.filter(g => g.rsvp_status === 'pending').length} en attente • 
-            ❌ {guests.filter(g => g.rsvp_status === 'declined').length} absent{guests.filter(g => g.rsvp_status === 'declined').length > 1 ? 's' : ''}
+            ✅ {guests.filter(g => g.rsvp_status === 'confirmed').length} {tr('confirmé', 'confirmed')}{!isEn && guests.filter(g => g.rsvp_status === 'confirmed').length > 1 ? 's' : ''} • 
+            ⏳ {guests.filter(g => g.rsvp_status === 'pending').length} {tr('en attente', 'pending')} • 
+            ❌ {guests.filter(g => g.rsvp_status === 'declined').length} {tr('absent', 'declined')}{!isEn && guests.filter(g => g.rsvp_status === 'declined').length > 1 ? 's' : ''}
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <Button variant="outline" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
-            Export CSV
+            {tr('Export tableur', 'Export spreadsheet')}
           </Button>
           <Button variant="outline" onClick={() => setIsImportOpen(true)}>
             <Upload className="h-4 w-4 mr-2" />
-            Importer un fichier
+            {tr('Importer un fichier', 'Import a file')}
           </Button>
           <Button variant="outline" onClick={() => setIsBulkNotesOpen(true)}>
             <Sparkles className="h-4 w-4 mr-2" />
-            Notes en vrac (IA)
+            {tr('Notes en vrac (IA)', 'Quick notes (AI)')}
           </Button>
           <Button onClick={() => setIsAddOpen(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Ajouter un invité
+            {tr('Ajouter un invité', 'Add a guest')}
           </Button>
         </div>
       </div>
@@ -222,7 +226,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Rechercher un invité..."
+          placeholder={tr('Rechercher un invité...', 'Search a guest...')}
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           className="pl-10"
@@ -233,22 +237,22 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
         <Card>
           <CardContent className="py-12 text-center">
             <Users className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
-            <h3 className="text-lg font-semibold mb-2">Aucun invité</h3>
+            <h3 className="text-lg font-semibold mb-2">{tr('Aucun invité', 'No guests yet')}</h3>
             <p className="text-muted-foreground mb-6">
-              Commencez par ajouter des invités manuellement ou en important un fichier
+              {tr('Commencez par ajouter des invités manuellement ou en important un fichier', 'Start by adding guests manually or importing a file')}
             </p>
             <div className="flex justify-center gap-3">
               <Button onClick={() => setIsAddOpen(true)}>
                 <Plus className="h-4 w-4 mr-2" />
-                Ajouter un invité
+                {tr('Ajouter un invité', 'Add a guest')}
               </Button>
               <Button variant="outline" onClick={() => setIsImportOpen(true)}>
                 <Upload className="h-4 w-4 mr-2" />
-                Importer un fichier
+                {tr('Importer un fichier', 'Import a file')}
               </Button>
               <Button variant="outline" onClick={() => setIsBulkNotesOpen(true)}>
                 <Sparkles className="h-4 w-4 mr-2" />
-                Notes en vrac (IA)
+                {tr('Notes en vrac (IA)', 'Quick notes (AI)')}
               </Button>
             </div>
           </CardContent>
@@ -260,12 +264,12 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
               <table className="w-full">
                 <thead className="border-b bg-muted/30">
                   <tr>
-                    <th className="text-left p-4 font-medium">Nom</th>
+                    <th className="text-left p-4 font-medium">{tr('Nom', 'Name')}</th>
                     <th className="text-left p-4 font-medium">Email</th>
-                    <th className="text-left p-4 font-medium">Téléphone</th>
+                    <th className="text-left p-4 font-medium">{tr('Téléphone', 'Phone')}</th>
                     <th className="text-left p-4 font-medium">Type</th>
-                    <th className="text-left p-4 font-medium">Statut</th>
-                    <th className="text-left p-4 font-medium">Commentaire</th>
+                    <th className="text-left p-4 font-medium">{tr('Statut', 'Status')}</th>
+                    <th className="text-left p-4 font-medium">{tr('Commentaire', 'Comment')}</th>
                     <th className="text-left p-4 font-medium">Source</th>
                     <th className="text-right p-4 font-medium">Actions</th>
                   </tr>
@@ -287,7 +291,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                       <td className="p-4 text-sm">{guest.guest_phone || '-'}</td>
                       <td className="p-4">
                         <Badge variant={guest.guest_type === 'adult' ? 'default' : 'secondary'}>
-                          {guest.guest_type === 'adult' ? 'Adulte' : 'Enfant'}
+                          {guest.guest_type === 'adult' ? tr('Adulte', 'Adult') : tr('Enfant', 'Child')}
                         </Badge>
                       </td>
                       <td className="p-4">
@@ -296,9 +300,9 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                           onChange={(e) => handleStatusChange(guest.id, e.target.value as 'pending' | 'confirmed' | 'declined')}
                           className={`px-3 py-1 rounded-full text-xs font-medium border cursor-pointer ${getStatusBadge(guest.rsvp_status).color}`}
                         >
-                          <option value="pending">En attente</option>
-                          <option value="confirmed">Confirmé</option>
-                          <option value="declined">Absent</option>
+                          <option value="pending">{tr('En attente', 'Pending')}</option>
+                          <option value="confirmed">{tr('Confirmé', 'Confirmed')}</option>
+                          <option value="declined">{tr('Absent', 'Declined')}</option>
                         </select>
                       </td>
                       <td className="p-4 text-sm text-muted-foreground max-w-[150px]">
@@ -310,9 +314,9 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                       </td>
                       <td className="p-4">
                         <Badge variant="outline">
-                          {guest.source === 'manual' && 'Manuel'}
+                          {guest.source === 'manual' && tr('Manuel', 'Manual')}
                           {guest.source === 'excel' && 'Excel'}
-                          {guest.source === 'txt' && 'Texte'}
+                          {guest.source === 'txt' && tr('Texte', 'Text')}
                         </Badge>
                       </td>
                       <td className="p-4 text-right">
