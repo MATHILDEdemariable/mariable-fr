@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 
 import React, { useState, useEffect } from "react";
 import { 
@@ -92,6 +93,14 @@ type VendorTrackingProps = {
 };
 
 const VendorTracking = ({ project_id }: VendorTrackingProps) => {
+  const { i18n } = useTranslation();
+  const isEn = i18n.language?.startsWith('en');
+  const tr = (fr: string, en: string) => (isEn ? en : fr);
+  const statusLabels: Record<string, [string, string]> = {
+    'à contacter': ['À contacter', 'To contact'], 'contactés': ['Contactés', 'Contacted'], 'en attente': ['En attente', 'Pending'],
+    'réponse reçue': ['Réponse reçue', 'Reply received'], 'à valider': ['À valider', 'To approve'], 'annuler': ['Annuler', 'Cancelled'],
+  };
+  const getStatusLabel = (status: string) => { const l = statusLabels[status]; return l ? tr(l[0], l[1]) : status; };
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
@@ -283,7 +292,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   
   // Format date for display
   const formatDate = (date?: Date | null) => {
-    if (!date) return "Aucun contact";
+    if (!date) return tr("Aucun contact", "No contact");
     return date.toLocaleDateString('fr-FR');
   };
 
@@ -325,9 +334,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         <CardHeader className="pb-2">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle className="font-serif">Mes prestataires</CardTitle>
+              <CardTitle className="font-serif">{tr('Mes prestataires', 'My vendors')}</CardTitle>
               <CardDescription>
-                Gérez vos prestataires de mariage et suivez l'avancement de vos démarches
+                {tr("Gérez vos prestataires de mariage et suivez l'avancement de vos démarches", 'Manage your wedding vendors and track your progress')}
               </CardDescription>
             </div>
             <Button
@@ -337,7 +346,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               className="flex items-center gap-2"
             >
               <Play className="h-4 w-4" />
-              Tuto vidéo
+              {tr('Tuto vidéo', 'Video tutorial')}
             </Button>
           </div>
         </CardHeader>
@@ -347,7 +356,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           {isMobile && (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 text-sm text-blue-800 flex items-start gap-2">
               <span className="text-base">💡</span>
-              <span>Pour une meilleure expérience, nous conseillons d'utiliser cette fonctionnalité sur ordinateur.</span>
+              <span>{tr("Pour une meilleure expérience, nous conseillons d'utiliser cette fonctionnalité sur ordinateur.", 'For a better experience, we recommend using this feature on a computer.')}</span>
             </div>
           )}
           
@@ -355,25 +364,25 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full text-sm">
-                <SelectValue placeholder="Filtrer par statut" />
+                <SelectValue placeholder={tr('Filtrer par statut', 'Filter by status')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="à contacter">À contacter</SelectItem>
-                <SelectItem value="contactés">Contactés</SelectItem>
-                <SelectItem value="en attente">En attente</SelectItem>
-                <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
-                <SelectItem value="à valider">À valider</SelectItem>
-                <SelectItem value="annuler">Annuler</SelectItem>
+                <SelectItem value="all">{tr('Tous les statuts', 'All statuses')}</SelectItem>
+                <SelectItem value="à contacter">{getStatusLabel('à contacter')}</SelectItem>
+                <SelectItem value="contactés">{getStatusLabel('contactés')}</SelectItem>
+                <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
+                <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
+                <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
               </SelectContent>
             </Select>
             
             <Select value={categoryFilter} onValueChange={setCategoryFilter}>
               <SelectTrigger className="w-full text-sm">
-                <SelectValue placeholder="Filtrer par catégorie" />
+                <SelectValue placeholder={tr('Filtrer par catégorie', 'Filter by category')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">Toutes les catégories</SelectItem>
+                <SelectItem value="all">{tr('Toutes les catégories', 'All categories')}</SelectItem>
                 {categories.map((category) => (
                   <SelectItem key={category} value={category}>
                     {category}
@@ -402,7 +411,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               variant="outline"
               onClick={fetchVendors}
             >
-              <RefreshCw className="h-4 w-4 mr-2" /> Actualiser
+              <RefreshCw className="h-4 w-4 mr-2" /> {tr('Actualiser', 'Refresh')}
             </Button>
             
             <Button 
@@ -410,11 +419,11 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               onClick={() => setCatalogOpen(true)}
             >
-              <Plus className="h-4 w-4 mr-2" /> Sélection Mariable
+              <Plus className="h-4 w-4 mr-2" /> {tr('Sélection Mariable', 'Mariable selection')}
             </Button>
             {isProAccount && (
               <Button variant="outline" onClick={() => setAddressBookOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" /> Depuis mon carnet
+                <Plus className="h-4 w-4 mr-2" /> {tr('Depuis mon carnet', 'From my address book')}
               </Button>
             )}
             
@@ -422,7 +431,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => setAddDialogOpen(true)}
             >
-              <Plus className="h-4 w-4 mr-2" /> Sélection personnelle
+              <Plus className="h-4 w-4 mr-2" /> {tr('Sélection personnelle', 'Add my own')}
             </Button>
           </div>
           
@@ -451,7 +460,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 className="text-xs h-10"
               >
                 <RefreshCw className="h-3 w-3 mr-1.5" />
-                Actualiser
+                {tr('Actualiser', 'Refresh')}
               </Button>
               
               <Button 
@@ -464,7 +473,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               </Button>
               {isProAccount && (
                 <Button variant="outline" size="sm" className="text-xs h-10" onClick={() => setAddressBookOpen(true)}>
-                  <Plus className="h-3 w-3 mr-1" /> Mon carnet
+                  <Plus className="h-3 w-3 mr-1" /> {tr('Mon carnet', 'Address book')}
                 </Button>
               )}
               
@@ -473,7 +482,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 className="bg-wedding-olive hover:bg-wedding-olive/90 text-xs h-10"
                 onClick={() => setAddDialogOpen(true)}
               >
-                <Plus className="h-3 w-3 mr-1" /> Perso
+                <Plus className="h-3 w-3 mr-1" /> {tr('Perso', 'Own')}
               </Button>
             </div>
           )}
@@ -488,8 +497,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               ) : filteredVendors.length === 0 ? (
                 <div className="text-center py-6 text-muted-foreground">
                   {vendors.length === 0 ? 
-                    "Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer." :
-                    "Aucun prestataire trouvé avec ces critères"
+                    tr("Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer.", "No vendors yet. Use the buttons above to get started.") :
+                    tr("Aucun prestataire trouvé avec ces critères", "No vendors match these filters")
                   }
                 </div>
               ) : (
@@ -508,25 +517,25 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                                 vendor.source === 'personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
                               )}
                             >
-                              {vendor.source === 'personal' ? '👤 Personnel' : '🏢 Mariable'}
+                              {vendor.source === 'personal' ? tr('👤 Personnel', '👤 Personal') : '🏢 Mariable'}
                             </Badge>
                           </div>
                         </div>
                         <Badge className={cn("flex items-center gap-1 text-xs px-2 py-1", statusColorMap[vendor.status])}>
                           {statusIconMap[vendor.status]}
-                          {vendor.status}
+                          {getStatusLabel(vendor.status)}
                         </Badge>
                       </div>
                       
                       <div className="space-y-2 text-sm text-gray-600 mb-4">
                         {vendor.budget && (
                           <div className="flex justify-between">
-                            <span>Budget:</span>
+                            <span>{tr('Budget :', 'Budget:')}</span>
                             <span className="font-medium">{vendor.budget}</span>
                           </div>
                         )}
                         <div className="flex justify-between">
-                          <span>Contact:</span>
+                          <span>{tr('Contact :', 'Contact:')}</span>
                           <span>{formatDate(vendor.contact_date)}</span>
                         </div>
                         {vendor.feeling && (
@@ -597,19 +606,19 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
 
                       <div className="space-y-2">
                         <Select 
-                          defaultValue={vendor.status}
+                          defaultValue={getStatusLabel(vendor.status)}
                           onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                         >
                           <SelectTrigger className="w-full">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            <SelectItem value="à contacter">À contacter</SelectItem>
-                            <SelectItem value="contactés">Contactés</SelectItem>
-                            <SelectItem value="en attente">En attente</SelectItem>
-                            <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
-                            <SelectItem value="à valider">À valider</SelectItem>
-                            <SelectItem value="annuler">Annuler</SelectItem>
+                            <SelectItem value="à contacter">{getStatusLabel('à contacter')}</SelectItem>
+                            <SelectItem value="contactés">{getStatusLabel('contactés')}</SelectItem>
+                            <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
+                            <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
+                            <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                            <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
                           </SelectContent>
                         </Select>
                         
@@ -624,7 +633,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             className="flex-1"
                           >
                             <Edit className="h-4 w-4 mr-1" />
-                            Modifier
+                            {tr('Modifier', 'Edit')}
                           </Button>
                           <Button
                             variant="outline"
@@ -636,7 +645,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             className="flex-1 text-red-600 hover:text-red-700"
                           >
                             <Trash className="h-4 w-4 mr-1" />
-                            Supprimer
+                            {tr('Supprimer', 'Delete')}
                           </Button>
                         </div>
                       </div>
@@ -651,14 +660,14 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">Prestataire</TableHead>
-                    <TableHead className="w-[120px]">Catégorie</TableHead>
+                    <TableHead className="w-[250px]">{tr('Prestataire', 'Vendor')}</TableHead>
+                    <TableHead className="w-[120px]">{tr('Catégorie', 'Category')}</TableHead>
                     <TableHead className="w-[100px]">Source</TableHead>
-                    <TableHead className="w-[140px]">Statut</TableHead>
+                    <TableHead className="w-[140px]">{tr('Statut', 'Status')}</TableHead>
                     <TableHead className="w-[100px]">Budget</TableHead>
                     <TableHead className="w-[120px]">Feeling</TableHead>
                     <TableHead className="w-[150px]">Notes</TableHead>
-                    <TableHead className="w-[150px]">Points +/-</TableHead>
+                    <TableHead className="w-[150px]">{tr('Points +/-', 'Pros / cons')}</TableHead>
                     <TableHead className="w-[110px]">Contact</TableHead>
                     <TableHead className="text-right w-[120px]">Actions</TableHead>
                   </TableRow>
@@ -676,8 +685,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                     <TableRow>
                       <TableCell colSpan={10} className="text-center py-6 text-muted-foreground">
                         {vendors.length === 0 ? 
-                          "Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer." :
-                          "Aucun prestataire trouvé avec ces critères"
+                          tr("Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer.", "No vendors yet. Use the buttons above to get started.") :
+                          tr("Aucun prestataire trouvé avec ces critères", "No vendors match these filters")
                         }
                       </TableCell>
                     </TableRow>
@@ -815,19 +824,19 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             </Button>
                             
                             <Select 
-                              defaultValue={vendor.status}
+                              defaultValue={getStatusLabel(vendor.status)}
                               onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                             >
                               <SelectTrigger className="w-[100px] text-xs">
                                 <SelectValue />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="à contacter">À contacter</SelectItem>
-                                <SelectItem value="contactés">Contactés</SelectItem>
-                                <SelectItem value="en attente">En attente</SelectItem>
-                                <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
-                                <SelectItem value="à valider">À valider</SelectItem>
-                                <SelectItem value="annuler">Annuler</SelectItem>
+                                <SelectItem value="à contacter">{getStatusLabel('à contacter')}</SelectItem>
+                                <SelectItem value="contactés">{getStatusLabel('contactés')}</SelectItem>
+                                <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
+                                <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
+                                <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                                <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
                               </SelectContent>
                             </Select>
                           </div>
@@ -884,18 +893,18 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Êtes-vous sûr ?</AlertDialogTitle>
+            <AlertDialogTitle>{tr('Êtes-vous sûr ?', 'Are you sure?')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action ne peut pas être annulée. Le prestataire sera définitivement supprimé de votre liste.
+              {tr('Cette action ne peut pas être annulée. Le prestataire sera définitivement supprimé de votre liste.', 'This cannot be undone. The vendor will be permanently removed from your list.')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogCancel>{tr('Annuler', 'Cancel')}</AlertDialogCancel>
             <AlertDialogAction 
               onClick={deleteVendor}
               className="bg-red-600 hover:bg-red-700"
             >
-              Supprimer
+              {tr('Supprimer', 'Delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
