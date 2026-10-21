@@ -623,6 +623,10 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         </Select>
                         
                         <div className="flex gap-2">
+                          <Button variant="outline" size="sm" className="flex-1" onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
+                            <FileText className="h-4 w-4 mr-1" />
+                            {tr('Documents', 'Documents')}
+                          </Button>
                           <Button
                             variant="outline"
                             size="sm"
@@ -797,6 +801,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         </TableCell>
                         <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
+                            <Button variant="outline" size="sm" className="p-2" title={tr('Documents (devis…)', 'Documents (quotes…)')} aria-label={tr('Documents du prestataire', 'Vendor documents')} onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
+                              <FileText className="h-3 w-3" />
+                            </Button>
                             <Button
                               variant="outline"
                               size="sm"
