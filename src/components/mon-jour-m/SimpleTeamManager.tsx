@@ -271,7 +271,6 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
             </p>
           </div>
           <div className="flex gap-2 flex-wrap">
-            <SharePublicButton coordinationId={coordination.id} />
             <Button variant="outline" onClick={() => setShowBulkModal(true)}>
               <Plus className="h-4 w-4 mr-2" />
               {t('team.bulkAdd')}

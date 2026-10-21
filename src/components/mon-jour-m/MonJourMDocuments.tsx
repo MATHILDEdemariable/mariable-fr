@@ -607,9 +607,6 @@ const MonJourMDocuments: React.FC = () => {
           <p className="text-gray-600">{t("documents.subtitle")}</p>
         </div>
         
-        <div className="flex gap-2">
-          {coordination && <SharePublicButton coordinationId={coordination.id} />}
-        </div>
       </div>
 
       <Tabs defaultValue="documents" className="w-full">

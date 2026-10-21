@@ -5,6 +5,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { BookOpen } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useTranslation } from 'react-i18next';
 
 export const AccommodationTutorial = () => {
@@ -75,6 +77,7 @@ export const AccommodationTutorial = () => {
           </AccordionContent>
         </AccordionItem>
       </Accordion>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };
