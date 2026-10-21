@@ -46,7 +46,7 @@ const TEXT = {
     renewal: "Yearly subscription, renewed on the anniversary of your sign-up date.",
     trial: "Free offer: 1 wedding for 2 months to try it, no commitment.",
     trialCta: "Start the free trial",
-    scope: "Mariable Pro is an event management tool: wedding-day timeline, vendor coordination, couple relationship, planning schedule and logistics.",
+    scope: "",
     plans: {
       "jour-j": { name: "Wedding-day coordination", features: ["Minute-by-minute timeline", "Collaborative mobile app on the day", "Link sharing with vendors", "Multiple weddings", "Collaboration with your couples", "Mariable listing"] },
       organisation: { name: "Full planning", features: ["Includes all Wedding-day coordination", "AI-assisted planning & tasks", "Budget & deposits", "Seating plan", "Digital RSVP & couple's mini-site", "Mariable listing"] },
