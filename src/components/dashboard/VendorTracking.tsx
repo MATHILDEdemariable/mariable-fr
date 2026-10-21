@@ -118,7 +118,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
-  const { accountType } = useWedding();
+  const { accountType, currentWedding } = useWedding();
   const isProAccount = accountType === 'b2b';
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [addressBookOpen, setAddressBookOpen] = useState(false);
