@@ -15,12 +15,17 @@ export const AccommodationTutorial = () => {
   const tipsItems = t('accommodationGuide.tipsItems', { returnObjects: true }) as string[];
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-      <div className="flex items-center gap-2 mb-3">
-        <BookOpen className="h-5 w-5 text-blue-600" />
-        <h3 className="font-semibold text-blue-900">{t('accommodationGuide.title')}</h3>
-      </div>
-      
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          <BookOpen className="w-4 h-4 mr-2" />
+          {t('accommodationGuide.title')}
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>{t('accommodationGuide.title')}</DialogTitle>
+        </DialogHeader>
       <Accordion type="single" collapsible className="w-full">
         <AccordionItem value="item-1">
           <AccordionTrigger className="text-sm">
