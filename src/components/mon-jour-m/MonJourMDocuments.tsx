@@ -11,7 +11,6 @@ import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import SharePublicButton from './SharePublicButton';
 import PhotoListTemplate from './PhotoListTemplate';
 import SeatingPlanCard from './SeatingPlanCard';
 import ImportFromDashboardModal from './ImportFromDashboardModal';
@@ -607,9 +606,6 @@ const MonJourMDocuments: React.FC = () => {
           <p className="text-gray-600">{t("documents.subtitle")}</p>
         </div>
         
-        <div className="flex gap-2">
-          {coordination && <SharePublicButton coordinationId={coordination.id} />}
-        </div>
       </div>
 
       <Tabs defaultValue="documents" className="w-full">

@@ -123,6 +123,15 @@
     "saved": "Enregistré dans votre carnet",
     "error": "Une erreur est survenue",
     "deleteConfirm": "Supprimer ce partenaire ?",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "importExcel": "Importer un fichier Excel",
+    "downloadTemplate": "Télécharger le modèle",
+    "importNone": "Aucun contact trouvé",
+    "importNoneDesc": "Ajoutez au moins une colonne « Société » ou « Nom ».",
+    "imported": "{{count}} contact(s) importé(s)",
+    "importError": "Import impossible",
+    "importErrorDesc": "Vérifiez le format du fichier.",
+    "delete": "Supprimer",
+    "other": "Autre"
   }
 }

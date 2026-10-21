@@ -36,7 +36,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
               <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">{t('layout.title')}</h1>
             </div>
 
-            {coordinationId && (
+            {coordinationId && currentPath.includes('/planning') && (
               <div className="shrink-0">
                 <SharePublicButton coordinationId={coordinationId} />
               </div>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Download, Lock, Loader2 } from 'lucide-react';
@@ -88,6 +89,8 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
 };
 
 const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
+  const { i18n } = useTranslation();
+  const isEnglish = i18n.language?.startsWith('en');
   const [isExporting, setIsExporting] = useState(false);
   const { 
     executeAction, 
@@ -216,7 +219,7 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
             <Download className="h-4 w-4 mr-2" />
           </>
         )}
-        {isExporting ? 'Export...' : 'Export PDF (liste, tables & menus, plan)'}
+        {isExporting ? 'Export...' : (isEnglish ? 'Export PDF (list, tables & menus, plan)' : 'Export PDF (liste, tables & menus, plan)')}
       </Button>
 
       <PremiumModal

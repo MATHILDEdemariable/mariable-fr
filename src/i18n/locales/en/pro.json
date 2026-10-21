@@ -123,6 +123,15 @@
     "saved": "Saved to your address book",
     "error": "Something went wrong",
     "deleteConfirm": "Delete this partner?",
-    "search": "Search"
+    "search": "Search",
+    "importExcel": "Import an Excel file",
+    "downloadTemplate": "Download the template",
+    "importNone": "No contact found",
+    "importNoneDesc": "Add at least a “Company” or “Name” column.",
+    "imported": "{{count}} contact(s) imported",
+    "importError": "Import failed",
+    "importErrorDesc": "Please check the file format.",
+    "delete": "Delete",
+    "other": "Other"
   }
 }

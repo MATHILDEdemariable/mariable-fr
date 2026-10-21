@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useRef, useEffect } from 'react';
 import { SeatingTable, SeatingAssignment } from '@/types/seating';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +16,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   guests,
   onTablePositionUpdate
 }) => {
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const containerRef = useRef<HTMLDivElement>(null);
   const [draggingTable, setDraggingTable] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -65,22 +68,22 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
           ]);
 
           toast({
-            title: 'Places échangées',
+            title: tr('Places échangées','Seats swapped'),
             description: `${guest1.guest_name} et ${guest2.guest_name} ont échangé leurs places`
           });
 
           onTablePositionUpdate();
         } catch (error) {
           toast({
-            title: 'Erreur',
-            description: 'Impossible d\'échanger les places',
+            title: tr('Erreur','Error'),
+            description: tr("Impossible d'échanger les places",'Unable to swap seats'),
             variant: 'destructive'
           });
         }
       } else {
         toast({
-          title: 'Action impossible',
-          description: 'Vous ne pouvez échanger que des invités sur la même table',
+          title: tr('Action impossible','Action not allowed'),
+          description: tr('Vous ne pouvez échanger que des invités sur la même table','You can only swap guests at the same table'),
           variant: 'destructive'
         });
       }
@@ -133,8 +136,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
 
       if (error) {
         toast({
-          title: 'Erreur',
-          description: 'Impossible de sauvegarder la position',
+          title: tr('Erreur','Error'),
+          description: tr('Impossible de sauvegarder la position','Unable to save position'),
           variant: 'destructive'
         });
       }
@@ -188,26 +191,26 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs space-y-1">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded-full bg-premium-sage" />
-          <span>Table ronde</span>
+          <span>{tr('Table ronde','Round table')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-5 h-3 rounded-lg bg-premium-sage" />
-          <span>Table rectangle</span>
+          <span>{tr('Table rectangle','Rectangular table')}</span>
         </div>
         <div className="flex items-center gap-2">
           <div className="w-5 h-3 rounded-[50%] bg-premium-sage" />
-          <span>Table ovale</span>
+          <span>{tr('Table ovale','Oval table')}</span>
         </div>
       </div>
 
       {/* Instructions */}
       <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
-        <p className="font-medium text-foreground mb-2">Mode Vue Visuelle</p>
-        <p className="mb-1">• Glissez les tables pour les repositionner</p>
-        <p className="mb-1">• Cliquez sur 2 invités d'une même table pour échanger leurs places</p>
+        <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
+        <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
+        <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
         <div className="mt-2 pt-2 border-t border-gray-200">
           <p className="text-[#7F9474] font-medium">
-            💡 Pour déplacer un invité vers une autre table, utilisez l'onglet "Liste"
+            💡 {tr('Pour déplacer un invité vers une autre table, utilisez l\'onglet « Liste »','To move a guest to another table, use the "List" tab')}
           </p>
         </div>
       </div>
@@ -215,7 +218,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {/* Selected guest indicator */}
       {selectedGuest && (
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-premium-sage text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
-          Cliquez sur un autre invité de la même table pour échanger
+          {tr('Cliquez sur un autre invité de la même table pour échanger','Click another guest at the same table to swap')}
         </div>
       )}
 
@@ -293,7 +296,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                     top: size.height / 2 + guestY - 10,
                     transform: 'translateX(-50%)'
                   }}
-                  title={`${guest.guest_name}${guest.seat_number ? ` (Place ${guest.seat_number})` : ''} - Cliquez pour échanger`}
+                  title={`${guest.guest_name}${guest.seat_number ? ` (${tr('Place','Seat')} ${guest.seat_number})` : ''} - ${tr('Cliquez pour échanger','Click to swap')}`}
                 >
                   {guest.guest_name}
                 </div>
@@ -307,8 +310,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {tables.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-muted-foreground">
-            <p className="text-lg font-medium mb-2">Aucune table créée</p>
-            <p className="text-sm">Créez des tables pour les voir ici</p>
+            <p className="text-lg font-medium mb-2">{tr('Aucune table créée','No tables yet')}</p>
+            <p className="text-sm">{tr('Créez des tables pour les voir ici','Create tables to see them here')}</p>
           </div>
         </div>
       )}

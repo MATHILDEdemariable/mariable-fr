@@ -132,7 +132,8 @@ export default function AccommodationsPage() {
             <h1 className="text-3xl font-bold text-wedding-olive">{t('accommodations.title')}</h1>
             <p className="text-muted-foreground mt-1">{t('accommodations.subtitle')}</p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
+            <AccommodationTutorial />
             <Button onClick={handleExportPDF} variant="outline">
               <FileDown className="w-4 h-4 mr-2" />
               {t('accommodations.exportPdf')}
@@ -143,8 +144,6 @@ export default function AccommodationsPage() {
             </Button>
           </div>
         </div>
-
-        <AccommodationTutorial />
 
         <AccommodationStats accommodations={accommodations} />
 

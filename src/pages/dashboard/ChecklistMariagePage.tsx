@@ -21,17 +21,20 @@ const ChecklistMariagePage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const { accountType } = useWedding();
   // Les pros arrivent directement sur la check-list professionnelle
-  const [activeTab, setActiveTab] = useState(accountType === 'b2b' ? 'pro' : 'etapes');
+  const isPro = accountType === 'b2b';
+  const allowedTabs = isPro ? ['manuelle', 'pro'] : ['etapes', 'manuelle', 'intelligente', 'pro'];
+  const [activeTab, setActiveTab] = useState(isPro ? 'pro' : 'etapes');
   const [showTutorial, setShowTutorial] = useState(false);
 
   // Synchroniser avec les paramètres URL
   useEffect(() => {
     const tabParam = searchParams.get('tab');
-    if (tabParam && ['etapes', 'manuelle', 'intelligente', 'pro'].includes(tabParam)) {
+    if (tabParam && allowedTabs.includes(tabParam)) {
       setActiveTab(tabParam);
     } else if (accountType === 'b2b') {
       setActiveTab('pro');
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams, accountType]);
 
   const handleTabChange = (value: string) => {
@@ -66,25 +69,25 @@ const ChecklistMariagePage: React.FC = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange}>
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger 
+          <TabsList className={`grid w-full ${isPro ? 'grid-cols-2' : 'grid-cols-4'}`}>
+            {!isPro && <TabsTrigger 
               value="etapes"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
               {isMobile ? t('tabs.stepsShort') : t('tabs.stepsLong')}
-            </TabsTrigger>
+            </TabsTrigger>}
             <TabsTrigger 
               value="manuelle"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
               {isMobile ? t('tabs.manualShort') : t('tabs.manualLong')}
             </TabsTrigger>
-            <TabsTrigger 
+            {!isPro && <TabsTrigger 
               value="intelligente"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"
             >
               {isMobile ? t('tabs.smartShort') : t('tabs.smartLong')}
-            </TabsTrigger>
+            </TabsTrigger>}
             <TabsTrigger 
               value="pro"
               className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white hover:bg-wedding-olive/20 hover:text-wedding-olive text-xs sm:text-sm"

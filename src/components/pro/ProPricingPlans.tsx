@@ -91,9 +91,13 @@ const getCompareRows = (isEnglish: boolean): { group?: string; label: string; ce
     { group: "admin", label: fr ? "Facturation" : "Invoicing", cells: ["no", "yes", "no", "no", "partial"] },
     { label: fr ? "CRM / prospects" : "CRM / leads", cells: ["no", "yes", "no", "no", "partial"] },
     { label: fr ? "Intégration mail" : "Email integration", cells: ["no", "yes", "no", "no", "partial"] },
-    { group: "ergonomy", label: fr ? "Intuitif, simple, en français" : "Intuitive, simple, in French", cells: [
-      "yes", { mark: "no", note: fr ? "Peu intuitif" : "Not intuitive" }, "partial", "partial", { mark: "no", note: fr ? "Prise en main longue" : "Steep learning curve" },
+    { group: "ergonomy", label: fr ? "Intuitif et simple" : "Intuitive and simple", cells: [
+      { mark: "yes", note: fr ? "Fonctionnalités IA intégrées" : "Built-in AI features" }, { mark: "no", note: fr ? "Peu intuitif" : "Not intuitive" }, "partial", "partial", { mark: "no", note: fr ? "Prise en main longue" : "Steep learning curve" },
     ] },
+    { label: fr ? "Langues" : "Languages", cells: [
+      { mark: "yes", note: fr ? "Français + anglais" : "French + English" }, { mark: "partial", note: fr ? "Français uniquement" : "French only" }, "partial", "partial", "yes",
+    ] },
+    { label: fr ? "Appli mobile" : "Mobile app", cells: ["yes", { mark: "yes", note: fr ? "Appli disponible" : "App available" }, "yes", "partial", "yes"] },
     { label: fr ? "Export / livrables" : "Export / deliverables", cells: [
       { mark: "yes", note: fr ? "PDF prêts à partager" : "Ready-to-share PDFs" }, "partial", "no", "partial", "partial",
     ] },
@@ -175,7 +179,12 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
       </div>
       <p className="mt-6 text-editorial-noir/75">{text.scope}</p>
 
-      <h2 className="mt-16 text-3xl md:text-4xl">{text.compareTitle}</h2>
+      <details className="group mt-16 border-t border-editorial-noir/20 pt-6">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4">
+        <h2 className="text-3xl md:text-4xl">{text.compareTitle}</h2>
+        <span className="text-sm underline underline-offset-4 group-open:hidden">{isEnglish ? "Show" : "Afficher"}</span>
+        <span className="hidden text-sm underline underline-offset-4 group-open:inline">{isEnglish ? "Hide" : "Masquer"}</span>
+      </summary>
       <div className="mt-8 overflow-x-auto">
         <table className="w-full min-w-[760px] border-collapse text-left text-sm">
           <thead>
@@ -214,6 +223,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
           </tbody>
         </table>
       </div>
+      </details>
       <ContactProModal open={subscribeSubject !== null} onOpenChange={(open) => !open && setSubscribeSubject(null)} defaultSubject={subscribeSubject ?? undefined} />
     </div>
   );

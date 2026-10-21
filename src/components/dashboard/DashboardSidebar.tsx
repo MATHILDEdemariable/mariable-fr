@@ -153,11 +153,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.budgetManagement')}</span>
         </Link>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
-          <UserCheck className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
-        </Link>
-
         {/* Prestataires (dropdown) */}
         <DropdownMenu>
           <DropdownMenuTrigger className={cn(linkClass(isPrestatairesActive()), 'w-full justify-start', coupleLockedClass)} disabled={isReaderMode || isWeddingCollaborator}>
@@ -197,6 +192,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         {/* JOUR-J */}
         <SectionLabel label={t('sidebar.sections.jourJ')} />
+
+        <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
+          <UserCheck className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
+        </Link>
+
 
         <DropdownMenu>
           <DropdownMenuTrigger className={cn(linkClass(isJourMActive()), 'w-full justify-start')} disabled={isReaderMode}>
