@@ -737,7 +737,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         <TableCell>
                           <Badge className={cn("flex items-center gap-1 text-xs px-2 py-1", statusColorMap[vendor.status])}>
                             {statusIconMap[vendor.status]}
-                            <span className="hidden sm:inline">{vendor.status}</span>
+                            <span className="hidden sm:inline">{getStatusLabel(vendor.status)}</span>
                           </Badge>
                         </TableCell>
                         <TableCell>
