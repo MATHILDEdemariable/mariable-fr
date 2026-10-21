@@ -12,7 +12,6 @@ import { Users, Plus, Edit2, Trash2, Mail, Phone, Building2, User, Instagram } f
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import { TeamMember, WeddingCoordination } from '@/types/monjourm-mvp';
-import SharePublicButton from './SharePublicButton';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import BulkAddTeamModal from './BulkAddTeamModal';

@@ -11,7 +11,6 @@ import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import SharePublicButton from './SharePublicButton';
 import PhotoListTemplate from './PhotoListTemplate';
 import SeatingPlanCard from './SeatingPlanCard';
 import ImportFromDashboardModal from './ImportFromDashboardModal';
