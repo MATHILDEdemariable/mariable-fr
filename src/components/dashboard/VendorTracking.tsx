@@ -31,13 +31,15 @@ import {
   Trash,
   Edit,
   Download,
-  Play
+  Play,
+  FileText
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import AddVendorDialog from './AddVendorDialog';
+import VendorDocumentsDialog from './VendorDocumentsDialog';
 import MariableCatalogDialog, { type CatalogVendor } from '@/components/vendors/MariableCatalogDialog';
 import AddressBookPickerDialog from '@/components/pro/AddressBookPickerDialog';
 import { useWedding } from '@/contexts/WeddingContext';
@@ -112,6 +114,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [vendorToDelete, setVendorToDelete] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [documentsVendorName, setDocumentsVendorName] = useState<string | null>(null);
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
@@ -917,6 +920,12 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         </AlertDialogContent>
       </AlertDialog>
       
+      <VendorDocumentsDialog
+        vendorName={documentsVendorName}
+        weddingId={currentWedding?.id ?? null}
+        onClose={() => setDocumentsVendorName(null)}
+      />
+
       <TutorialVideoModal
         isOpen={showTutorial}
         onClose={() => setShowTutorial(false)}
