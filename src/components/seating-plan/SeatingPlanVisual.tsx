@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState, useRef, useEffect } from 'react';
 import { SeatingTable, SeatingAssignment } from '@/types/seating';
 import { supabase } from '@/integrations/supabase/client';
@@ -15,6 +16,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   guests,
   onTablePositionUpdate
 }) => {
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const containerRef = useRef<HTMLDivElement>(null);
   const [draggingTable, setDraggingTable] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
@@ -65,7 +68,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
           ]);
 
           toast({
-            title: 'Places échangées',
+            title: tr('Places échangées','Seats swapped'),
             description: `${guest1.guest_name} et ${guest2.guest_name} ont échangé leurs places`
           });
 
@@ -73,14 +76,14 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         } catch (error) {
           toast({
             title: tr('Erreur','Error'),
-            description: 'Impossible d\'échanger les places',
+            description: tr("Impossible d'échanger les places",'Unable to swap seats'),
             variant: 'destructive'
           });
         }
       } else {
         toast({
-          title: 'Action impossible',
-          description: 'Vous ne pouvez échanger que des invités sur la même table',
+          title: tr('Action impossible','Action not allowed'),
+          description: tr('Vous ne pouvez échanger que des invités sur la même table','You can only swap guests at the same table'),
           variant: 'destructive'
         });
       }
@@ -307,8 +310,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {tables.length === 0 && (
         <div className="absolute inset-0 flex items-center justify-center">
           <div className="text-center text-muted-foreground">
-            <p className="text-lg font-medium mb-2">Aucune table créée</p>
-            <p className="text-sm">Créez des tables pour les voir ici</p>
+            <p className="text-lg font-medium mb-2">{tr('Aucune table créée','No tables yet')}</p>
+            <p className="text-sm">{tr('Créez des tables pour les voir ici','Create tables to see them here')}</p>
           </div>
         </div>
       )}
