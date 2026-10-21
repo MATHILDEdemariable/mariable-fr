@@ -113,16 +113,16 @@ const CarnetAdresses: React.FC = () => {
         }))
         .filter((r) => r.company_name);
       if (records.length === 0) {
-        toast({ title: 'Aucun contact trouvé', description: 'Ajoutez au moins une colonne « Société » ou « Nom ».', variant: 'destructive' });
+        toast({ title: t('addressBook.importNone'), description: t('addressBook.importNoneDesc'), variant: 'destructive' });
         return;
       }
       const { error } = await addressBookTable().insert(records);
       if (error) throw error;
-      toast({ title: `${records.length} contact(s) importé(s)` });
+      toast({ title: t('addressBook.imported', { count: records.length }) });
       loadContacts();
     } catch (error) {
       console.error('❌ CarnetAdresses: import Excel impossible', error);
-      toast({ title: 'Import impossible', description: 'Vérifiez le format du fichier.', variant: 'destructive' });
+      toast({ title: t('addressBook.importError'), description: t('addressBook.importErrorDesc'), variant: 'destructive' });
     } finally {
       setIsSaving(false);
     }
@@ -220,12 +220,12 @@ const CarnetAdresses: React.FC = () => {
             <div className="flex flex-wrap items-center gap-2">
               <Button asChild variant="outline" className="rounded-none min-h-[44px]" disabled={isSaving}>
                 <label className="cursor-pointer">
-                  <Upload className="h-4 w-4 mr-1" />Importer un fichier Excel
+                  <Upload className="h-4 w-4 mr-1" />{t('addressBook.importExcel')}
                   <input type="file" accept=".xlsx,.xls,.csv" className="sr-only" onChange={handleImportExcel} />
                 </label>
               </Button>
               <Button type="button" variant="ghost" className="rounded-none min-h-[44px]" onClick={handleDownloadTemplate}>
-                <Download className="h-4 w-4 mr-1" />Télécharger le modèle
+                <Download className="h-4 w-4 mr-1" />{t('addressBook.downloadTemplate')}
               </Button>
             </div>
             <form onSubmit={handleAddContact} className="grid gap-2 sm:grid-cols-3 bg-editorial-beige border border-border p-4">
@@ -250,7 +250,7 @@ const CarnetAdresses: React.FC = () => {
                     <div className="min-w-0 space-y-1">
                       <p className="font-medium">
                         {c.company_name}
-                        <span className="ml-2 text-xs px-2 py-0.5 bg-wedding-olive/10 text-wedding-olive">{c.category}</span>
+                        <span className="ml-2 text-xs px-2 py-0.5 bg-wedding-olive/10 text-wedding-olive">{c.category === 'Autre' ? t('addressBook.other') : c.category}</span>
                         {c.source === 'mariable' && <span className="ml-1 text-xs text-muted-foreground">· Mariable</span>}
                       </p>
                       {c.contact_name && <p className="text-sm text-muted-foreground">{c.contact_name}</p>}
@@ -261,7 +261,7 @@ const CarnetAdresses: React.FC = () => {
                       </div>
                       {c.notes && <p className="text-xs italic text-muted-foreground">{c.notes}</p>}
                     </div>
-                    <Button variant="ghost" size="icon" aria-label="Supprimer" onClick={() => handleDeleteContact(c.id)}>
+                    <Button variant="ghost" size="icon" aria-label={t('addressBook.delete')} onClick={() => handleDeleteContact(c.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </li>
