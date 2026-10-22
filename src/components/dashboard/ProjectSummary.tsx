@@ -16,7 +16,23 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
-import ToolsGrid from './gaming/ToolsGrid';
+import { Calendar, Users, Heart, Table, Wine, FileText, Home, CalendarRange, Calculator, UserCheck, Store, ListChecks } from 'lucide-react';
+
+// Tous les outils du couple, même présentation que la vue pro.
+const COUPLE_TOOLS = [
+  { fr: 'Rétroplanning', en: 'Timeline', icon: CalendarRange, path: '/dashboard/mon-mariage/retroplanning' },
+  { fr: 'Checklist', en: 'Checklist', icon: ListChecks, path: '/dashboard/checklist-mariage' },
+  { fr: 'Budget & acomptes', en: 'Budget & deposits', icon: Calculator, path: '/dashboard/budget' },
+  { fr: 'Invités & RSVP', en: 'Guests & RSVP', icon: UserCheck, path: '/dashboard/rsvp' },
+  { fr: 'Prestataires', en: 'Vendors', icon: Store, path: '/dashboard/suivi' },
+  { fr: 'Planning Jour J', en: 'Day-of schedule', icon: Calendar, path: '/mon-jour-m/planning' },
+  { fr: 'Équipe & contacts', en: 'Team & contacts', icon: Users, path: '/mon-jour-m/equipe' },
+  { fr: 'Cérémonie', en: 'Ceremony', icon: Heart, path: '/dashboard/ceremonie' },
+  { fr: 'Plan de table', en: 'Seating plan', icon: Table, path: '/dashboard/seating-plan' },
+  { fr: 'Boissons', en: 'Drinks', icon: Wine, path: '/dashboard/drinks' },
+  { fr: 'Hébergements', en: 'Accommodation', icon: Home, path: '/dashboard/accommodations' },
+  { fr: 'Documents', en: 'Documents', icon: FileText, path: '/mon-jour-m/documents' },
+];
 import QuickActions from './gaming/QuickActions';
 import { useWedding } from '@/contexts/WeddingContext';
 import ProWeddingOverview from '@/components/pro/ProWeddingOverview';
@@ -31,7 +47,8 @@ interface Task {
 }
 
 const ProjectSummary = () => {
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
+  const isEnglish = i18n.language?.startsWith('en');
   const { profile, loading, updateProfile } = useUserProfile();
   const [localWeddingDate, setLocalWeddingDate] = useState<Date | undefined>();
   const [localGuestCount, setLocalGuestCount] = useState<string>("");
@@ -269,7 +286,17 @@ const ProjectSummary = () => {
       <PushNotificationBanner />
 
       {/* Tools Grid */}
-      <ToolsGrid />
+      <section aria-labelledby="couple-tools">
+        <h2 id="couple-tools" className="font-serif text-2xl text-foreground mb-3">{isEnglish ? 'All your tools' : 'Tous vos outils'}</h2>
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3">
+          {COUPLE_TOOLS.map((tool) => (
+            <Link key={tool.path} to={tool.path} className="group bg-background border border-border p-4 min-h-[96px] transition-all hover:border-wedding-olive hover:shadow-md">
+              <tool.icon className="h-6 w-6 text-wedding-olive" aria-hidden="true" />
+              <h3 className="font-semibold text-sm mt-3 text-foreground">{isEnglish ? tool.en : tool.fr}</h3>
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* Ressources d'aide regroupées en bas de page */}
       <section aria-label={t('support.title')} className="border-t border-border pt-6 space-y-4">
