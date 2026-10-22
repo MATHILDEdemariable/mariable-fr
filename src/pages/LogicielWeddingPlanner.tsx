@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import ProPricingPlans from "@/components/pro/ProPricingPlans";
+import heroPlannerPhoto from "@/assets/editorial/wedding-planner-chateau.png.asset.json";
 
 const PAGE_PATH = "/pro-solutions";
 const SITE_URL = "https://mariable.fr";
@@ -16,8 +17,8 @@ const CONTENT = {
     seoTitle: "Application & logiciel wedding planner – Mariable Pro",
     seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 2 mois.",
     eyebrow: "Mariable Pro · Logiciel wedding planner",
-    h1: "L'application des wedding planners boostée à l'IA.",
-    answer: "L'outil des wedding planners et organisateurs de mariage : une application pour centraliser toutes les informations d'un mariage et collaborer facilement avec vos couples et prestataires, boostée à l'IA.",
+    h1: "La solution d'organisation de mariage boostée à l'IA pour les professionnels",
+    answer: "L'outil et l'écosystème des wedding planners et organisateurs d'événements : pilotez vos mariages de A à Z, centralisez toutes vos informations et bénéficiez de solutions IA sur mesure pour votre activité.",
     ctaPrices: "Voir les prix",
     ctaTry: "Essayer gratuitement",
     ctaTalk: "Échanger avec Mathilde",
@@ -84,6 +85,8 @@ const CONTENT = {
     faqTitle: "Questions fréquentes",
     faq: [
       ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète. Renouvellement à date anniversaire de la souscription."],
+      ["Que comprend exactement la solution Mariable Pro ?", "Un outil de coordination et d'organisation de mariage (planning jour J, rétroplanning IA, budget, plan de table, RSVP, multi-mariages, collaboration couples), un référencement et une mise en avant sur Mariable et son Instagram, et, sur devis, des services IA sur mesure : formation, agents et process, applications dédiées."],
+      ["À qui s'adresse Mariable Pro ?", "Aux wedding planners, coordinatrices jour J, lieux de réception, officiants de cérémonie laïque, ainsi qu'aux agences et écoles de wedding planners."],
       ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
       ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
       ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
@@ -101,8 +104,8 @@ const CONTENT = {
     seoTitle: "Wedding planner app & software – Mariable Pro",
     seoDescription: "The app for wedding planners and day-of coordinators: one shared timeline for couples and vendors, powered by AI. From €149/year, 2-month free trial.",
     eyebrow: "Mariable Pro · Wedding planner software",
-    h1: "The wedding planner app that keeps the whole wedding day in one document",
-    answer: "The tool for wedding planners and organisers: one app to centralise all of a wedding's information and collaborate easily with your couples and vendors, powered by AI.",
+    h1: "The AI-powered wedding planning solution for professionals",
+    answer: "The tool and ecosystem for wedding planners and event organisers: run your weddings from A to Z, centralise all your information and get tailor-made AI solutions for your business.",
     ctaPrices: "See pricing",
     ctaTry: "Try it for free",
     ctaTalk: "Talk with Mathilde",
@@ -169,6 +172,8 @@ const CONTENT = {
     faqTitle: "Frequently asked questions",
     faq: [
       ["How much does Mariable Pro cost?", "Wedding-day coordination: €149/year. Full planning (includes Wedding-day coordination): €259/year. Pay yearly, or in 3 instalments: €200 (3 × €66.67) for Wedding-day and €310 (3 × €103.33) for Full planning."],
+      ["What exactly does the Mariable Pro solution include?", "A wedding coordination and planning tool (day-of timeline, AI planning, budget, seating plan, RSVP, multiple weddings, couple collaboration), a listing and feature on Mariable and its Instagram, and, on quote, tailor-made AI services: training, agents and processes, dedicated apps."],
+      ["Who is Mariable Pro for?", "Wedding planners, day-of coordinators, reception venues, celebrants, as well as agencies and wedding planner schools."],
       ["Is there a free trial?", "Yes: one wedding free for 2 months, no commitment."],
       ["What do all plans include?", "Multiple weddings, collaboration with your couples and a Mariable listing."],
       ["Does Mariable Pro handle invoicing and lead generation?", "No. Mariable Pro is an event management tool: wedding-day timeline, vendors, couples, planning and logistics."],
@@ -193,7 +198,7 @@ const STUDIO = {
       ["Conseil & accompagnement", "Revoir vos méthodes et mettre en place des agents et process IA dans votre quotidien : leads, relances, feuilles de route."],
       ["Application sur mesure", "Créer un outil ou une application dédiée à votre activité, à votre marque et connectée à vos outils."],
     ],
-    outro: "Sur devis : demandez « AI Studio » dans les formules ci-dessus.",
+    outro: "Sur devis : voir la formule « Agences, écoles & sur-mesure » ci-dessus.",
   },
   en: {
     title: "The AI Agency for Event Professionals",
@@ -203,7 +208,7 @@ const STUDIO = {
       ["Consulting & support", "Review your methods and set up AI agents and processes in your daily work: leads, follow-ups, run sheets."],
       ["Custom app", "Build a tool or app dedicated to your business and brand, connected to your existing tools."],
     ],
-    outro: "On quote: choose “AI Studio” in the plans above.",
+    outro: "On quote: see the “Agencies, schools & custom” plan above.",
   },
 };
 
@@ -245,7 +250,8 @@ const LogicielWeddingPlanner = () => {
       <PremiumHeader />
       <main className="page-content bg-background text-editorial-noir">
         <section className="bg-editorial-beige/40 px-4 pb-12 pt-10 md:pb-16 md:pt-16">
-          <div className="mx-auto max-w-4xl">
+          <div className="mx-auto grid max-w-6xl items-center gap-10 md:grid-cols-[1.3fr_1fr]">
+            <div>
             <nav aria-label="Fil d'Ariane" className="mb-6 text-sm text-editorial-noir/60">
               <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / Mariable Pro
             </nav>
@@ -255,6 +261,10 @@ const LogicielWeddingPlanner = () => {
             <Button asChild className="mt-8 min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
               <a href="#tarifs">{content.ctaPrices} <ArrowDown className="ml-2 h-4 w-4" /></a>
             </Button>
+            </div>
+            <figure className="relative">
+              <img src={heroPlannerPhoto.url} alt={isEnglish ? "Wedding planner checking the day-of schedule on her phone at a château" : "Wedding planner consultant le planning du jour J sur son téléphone devant un château"} className="aspect-[3/4] w-full object-cover object-top" width={1440} height={1920} fetchPriority="high" />
+            </figure>
           </div>
         </section>
 
@@ -295,21 +305,7 @@ const LogicielWeddingPlanner = () => {
 
         <section className="px-4 py-16 md:py-20">
           <div className="mx-auto max-w-5xl">
-            <h2 className="text-2xl md:text-3xl">{content.aiTitle}</h2>
-            <p className="mt-4 text-editorial-noir/75">{content.aiText}</p>
-            <h2 className="mt-12 text-2xl md:text-3xl">{content.visTitle}</h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              {content.vis.map(([heading, copy]) => (
-                <div key={heading}><h3 className="font-serif text-lg">{heading}</h3><p className="mt-1 text-sm text-editorial-noir/70">{copy}</p></div>
-              ))}
-            </div>
-            <h2 className="mt-12 text-2xl md:text-3xl">{content.whoTitle}</h2>
-            <div className="mt-6 grid gap-6 sm:grid-cols-2">
-              {content.who.map(([heading, copy]) => (
-                <div key={heading}><h3 className="font-serif text-lg">{heading}</h3><p className="mt-1 text-sm text-editorial-noir/70">{copy}</p></div>
-              ))}
-            </div>
-            <div className="mt-12 grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 md:grid-cols-2">
               {[
                 [isEnglish ? "Mariages.net alternative for pros" : "L'alternative à Mariages.net pour les pros", "/pro/alternative-mariages-net"],
                 [isEnglish ? "Free AI Playbook for wedding planners" : "Le Playbook IA du Wedding Planner (gratuit)", "/pro/ia-organisation-mariage"],

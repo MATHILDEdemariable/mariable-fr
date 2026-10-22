@@ -27,7 +27,7 @@ const TEXT = {
     plans: {
       "jour-j": { name: "Coordination Jour J", features: ["Déroulé jour J minute par minute", "Appli mobile collaborative le jour J", "Partage par lien aux prestataires", "Multi-mariages", "Collaboration avec vos couples", "Référencement Mariable"] },
       organisation: { name: "Organisation complète", features: ["Inclut toute la Coordination Jour J", "Rétroplanning & tâches assistés par IA", "Budget & acomptes", "Plan de table", "RSVP digital & mini-site des mariés", "Référencement Mariable"] },
-      agence: { name: "Agence / multi wedding planners", features: ["Inclut l'Organisation complète", "Plusieurs comptes coordinatrices", "Mariages partagés en équipe", "Accompagnement sur mesure"] },
+      agence: { name: "Agences, écoles & sur-mesure", features: ["Formation des équipes à l'IA (ChatGPT, Claude, Gemini)", "Agents & process IA sur mesure", "Outils et applications dédiés à votre marque", "Accompagnement personnalisé"] },
     },
     compareTitle: "Mariable Pro face aux autres outils",
     groups: { price: "Prix", visibility: "Référencement pour couples", event: "Outils pro événement", admin: "Outils pro admin", ergonomy: "Ergonomie" },
@@ -50,7 +50,7 @@ const TEXT = {
     plans: {
       "jour-j": { name: "Wedding-day coordination", features: ["Minute-by-minute timeline", "Collaborative mobile app on the day", "Link sharing with vendors", "Multiple weddings", "Collaboration with your couples", "Mariable listing"] },
       organisation: { name: "Full planning", features: ["Includes all Wedding-day coordination", "AI-assisted planning & tasks", "Budget & deposits", "Seating plan", "Digital RSVP & couple's mini-site", "Mariable listing"] },
-      agence: { name: "Agency / multiple planners", features: ["Includes Full planning", "Several coordinator accounts", "Team-shared weddings", "Tailored support"] },
+      agence: { name: "Agencies, schools & custom", features: ["AI training for your team (ChatGPT, Claude, Gemini)", "Custom AI agents & processes", "Tools and apps dedicated to your brand", "Personalised support"] },
     },
     compareTitle: "Mariable Pro vs other tools",
     groups: { price: "Price", visibility: "Listing for couples", event: "Pro event tools", admin: "Pro admin tools", ergonomy: "Ease of use" },
@@ -115,7 +115,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
   const [subscribeSubject, setSubscribeSubject] = useState<string | null>(null);
   const text = isEnglish ? TEXT.en : TEXT.fr;
   const compareRows = getCompareRows(isEnglish);
-  const planIds: PlanId[] = ["jour-j", "organisation"];
+  const planIds: PlanId[] = ["jour-j", "organisation", "agence"];
 
   return (
     <div>
@@ -132,7 +132,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
         ))}
       </div>
 
-      <div className="mt-8 grid gap-px bg-editorial-noir/20 md:grid-cols-2">
+      <div className="mt-8 grid gap-px bg-editorial-noir/20 md:grid-cols-3">
         {planIds.map((planId) => {
           const plan = text.plans[planId];
           const price = planId === "agence" ? null : PRICES[planId];
@@ -163,32 +163,20 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                 ))}
               </ul>
               <Button asChild className={`min-h-12 rounded-none ${isHighlighted ? "bg-primary-foreground text-editorial-noir hover:bg-primary-foreground/90" : "bg-editorial-noir text-primary-foreground hover:bg-editorial-olive"}`}>
-                <button type="button" onClick={() => setSubscribeSubject(`Souscription Mariable Pro — ${plan.name}${price ? ` (${isSplitPayment ? `${price.split} € en 3 fois` : `${price.annual} €/an`})` : ""}`)}>{text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></button>
+                <button type="button" onClick={() => setSubscribeSubject(planId === "agence" ? "Demande de devis — Agences, écoles & sur-mesure" : `Souscription Mariable Pro — ${plan.name}${price ? ` (${isSplitPayment ? `${price.split} € en 3 fois` : `${price.annual} €/an`})` : ""}`)}>{planId === "agence" ? (isEnglish ? "Request a quote" : "Demander un devis") : text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></button>
               </Button>
             </article>
           );
         })}
       </div>
 
-      <p className="mt-4 text-sm text-editorial-noir/70">{text.renewal}</p>
-      <article className="mt-6 flex flex-col gap-4 border border-editorial-noir p-6 md:flex-row md:items-center md:justify-between">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-widest text-editorial-olive">{isEnglish ? "On quote" : "Sur devis"}</p>
-          <h3 className="mt-1 font-serif text-2xl">AI Studio</h3>
-          <p className="mt-2 text-sm text-editorial-noir/75">{isEnglish
-            ? "For agencies and wedding planner schools: AI training, custom AI agents and processes, tailor-made apps."
-            : "Pour les agences et écoles de wedding planners : formation IA, agents et process IA sur mesure, applications dédiées."}</p>
-        </div>
-        <Button type="button" onClick={() => setSubscribeSubject("Demande de devis — AI Studio sur mesure")} className="min-h-12 shrink-0 rounded-none bg-editorial-noir text-primary-foreground hover:bg-editorial-olive">
-          {isEnglish ? "Request a quote" : "Demander un devis"} <ArrowRight className="ml-2 h-4 w-4" />
-        </Button>
-      </article>
-      <div className="mt-6 flex flex-col gap-4 border border-editorial-olive p-5 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-px flex flex-col gap-4 border border-editorial-olive p-5 sm:flex-row sm:items-center sm:justify-between md:w-2/3">
         <p className="font-medium">{text.trial}</p>
-        <Button asChild variant="outline" className="min-h-11 rounded-none border-editorial-noir bg-transparent">
+        <Button asChild variant="outline" className="min-h-11 shrink-0 rounded-none border-editorial-noir bg-transparent">
           <Link to="/register-gratuit?type=pro">{text.trialCta}</Link>
         </Button>
       </div>
+      <p className="mt-4 text-sm text-editorial-noir/70">{text.renewal}</p>
       <p className="mt-6 text-editorial-noir/75">{text.scope}</p>
 
       <details className="group mt-16 border-t border-editorial-noir/20 pt-6">
