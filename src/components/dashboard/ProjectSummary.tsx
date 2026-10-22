@@ -268,6 +268,11 @@ const ProjectSummary = () => {
       {/* Push Notifications opt-in banner */}
       <PushNotificationBanner />
 
+      {/* Tools Grid */}
+      <ToolsGrid />
+
+      {/* Ressources d'aide regroupées en bas de page */}
+      <section aria-label={t('support.title')} className="border-t border-border pt-6 space-y-4">
       {/* Quick Actions (Guide, Video, Instagram) */}
       <QuickActions
         showVideoModal={showVideoModal}
@@ -279,7 +284,7 @@ const ProjectSummary = () => {
       {/* Install App Banner */}
       <Link
         to="/dashboard/installer-app"
-        className="block bg-gradient-to-r from-wedding-olive to-wedding-olive/80 text-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-md transition-shadow"
+        className="block bg-gradient-to-r from-wedding-olive to-wedding-olive/80 text-white rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow"
       >
         <div className="flex items-start sm:items-center gap-4">
           <div className="bg-white/15 p-3 rounded-lg shrink-0">
@@ -299,9 +304,6 @@ const ProjectSummary = () => {
         </div>
       </Link>
 
-      {/* Tools Grid */}
-      <ToolsGrid />
-
       {/* Contact Support */}
       <div className="bg-muted/30 border border-border rounded-xl p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
         <div className="flex-1">
@@ -320,6 +322,8 @@ const ProjectSummary = () => {
           {t('support.cta')}
         </Button>
       </div>
+
+      </section>
 
       <ProblemModal isOpen={showProblemModal} onClose={() => setShowProblemModal(false)} />
 
