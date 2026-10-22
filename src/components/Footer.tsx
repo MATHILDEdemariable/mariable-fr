@@ -79,11 +79,10 @@ const Footer = () => {
           <div>
             <h3 className="font-serif text-base mb-3">{t('footer.section.pro')}</h3>
             <ul className="space-y-1 text-sm">
-              <li><Link to="/logiciel-wedding-planner" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proSoftware')}</Link></li>
+              <li><Link to="/pro-solutions" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{i18n.language?.startsWith("en") ? "For pros" : "Pour les pros"}</Link></li>
               <li><Link to="/pro/feuille-de-route-jour-j" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proRoadmap')}</Link></li>
               <li><Link to="/pro/alternative-mariages-net" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAlternative')}</Link></li>
               <li><Link to="/pro/ia-organisation-mariage" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proPlaybook')}</Link></li>
-              <li><Link to="/partenariat" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proOffer')}</Link></li>
               <li><Link to="/demo-pro" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proDemo')}</Link></li>
               <li><Link to="/conseils-professionnels" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.proAdvice')}</Link></li>
             </ul>

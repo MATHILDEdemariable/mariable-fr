@@ -236,7 +236,8 @@ function App() {
           <Route path="/outils-planning-mariage" element={<OutilsPlanningMariage />} />
                     <Route path="/coordination-jour-j" element={<CoordinationJourJ />} />
                     <Route path="/pro/feuille-de-route-jour-j" element={<ProFeuilleRouteJourJ />} />
-                    <Route path="/logiciel-wedding-planner" element={<LogicielWeddingPlanner />} />
+                    <Route path="/pro-solutions" element={<LogicielWeddingPlanner />} />
+                    <Route path="/logiciel-wedding-planner" element={<Navigate to="/pro-solutions" replace />} />
                     <Route path="/landingjourj" element={<LandingJourJ />} />
           
           {/* Pages régionales */}
@@ -303,8 +304,8 @@ function App() {
                   <Route path="/contact" element={<Contact />} />
                   
                   {/* Missing routes - Fixed */}
-                  <Route path="/professionnels" element={<Navigate to="/partenariat" replace />} />
-                  <Route path="/partenariat" element={<Partenariat />} />
+                  <Route path="/professionnels" element={<Navigate to="/pro-solutions" replace />} />
+                  <Route path="/partenariat" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/demo-pro" element={<DemoPro />} />
                   <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
                   <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />

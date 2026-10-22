@@ -171,6 +171,18 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
       </div>
 
       <p className="mt-4 text-sm text-editorial-noir/70">{text.renewal}</p>
+      <article className="mt-6 flex flex-col gap-4 border border-editorial-noir p-6 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-widest text-editorial-olive">{isEnglish ? "On quote" : "Sur devis"}</p>
+          <h3 className="mt-1 font-serif text-2xl">AI Studio</h3>
+          <p className="mt-2 text-sm text-editorial-noir/75">{isEnglish
+            ? "For agencies and wedding planner schools: AI training, custom AI agents and processes, tailor-made apps."
+            : "Pour les agences et écoles de wedding planners : formation IA, agents et process IA sur mesure, applications dédiées."}</p>
+        </div>
+        <Button type="button" onClick={() => setSubscribeSubject("Demande de devis — AI Studio sur mesure")} className="min-h-12 shrink-0 rounded-none bg-editorial-noir text-primary-foreground hover:bg-editorial-olive">
+          {isEnglish ? "Request a quote" : "Demander un devis"} <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </article>
       <div className="mt-6 flex flex-col gap-4 border border-editorial-olive p-5 sm:flex-row sm:items-center sm:justify-between">
         <p className="font-medium">{text.trial}</p>
         <Button asChild variant="outline" className="min-h-11 rounded-none border-editorial-noir bg-transparent">
