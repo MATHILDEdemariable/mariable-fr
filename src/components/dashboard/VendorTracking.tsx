@@ -609,7 +609,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
 
                       <div className="space-y-2">
                         <Select 
-                          defaultValue={getStatusLabel(vendor.status)}
+                          defaultValue={vendor.status}
                           onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                         >
                           <SelectTrigger className="w-full">
@@ -834,7 +834,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             </Button>
                             
                             <Select 
-                              defaultValue={getStatusLabel(vendor.status)}
+                              defaultValue={vendor.status}
                               onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                             >
                               <SelectTrigger className="w-[100px] text-xs">
