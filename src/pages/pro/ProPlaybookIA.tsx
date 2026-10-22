@@ -114,7 +114,7 @@ const ProPlaybookIA = () => {
           <div className="mx-auto grid max-w-6xl items-start gap-12 lg:grid-cols-2">
             <div>
               <nav aria-label="Fil d'Ariane" className="mb-6 text-sm text-editorial-noir/60">
-                <Link to="/" className="hover:text-editorial-olive">{text.home}</Link> / <Link to="/logiciel-wedding-planner" className="hover:text-editorial-olive">Mariable Pro</Link>
+                <Link to="/" className="hover:text-editorial-olive">{text.home}</Link> / <Link to="/pro-solutions" className="hover:text-editorial-olive">Mariable Pro</Link>
               </nav>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{text.eyebrow}</p>
               <h1 className="text-4xl leading-tight md:text-6xl">{text.h1}</h1>
@@ -177,7 +177,7 @@ const ProPlaybookIA = () => {
         </section>
         <section className="px-4 py-12">
           <div className="mx-auto max-w-4xl text-center">
-            <Link to="/logiciel-wedding-planner" className="inline-flex min-h-11 items-center gap-2 font-serif text-xl underline underline-offset-4">{text.pilier} <ArrowRight className="h-4 w-4" /></Link>
+            <Link to="/pro-solutions" className="inline-flex min-h-11 items-center gap-2 font-serif text-xl underline underline-offset-4">{text.pilier} <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </section>
       </main>

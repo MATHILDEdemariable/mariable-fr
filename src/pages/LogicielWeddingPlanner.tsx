@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { ArrowDown, ArrowRight } from "lucide-react";
@@ -7,7 +8,7 @@ import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import ProPricingPlans from "@/components/pro/ProPricingPlans";
 
-const PAGE_PATH = "/logiciel-wedding-planner";
+const PAGE_PATH = "/pro-solutions";
 const SITE_URL = "https://mariable.fr";
 
 const CONTENT = {
@@ -183,10 +184,38 @@ const CONTENT = {
   },
 };
 
+const STUDIO = {
+  fr: {
+    title: "L'agence IA des professionnels de l'événementiel",
+    intro: "Au-delà de l'app, Mariable accompagne wedding planners, agences, lieux et écoles à adopter l'IA, sur mesure et sur devis.",
+    offers: [
+      ["Formation", "Former vos équipes à ChatGPT, Claude ou Gemini : prompts adaptés au mariage, réponses aux couples, briefs, fiches techniques."],
+      ["Conseil & accompagnement", "Revoir vos méthodes et mettre en place des agents et process IA dans votre quotidien : leads, relances, feuilles de route."],
+      ["Application sur mesure", "Créer un outil ou une application dédiée à votre activité, à votre marque et connectée à vos outils."],
+    ],
+    outro: "Sur devis : demandez « AI Studio » dans les formules ci-dessus.",
+  },
+  en: {
+    title: "The AI Agency for Event Professionals",
+    intro: "Beyond the app, Mariable helps wedding planners, agencies, venues and schools adopt AI, tailor-made and on quote.",
+    offers: [
+      ["Training", "Train your team on ChatGPT, Claude or Gemini: wedding-specific prompts, replies to couples, briefs, run sheets."],
+      ["Consulting & support", "Review your methods and set up AI agents and processes in your daily work: leads, follow-ups, run sheets."],
+      ["Custom app", "Build a tool or app dedicated to your business and brand, connected to your existing tools."],
+    ],
+    outro: "On quote: choose “AI Studio” in the plans above.",
+  },
+};
+
 const LogicielWeddingPlanner = () => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith("en");
   const content = isEnglish ? CONTENT.en : CONTENT.fr;
+  const studio = isEnglish ? STUDIO.en : STUDIO.fr;
+
+  useEffect(() => {
+    if (!window.location.hash) window.scrollTo(0, 0);
+  }, []);
 
   const softwareSchema = {
     "@context": "https://schema.org",
@@ -209,7 +238,7 @@ const LogicielWeddingPlanner = () => {
   return (
     <>
       <SEO title={content.seoTitle} description={content.seoDescription} canonical={PAGE_PATH}
-        keywords="logiciel wedding planner, application wedding planner, outil wedding planner, logiciel organisation mariage professionnel, logiciel coordination jour J">
+        keywords="logiciel wedding planner, application wedding planner, outil wedding planner, logiciel organisation mariage professionnel, logiciel coordination jour J, AI wedding planner, AI for event professionals, agence IA événementiel, formation IA wedding planner">
         <script type="application/ld+json">{JSON.stringify(softwareSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
       </SEO>
@@ -218,7 +247,7 @@ const LogicielWeddingPlanner = () => {
         <section className="bg-editorial-beige/40 px-4 pb-12 pt-10 md:pb-16 md:pt-16">
           <div className="mx-auto max-w-4xl">
             <nav aria-label="Fil d'Ariane" className="mb-6 text-sm text-editorial-noir/60">
-              <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / <Link to="/partenariat" className="hover:text-editorial-olive">Mariable Pro</Link>
+              <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / Mariable Pro
             </nav>
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{content.eyebrow}</p>
             <h1 className="text-4xl leading-tight md:text-6xl">{content.h1}</h1>
@@ -231,6 +260,23 @@ const LogicielWeddingPlanner = () => {
 
         <section id="tarifs" aria-label={content.priceTitle} className="scroll-mt-24 px-4 py-16 md:py-20">
           <div className="mx-auto max-w-5xl"><ProPricingPlans isEnglish={isEnglish} /></div>
+        </section>
+
+        <section id="ai-studio" aria-labelledby="ai-studio-title" className="scroll-mt-24 bg-editorial-noir px-4 py-16 text-primary-foreground md:py-20">
+          <div className="mx-auto max-w-5xl">
+            <p className="text-xs font-semibold uppercase tracking-widest opacity-70">Mariable AI Studio</p>
+            <h2 id="ai-studio-title" className="mt-3 text-3xl md:text-4xl">{studio.title}</h2>
+            <p className="mt-4 max-w-3xl text-lg opacity-80">{studio.intro}</p>
+            <div className="mt-10 grid gap-px bg-primary-foreground/20 md:grid-cols-3">
+              {studio.offers.map(([heading, copy]) => (
+                <article key={heading} className="bg-editorial-noir p-6">
+                  <h3 className="font-serif text-xl">{heading}</h3>
+                  <p className="mt-3 text-sm opacity-80">{copy}</p>
+                </article>
+              ))}
+            </div>
+            <p className="mt-8 text-sm opacity-70">{studio.outro}</p>
+          </div>
         </section>
 
         <section className="bg-editorial-beige/40 px-4 py-16 md:py-20">

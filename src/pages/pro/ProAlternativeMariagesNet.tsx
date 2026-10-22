@@ -97,7 +97,7 @@ const ProAlternativeMariagesNet = () => {
         <Link to="/register-gratuit?type=pro">{content.ctaTry} <ArrowRight className="ml-2 h-4 w-4" /></Link>
       </Button>
       <Button asChild variant="outline" className="min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
-        <Link to="/logiciel-wedding-planner">{content.ctaPilier}</Link>
+        <Link to="/pro-solutions">{content.ctaPilier}</Link>
       </Button>
     </div>
   );
@@ -113,7 +113,7 @@ const ProAlternativeMariagesNet = () => {
         <section className="bg-editorial-beige/40 px-4 pb-16 pt-10 md:pb-24 md:pt-16">
           <div className="mx-auto max-w-4xl">
             <nav aria-label="Fil d'Ariane" className="mb-6 text-sm text-editorial-noir/60">
-              <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / <Link to="/logiciel-wedding-planner" className="hover:text-editorial-olive">Mariable Pro</Link>
+              <Link to="/" className="hover:text-editorial-olive">{content.home}</Link> / <Link to="/pro-solutions" className="hover:text-editorial-olive">Mariable Pro</Link>
             </nav>
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{content.eyebrow}</p>
             <h1 className="text-4xl leading-tight md:text-6xl">{content.h1}</h1>

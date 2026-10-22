@@ -46,7 +46,7 @@ const ProFeuilleRouteJourJ = () => {
       <PremiumHeader />
       <main className="page-content bg-background text-editorial-noir">
         <div className="bg-editorial-beige/30 px-4 pt-6">
-          <Link to="/partenariat" className="mx-auto flex min-h-11 max-w-6xl items-center gap-2 text-sm text-editorial-noir/70 hover:text-editorial-olive">
+          <Link to="/pro-solutions" className="mx-auto flex min-h-11 max-w-6xl items-center gap-2 text-sm text-editorial-noir/70 hover:text-editorial-olive">
             <ArrowRight className="h-4 w-4 rotate-180" aria-hidden="true" /> Retour à Mariable Pro
           </Link>
         </div>
@@ -119,7 +119,7 @@ const ProFeuilleRouteJourJ = () => {
         <section className="bg-editorial-beige/30 px-4 py-20">
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-10 md:grid-cols-2">
-              <div><p className="text-sm text-editorial-olive">L’écosystème Mariable</p><h2 className="mt-3 text-3xl">Du premier brief au débrief du mariage</h2><p className="mt-5 leading-relaxed text-editorial-noir/70">Planning Jour-J, équipe, documents, budget, checklist et suivi de plusieurs mariages restent réunis dans le même espace professionnel.</p><Button asChild variant="link" className="mt-4 h-auto rounded-none p-0 text-editorial-olive"><Link to="/partenariat">Découvrir Mariable Pro <ArrowRight className="ml-2 h-4 w-4" /></Link></Button></div>
+              <div><p className="text-sm text-editorial-olive">L’écosystème Mariable</p><h2 className="mt-3 text-3xl">Du premier brief au débrief du mariage</h2><p className="mt-5 leading-relaxed text-editorial-noir/70">Planning Jour-J, équipe, documents, budget, checklist et suivi de plusieurs mariages restent réunis dans le même espace professionnel.</p><Button asChild variant="link" className="mt-4 h-auto rounded-none p-0 text-editorial-olive"><Link to="/pro-solutions">Découvrir Mariable Pro <ArrowRight className="ml-2 h-4 w-4" /></Link></Button></div>
               <div><h2 className="text-3xl">Pourquoi Mariable existe</h2><p className="mt-5 leading-relaxed text-editorial-noir/70">Pour que les outils servent la coordination au lieu de l’alourdir. Les professionnels gardent la maîtrise du déroulé ; chaque prestataire accède simplement à l’information utile, sans nouvelle application à apprendre.</p></div>
             </div>
           </div>
@@ -130,9 +130,9 @@ const ProFeuilleRouteJourJ = () => {
             <h2 className="text-3xl md:text-4xl">Pour aller plus loin</h2>
             <div className="mt-8 grid gap-4 md:grid-cols-2">
               {[
-                ["Découvrir le logiciel wedding planner Mariable Pro", "/logiciel-wedding-planner"],
+                ["Découvrir le logiciel wedding planner Mariable Pro", "/pro-solutions"],
                 ["Remplacer Excel pour le déroulé du mariage", "/conseils-professionnels/alternative-excel-deroule-mariage"],
-                ["Comparer les logiciels wedding planner", "/conseils-professionnels/logiciel-wedding-planner"],
+                ["Comparer les logiciels wedding planner", "/conseils-professionnels/pro-solutions"],
                 ["Le Playbook IA du Wedding Planner", "/pro/ia-organisation-mariage"],
                 ["Réussir sa coordination Jour-J", "/conseils-professionnels/coordination-jour-j"],
                 ["Organiser le conducteur d’un lieu de réception", "/conseils-professionnels/lieux-reception"],

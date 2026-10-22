@@ -176,7 +176,7 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
                   {t('header.login')}
                 </Link>
               )}
-              <Link to="/partenariat" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
+              <Link to="/pro-solutions" onClick={() => setOpen(false)} className="hover:text-editorial-noir">
                 {t('header.prosFooter')}
               </Link>
             </div>

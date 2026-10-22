@@ -541,7 +541,7 @@ const MonJourMEventCard: React.FC<MonJourMEventCardProps> = ({
                   {showAssignmentSelect && !selectionMode && (
                     <Select onValueChange={handleAssignMember}>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Assigner à un membre" />
+                        <SelectValue placeholder={tr('Assigner à un membre', 'Assign to a member')} />
                       </SelectTrigger>
                       <SelectContent>
                         {teamMembers.map((member) => (
