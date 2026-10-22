@@ -269,7 +269,7 @@ const Agence = () => {
                 {CONTACT_EMAIL}
               </a>
               <Link
-                to="/partenariat"
+                to="/pro-solutions"
                 className="inline-flex items-center gap-2 px-8 py-4 border border-editorial-noir text-editorial-noir hover:bg-editorial-noir hover:text-white transition-colors"
               >
                 Voir les détails

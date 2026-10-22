@@ -78,7 +78,6 @@ const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
-const Partenariat = lazy(() => import("./pages/Partenariat"));
 const DemoPro = lazy(() => import("./pages/DemoPro"));
 const ProPlaybookIA = lazy(() => import("./pages/pro/ProPlaybookIA"));
 const ProAlternativeMariagesNet = lazy(() => import("./pages/pro/ProAlternativeMariagesNet"));

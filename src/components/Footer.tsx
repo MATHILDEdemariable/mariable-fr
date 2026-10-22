@@ -4,7 +4,7 @@ import { Instagram } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
-  const { t } = useTranslation('common');
+  const { t, i18n } = useTranslation('common');
   return (
     <footer className="py-8 bg-white text-wedding-black" role="contentinfo" aria-label="Footer">
       <div className="container mx-auto px-4">
