@@ -7,6 +7,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
 import { toast } from 'sonner';
+import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
 
 export interface DrinkPlanRow {
   id: string;
@@ -178,6 +179,7 @@ const DrinksPlanTable: React.FC = () => {
           <p className="text-xs text-muted-foreground mt-1" aria-live="polite">
             {isSaving ? tr('Enregistrement…', 'Saving…') : tr('Enregistré automatiquement', 'Saved automatically')}
           </p>
+          <JourJHandoffButton module="drinks" className="mt-3" />
         </div>
         <div className="flex flex-wrap gap-2">
           <Button onClick={handleCreateShareLink} className="bg-editorial-olive hover:bg-editorial-olive/90 text-white min-h-[44px]">

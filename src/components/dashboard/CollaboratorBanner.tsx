@@ -5,7 +5,7 @@ import { Eye, PenLine } from 'lucide-react';
 import { useWedding } from '@/contexts/WeddingContext';
 
 /** Modules que les mariés invités peuvent modifier avec leur wedding planner */
-export const COLLABORATIVE_DASHBOARD_PATHS = ['/dashboard/budget', '/dashboard/rsvp', '/dashboard/seating-plan', '/dashboard/drinks'];
+export const COLLABORATIVE_DASHBOARD_PATHS = ['/dashboard/budget', '/dashboard/rsvp', '/dashboard/seating-plan', '/dashboard/drinks', '/dashboard/decoration', '/dashboard/trombinoscope'];
 
 /**
  * Bandeau affiché aux mariés invités sur le mariage d'un pro :

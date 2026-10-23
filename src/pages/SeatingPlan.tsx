@@ -22,6 +22,7 @@ import { SeatingTable, SeatingAssignment, SeatingPlan as SeatingPlanType } from 
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
 
 const SeatingPlan = () => {
   const { t } = useTranslation('seating');
@@ -270,6 +271,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           <div>
             <h1 className="text-3xl font-serif text-foreground">{t('page.title')}</h1>
             <p className="text-muted-foreground mt-1">{t('page.subtitle')}</p>
+            <JourJHandoffButton module="seating" className="mt-3" />
           </div>
           <div className="hidden md:flex items-center gap-2">
             <Button onClick={() => setShowTutorial(true)} variant="outline">

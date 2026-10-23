@@ -16,7 +16,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 // Gaming Components
 import HeroStats from './gaming/HeroStats';
-import { Calendar, Users, Heart, Table, Wine, FileText, Home, CalendarRange, Calculator, UserCheck, Store, ListChecks } from 'lucide-react';
+import { Calendar, Users, Heart, Table, Wine, FileText, Home, CalendarRange, Calculator, UserCheck, Store, ListChecks, Sparkles, Contact } from 'lucide-react';
 
 // Tous les outils du couple, même présentation que la vue pro.
 const COUPLE_TOOLS = [
@@ -25,6 +25,8 @@ const COUPLE_TOOLS = [
   { fr: 'Budget & acomptes', en: 'Budget & deposits', icon: Calculator, path: '/dashboard/budget' },
   { fr: 'Invités & RSVP', en: 'Guests & RSVP', icon: UserCheck, path: '/dashboard/rsvp' },
   { fr: 'Prestataires', en: 'Vendors', icon: Store, path: '/dashboard/suivi' },
+  { fr: 'Décoration', en: 'Decor', icon: Sparkles, path: '/dashboard/decoration' },
+  { fr: 'Trombinoscope', en: 'Who’s who', icon: Contact, path: '/dashboard/trombinoscope' },
   { fr: 'Planning Jour J', en: 'Day-of schedule', icon: Calendar, path: '/mon-jour-m/planning' },
   { fr: 'Équipe & contacts', en: 'Team & contacts', icon: Users, path: '/mon-jour-m/equipe' },
   { fr: 'Cérémonie', en: 'Ceremony', icon: Heart, path: '/dashboard/ceremonie' },
