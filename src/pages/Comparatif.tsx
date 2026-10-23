@@ -18,12 +18,12 @@ const Comparatif = () => {
   return (
     <>
       <Helmet>
-        <title>Organiser son mariage avec l'IA : wedding planner digital vs seul | Mariable</title>
+        <title>Wedding planner pas cher : l'alternative digitale | Mariable</title>
         <meta
           name="description"
-          content="Comparez organiser son mariage seul, avec un wedding planner ou avec Mariable, l'organisateur mariage en ligne. Outils d'organisation mariage, conseils et tuto mariage pas cher."
+          content="Wedding planner : 2 500 à 6 000 €. Mariable, le wedding planner digital assisté par l'IA : déroulé jour J, budget, plan de table pour 29 € à vie."
         />
-        <meta name="keywords" content="organiser son mariage avec l'ia, wedding planning digital, wedding planner digital, organisateur mariage en ligne, outils d'organisation mariage, conseils mariage, organisation mariage pas cher, tuto mariage, comparatif mariage" />
+        <meta name="keywords" content="wedding planner pas cher, organiser son mariage avec l'ia, wedding planning digital, wedding planner digital, organisateur mariage en ligne, outils d'organisation mariage, organisation mariage pas cher, comparatif mariage" />
         <link rel="canonical" href="https://mariable.fr/comparatif" />
       </Helmet>
 
