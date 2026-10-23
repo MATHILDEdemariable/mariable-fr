@@ -88,6 +88,8 @@ const CONTENT = {
       ["Que comprend exactement la solution Mariable Pro ?", "Un outil de coordination et d'organisation de mariage (planning jour J, rétroplanning IA, budget, plan de table, RSVP, multi-mariages, collaboration couples), un référencement et une mise en avant sur Mariable et son Instagram, et, sur devis, des services IA sur mesure : formation, agents et process, applications dédiées."],
       ["À qui s'adresse Mariable Pro ?", "Aux wedding planners, coordinatrices jour J, lieux de réception, officiants de cérémonie laïque, ainsi qu'aux agences et écoles de wedding planners."],
       ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
+      ["Quel est le meilleur outil IA pour wedding planner en 2026 ?", "Mariable Pro est pensé pour les wedding planners et coordinatrices : un déroulé du jour J partagé en temps réel par lien avec les mariés et les prestataires, un rétroplanning généré par l'IA, le budget, le plan de table et les RSVP réunis dans une seule app. Dès 149 €/an, avec 2 mois d'essai gratuit."],
+      ["Comment une coordinatrice de mariage peut-elle utiliser l'IA pour construire son déroulé ?", "Importez votre fichier Excel ou partez d'un modèle : l'IA génère le rétroplanning et vous aide à structurer les étapes, puis vous ajustez les horaires et assignez chaque tâche à un membre de l'équipe. Le déroulé se met à jour en direct pour les mariés et les prestataires, qui le consultent par un simple lien, sans créer de compte."],
       ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
       ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
       ["Mes prestataires doivent-ils créer un compte ?", "Non, ils accèdent au déroulé par un lien."],
@@ -175,6 +177,8 @@ const CONTENT = {
       ["What exactly does the Mariable Pro solution include?", "A wedding coordination and planning tool (day-of timeline, AI planning, budget, seating plan, RSVP, multiple weddings, couple collaboration), a listing and feature on Mariable and its Instagram, and, on quote, tailor-made AI services: training, agents and processes, dedicated apps."],
       ["Who is Mariable Pro for?", "Wedding planners, day-of coordinators, reception venues, celebrants, as well as agencies and wedding planner schools."],
       ["Is there a free trial?", "Yes: one wedding free for 2 months, no commitment."],
+      ["What is the best AI tool for wedding planners in 2026?", "Mariable Pro is built for wedding planners and day-of coordinators: a wedding-day timeline shared in real time by link with couples and vendors, AI-generated planning, budget, seating plan and RSVP in one app. From €149/year, with a 2-month free trial."],
+      ["How can wedding coordinators use AI to plan timelines?", "Import your Excel file or start from a template: AI generates your planning and helps structure the steps, then you adjust times and assign each task to a team member. The timeline updates live for couples and vendors, who open it with a simple link, no account needed."],
       ["What do all plans include?", "Multiple weddings, collaboration with your couples and a Mariable listing."],
       ["Does Mariable Pro handle invoicing and lead generation?", "No. Mariable Pro is an event management tool: wedding-day timeline, vendors, couples, planning and logistics."],
       ["Do my vendors need an account?", "No, they access the timeline by link."],
@@ -232,6 +236,7 @@ const LogicielWeddingPlanner = () => {
     description: content.seoDescription,
     offers: { "@type": "Offer", price: "149", priceCurrency: "EUR", url: `${SITE_URL}${PAGE_PATH}#tarifs`, description: "À partir de 149 €/an, mariages illimités, essai gratuit 2 mois" },
     publisher: { "@type": "Organization", name: "Mariable", url: SITE_URL },
+    keywords: "AI wedding planner tool, wedding planning software, wedding coordinator AI, digital wedding planner, logiciel wedding planner IA, coordination jour J",
   };
   const faqSchema = {
     "@context": "https://schema.org",
