@@ -79,9 +79,25 @@ const PlanningPublic: React.FC = () => {
     }
   }, [selectedTeamMember, selectedDay, coordinationData?.tasks]);
 
-  const loadPublicCoordinationData = async (id: string) => {
+  // Coches du conducteur wedding planner : rafraîchissement en direct + filet de sécurité toutes les 20 s
+  useEffect(() => {
+    if (!coordinationId) return;
+    const refreshSilently = () => loadPublicCoordinationData(coordinationId, true);
+    const channel = supabase
+      .channel(`planning-public-${coordinationId}-${Math.random().toString(36).slice(2)}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_planning', filter: `coordination_id=eq.${coordinationId}` }, refreshSilently)
+      .subscribe();
+    const intervalId = window.setInterval(refreshSilently, 20000);
+    return () => {
+      window.clearInterval(intervalId);
+      supabase.removeChannel(channel);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [coordinationId]);
+
+  const loadPublicCoordinationData = async (id: string, silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       console.log('📋 Loading public coordination data for:', id);
 
       // Récupérer les données de coordination
@@ -134,9 +150,9 @@ const PlanningPublic: React.FC = () => {
       setCoordinationData(result);
     } catch (error: any) {
       console.error('❌ Error loading coordination data:', error);
-      setError(error.message);
+      if (!silent) setError(error.message);
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   };
 
@@ -692,10 +708,17 @@ const PlanningPublic: React.FC = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {people.map((member) => (
                           <div key={member.id} className="border rounded-lg p-4">
+                            <div className="flex items-start gap-3">
+                              {member.photo_url ? (
+                                <img src={member.photo_url} alt={member.name} className="h-14 w-14 shrink-0 rounded-full object-cover object-top border" loading="lazy" />
+                              ) : null}
+                              <div className="min-w-0">
                             <h3 className="font-medium">{member.name}</h3>
                             <Badge variant="outline" className="mt-1 mb-2">
                               {member.role}
                             </Badge>
+                              </div>
+                            </div>
                             <div className="space-y-1 text-sm text-gray-600">
                               {member.email && (
                                 <div className="flex items-center gap-2">
