@@ -32,6 +32,7 @@ export interface TeamMember {
   phone?: string;
   instagram?: string;
   notes?: string;
+  photo_url?: string | null;
 }
 
 // Rôles prédéfinis pour simplifier l'assignation

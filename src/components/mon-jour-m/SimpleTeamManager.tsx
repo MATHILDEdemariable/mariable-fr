@@ -92,7 +92,8 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
         email: item.email,
         phone: item.phone,
         instagram: item.instagram,
-        notes: item.notes
+        notes: item.notes,
+        photo_url: item.photo_url
       }));
 
       setTeamMembers(mappedData);
@@ -309,6 +310,9 @@ const SimpleTeamManager: React.FC<SimpleTeamManagerProps> = ({ coordination }) =
               <Card key={member.id}>
                 <CardContent className="p-4">
                   <div className="flex items-start justify-between mb-3">
+                     {member.photo_url && (
+                       <img src={member.photo_url} alt={member.name} className="h-14 w-14 mr-3 shrink-0 rounded-full object-cover object-top border" loading="lazy" />
+                     )}
                      <div className="flex-grow">
                        <h4 className="font-medium mb-1">{member.name}</h4>
                        <div className="flex items-center gap-2 mb-2">
