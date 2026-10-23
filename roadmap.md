@@ -22,10 +22,10 @@
 - [ ] Plan de table : glisser-déposer les invités, salle avec dimensions et m²
 
 ## Lot liaisons Organisation ↔ Jour J (oct. 2026)
-- [ ] Rétroplanning public : titre « Rétroplanning » (plus « manuel »)
-- [ ] Suivi prestataires rattaché au mariage, statut « Validé », lecture seule + documents pour le couple invité
-- [ ] Synchro : « À contacter » → tâche checklist (cochée ensuite) ; « Validé » → équipe Jour J
-- [ ] Trombinoscope (côté invités) + bouton « Valider pour le Jour J » → équipe Jour J avec photos
-- [ ] Module Décoration (kanban + vue par zone + kit indispensable)
-- [ ] Validation plan de table / boissons / déco → fiches dans Documents Jour J
-- [ ] Onglet « Conducteur » (remplace Pense-bête) + coche en direct visible sur le planning partagé
+- [x] Rétroplanning public : titre « Rétroplanning » (plus « manuel »)
+- [x] Suivi prestataires rattaché au mariage, statut « Validé », lecture seule + documents pour le couple invité
+- [x] Synchro : « À contacter » → tâche checklist (cochée ensuite) ; « Validé » → équipe Jour J
+- [x] Trombinoscope (côté invités) + bouton « Valider pour le Jour J » → équipe Jour J avec photos
+- [x] Module Décoration (kanban + vue par zone + kit indispensable)
+- [x] Validation plan de table / boissons / déco → fiches dans Documents Jour J
+- [x] Onglet « Conducteur » (remplace Pense-bête) + coche en direct visible sur le planning partagé
