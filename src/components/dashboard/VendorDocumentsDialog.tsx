@@ -9,6 +9,8 @@ import { useToast } from '@/components/ui/use-toast';
 interface VendorDocumentsDialogProps {
   vendorName: string | null;
   weddingId: string | null;
+  /** Couple invité : consultation et téléchargement uniquement */
+  readOnly?: boolean;
   onClose: () => void;
 }
 
@@ -22,7 +24,7 @@ interface VendorDocument {
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
-const VendorDocumentsDialog: React.FC<VendorDocumentsDialogProps> = ({ vendorName, weddingId, onClose }) => {
+const VendorDocumentsDialog: React.FC<VendorDocumentsDialogProps> = ({ vendorName, weddingId, readOnly = false, onClose }) => {
   const { i18n } = useTranslation();
   const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const { toast } = useToast();
@@ -118,11 +120,13 @@ const VendorDocumentsDialog: React.FC<VendorDocumentsDialogProps> = ({ vendorNam
           <DialogDescription>{tr('Devis, contrats, factures… liés à ce prestataire.', 'Quotes, contracts, invoices… for this vendor.')}</DialogDescription>
         </DialogHeader>
 
+        {!readOnly && (
         <label className="flex min-h-[44px] cursor-pointer items-center justify-center gap-2 border border-dashed border-wedding-olive/50 px-4 py-3 text-sm text-wedding-olive hover:bg-wedding-olive/5">
           {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
           {tr('Ajouter un document (PDF, image… 10 Mo max)', 'Add a document (PDF, image… 10 MB max)')}
           <input type="file" className="sr-only" onChange={handleUpload} disabled={isUploading} accept=".pdf,.doc,.docx,.xls,.xlsx,image/*" />
         </label>
+        )}
 
         <div className="space-y-2 max-h-72 overflow-y-auto">
           {isLoading ? (
@@ -138,9 +142,11 @@ const VendorDocumentsDialog: React.FC<VendorDocumentsDialogProps> = ({ vendorNam
               <a href={document.file_url} target="_blank" rel="noopener noreferrer" aria-label={tr('Ouvrir', 'Open')} className="p-2">
                 <ExternalLink className="h-4 w-4" />
               </a>
+              {!readOnly && (
               <Button variant="ghost" size="icon" aria-label={tr('Supprimer', 'Delete')} onClick={() => handleDelete(document)}>
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
+              )}
             </div>
           ))}
         </div>
