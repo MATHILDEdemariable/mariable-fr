@@ -25,6 +25,8 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
   const { t, i18n } = useTranslation('partenariat');
   const { t: tPro } = useTranslation('pro');
   const includedItems = t('pro.included', { returnObjects: true }) as string[];
+  const eligibleItems = t('conditions.one.items', { returnObjects: true }) as string[];
+  const [showConditions, setShowConditions] = React.useState(false);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -69,14 +71,38 @@ const ProPremiumModal: React.FC<ProPremiumModalProps> = ({ open, onOpenChange })
           >
             {i18n.language?.startsWith('en') ? 'Or write to mathilde@mariable.fr (click to copy)' : 'Ou écrivez à mathilde@mariable.fr (clic pour copier)'}
           </button>
-          <a
-            href="/partenariat?conditions=1"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            aria-expanded={showConditions}
             className="text-center text-sm underline text-editorial-noir/70 hover:text-editorial-noir"
+            onClick={() => setShowConditions((isOpen) => !isOpen)}
           >
             {t('pro.ctaConditions')}
-          </a>
+          </button>
+          {showConditions && (
+            <div className="border border-editorial-noir/10 bg-white p-4 text-left text-sm text-editorial-noir/80 space-y-4">
+              <div>
+                <p className="font-serif text-base text-editorial-noir">{t('conditions.sectionTitle')}</p>
+                <p className="mt-1 text-xs uppercase tracking-widest text-wedding-olive">{t('conditions.one.label')}</p>
+                <p className="mt-1 font-medium text-editorial-noir">{t('conditions.one.title')}</p>
+                <ul className="mt-2 space-y-1">
+                  {Array.isArray(eligibleItems) &&
+                    eligibleItems.map((item) => (
+                      <li key={item} className="flex items-start gap-2">
+                        <Check className="h-4 w-4 text-wedding-olive flex-shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                </ul>
+              </div>
+              <div>
+                <p className="text-xs uppercase tracking-widest text-wedding-olive">{t('conditions.two.label')}</p>
+                <p className="mt-1 font-medium text-editorial-noir">{t('conditions.two.title')}</p>
+                <p className="mt-1">{t('conditions.two.body')}</p>
+                <p className="mt-2"><strong>{t('conditions.two.howTitle')}</strong> {t('conditions.two.how')}</p>
+              </div>
+            </div>
+          )}
           <Button type="button" variant="ghost" className="w-full rounded-none" onClick={() => onOpenChange(false)}>
             {tPro('premiumModal.close')}
           </Button>

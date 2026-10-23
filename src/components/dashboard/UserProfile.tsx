@@ -184,7 +184,7 @@ const UserProfile: React.FC = () => {
                 <div className="pt-2 space-y-2">
                   {isPro ? (
                     <Button
-                      onClick={() => navigate('/partenariat#mariable-pro')}
+                      onClick={() => navigate('/pro-solutions#tarifs')}
                       className="w-full bg-wedding-olive hover:bg-wedding-olive/80"
                       size="sm"
                     >
