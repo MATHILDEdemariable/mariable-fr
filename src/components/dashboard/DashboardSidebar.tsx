@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images
+  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -48,7 +48,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
     { label: t('sidebar.checklistSmart'), icon: <Lightbulb className="h-4 w-4" />, path: '/dashboard/checklist-mariage?tab=intelligente' },
   ];
 
-  const prestatairesItems = [
+  // Couple invité : consultation du suivi (statuts, devis, contrats) partagé par son wedding planner
+  const prestatairesItems = isWeddingCollaborator ? [
+    { label: t('sidebar.vendorsTracking'), icon: <Settings className="h-4 w-4" />, path: '/dashboard/suivi' },
+  ] : [
     { label: t('sidebar.vendorsTracking'), icon: <Settings className="h-4 w-4" />, path: '/dashboard/suivi' },
     { label: t('sidebar.vendorsCart'), icon: <ShoppingCart className="h-4 w-4" />, path: '/dashboard/panier' },
   ];
@@ -155,7 +158,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         {/* Prestataires (dropdown) */}
         <DropdownMenu>
-          <DropdownMenuTrigger className={cn(linkClass(isPrestatairesActive()), 'w-full justify-start', coupleLockedClass)} disabled={isReaderMode || isWeddingCollaborator}>
+          <DropdownMenuTrigger className={cn(linkClass(isPrestatairesActive()), 'w-full justify-start')} disabled={isReaderMode}>
             <Store className="h-4 w-4" />
             <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.vendors')}</span>
             <ChevronDown className="ml-auto h-4 w-4" />
@@ -190,12 +193,22 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </DropdownMenu>
         </>)}
 
+        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
+        </Link>
+
         {/* JOUR-J */}
         <SectionLabel label={t('sidebar.sections.jourJ')} />
 
         <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
           <UserCheck className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
+        </Link>
+
+        <Link to={isReaderMode ? '#' : '/dashboard/trombinoscope'} onClick={preventReader} className={linkClass(isActive('/dashboard/trombinoscope'))}>
+          <Contact className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Who’s who' : 'Trombinoscope'}</span>
         </Link>
 
 
