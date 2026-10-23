@@ -75,6 +75,7 @@ const EmailConfirmation = lazy(() => import("./pages/auth/EmailConfirmation"));
 const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
 const MonJourMConseils = lazy(() => import("./pages/MonJourMConseils"));
 const MonJourMPenseBete = lazy(() => import("./pages/MonJourMPenseBete"));
+const MonJourMConducteur = lazy(() => import("./pages/MonJourMConducteur"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
@@ -274,6 +275,7 @@ function App() {
                   <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
           <Route path="/mon-jour-m/conseils" element={<MonJourMConseils />} />
           <Route path="/mon-jour-m/pense-bete" element={<MonJourMPenseBete />} />
+          <Route path="/mon-jour-m/conducteur" element={<MonJourMConducteur />} />
 
                   {/* Auth routes */}
                    <Route path="/login" element={<Login />} />

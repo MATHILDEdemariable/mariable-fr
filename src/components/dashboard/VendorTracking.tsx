@@ -78,6 +78,7 @@ const statusColorMap: Record<VendorStatus, string> = {
   'en attente': 'bg-orange-100 text-orange-800',
   'réponse reçue': 'bg-green-100 text-green-800',
   'à valider': 'bg-purple-100 text-purple-800',
+  'validé': 'bg-wedding-olive/15 text-wedding-olive',
   'annuler': 'bg-red-100 text-red-800',
 };
 
@@ -87,6 +88,7 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
   'en attente': <Clock className="h-4 w-4" />,
   'réponse reçue': <CheckCircle className="h-4 w-4" />,
   'à valider': <Calendar className="h-4 w-4" />,
+  'validé': <CheckCircle className="h-4 w-4" />,
   'annuler': <Trash className="h-4 w-4" />,
 };
 
@@ -100,7 +102,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const tr = (fr: string, en: string) => (isEn ? en : fr);
   const statusLabels: Record<string, [string, string]> = {
     'à contacter': ['À contacter', 'To contact'], 'contactés': ['Contactés', 'Contacted'], 'en attente': ['En attente', 'Pending'],
-    'réponse reçue': ['Réponse reçue', 'Reply received'], 'à valider': ['À valider', 'To approve'], 'annuler': ['Annuler', 'Cancelled'],
+    'réponse reçue': ['Réponse reçue', 'Reply received'], 'à valider': ['À valider', 'To approve'], 'validé': ['Validé', 'Approved'], 'annuler': ['Annuler', 'Cancelled'],
   };
   const getStatusLabel = (status: string) => { const l = statusLabels[status]; return l ? tr(l[0], l[1]) : status; };
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -118,8 +120,11 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
-  const { accountType, currentWedding } = useWedding();
+  const { accountType, currentWedding, currentWeddingId, isWeddingCollaborator } = useWedding();
   const isProAccount = accountType === 'b2b';
+  // Couple invité par son wedding planner : consultation des statuts et documents, sans modification
+  const isReadOnly = isWeddingCollaborator;
+  const [documentCounts, setDocumentCounts] = useState<Record<string, number>>({});
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [addressBookOpen, setAddressBookOpen] = useState(false);
 
@@ -132,7 +137,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         user_id: user.id,
         ...entry,
         status: 'à contacter',
-      });
+        ...(currentWeddingId ? { wedding_id: currentWeddingId } : {}),
+      } as any);
       if (error) throw error;
       toast({ title: 'Ajouté au suivi', description: entry.vendor_name });
       fetchVendors();
@@ -168,17 +174,21 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
         return;
       }
 
-      let query = supabase
+      // Suivi rattaché au mariage ouvert (partagé pro ↔ couple) ; anciennes lignes sans mariage conservées pour leur auteur
+      let query: any = supabase
         .from('vendors_tracking_preprod')
-        .select('*')
-        .eq('user_id', user.id);
-        
+        .select('*');
+      query = currentWeddingId
+        ? query.or(`wedding_id.eq.${currentWeddingId},and(wedding_id.is.null,user_id.eq.${user.id})`)
+        : query.eq('user_id', user.id);
+
       const { data, error } = await query.order('created_at', { ascending: false });
 
       if (error) throw error;
       
+      loadDocumentCounts(user.id);
       if (data) {
-        setVendors(data.map(v => ({
+        setVendors(data.map((v: any) => ({
           ...v,
           contact_date: v.contact_date ? new Date(v.contact_date) : null,
           response_date: v.response_date ? new Date(v.response_date) : null
@@ -196,10 +206,26 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
     }
   };
   
-  // Initial fetch
+  // Nombre de devis / contrats par prestataire (badge sur le bouton Documents)
+  const loadDocumentCounts = async (userId: string) => {
+    try {
+      let documentsQuery: any = supabase.from('wedding_documents').select('vendor_name').not('vendor_name', 'is', null);
+      documentsQuery = currentWeddingId ? documentsQuery.eq('wedding_id', currentWeddingId) : documentsQuery.eq('user_id', userId);
+      const { data, error } = await documentsQuery;
+      if (error) throw error;
+      const counts: Record<string, number> = {};
+      (data || []).forEach((row: any) => { counts[row.vendor_name] = (counts[row.vendor_name] || 0) + 1; });
+      setDocumentCounts(counts);
+    } catch (error) {
+      console.error('❌ loadDocumentCounts failed:', error);
+    }
+  };
+
+  // Initial fetch (et à chaque changement de mariage)
   useEffect(() => {
     fetchVendors();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWeddingId]);
   
   // Get unique categories for filter
   const categories = [...new Set(vendors.map(vendor => vendor.category))];
@@ -246,8 +272,12 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
       }));
       
       toast({
-        title: "Statut mis à jour",
-        description: "Le statut du prestataire a été mis à jour",
+        title: tr('Statut mis à jour', 'Status updated'),
+        description: newStatus === 'validé'
+          ? tr("Prestataire ajouté à l'équipe du Jour J", 'Vendor added to the wedding-day team')
+          : newStatus === 'à contacter'
+            ? tr('Tâche ajoutée à la check-list', 'Task added to the checklist')
+            : tr('La check-list est mise à jour', 'The checklist is up to date'),
       });
       
     } catch (error) {
@@ -376,6 +406,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
                 <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
                 <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                <SelectItem value="validé">{getStatusLabel('validé')}</SelectItem>
                 <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
               </SelectContent>
             </Select>
@@ -417,6 +448,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <RefreshCw className="h-4 w-4 mr-2" /> {tr('Actualiser', 'Refresh')}
             </Button>
             
+            {!isReadOnly && (<>
             <Button 
               variant="outline"
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
@@ -436,7 +468,14 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
             >
               <Plus className="h-4 w-4 mr-2" /> {tr('Sélection personnelle', 'Add my own')}
             </Button>
+            </>)}
           </div>
+
+          {isReadOnly && (
+            <div role="status" className="border border-border bg-editorial-beige px-4 py-3 text-sm">
+              {tr('Suivi géré par votre wedding planner : consultez les statuts, devis et contrats de vos prestataires.', 'Managed by your wedding planner: view your vendors’ statuses, quotes and contracts.')}
+            </div>
+          )}
           
           {/* Boutons d'action - Mobile */}
           {isMobile && (
@@ -466,6 +505,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 {tr('Actualiser', 'Refresh')}
               </Button>
               
+              {!isReadOnly && (<>
               <Button 
                 variant="outline"
                 size="sm"
@@ -487,6 +527,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               >
                 <Plus className="h-3 w-3 mr-1" /> {tr('Perso', 'Own')}
               </Button>
+              </>)}
             </div>
           )}
 
@@ -610,6 +651,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       <div className="space-y-2">
                         <Select 
                           defaultValue={vendor.status}
+                          disabled={isReadOnly}
                           onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                         >
                           <SelectTrigger className="w-full">
@@ -621,6 +663,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
                             <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
                             <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                <SelectItem value="validé">{getStatusLabel('validé')}</SelectItem>
                             <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
                           </SelectContent>
                         </Select>
@@ -628,8 +671,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         <div className="flex gap-2">
                           <Button variant="outline" size="sm" className="flex-1" onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
                             <FileText className="h-4 w-4 mr-1" />
-                            {tr('Documents', 'Documents')}
+                            {tr('Documents', 'Documents')}{documentCounts[vendor.vendor_name] ? ` (${documentCounts[vendor.vendor_name]})` : ''}
                           </Button>
+                          {!isReadOnly && (<>
                           <Button
                             variant="outline"
                             size="sm"
@@ -654,6 +698,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <Trash className="h-4 w-4 mr-1" />
                             {tr('Supprimer', 'Delete')}
                           </Button>
+                          </>)}
                         </div>
                       </div>
                     </CardContent>
@@ -806,7 +851,9 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           <div className="flex items-center justify-end gap-1">
                             <Button variant="outline" size="sm" className="p-2" title={tr('Documents (devis…)', 'Documents (quotes…)')} aria-label={tr('Documents du prestataire', 'Vendor documents')} onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
                               <FileText className="h-3 w-3" />
+                              {documentCounts[vendor.vendor_name] ? <span className="ml-1 text-xs">{documentCounts[vendor.vendor_name]}</span> : null}
                             </Button>
+                            {!isReadOnly && (<>
                             <Button
                               variant="outline"
                               size="sm"
@@ -832,9 +879,11 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             >
                               <Trash className="h-3 w-3" />
                             </Button>
+                            </>)}
                             
                             <Select 
                               defaultValue={vendor.status}
+                          disabled={isReadOnly}
                               onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                             >
                               <SelectTrigger className="w-[100px] text-xs">
@@ -846,6 +895,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                                 <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
                                 <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
                                 <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                <SelectItem value="validé">{getStatusLabel('validé')}</SelectItem>
                                 <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
                               </SelectContent>
                             </Select>
@@ -923,7 +973,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
       <VendorDocumentsDialog
         vendorName={documentsVendorName}
         weddingId={currentWedding?.id ?? null}
-        onClose={() => setDocumentsVendorName(null)}
+        readOnly={isReadOnly}
+        onClose={() => { setDocumentsVendorName(null); supabase.auth.getUser().then(({ data }) => data.user && loadDocumentCounts(data.user.id)); }}
       />
 
       <TutorialVideoModal

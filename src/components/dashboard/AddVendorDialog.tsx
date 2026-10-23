@@ -10,6 +10,7 @@ import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 import { Loader2 } from 'lucide-react';
+import { useWedding } from '@/contexts/WeddingContext';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
 
@@ -52,6 +53,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
   const [notes, setNotes] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+  const { currentWeddingId } = useWedding();
 
   const handleAddVendor = async () => {
     if (!vendorName || !category) {
@@ -86,7 +88,8 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
         contact_date: null,
         response_date: null,
         source: 'personal', // Marquer comme prestataire personnel
-      });
+        ...(currentWeddingId ? { wedding_id: currentWeddingId } : {}),
+      } as any);
 
       if (error) throw error;
 

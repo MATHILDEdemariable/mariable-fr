@@ -116,7 +116,7 @@ const RetroplanningManuel = () => {
           .insert([withWedding({
             user_id: user.id,
             mode: 'manual',
-            title: isEnglish ? 'Manual timeline' : 'Rétroplanning manuel',
+            title: isEnglish ? 'Wedding timeline' : 'Rétroplanning',
             wedding_date: firstDate,
             timeline_data: nextSteps,
             categories: [],

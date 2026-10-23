@@ -63,7 +63,7 @@ const RetroplanningPublic = () => {
             <header className="text-center space-y-3 border-b border-editorial-olive/30 pb-8">
               <img src="/cachet_M.webp" alt="Mariable" className="h-12 w-auto mx-auto" width={48} height={48} />
               <p className="text-xs uppercase tracking-[0.3em] text-editorial-olive">{isEnglish ? 'Read-only view' : 'Consultation'}</p>
-              <h1 className="text-4xl sm:text-5xl font-serif">{retroplanning.mode === 'manual' ? retroplanning.title : (isEnglish ? 'Wedding timeline' : 'Rétroplanning du mariage')}</h1>
+              <h1 className="text-4xl sm:text-5xl font-serif">{retroplanning.mode === 'manual' && retroplanning.title && !/manuel|manual/i.test(retroplanning.title) ? retroplanning.title : (isEnglish ? 'Wedding timeline' : 'Rétroplanning')}</h1>
               {retroplanning.mode !== 'manual' && retroplanning.wedding_date && (
                 <p className="text-muted-foreground">{format(new Date(retroplanning.wedding_date), 'dd MMMM yyyy', { locale: dateLocale })}</p>
               )}

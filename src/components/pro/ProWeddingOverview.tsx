@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   Calendar, Users, Heart, Table, Wine, FileText, Home, CalendarRange, Calculator,
-  UserCheck, Store, ListChecks, ArrowRight,
+  UserCheck, Store, ListChecks, ArrowRight, Sparkles, Contact,
 } from 'lucide-react';
 import type { Wedding } from '@/contexts/WeddingContext';
 import InviteCoupleDialog from './InviteCoupleDialog';
@@ -15,6 +15,8 @@ type OverviewModule = { labelFr: string; labelEn: string; hintFr: string; hintEn
 const JOUR_J_MODULES: OverviewModule[] = [
   { labelFr: 'Planning Jour J', labelEn: 'Day-of schedule', hintFr: 'Conducteur minute par minute', hintEn: 'Minute-by-minute run sheet', icon: Calendar, path: '/mon-jour-m/planning' },
   { labelFr: 'Équipe & contacts', labelEn: 'Team & contacts', hintFr: 'Témoins, prestataires', hintEn: 'Witnesses, vendors', icon: Users, path: '/mon-jour-m/equipe' },
+  { labelFr: 'Trombinoscope', labelEn: 'Who’s who', hintFr: 'Personnes clés avec photo', hintEn: 'Key people with photos', icon: Contact, path: '/dashboard/trombinoscope' },
+  { labelFr: 'Décoration', labelEn: 'Decor', hintFr: 'Papeterie, petite déco, zones', hintEn: 'Stationery, small decor, areas', icon: Sparkles, path: '/dashboard/decoration' },
   { labelFr: 'Cérémonie', labelEn: 'Ceremony', hintFr: 'Cortège, textes, musiques', hintEn: 'Procession, readings, music', icon: Heart, path: '/dashboard/ceremonie' },
   { labelFr: 'Plan de table & menus', labelEn: 'Seating & menus', hintFr: 'Placement, régimes', hintEn: 'Seating, diets', icon: Table, path: '/dashboard/seating-plan' },
   { labelFr: 'Boissons', labelEn: 'Drinks', hintFr: 'Quantités selon invités', hintEn: 'Quantities per guest', icon: Wine, path: '/dashboard/drinks' },
