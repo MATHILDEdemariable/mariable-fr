@@ -174,6 +174,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
                   <SelectItem value="en attente">En attente</SelectItem>
                   <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
                   <SelectItem value="à valider">À valider</SelectItem>
+                  <SelectItem value="validé">Validé</SelectItem>
                   <SelectItem value="annuler">Annuler</SelectItem>
                 </SelectContent>
               </Select>
