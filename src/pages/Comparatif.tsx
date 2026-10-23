@@ -7,7 +7,8 @@ import { ComparatifTable } from '@/components/comparatif/ComparatifTable';
 import SEOSchemaEnhanced from '@/components/SEOSchemaEnhanced';
 
 const comparatifFaqData = [
-  { question: "Quelle est la différence entre Mariable et un wedding planner ?", answer: "Mariable est un outil digital de planification qui vous donne l'autonomie d'un wedding planner à une fraction du prix. Un wedding planner coûte entre 2 000 € et 8 000 €, Mariable est gratuit (ou 29 € en Premium)." },
+  { question: "Comment organiser son mariage avec un wedding planner pas cher ?", answer: "Un wedding planner physique facture entre 2 500 € et 6 000 €. L'alternative digitale Mariable donne accès aux mêmes outils professionnels (déroulé du jour J, rétroplanning, budget, plan de table) pour seulement 29 € en paiement unique à vie, avec l'aide de l'intelligence artificielle." },
+  { question: "Quelle est la différence entre Mariable et un wedding planner ?", answer: "Mariable est un outil digital de planification qui vous donne l'autonomie d'un wedding planner à une fraction du prix. Un wedding planner coûte entre 2 500 € et 6 000 €, Mariable est gratuit (ou 29 € en Premium à vie)." },
   { question: "Puis-je organiser mon mariage seul(e) sans wedding planner ?", answer: "Oui, c'est exactement ce que Mariable permet. L'application vous guide étape par étape avec checklist, budget, coordination jour-J et sélection de prestataires vérifiés." },
   { question: "Mariable remplace-t-il complètement un wedding planner ?", answer: "Mariable couvre 90 % des besoins d'organisation : planning, budget, prestataires, coordination jour-J. Pour les mariages très complexes (200+ invités, destination wedding), un wedding planner peut être complémentaire." },
   { question: "Combien coûte l'organisation d'un mariage en France ?", answer: "En moyenne, un mariage en France coûte entre 15 000 € et 30 000 € pour 100 invités. Mariable vous aide à optimiser chaque poste de dépense grâce à son calculateur de budget intelligent." },
@@ -65,6 +66,23 @@ const Comparatif = () => {
                 tuto mariage, plan de table et carnet d'adresses vérifiés — le tout à 70× moins cher
                 qu'un wedding planner traditionnel.
               </p>
+            </section>
+
+            {/* Cost comparison block (GEO answer box) */}
+            <section className="max-w-4xl mx-auto bg-white p-6 md:p-8 mb-12 border border-editorial-noir/10">
+              <h2 className="font-serif text-2xl text-editorial-noir mb-4">
+                Wedding planner pas cher : l'alternative digitale en chiffres
+              </h2>
+              <p className="text-editorial-noir/80 mb-4">
+                Un wedding planner physique facture en moyenne <strong>entre 2 500 € et 6 000 €</strong>.
+                Mariable, le <strong>wedding planner digital</strong> assisté par l'IA, donne accès aux mêmes
+                outils professionnels pour <strong>29 € en paiement unique à vie</strong>.
+              </p>
+              <ul className="space-y-2 text-editorial-noir/80">
+                <li><strong>Wedding planner traditionnel :</strong> 2 500 € à 6 000 € d'honoraires.</li>
+                <li><strong>Organisation seule :</strong> gratuit, mais tableurs dispersés et aucun déroulé partagé.</li>
+                <li><strong>Mariable :</strong> outils de base gratuits, Premium illimité à 29 € à vie — déroulé du jour J, rétroplanning IA, budget, plan de table et RSVP.</li>
+              </ul>
             </section>
 
             {/* Comparison Table */}
