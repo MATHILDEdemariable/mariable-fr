@@ -515,6 +515,7 @@ export type Database = {
           position: number
           priority: string
           responsible: string | null
+          source_vendor_id: string | null
           status: string
           title: string
           updated_at: string
@@ -531,6 +532,7 @@ export type Database = {
           position?: number
           priority?: string
           responsible?: string | null
+          source_vendor_id?: string | null
           status?: string
           title: string
           updated_at?: string
@@ -547,6 +549,7 @@ export type Database = {
           position?: number
           priority?: string
           responsible?: string | null
+          source_vendor_id?: string | null
           status?: string
           title?: string
           updated_at?: string
@@ -738,6 +741,7 @@ export type Database = {
         Row: {
           assigned_to: Json | null
           category: string
+          completed_at: string | null
           coordination_id: string
           created_at: string
           description: string | null
@@ -750,12 +754,14 @@ export type Database = {
           position: number | null
           priority: string | null
           start_time: string | null
+          status: string
           title: string
           updated_at: string
         }
         Insert: {
           assigned_to?: Json | null
           category?: string
+          completed_at?: string | null
           coordination_id: string
           created_at?: string
           description?: string | null
@@ -768,12 +774,14 @@ export type Database = {
           position?: number | null
           priority?: string | null
           start_time?: string | null
+          status?: string
           title: string
           updated_at?: string
         }
         Update: {
           assigned_to?: Json | null
           category?: string
+          completed_at?: string | null
           coordination_id?: string
           created_at?: string
           description?: string | null
@@ -786,6 +794,7 @@ export type Database = {
           position?: number | null
           priority?: string | null
           start_time?: string | null
+          status?: string
           title?: string
           updated_at?: string
         }
@@ -809,8 +818,10 @@ export type Database = {
           name: string
           notes: string | null
           phone: string | null
+          photo_url: string | null
           prestataire_id: string | null
           role: string
+          source_vendor_id: string | null
           type: string
           updated_at: string
         }
@@ -823,8 +834,10 @@ export type Database = {
           name: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           prestataire_id?: string | null
           role: string
+          source_vendor_id?: string | null
           type?: string
           updated_at?: string
         }
@@ -837,8 +850,10 @@ export type Database = {
           name?: string
           notes?: string | null
           phone?: string | null
+          photo_url?: string | null
           prestataire_id?: string | null
           role?: string
+          source_vendor_id?: string | null
           type?: string
           updated_at?: string
         }
@@ -3510,6 +3525,7 @@ export type Database = {
           valide_date_rdv: number | null
           vendor_name: string
           website: string | null
+          wedding_id: string | null
         }
         Insert: {
           budget?: string | null
@@ -3541,6 +3557,7 @@ export type Database = {
           valide_date_rdv?: number | null
           vendor_name: string
           website?: string | null
+          wedding_id?: string | null
         }
         Update: {
           budget?: string | null
@@ -3572,6 +3589,7 @@ export type Database = {
           valide_date_rdv?: number | null
           vendor_name?: string
           website?: string | null
+          wedding_id?: string | null
         }
         Relationships: [
           {
@@ -3745,6 +3763,54 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wedding_decor_items: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          name: string
+          notes: string | null
+          position: number
+          quantity: number | null
+          responsible: string
+          status: string
+          updated_at: string
+          user_id: string
+          wedding_id: string
+          zone: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          name: string
+          notes?: string | null
+          position?: number
+          quantity?: number | null
+          responsible?: string
+          status?: string
+          updated_at?: string
+          user_id: string
+          wedding_id: string
+          zone?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          position?: number
+          quantity?: number | null
+          responsible?: string
+          status?: string
+          updated_at?: string
+          user_id?: string
+          wedding_id?: string
+          zone?: string
+        }
+        Relationships: []
       }
       wedding_documents: {
         Row: {
@@ -3929,6 +3995,81 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wedding_jour_j_handoffs: {
+        Row: {
+          created_at: string
+          id: string
+          module: string
+          updated_at: string
+          validated_at: string
+          validated_by: string | null
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          module: string
+          updated_at?: string
+          validated_at?: string
+          validated_by?: string | null
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          module?: string
+          updated_at?: string
+          validated_at?: string
+          validated_by?: string | null
+          wedding_id?: string
+        }
+        Relationships: []
+      }
+      wedding_key_people: {
+        Row: {
+          created_at: string
+          full_name: string
+          id: string
+          key_role: string
+          notes: string | null
+          phone: string | null
+          photo_url: string | null
+          position: number
+          team_member_id: string | null
+          updated_at: string
+          user_id: string
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          full_name: string
+          id?: string
+          key_role?: string
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          position?: number
+          team_member_id?: string | null
+          updated_at?: string
+          user_id: string
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          full_name?: string
+          id?: string
+          key_role?: string
+          notes?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          position?: number
+          team_member_id?: string | null
+          updated_at?: string
+          user_id?: string
+          wedding_id?: string
+        }
+        Relationships: []
       }
       wedding_projects: {
         Row: {
@@ -4483,6 +4624,10 @@ export type Database = {
         Args: { accept_invitation: boolean; target_invitation_id: string }
         Returns: boolean
       }
+      sync_key_people_to_jour_j: {
+        Args: { target_wedding_id: string }
+        Returns: number
+      }
       validate_apres_jour_j_share_token: {
         Args: { token_value: string }
         Returns: {
@@ -4577,6 +4722,7 @@ export type Database = {
         | "réponse reçue"
         | "à valider"
         | "annuler"
+        | "validé"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -4765,6 +4911,7 @@ export const Constants = {
         "réponse reçue",
         "à valider",
         "annuler",
+        "validé",
       ],
     },
   },
