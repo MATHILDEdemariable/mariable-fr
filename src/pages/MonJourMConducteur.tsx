@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle2, Circle, Clock, MapPin, Loader2, ExternalLink } from 'lucide-react';
+import { CheckCircle2, Circle, Clock, Users, Loader2, ExternalLink } from 'lucide-react';
 import MonJourMLayout from '@/components/mon-jour-m/MonJourMLayout';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import { supabase } from '@/integrations/supabase/client';
@@ -164,7 +164,7 @@ const MonJourMConducteur: React.FC = () => {
                           </span>
                           <span className={`block font-medium ${isDone ? 'line-through text-muted-foreground' : ''}`}>{task.title}</span>
                           {task.description && <span className="block text-sm text-muted-foreground line-clamp-2">{task.description}</span>}
-                          {assignees && <span className="mt-1 inline-flex items-center gap-1 text-xs text-wedding-olive"><MapPin className="h-3 w-3" />{assignees}</span>}
+                          {assignees && <span className="mt-1 inline-flex items-center gap-1 text-xs text-wedding-olive"><Users className="h-3 w-3" />{assignees}</span>}
                         </span>
                       </button>
                     </li>
