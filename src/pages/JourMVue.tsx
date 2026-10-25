@@ -468,7 +468,14 @@ const JourMVue: React.FC = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                        {people.map((member) => (
                          <div key={member.id} className="border rounded-lg p-3 md:p-4">
+                           <div className="flex items-center gap-3">
+                           {member.photo_url ? (
+                             <img src={member.photo_url} alt={member.name} loading="lazy" className="h-14 w-14 rounded-full object-cover object-top border border-border shrink-0" />
+                           ) : (
+                             <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center font-serif text-lg text-muted-foreground shrink-0" aria-hidden="true">{(member.name || '?').charAt(0).toUpperCase()}</div>
+                           )}
                            <h3 className="font-medium text-sm md:text-base break-words">{member.name}</h3>
+                           </div>
                            <Badge variant="outline" className="mt-1 mb-2 text-xs">
                              {member.role}
                            </Badge>
@@ -519,7 +526,14 @@ const JourMVue: React.FC = () => {
                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
                        {vendors.map((member) => (
                          <div key={member.id} className="border rounded-lg p-3 md:p-4">
+                           <div className="flex items-center gap-3">
+                           {member.photo_url ? (
+                             <img src={member.photo_url} alt={member.name} loading="lazy" className="h-14 w-14 rounded-full object-cover object-top border border-border shrink-0" />
+                           ) : (
+                             <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center font-serif text-lg text-muted-foreground shrink-0" aria-hidden="true">{(member.name || '?').charAt(0).toUpperCase()}</div>
+                           )}
                            <h3 className="font-medium text-sm md:text-base break-words">{member.name}</h3>
+                           </div>
                            <Badge variant="outline" className="mt-1 mb-2 bg-blue-50 text-blue-700 text-xs">
                              {member.role}
                            </Badge>
