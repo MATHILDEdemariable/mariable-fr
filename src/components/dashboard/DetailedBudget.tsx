@@ -17,6 +17,8 @@ import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
 import { useWedding } from '@/contexts/WeddingContext';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
+import PaymentScheduleDialog, { paidFromSchedule, type PaymentSchedule } from '@/components/dashboard/budget/PaymentScheduleDialog';
+import { CalendarClock } from 'lucide-react';
 import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 
 // Type for budget category
@@ -30,6 +32,7 @@ interface BudgetItem {
   deposit: number;
   remaining: number;
   payment_note: string;
+  payment_schedule?: PaymentSchedule;
 }
 
 interface BudgetCategory {
@@ -127,6 +130,7 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [saveTimeouts, setSaveTimeouts] = useState<{ [key: string]: NodeJS.Timeout }>({});
   const [isCatalogImportOpen, setIsCatalogImportOpen] = useState(false);
+  const [scheduleTarget, setScheduleTarget] = useState<{ categoryIndex: number; itemIndex: number } | null>(null);
   
   // Fetch detailed budget data from Supabase
   const { data: budgetDetailsData, isLoading: isLoadingDetails } = useQuery({
@@ -194,7 +198,8 @@ else query = query.eq('user_id', userData.user.id);
         actual: Number(item.actual) || 0,
         deposit: Number(item.deposit) || 0,
         remaining: Number(item.remaining) || 0,
-        payment_note: item.payment_note || ''
+        payment_note: item.payment_note || '',
+        payment_schedule: item.payment_schedule || {}
       };
 
       if (weddingId) itemData.wedding_id = weddingId;
@@ -322,6 +327,8 @@ else query = query.eq('user_id', userData.user.id);
           categoriesMap.set(dbItem.category_name, []);
         }
         
+        const loadedSchedule = ((dbItem as any).payment_schedule || {}) as PaymentSchedule;
+        if (loadedSchedule.installments?.length) dbItem.deposit = paidFromSchedule(loadedSchedule);
         const remaining = calculateRemaining(
           Number(dbItem.estimated) || 0,
           Number(dbItem.actual) || 0,
@@ -337,7 +344,8 @@ else query = query.eq('user_id', userData.user.id);
           actual: Number(dbItem.actual) || 0,
           deposit: Number(dbItem.deposit) || 0,
           remaining: remaining,
-          payment_note: dbItem.payment_note || ''
+          payment_note: dbItem.payment_note || '',
+          payment_schedule: ((dbItem as any).payment_schedule || {}) as PaymentSchedule
         });
       });
       
@@ -701,6 +709,17 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
     debouncedSave(item, categoryName);
   }, [categories, calculateTotalsFromCategories, debouncedSave]);
 
+  // Échéancier : acomptes payés → colonne acompte, reste à payer recalculé, sauvegarde immédiate
+  const handleScheduleSave = (categoryIndex: number, itemIndex: number, schedule: PaymentSchedule) => {
+    const newCategories = [...categories];
+    const item = { ...newCategories[categoryIndex].items[itemIndex], payment_schedule: schedule };
+    if (schedule.installments?.length) item.deposit = paidFromSchedule(schedule);
+    item.remaining = calculateRemaining(item.estimated, item.actual, item.deposit);
+    newCategories[categoryIndex] = { ...newCategories[categoryIndex], items: newCategories[categoryIndex].items.map((entry, i) => (i === itemIndex ? item : entry)) };
+    setCategories(calculateTotalsFromCategories(newCategories));
+    saveBudgetItemMutation.mutate({ item, categoryName: newCategories[categoryIndex].name });
+  };
+
   // Save budget to database
   const handleSaveBudget = () => {
     updateBudgetMutation.mutate();
@@ -844,8 +863,8 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
 
   const dayEnvelopes = categories.flatMap((category) =>
     category.items
+      .map((item) => ({ id: item.id, name: item.name || '-', category: t(`detailed.categoryNames.${category.name}`, { defaultValue: category.name }), remaining: Math.min(Number(item.payment_schedule?.cash_day) || 0, Math.max(item.remaining, 0)) }))
       .filter((item) => item.remaining > 0)
-      .map((item) => ({ id: item.id, name: item.name || '-', category: t(`detailed.categoryNames.${category.name}`, { defaultValue: category.name }), remaining: item.remaining }))
   );
 
   return (
@@ -856,6 +875,21 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
         feature={feature}
         description={description}
       />
+      {scheduleTarget && categories[scheduleTarget.categoryIndex]?.items[scheduleTarget.itemIndex] && (() => {
+        const target = categories[scheduleTarget.categoryIndex].items[scheduleTarget.itemIndex];
+        return (
+          <PaymentScheduleDialog
+            open
+            onOpenChange={(open) => !open && setScheduleTarget(null)}
+            itemName={target.name}
+            total={Math.max(Number(target.estimated) || 0, Number(target.actual) || 0)}
+            schedule={target.payment_schedule || {}}
+            isEnglish={isEnglishBudget}
+            disabled={!isPremium}
+            onSave={(schedule) => handleScheduleSave(scheduleTarget.categoryIndex, scheduleTarget.itemIndex, schedule)}
+          />
+        );
+      })()}
       <ImportFromCatalogDialog
         open={isCatalogImportOpen}
         onOpenChange={setIsCatalogImportOpen}
@@ -1050,18 +1084,37 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
                         />
                       </td>
                       <td className="px-4 py-2">
-                        <Input
-                          type="number"
-                          value={item.deposit || ''}
-                          onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'deposit', e.target.value)}
-                          className="h-8 text-right border-gray-200"
-                          placeholder="0.00"
-                          step="0.01"
-                          disabled={!isPremium}
-                        />
+                        <div className="flex items-center gap-1 min-w-[150px]">
+                          <Input
+                            type="number"
+                            value={item.deposit || ''}
+                            onChange={(e) => handleItemChange(categoryIndex, itemIndex, 'deposit', e.target.value)}
+                            className="h-8 text-right border-gray-200"
+                            placeholder="0.00"
+                            step="0.01"
+                            disabled={!isPremium || !!item.payment_schedule?.installments?.length}
+                            aria-label={t('detailed.columns.deposit')}
+                          />
+                          <Button type="button" variant="outline" size="icon" className="h-8 w-8 shrink-0 rounded-none border-wedding-olive/40 text-wedding-olive"
+                            onClick={() => setScheduleTarget({ categoryIndex, itemIndex })}
+                            aria-label={isEnglishBudget ? 'Deposits & reminders' : 'Acomptes & rappels'}
+                            title={isEnglishBudget ? 'Deposits & reminders' : 'Acomptes & rappels'}>
+                            <CalendarClock className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {(item.payment_schedule?.installments?.length || 0) > 0 && (
+                          <p className="text-[11px] text-muted-foreground mt-1 text-right">
+                            {item.payment_schedule!.installments!.filter((i) => i.paid).length}/{item.payment_schedule!.installments!.length} {isEnglishBudget ? 'paid' : 'payés'}
+                          </p>
+                        )}
                       </td>
                       <td className="px-4 py-2 text-right">
                         {item.remaining.toFixed(2)}
+                        {item.remaining > 0 && (
+                          <p className="text-[11px] text-muted-foreground whitespace-nowrap">
+                            {isEnglishBudget ? 'Cash' : 'Cash'} {Math.min(Number(item.payment_schedule?.cash_day) || 0, item.remaining).toFixed(0)} · {isEnglishBudget ? 'Transfer' : 'Virement'} {(item.remaining - Math.min(Number(item.payment_schedule?.cash_day) || 0, item.remaining)).toFixed(0)}
+                          </p>
+                        )}
                       </td>
                       <td className="px-4 py-2">
                         <Input
@@ -1145,10 +1198,10 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
         <div className="p-4 sm:p-6 border-t">
           <h3 className="font-serif text-xl mb-1">{isEnglishBudget ? 'Wedding-day envelopes' : 'Enveloppes Jour J'}</h3>
           <p className="text-sm text-muted-foreground mb-3">
-            {isEnglishBudget ? 'Remaining amounts to hand over on the day, per vendor.' : 'Soldes restant à remettre le jour J, par prestataire.'}
+            {isEnglishBudget ? 'Cash amounts to hand over on the day, per vendor (set in each line’s payment schedule). Shared with the planner.' : 'Montants à remettre en cash le jour J, par prestataire (à ventiler dans l’échéancier de chaque ligne). Partagé avec le wedding planner.'}
           </p>
           {dayEnvelopes.length === 0 ? (
-            <p className="text-sm text-muted-foreground">{isEnglishBudget ? 'Nothing left to pay.' : 'Rien à régler le jour J.'}</p>
+            <p className="text-sm text-muted-foreground">{isEnglishBudget ? 'No cash payment planned on the day.' : 'Aucun paiement cash prévu le jour J.'}</p>
           ) : (
             <ul className="divide-y border">
               {dayEnvelopes.map((envelope) => (
