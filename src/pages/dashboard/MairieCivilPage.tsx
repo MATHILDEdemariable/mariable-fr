@@ -34,6 +34,7 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import CeremonyPlanner from '@/components/ceremony/CeremonyPlanner';
 
 const CONDITION_ICONS = [Calendar, Heart, Users, Scale];
 const LIEU_ICONS = [Building2, Users];
