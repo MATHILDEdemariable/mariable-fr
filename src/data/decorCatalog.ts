@@ -24,7 +24,10 @@ export const DECOR_RESPONSIBLES: Record<string, Label> = {
   couple: { fr: 'Les mariés', en: 'The couple' },
   planner: { fr: 'Wedding planner', en: 'Wedding planner' },
   temoins: { fr: 'Témoins / famille', en: 'Witnesses / family' },
-  lieu: { fr: 'Lieu / traiteur', en: 'Venue / caterer' },
+  lieu: { fr: 'Lieu', en: 'Venue' },
+  traiteur: { fr: 'Traiteur', en: 'Caterer' },
+  decorateur: { fr: 'Décorateur', en: 'Decorator' },
+  fleuriste: { fr: 'Fleuriste', en: 'Florist' },
 };
 
 export const DECOR_STATUSES: { key: DecorStatus; fr: string; en: string }[] = [
