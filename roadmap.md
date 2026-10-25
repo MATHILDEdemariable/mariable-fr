@@ -17,7 +17,7 @@
 - [x] CSV → Tableur dans les textes
 - [x] Plan de table : nom complet visible
 - [ ] Rétroplanning modèle dans /pro, récupérable par mariage
-- [ ] Cérémonie : cortège + musiques par temps fort
+- [x] Cérémonie : cortège + musiques par temps fort
 - [ ] Planning Jour J : point d'étape sans horaire, lieu, attribution groupée
 - [ ] Plan de table : glisser-déposer les invités, salle avec dimensions et m²
 
@@ -29,3 +29,11 @@
 - [x] Module Décoration (kanban + vue par zone + kit indispensable)
 - [x] Validation plan de table / boissons / déco → fiches dans Documents Jour J
 - [x] Onglet « Conducteur » (remplace Pense-bête) + coche en direct visible sur le planning partagé
+
+## Lot Cérémonie, Budget & Documents (oct. 2026)
+- [x] Fiches organisation → « Publier en PDF dans Documents » (visible en consultation)
+- [x] Photos équipe/prestataires dans la consultation
+- [x] Carte bleue plan de table retirée ; liste de photos cochable dans le Conducteur (live)
+- [x] Décoration : responsables Traiteur/Décorateur/Fleuriste + vue « Par responsable »
+- [x] Budget identique couple/pro : sans calculatrice, 3 acomptes datés, rappel mail, ventilation cash/virement → Enveloppes Jour J
+- [x] Cérémonie religieuse/laïque (cortège, musiques, discours, fiche PDF) et Mairie (dossier, témoins, timing, badge partagé)

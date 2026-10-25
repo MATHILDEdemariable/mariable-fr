@@ -204,6 +204,8 @@ const MairieCivilPage: React.FC = () => {
           </div>
         </div>
 
+        <CeremonyPlanner type="civil" />
+
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="flex items-start gap-3 py-4">
             <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 shrink-0" />
