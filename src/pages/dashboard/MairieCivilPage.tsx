@@ -34,6 +34,7 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import CeremonyPlanner from '@/components/ceremony/CeremonyPlanner';
 
 const CONDITION_ICONS = [Calendar, Heart, Users, Scale];
 const LIEU_ICONS = [Building2, Users];
@@ -202,6 +203,8 @@ const MairieCivilPage: React.FC = () => {
             </Button>
           </div>
         </div>
+
+        <CeremonyPlanner type="civil" />
 
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="flex items-start gap-3 py-4">

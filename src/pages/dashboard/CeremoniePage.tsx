@@ -14,6 +14,7 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import CeremonyPlanner from '@/components/ceremony/CeremonyPlanner';
 
 const FUND_ICONS = [Clock, AlertCircle, MapPin];
 
@@ -152,8 +153,12 @@ const CeremoniePage: React.FC = () => {
           </div>
         </div>
 
-        <Tabs defaultValue="laique" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 mb-6">
+        <Tabs defaultValue="organisation" className="w-full">
+          <TabsList className="grid w-full grid-cols-3 mb-6 h-auto">
+            <TabsTrigger value="organisation" className="flex items-center gap-2 min-h-[44px]">
+              <Users className="h-4 w-4" />
+              {i18n.language?.startsWith('en') ? 'My ceremony' : 'Ma cérémonie'}
+            </TabsTrigger>
             <TabsTrigger value="laique" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
               {t('tabs.laique')}
@@ -163,6 +168,10 @@ const CeremoniePage: React.FC = () => {
               {t('tabs.catholique')}
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="organisation">
+            <CeremonyPlanner type="religious" />
+          </TabsContent>
 
           {/* ==================== LAÏQUE ==================== */}
           <TabsContent value="laique" className="space-y-6">

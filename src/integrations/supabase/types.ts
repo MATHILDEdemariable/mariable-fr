@@ -399,6 +399,7 @@ export type Database = {
           item_id: string
           item_name: string
           payment_note: string | null
+          payment_schedule: Json
           quantity: number
           remaining: number | null
           unit_price: number
@@ -416,6 +417,7 @@ export type Database = {
           item_id: string
           item_name: string
           payment_note?: string | null
+          payment_schedule?: Json
           quantity?: number
           remaining?: number | null
           unit_price?: number
@@ -433,6 +435,7 @@ export type Database = {
           item_id?: string
           item_name?: string
           payment_note?: string | null
+          payment_schedule?: Json
           quantity?: number
           remaining?: number | null
           unit_price?: number
@@ -3672,6 +3675,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      wedding_ceremony_plans: {
+        Row: {
+          ceremony_type: string
+          created_at: string
+          data: Json
+          id: string
+          updated_at: string
+          updated_by: string | null
+          wedding_id: string
+        }
+        Insert: {
+          ceremony_type: string
+          created_at?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+          wedding_id: string
+        }
+        Update: {
+          ceremony_type?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          updated_at?: string
+          updated_by?: string | null
+          wedding_id?: string
+        }
+        Relationships: []
       }
       wedding_collaborators: {
         Row: {

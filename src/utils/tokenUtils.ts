@@ -94,6 +94,7 @@ export const getPublicCoordinationData = async (coordinationId: string) => {
       .from('coordination_documents')
       .select('id, title, category, created_at, file_url, description')
       .eq('coordination_id', coordinationId)
+      .not('category', 'in', '(photo_list,photo_list_status)')
       .order('created_at', { ascending: false });
 
     if (docsError) {

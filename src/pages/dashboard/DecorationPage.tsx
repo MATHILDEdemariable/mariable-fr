@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Plus, Sparkles, Trash2, Pencil, ChevronLeft, ChevronRight, LayoutGrid, MapPin, Loader2 } from 'lucide-react';
+import { Plus, Sparkles, Trash2, Pencil, ChevronLeft, ChevronRight, LayoutGrid, UserRound, MapPin, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -42,7 +42,7 @@ const DecorationPage: React.FC = () => {
 
   const [items, setItems] = useState<DecorItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'kanban' | 'zones'>('kanban');
+  const [view, setView] = useState<'kanban' | 'zones' | 'owners'>('kanban');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -165,6 +165,12 @@ const DecorationPage: React.FC = () => {
       .filter((group) => group.zoneItems.length > 0);
   }, [items]);
 
+  const itemsByOwner = useMemo(() => {
+    return Object.keys(DECOR_RESPONSIBLES)
+      .map((zoneKey) => ({ zoneKey, zoneItems: items.filter((item) => item.responsible === zoneKey) }))
+      .filter((group) => group.zoneItems.length > 0);
+  }, [items]);
+
   const renderItemCard = (item: DecorItem) => {
     const statusIndex = DECOR_STATUSES.findIndex((status) => status.key === item.status);
     return (
@@ -187,7 +193,7 @@ const DecorationPage: React.FC = () => {
             className="min-h-[36px] px-2 text-xs inline-flex items-center gap-1 disabled:opacity-30 hover:bg-muted" aria-label={tr('Étape précédente', 'Previous step')}>
             <ChevronLeft className="h-4 w-4" />
           </button>
-          {view === 'zones' && <span className="text-xs text-wedding-olive">{isEnglish ? DECOR_STATUSES[statusIndex]?.en : DECOR_STATUSES[statusIndex]?.fr}</span>}
+          {view !== 'kanban' && <span className="text-xs text-wedding-olive">{isEnglish ? DECOR_STATUSES[statusIndex]?.en : DECOR_STATUSES[statusIndex]?.fr}</span>}
           <button type="button" disabled={statusIndex >= DECOR_STATUSES.length - 1} onClick={() => updateItemStatus(item, DECOR_STATUSES[statusIndex + 1].key)}
             className="min-h-[36px] px-2 text-xs inline-flex items-center gap-1 disabled:opacity-30 hover:bg-muted" aria-label={tr('Étape suivante', 'Next step')}>
             {statusIndex < DECOR_STATUSES.length - 1 && (isEnglish ? DECOR_STATUSES[statusIndex + 1].en : DECOR_STATUSES[statusIndex + 1].fr)}
@@ -218,7 +224,7 @@ const DecorationPage: React.FC = () => {
         </header>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="grid grid-cols-2 border border-wedding-olive/30 w-full sm:w-auto" role="group" aria-label={tr('Affichage', 'View')}>
+          <div className="grid grid-cols-3 border border-wedding-olive/30 w-full sm:w-auto" role="group" aria-label={tr('Affichage', 'View')}>
             <button type="button" aria-pressed={view === 'kanban'} onClick={() => setView('kanban')}
               className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'kanban' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
               <LayoutGrid className="h-4 w-4" /> {tr('Avancement', 'Progress')}
@@ -226,6 +232,10 @@ const DecorationPage: React.FC = () => {
             <button type="button" aria-pressed={view === 'zones'} onClick={() => setView('zones')}
               className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'zones' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
               <MapPin className="h-4 w-4" /> {tr('Par zone', 'By area')}
+            </button>
+            <button type="button" aria-pressed={view === 'owners'} onClick={() => setView('owners')}
+              className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'owners' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
+              <UserRound className="h-4 w-4" /> {tr('Par responsable', 'By owner')}
             </button>
           </div>
           <div className="grid grid-cols-2 sm:flex gap-2">
@@ -263,9 +273,9 @@ const DecorationPage: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-5">
-            {itemsByZone.map(({ zoneKey, zoneItems }) => (
+            {(view === 'owners' ? itemsByOwner : itemsByZone).map(({ zoneKey, zoneItems }) => (
               <div key={zoneKey} className="space-y-2">
-                <h2 className="font-serif text-xl border-b border-wedding-olive/30 pb-1">{decorLabel(DECOR_ZONES, zoneKey, isEnglish)} <span className="text-sm text-muted-foreground">({zoneItems.length})</span></h2>
+                <h2 className="font-serif text-xl border-b border-wedding-olive/30 pb-1">{decorLabel(view === 'owners' ? DECOR_RESPONSIBLES : DECOR_ZONES, zoneKey, isEnglish)} <span className="text-sm text-muted-foreground">({zoneItems.length})</span></h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{zoneItems.map(renderItemCard)}</div>
               </div>
             ))}
