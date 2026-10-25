@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Table, Wine, Sparkles, Users, CheckCircle2, Clock, Loader2 } from 'lucide-react';
+import { Table, Wine, Sparkles, Users, CheckCircle2, Clock, Loader2, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -9,6 +9,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
 import { DECOR_ZONES, DECOR_RESPONSIBLES, DECOR_STATUSES, decorLabel } from '@/data/decorCatalog';
 import { translateDrinkLabel } from '@/components/drinks/DrinksPlanTable';
+import { toast } from 'sonner';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import type { JourJModule } from '@/hooks/useJourJHandoff';
 
 const db = supabase as any;
@@ -16,7 +18,8 @@ const db = supabase as any;
 type SheetData =
   | { module: 'seating'; tables: { name: string; guests: string[] }[]; alphabetical: { guest: string; table: string }[] }
   | { module: 'drinks'; rows: any[] }
-  | { module: 'decor'; zones: { zone: string; items: any[] }[] };
+  | { module: 'decor'; zones: { zone: string; items: any[] }[] }
+  | { module: 'trombinoscope'; people: any[] };
 
 const MODULES: { key: JourJModule; icon: typeof Table; fr: string; en: string; sourceFr: string; sourceEn: string; path: string }[] = [
   { key: 'seating', icon: Table, fr: 'Plan de table', en: 'Seating plan', sourceFr: 'Liste par table et alphabétique', sourceEn: 'By table and alphabetical', path: '/dashboard/seating-plan' },
@@ -36,6 +39,8 @@ const JourJHandoffSheets: React.FC = () => {
   const [handoffs, setHandoffs] = useState<Record<string, string>>({});
   const [openSheet, setOpenSheet] = useState<SheetData | null>(null);
   const [loadingModule, setLoadingModule] = useState<JourJModule | null>(null);
+  const [publishingModule, setPublishingModule] = useState<JourJModule | null>(null);
+  const { coordination } = useMonJourMCoordination();
 
   useEffect(() => {
     if (!weddingId) return;
@@ -49,10 +54,15 @@ const JourJHandoffSheets: React.FC = () => {
     })();
   }, [weddingId]);
 
-  const openModuleSheet = async (module: JourJModule) => {
-    if (!weddingId || module === 'trombinoscope') return;
-    setLoadingModule(module);
-    try {
+  const loadSheetData = async (module: JourJModule): Promise<SheetData | null> => {
+    if (!weddingId) return null;
+    if (module === 'trombinoscope') {
+      const { data } = await db.from('wedding_key_people').select('full_name, key_role, phone, notes').eq('wedding_id', weddingId).order('position');
+      return { module: 'trombinoscope', people: data || [] };
+    }
+    let result: SheetData | null = null;
+    const setOpenSheet = (value: SheetData) => { result = value; };
+    {
       if (module === 'seating') {
         const { data: plans } = await db.from('seating_plans').select('id').eq('wedding_id', weddingId).order('created_at', { ascending: false }).limit(1);
         const planId = plans?.[0]?.id;
@@ -84,10 +94,81 @@ const JourJHandoffSheets: React.FC = () => {
           .filter((group) => group.items.length > 0);
         setOpenSheet({ module: 'decor', zones });
       }
+    }
+    return result;
+  };
+
+  const openModuleSheet = async (module: JourJModule) => {
+    if (module === 'trombinoscope') return;
+    setLoadingModule(module);
+    try {
+      const data = await loadSheetData(module);
+      if (data) setOpenSheet(data);
     } catch (error) {
       console.error('❌ openModuleSheet failed:', error);
     } finally {
       setLoadingModule(null);
+    }
+  };
+
+  /** Génère la fiche en PDF (charte Mariable) et la range dans les documents du Jour J, visibles en consultation. */
+  const publishModulePdf = async (module: JourJModule) => {
+    if (!coordination?.id || !user) return;
+    setPublishingModule(module);
+    try {
+      const data = await loadSheetData(module);
+      if (!data) throw new Error('Fiche introuvable');
+      const meta = MODULES.find((entry) => entry.key === module)!;
+      const title = isEnglish ? meta.en : meta.fr;
+      const lines: { text: string; bold?: boolean }[] = [];
+      if (data.module === 'seating') {
+        data.tables.forEach((table) => { lines.push({ text: `${table.name} (${table.guests.length})`, bold: true }); lines.push({ text: table.guests.join(', ') || '—' }); });
+        lines.push({ text: tr('Ordre alphabétique', 'Alphabetical'), bold: true });
+        data.alphabetical.forEach((entry) => lines.push({ text: `${entry.guest} — ${entry.table}` }));
+      } else if (data.module === 'drinks') {
+        data.rows.forEach((row: any) => lines.push({ text: [translateDrinkLabel(row.moment, !!isEnglish), translateDrinkLabel(row.drinkType, !!isEnglish), row.drinkName, row.quantity && `${tr('Qté', 'Qty')} ${row.quantity}`, row.supplier].filter(Boolean).join(' · ') }));
+      } else if (data.module === 'decor') {
+        data.zones.forEach((group) => {
+          lines.push({ text: decorLabel(DECOR_ZONES, group.zone, !!isEnglish), bold: true });
+          group.items.forEach((item: any) => lines.push({ text: `${item.name}${item.quantity ? ` × ${item.quantity}` : ''} — ${decorLabel(DECOR_RESPONSIBLES, item.responsible, !!isEnglish)}${item.notes ? ` (${item.notes})` : ''}` }));
+        });
+      } else {
+        data.people.forEach((person: any) => lines.push({ text: [person.full_name, person.key_role, person.phone].filter(Boolean).join(' · ') }));
+      }
+      const { default: jsPDF } = await import('jspdf');
+      const pdf = new jsPDF();
+      pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
+      pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
+      pdf.setFont('times', 'normal'); pdf.setFontSize(12); pdf.text(title, 15, 24);
+      pdf.setTextColor(30, 30, 30);
+      let y = 42;
+      lines.forEach((line) => {
+        pdf.setFont('helvetica', line.bold ? 'bold' : 'normal'); pdf.setFontSize(line.bold ? 12 : 10);
+        pdf.splitTextToSize(line.text, 180).forEach((part: string) => {
+          if (y > 280) { pdf.addPage(); y = 20; }
+          pdf.text(part, 15, y); y += line.bold ? 7 : 5.5;
+        });
+        if (line.bold) y += 1;
+      });
+      const blob = pdf.output('blob');
+      const filePath = `${user.id}/coordination-${coordination.id}/fiche-${module}-${Date.now()}.pdf`;
+      const { error: uploadError } = await supabase.storage.from('coordination-files').upload(filePath, blob, { contentType: 'application/pdf' });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('coordination-files').getPublicUrl(filePath);
+      const documentTitle = `${tr('Fiche', 'Sheet')} ${title}`;
+      await db.from('coordination_documents').delete().eq('coordination_id', coordination.id).eq('category', `organisation-${module}`);
+      const { error: insertError } = await db.from('coordination_documents').insert({
+        coordination_id: coordination.id, title: documentTitle, category: `organisation-${module}`,
+        description: tr('Générée depuis l’organisation', 'Generated from the planning space'),
+        file_url: publicUrl, file_path: filePath, file_type: 'pdf', mime_type: 'application/pdf', file_size: blob.size,
+      });
+      if (insertError) throw insertError;
+      toast.success(tr('PDF ajouté aux documents, visible en consultation', 'PDF added to documents, visible in the shared view'));
+    } catch (error) {
+      console.error('❌ publishModulePdf failed:', error);
+      toast.error(tr('Impossible de publier le PDF', 'Could not publish the PDF'));
+    } finally {
+      setPublishingModule(null);
     }
   };
 
@@ -115,7 +196,13 @@ const JourJHandoffSheets: React.FC = () => {
                 {validatedAt ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
                 {validatedAt ? `${tr('Validé le', 'Approved')} ${formatDate(validatedAt)}` : tr('Pas encore validé', 'Not approved yet')}
               </p>
-              <div className="mt-auto">
+              <div className="mt-auto space-y-2">
+                {validatedAt && (
+                  <Button size="sm" className="min-h-[40px] w-full rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white" onClick={() => publishModulePdf(module.key)} disabled={publishingModule === module.key}>
+                    {publishingModule === module.key ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileDown className="h-4 w-4 mr-2" />}
+                    {tr('Publier en PDF dans Documents', 'Publish as PDF to Documents')}
+                  </Button>
+                )}
                 {validatedAt && module.key !== 'trombinoscope' ? (
                   <Button size="sm" variant="outline" className="min-h-[40px] w-full rounded-none" onClick={() => openModuleSheet(module.key)} disabled={loadingModule === module.key}>
                     {loadingModule === module.key && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}

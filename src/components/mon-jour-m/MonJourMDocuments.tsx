@@ -12,7 +12,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PhotoListTemplate from './PhotoListTemplate';
-import SeatingPlanCard from './SeatingPlanCard';
 import ImportFromDashboardModal from './ImportFromDashboardModal';
 
 interface Document {
@@ -626,14 +625,12 @@ const MonJourMDocuments: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-6">
             {/* Liste Photos Jour-J */}
             {coordination && (
               <PhotoListTemplate coordinationId={coordination.id} />
             )}
 
-            {/* Plan de Table */}
-            <SeatingPlanCard />
           </div>
         </TabsContent>
 
