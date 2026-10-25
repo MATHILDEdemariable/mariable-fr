@@ -5,10 +5,9 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
-import { BarChart, Calculator, Play, Monitor, Package } from 'lucide-react';
+import { BarChart, Play, Monitor, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
-import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import PriceCatalogTab from '@/components/dashboard/catalog/PriceCatalogTab';
 import type { CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
@@ -20,7 +19,7 @@ const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const initialTab = tabParam === 'detailed' || tabParam === 'catalog' ? tabParam : 'calculator';
+  const initialTab = tabParam === 'catalog' ? 'catalog' : 'detailed';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
   const [pendingCatalogSelections, setPendingCatalogSelections] = useState<CatalogImportSelection[]>([]);
@@ -29,7 +28,7 @@ const BudgetPage: React.FC = () => {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'detailed' || tab === 'calculator' || tab === 'catalog') setActiveTab(tab);
+    if (tab === 'detailed' || tab === 'catalog') setActiveTab(tab);
   }, [searchParams]);
 
   const handleTabChange = (value: string) => {
@@ -105,20 +104,13 @@ else query = query.eq('user_id', userData.user.id);
         </div>
 
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-3 bg-gray-100 h-auto p-1 rounded-lg">
+          <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
               value="detailed" 
               className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
             >
               <BarChart className="h-4 w-4 shrink-0" />
               <span>{t('tabs.detailed')}</span>
-            </TabsTrigger>
-            <TabsTrigger 
-              value="calculator" 
-              className="flex items-center justify-center gap-1 data-[state=active]:bg-black data-[state=active]:text-white text-xs sm:text-sm py-3 px-2 min-h-[48px] touch-manipulation rounded-md font-medium"
-            >
-              <Calculator className="h-4 w-4 shrink-0" />
-              <span>{t('tabs.calculator')}</span>
             </TabsTrigger>
             <TabsTrigger 
               value="catalog" 
@@ -138,11 +130,6 @@ else query = query.eq('user_id', userData.user.id);
             </div>
           </TabsContent>
 
-          <TabsContent value="calculator" className="bg-white rounded-lg mt-3 sm:mt-6 overflow-hidden">
-            <div className="bg-white rounded-lg overflow-hidden">
-              <BudgetCalculator />
-            </div>
-          </TabsContent>
 
           <TabsContent value="catalog" className="mt-3 sm:mt-6 overflow-hidden max-w-full">
             <PriceCatalogTab
