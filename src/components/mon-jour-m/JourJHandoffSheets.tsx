@@ -60,7 +60,7 @@ const JourJHandoffSheets: React.FC = () => {
       const { data } = await db.from('wedding_key_people').select('full_name, key_role, phone, notes').eq('wedding_id', weddingId).order('position');
       return { module: 'trombinoscope', people: data || [] };
     }
-    let result: SheetData | null = null;
+    let result = null as SheetData | null;
     const setOpenSheet = (value: SheetData) => { result = value; };
     {
       if (module === 'seating') {
