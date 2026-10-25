@@ -6,6 +6,7 @@ import MonJourMLayout from '@/components/mon-jour-m/MonJourMLayout';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
+import PhotoListReadOnly from '@/components/mon-jour-m/PhotoListReadOnly';
 
 interface ConducteurTask {
   id: string;
@@ -42,6 +43,7 @@ const MonJourMConducteur: React.FC = () => {
   const [team, setTeam] = useState<TeamOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState('Jour J');
+  const [conducteurTab, setConducteurTab] = useState<'steps' | 'photos'>('steps');
 
   const loadConducteur = async (coordinationId: string) => {
     try {
@@ -129,6 +131,18 @@ const MonJourMConducteur: React.FC = () => {
             )}
           </header>
 
+          <div className="grid grid-cols-2 border border-wedding-olive/30" role="group" aria-label={tr('Vue', 'View')}>
+            {(['steps', 'photos'] as const).map((key) => (
+              <button key={key} type="button" aria-pressed={conducteurTab === key} onClick={() => setConducteurTab(key)}
+                className={`min-h-[44px] px-4 text-sm ${conducteurTab === key ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
+                {key === 'steps' ? tr('Étapes', 'Steps') : tr('Liste de photos', 'Photo list')}
+              </button>
+            ))}
+          </div>
+
+          {conducteurTab === 'photos' ? (
+            coordination?.id ? <PhotoListReadOnly coordinationId={coordination.id} editable /> : null
+          ) : (<>
           {availableDays.length > 1 && (
             <div className="flex flex-wrap gap-2" role="group" aria-label={tr('Jour', 'Day')}>
               {availableDays.map((day) => (
@@ -173,6 +187,7 @@ const MonJourMConducteur: React.FC = () => {
               </ol>
             </>
           )}
+          </>)}
         </section>
       </MonJourMLayout>
     </>
