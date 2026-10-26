@@ -65,7 +65,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
     else doc.rect(cx - radius * 1.5, cy - radius * 0.8, radius * 3, radius * 1.6, 'FD');
 
     doc.setTextColor(40, 40, 40);
-    doc.setFontSize(7);
+    doc.setFontSize(8.5);
     doc.setFont(undefined, 'bold');
     doc.text(table.table_name.slice(0, 18), cx, cy - 0.5, { align: 'center' });
     doc.setFont(undefined, 'normal');
@@ -73,13 +73,13 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
     doc.text(`${tableGuests.length}/${table.capacity}`, cx, cy + 3, { align: 'center' });
 
     if (!showGuestNames) return;
-    doc.setFontSize(5);
+    doc.setFontSize(5.5);
     doc.setTextColor(90, 90, 90);
     tableGuests.slice(0, 12).forEach((guest, index) => {
-      doc.text(guest.guest_name.slice(0, 22), cx, cy + radius + 3 + index * 2.2, { align: 'center' });
+      doc.text(guest.guest_name.slice(0, 22), cx, cy + radius + 4 + index * 2.6, { align: 'center' });
     });
     if (tableGuests.length > 12) {
-      doc.text(`+${tableGuests.length - 12}`, cx, cy + radius + 3 + 12 * 2.2, { align: 'center' });
+      doc.text(`+${tableGuests.length - 12}`, cx, cy + radius + 4 + 12 * 2.6, { align: 'center' });
     }
   });
 
