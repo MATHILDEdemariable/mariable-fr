@@ -125,7 +125,8 @@ const AvantJourJPublic = lazy(() => import("./pages/AvantJourJPublic"));
 const ApresJourJPublic = lazy(() => import("./pages/ApresJourJPublic"));
 const GuestAlbumPublic = lazy(() => import("./pages/GuestAlbumPublic"));
 const ProtectedRoute = lazy(() => import("./components/auth/ProtectedRoute"));
-const MobileBottomNav = lazy(() => import("./components/layout/MobileBottomNav"));
+// Import direct : barre affichée partout, un chunk obsolète ne doit jamais provoquer d'écran blanc
+import MobileBottomNav from "./components/layout/MobileBottomNav";
 const ContentCreatorMariage = lazy(() => import("./pages/ContentCreatorMariage"));
 const VibeWedding = lazy(() => import("./pages/VibeWedding"));
 const FeaturesInteractive = lazy(() => import("./pages/FeaturesInteractive"));
