@@ -146,15 +146,6 @@ const DrinksPlanTable: React.FC = () => {
     toast.success(tr('Lien désactivé', 'Link disabled'));
   };
 
-  const handleCopyLink = async () => {
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      toast.success(tr('Lien copié', 'Link copied'));
-    } catch {
-      toast.error(tr('Copie impossible', 'Copy failed'));
-    }
-  };
-
   if (isLoading) {
     return <div className="py-12 text-center text-sm text-muted-foreground">{tr('Chargement…', 'Loading…')}</div>;
   }

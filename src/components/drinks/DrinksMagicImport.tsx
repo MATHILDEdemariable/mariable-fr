@@ -3,7 +3,6 @@ import { Wand2, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { translateDrinkLabel, type DrinkPlanRow } from '@/components/drinks/DrinksPlanTable';
 
@@ -12,7 +11,6 @@ interface Props { isEnglish: boolean; onImport: (rows: DrinkPlanRow[]) => void }
 /** Transforme une note libre (email traiteur, caviste…) en lignes du plan des boissons grâce à l'IA. */
 const DrinksMagicImport: React.FC<Props> = ({ isEnglish, onImport }) => {
   const tr = (fr: string, en: string) => (isEnglish ? en : fr);
-  const [isOpen, setIsOpen] = useState(false);
   const [note, setNote] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [previewRows, setPreviewRows] = useState<DrinkPlanRow[]>([]);
@@ -42,7 +40,7 @@ const DrinksMagicImport: React.FC<Props> = ({ isEnglish, onImport }) => {
   const confirmImport = () => {
     onImport(previewRows);
     toast.success(tr(`${previewRows.length} boisson(s) ajoutée(s)`, `${previewRows.length} drink(s) added`));
-    setPreviewRows([]); setNote(''); setIsOpen(false);
+    setPreviewRows([]); setNote('');
   };
 
   return (
