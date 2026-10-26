@@ -45,7 +45,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
             </div>
           </div>
 
-          <div className="mt-2 sm:mt-4 pb-3 sm:pb-4">
+          <div className="hidden md:block mt-2 sm:mt-4 pb-3 sm:pb-4">
             <div className="bg-gray-100 rounded-lg p-1">
               <div className="grid grid-cols-4 gap-1 max-w-3xl">
                 <Link 

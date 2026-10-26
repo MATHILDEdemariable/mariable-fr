@@ -189,13 +189,19 @@ const JourJHandoffSheets: React.FC = () => {
     new Date(value).toLocaleDateString(isEnglish ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
 
   return (
-    <section className="mb-6 border border-border bg-editorial-beige p-4 sm:p-5 space-y-3" aria-labelledby="handoff-sheets-title">
-      <div>
-        <h2 id="handoff-sheets-title" className="font-serif text-xl">{tr('Transmis par l’organisation', 'Sent from the planning space')}</h2>
-        <p className="text-sm text-muted-foreground">{tr('Dès qu’un module est validé côté organisation, sa fiche est disponible ici, toujours à jour.', 'As soon as a module is approved in the planning space, its sheet is available here, always up to date.')}</p>
-      </div>
+    <section className="mb-6 border-l-2 border-wedding-olive bg-editorial-beige px-4 py-3 space-y-3" aria-labelledby="handoff-sheets-title">
+      <p id="handoff-sheets-title" className="text-sm text-muted-foreground">
+        {tr('Complétez votre ', 'Complete your ')}
+        {MODULES.filter((module) => module.key !== 'ceremony_civil').map((module, index, list) => (
+          <React.Fragment key={module.key}>
+            <Link to={module.path} className="underline text-wedding-olive hover:text-foreground">{(isEnglish ? module.en : module.fr).toLowerCase()}</Link>
+            {index < list.length - 2 ? ', ' : index === list.length - 2 ? tr(' ou ', ' or ') : ''}
+          </React.Fragment>
+        ))}
+        {tr(' pour retrouver les fiches ici en un clic.', ' to find the sheets here in one click.')}
+      </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {MODULES.map((module) => {
+        {MODULES.filter((module) => handoffs[module.key]).map((module) => {
           const validatedAt = handoffs[module.key];
           const Icon = module.icon;
           return (
