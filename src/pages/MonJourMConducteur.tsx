@@ -6,7 +6,6 @@ import MonJourMLayout from '@/components/mon-jour-m/MonJourMLayout';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
-import PhotoListReadOnly from '@/components/mon-jour-m/PhotoListReadOnly';
 
 interface ConducteurTask {
   id: string;
@@ -33,7 +32,7 @@ const formatTaskTime = (value: string | null, locale: string) => {
 };
 
 /** Vue « Conducteur » : même déroulé que la consultation, avec une coche « fait » synchronisée en direct. */
-const MonJourMConducteur: React.FC = () => {
+const MonJourMConducteur: React.FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith('en');
   const tr = (fr: string, en: string) => (isEnglish ? en : fr);
@@ -43,7 +42,6 @@ const MonJourMConducteur: React.FC = () => {
   const [team, setTeam] = useState<TeamOption[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDay, setSelectedDay] = useState('Jour J');
-  const [conducteurTab, setConducteurTab] = useState<'steps' | 'photos'>('steps');
 
   const loadConducteur = async (coordinationId: string) => {
     try {
@@ -110,13 +108,7 @@ const MonJourMConducteur: React.FC = () => {
   const teamNames = (ids: string[] | null) =>
     (ids || []).map((id) => team.find((member) => member.id === id)?.name).filter(Boolean).join(', ');
 
-  return (
-    <>
-      <Helmet>
-        <title>{tr('Conducteur Jour J | Mariable', 'Wedding day run sheet | Mariable')}</title>
-        <meta name="robots" content="noindex" />
-      </Helmet>
-      <MonJourMLayout coordinationId={coordination?.id}>
+  const conducteurContent = (
         <section className="max-w-3xl mx-auto space-y-4">
           <header className="bg-editorial-beige border border-border p-4 sm:p-5 space-y-2">
             <h2 className="font-serif text-2xl">{tr('Conducteur en direct', 'Live run sheet')}</h2>
@@ -131,18 +123,6 @@ const MonJourMConducteur: React.FC = () => {
             )}
           </header>
 
-          <div className="grid grid-cols-2 border border-wedding-olive/30" role="group" aria-label={tr('Vue', 'View')}>
-            {(['steps', 'photos'] as const).map((key) => (
-              <button key={key} type="button" aria-pressed={conducteurTab === key} onClick={() => setConducteurTab(key)}
-                className={`min-h-[44px] px-4 text-sm ${conducteurTab === key ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
-                {key === 'steps' ? tr('Étapes', 'Steps') : tr('Liste de photos', 'Photo list')}
-              </button>
-            ))}
-          </div>
-
-          {conducteurTab === 'photos' ? (
-            coordination?.id ? <PhotoListReadOnly coordinationId={coordination.id} editable /> : null
-          ) : (<>
           {availableDays.length > 1 && (
             <div className="flex flex-wrap gap-2" role="group" aria-label={tr('Jour', 'Day')}>
               {availableDays.map((day) => (
@@ -187,9 +167,18 @@ const MonJourMConducteur: React.FC = () => {
               </ol>
             </>
           )}
-          </>)}
         </section>
-      </MonJourMLayout>
+  );
+
+  if (embedded) return conducteurContent;
+
+  return (
+    <>
+      <Helmet>
+        <title>{tr('Conducteur Jour J | Mariable', 'Wedding day run sheet | Mariable')}</title>
+        <meta name="robots" content="noindex" />
+      </Helmet>
+      <MonJourMLayout coordinationId={coordination?.id}>{conducteurContent}</MonJourMLayout>
     </>
   );
 };

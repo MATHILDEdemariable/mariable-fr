@@ -5,12 +5,13 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact
+  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact, Camera
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import SiteInternetModal from './SiteInternetModal';
 import { useWedding } from '@/contexts/WeddingContext';
@@ -215,23 +216,28 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </Link>
 
 
-        <DropdownMenu>
-          <DropdownMenuTrigger className={cn(linkClass(isJourMActive()), 'w-full justify-start')} disabled={isReaderMode}>
-            <Calendar className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.weddingDay')}</span>
-            <span className="ml-2 px-1.5 py-0.5 text-xs bg-wedding-olive text-white rounded-full font-semibold">{t('header.exclusive')}</span>
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
-            {jourMItems.map(subItem => (
-              <DropdownMenuItem key={subItem.path} asChild>
-                <Link to={isReaderMode ? '#' : subItem.path} onClick={preventReader} className={cn("flex items-center px-2 py-2 text-sm w-full", isActive(subItem.path) ? 'bg-wedding-olive/10 text-wedding-olive font-medium' : 'text-gray-600 hover:bg-gray-50')}>
-                  {subItem.icon}<span className="ml-2">{subItem.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <HoverCard openDelay={150} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <Link to={isReaderMode ? '#' : '/mon-jour-m'} onClick={preventReader} className={linkClass(isJourMActive())}>
+              <Calendar className="h-4 w-4" />
+              <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Wedding day run' : 'Déroulé Jour J'}</span>
+              <span className={cn('ml-auto px-1.5 py-0.5 text-[10px] font-semibold tracking-wider', isJourMActive() ? 'bg-background text-wedding-olive' : 'bg-wedding-olive text-white')}>LIVE</span>
+            </Link>
+          </HoverCardTrigger>
+          <HoverCardContent side="right" align="start" className="w-80 rounded-none bg-[#F8F5EF] border-wedding-olive/30">
+            <p className="font-serif text-lg mb-3">{isEnglish ? 'Your wedding day cockpit' : 'Votre cockpit pour le Jour J'}</p>
+            <ul className="space-y-2.5 text-sm">
+              <li><strong>{isEnglish ? 'Live schedule' : 'Planning & conducteur'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Minute-by-minute run sheet, steps ticked live on the day.' : 'Déroulé minute par minute, étapes cochées en direct le jour J.'}</span></li>
+              <li><strong>{isEnglish ? 'Team & contacts' : 'Équipe & contacts'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Vendors and key people at hand.' : 'Prestataires et personnes clés sous la main.'}</span></li>
+              <li><strong>{isEnglish ? 'Official sheets' : 'Fiches officielles'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Validated seating, ceremony, decor and photos as PDFs.' : 'Plan de table, cérémonie, déco et photos validés en PDF.'}</span></li>
+            </ul>
+          </HoverCardContent>
+        </HoverCard>
+
+        <Link to={isReaderMode ? '#' : '/dashboard/liste-photos'} onClick={preventReader} className={linkClass(isActive('/dashboard/liste-photos'))}>
+          <Camera className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Photo list' : 'Liste de photos'}</span>
+        </Link>
 
         <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={preventReader} className={linkClass(isActive('/dashboard/seating-plan'))}>
           <Table className="h-4 w-4" />
