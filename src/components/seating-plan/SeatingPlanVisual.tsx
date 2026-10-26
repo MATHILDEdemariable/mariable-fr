@@ -45,21 +45,63 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
 
-  // Affichage & configuration de salle (mémorisés par plan sur cet appareil)
-  const roomStorageKey = `seating-room-${tables[0]?.seating_plan_id ?? 'default'}`;
+  // Configuration de salle partagée en ligne (wedding_tool_states, accès par mariage : pro + couple)
+  const seatingPlanId = tables[0]?.seating_plan_id;
+  const roomToolKey = `seating-room-${seatingPlanId ?? 'default'}`;
   const [showGuestNames, setShowGuestNames] = useState(true);
   const [roomConfig, setRoomConfig] = useState<RoomConfig>(DEFAULT_ROOM);
   const [areaInput, setAreaInput] = useState('');
+  const roomStateRef = useRef<{ id: string | null; weddingId: string | null }>({ id: null, weddingId: null });
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    try {
-      const saved = localStorage.getItem(roomStorageKey);
-      if (saved) setRoomConfig({ ...DEFAULT_ROOM, ...JSON.parse(saved) });
-    } catch (error) { console.error('Erreur lecture configuration salle:', error); }
-  }, [roomStorageKey]);
+    if (!seatingPlanId) return;
+    const loadRoomConfig = async () => {
+      try {
+        const { data: plan } = await supabase.from('seating_plans').select('wedding_id').eq('id', seatingPlanId).maybeSingle();
+        const weddingId = plan?.wedding_id ?? null;
+        let query = supabase.from('wedding_tool_states').select('id, state').eq('tool_key', roomToolKey);
+        query = weddingId ? query.eq('wedding_id', weddingId) : query.is('wedding_id', null);
+        const { data, error } = await query.order('updated_at', { ascending: false }).limit(1);
+        if (error) throw error;
+        roomStateRef.current = { id: data?.[0]?.id ?? null, weddingId };
+        if (data?.[0]) {
+          setRoomConfig({ ...DEFAULT_ROOM, ...(data[0].state as Partial<RoomConfig>) });
+        } else {
+          // Reprise d'une ancienne configuration enregistrée sur cet appareil
+          const legacy = localStorage.getItem(`seating-room-${seatingPlanId}`);
+          if (legacy) setRoomConfig({ ...DEFAULT_ROOM, ...JSON.parse(legacy) });
+        }
+      } catch (error) { console.error('Erreur lecture configuration salle:', error); }
+    };
+    loadRoomConfig();
+  }, [seatingPlanId, roomToolKey]);
+  const saveRoomConfig = (config: RoomConfig) => {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+    saveTimerRef.current = setTimeout(async () => {
+      try {
+        const { id, weddingId } = roomStateRef.current;
+        if (id) {
+          const { error } = await supabase.from('wedding_tool_states').update({ state: config as any }).eq('id', id);
+          if (error) throw error;
+        } else {
+          const { data: auth } = await supabase.auth.getUser();
+          if (!auth.user) return;
+          const { data, error } = await supabase.from('wedding_tool_states')
+            .insert({ user_id: auth.user.id, wedding_id: weddingId, tool_key: roomToolKey, state: config as any })
+            .select('id').single();
+          if (error) throw error;
+          roomStateRef.current.id = data.id;
+        }
+      } catch (error) {
+        console.error('Erreur sauvegarde salle:', error);
+        toast({ title: tr('Configuration de salle non enregistrée', 'Room setup not saved'), variant: 'destructive' });
+      }
+    }, 600);
+  };
   const updateRoom = (patch: Partial<RoomConfig>) => {
     setRoomConfig((prev) => {
       const next = { ...prev, ...patch };
-      try { localStorage.setItem(roomStorageKey, JSON.stringify(next)); } catch (error) { console.error('Erreur sauvegarde salle:', error); }
+      saveRoomConfig(next);
       return next;
     });
   };

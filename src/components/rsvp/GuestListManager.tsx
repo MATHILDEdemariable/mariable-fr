@@ -258,7 +258,39 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
           </CardContent>
         </Card>
       ) : (
-        <Card>
+        <>
+        {/* Mobile : cartes tactiles, pas de défilement horizontal */}
+        <ul className="md:hidden space-y-2">
+          {filteredGuests.map((guest) => (
+            <li key={guest.id} className="border border-border bg-background p-3">
+              <div className="flex items-start justify-between gap-2">
+                <div className="min-w-0">
+                  <p className="font-medium truncate">{guest.guest_first_name} {guest.guest_last_name}</p>
+                  <p className="text-xs text-muted-foreground truncate">{[guest.guest_email, guest.guest_phone].filter(Boolean).join(' · ') || '-'}</p>
+                </div>
+                <div className="flex shrink-0">
+                  <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={tr('Modifier', 'Edit')} onClick={() => handleEdit(guest)}><Pencil className="h-4 w-4" /></Button>
+                  <Button variant="ghost" size="icon" className="h-11 w-11" aria-label={tr('Supprimer', 'Delete')} onClick={() => handleDelete(guest.id)}><Trash2 className="h-4 w-4 text-destructive" /></Button>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 mt-2">
+                <Badge variant={guest.guest_type === 'adult' ? 'default' : 'secondary'}>{guest.guest_type === 'adult' ? tr('Adulte', 'Adult') : tr('Enfant', 'Child')}</Badge>
+                <select
+                  value={guest.rsvp_status}
+                  aria-label={tr('Statut', 'Status')}
+                  onChange={(e) => handleStatusChange(guest.id, e.target.value as 'pending' | 'confirmed' | 'declined')}
+                  className={`min-h-[36px] px-3 rounded-full text-sm font-medium border ${getStatusBadge(guest.rsvp_status).color}`}
+                >
+                  <option value="pending">{tr('En attente', 'Pending')}</option>
+                  <option value="confirmed">{tr('Confirmé', 'Confirmed')}</option>
+                  <option value="declined">{tr('Absent', 'Declined')}</option>
+                </select>
+              </div>
+              {guest.notes && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{guest.notes}</p>}
+            </li>
+          ))}
+        </ul>
+        <Card className="hidden md:block">
           <CardContent className="p-0">
             <div className="overflow-x-auto">
               <table className="w-full">
@@ -344,6 +376,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
             </div>
           </CardContent>
         </Card>
+        </>
       )}
 
       <GuestImportDialog

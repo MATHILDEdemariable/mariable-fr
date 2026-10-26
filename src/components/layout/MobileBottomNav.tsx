@@ -41,11 +41,11 @@ interface NavItem {
   path: string;
 }
 
+// Même barre dans tout le mariage (dashboard + Jour J) : le Jour J en direct, le reste dans "Organisation"
 const mainNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard' },
-  { icon: CheckSquare, label: 'Check-list', path: '/dashboard/checklist-mariage' },
-  { icon: Calculator, label: 'Budget', path: '/dashboard/budget' },
-  { icon: Calendar, label: 'Jour-J', path: '/mon-jour-m/planning' },
+  { icon: Calendar, label: 'Planning', path: '/mon-jour-m/planning' },
+  { icon: Users, label: 'Équipe', path: '/mon-jour-m/equipe' },
+  { icon: FileText, label: 'Documents', path: '/mon-jour-m/documents' },
 ];
 
 const proNavItems: NavItem[] = [
@@ -54,32 +54,32 @@ const proNavItems: NavItem[] = [
   { icon: BookOpen, label: 'Carnet', path: '/pro/carnet-adresses' },
 ];
 
-// Pro à l'intérieur d'un mariage : retour aux mariages + outils clés du dossier
+// Pro dans un mariage : retour aux mariages + même barre que le couple
 const proWeddingNavItems: NavItem[] = [
   { icon: ArrowLeft, label: 'Mariages', path: '/pro#mes-mariages' },
-  { icon: Calendar, label: 'Jour J', path: '/mon-jour-m/planning' },
-  { icon: Users, label: 'Invités', path: '/dashboard/rsvp' },
-  { icon: Calculator, label: 'Budget', path: '/dashboard/budget' },
+  ...mainNavItems,
 ];
 
 const drawerNavItems: NavItem[] = [
+  { icon: LayoutDashboard, label: 'Accueil', path: '/dashboard' },
   { icon: ClipboardList, label: 'Rétroplanning', path: '/dashboard/mon-mariage/retroplanning' },
-  { icon: Users, label: 'RSVP', path: '/dashboard/rsvp' },
+  { icon: CheckSquare, label: 'Check-list', path: '/dashboard/checklist-mariage' },
+  { icon: Calculator, label: 'Budget', path: '/dashboard/budget' },
+  { icon: Users, label: 'Invités & RSVP', path: '/dashboard/rsvp' },
   { icon: Utensils, label: 'Plan de table', path: '/dashboard/seating-plan' },
+  { icon: Utensils, label: 'Boissons', path: '/dashboard/drinks' },
   { icon: Hotel, label: 'Hébergements', path: '/dashboard/accommodations' },
   { icon: Church, label: 'Cérémonie', path: '/dashboard/ceremonie' },
   { icon: Building2, label: 'Mairie', path: '/dashboard/mairie-civil' },
   { icon: Users, label: 'Prestataires', path: '/dashboard/suivi' },
   { icon: Sparkles, label: 'Décoration', path: '/dashboard/decoration' },
   { icon: Contact, label: 'Trombinoscope', path: '/dashboard/trombinoscope' },
-  { icon: FileText, label: 'Documents', path: '/mon-jour-m/documents' },
+  { icon: MessageSquare, label: 'Liste photos', path: '/dashboard/liste-photos' },
   { icon: QrCode, label: 'QR Code', path: '/dashboard/qr-code' },
   { icon: BookOpen, label: 'Guides', path: '/dashboard/guides' },
 ];
 
-const bonusItems: NavItem[] = [
-  { icon: Sparkles, label: 'Assistant IA', path: '/dashboard/assistant' },
-];
+const bonusItems: NavItem[] = [];
 
 // Routes où on masque la nav (marketing, admin, embeds, auth)
 const HIDDEN_PATTERNS = [
