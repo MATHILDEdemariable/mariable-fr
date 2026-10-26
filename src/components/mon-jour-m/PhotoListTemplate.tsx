@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Plus, Trash2, Camera, Save, RotateCcw, Download } from 'lucide-react';
+import { Plus, Trash2, Camera, Save, RotateCcw, Download, CheckCircle2 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
 import PhotoGuestSelector from './PhotoGuestSelector';
@@ -340,7 +340,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
             <Button
               variant="outline"
               size="sm"
-              onClick={handleExportPDF}
+              onClick={() => handleExportPDF()}
               className="text-gray-600"
             >
               <Download className="h-4 w-4 mr-1" />
@@ -354,6 +354,15 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
             >
               <RotateCcw className="h-4 w-4 mr-1" />
               {t('photoList.reset')}
+            </Button>
+            <Button
+              size="sm"
+              onClick={handleValidateForJourJ}
+              disabled={isPublishing}
+              className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+            >
+              <CheckCircle2 className="h-4 w-4 mr-1" />
+              {isPublishing ? '…' : (i18n.language?.startsWith('en') ? 'Validate for the wedding day' : 'Valider pour le Jour J')}
             </Button>
             <Button
               size="sm"
