@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ArrowDown, ArrowUp, Download, FileText, Loader2, Lock, Plus, Trash2, Upload } from 'lucide-react';
+import { ArrowDown, ArrowUp, CheckCircle2, Download, FileText, Loader2, Lock, Plus, Trash2, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -116,6 +116,9 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
       try {
         const { data: row, error } = await db.from('wedding_ceremony_plans').select('data').eq('wedding_id', weddingId).eq('ceremony_type', type).maybeSingle();
         if (error) throw error;
+        const { data: handoff } = await db.from('wedding_jour_j_handoffs').select('validated_at').eq('wedding_id', weddingId)
+          .eq('module', type === 'civil' ? 'ceremony_civil' : 'ceremony_religious').maybeSingle();
+        setValidatedAt(handoff?.validated_at ?? null);
         setData(row?.data || {
           music: type === 'religious' ? MUSIC_MOMENTS.map((moment) => ({ moment: lab(moment), title: '', artist: '', timecode: '', launcher: '' })) : [],
         });
@@ -275,11 +278,17 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
             </p>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           {isSaving && <span className="text-xs text-muted-foreground">{tr('Enregistrement…', 'Saving…')}</span>}
-          <Button onClick={exportSummary} className="rounded-none min-h-[44px] bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+          <Button variant="outline" onClick={exportSummary} className="rounded-none min-h-[44px]">
             <Download className="h-4 w-4 mr-2" />{tr('Fiche synthétique PDF', 'Summary sheet PDF')}
           </Button>
+          {canEdit && (
+            <Button onClick={validateForJourJ} disabled={isValidating} className="rounded-none min-h-[44px] bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+              {isValidating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <CheckCircle2 className="h-4 w-4 mr-2" />}
+              {validatedAt ? tr('Mettre à jour pour le Jour J', 'Update for the big day') : tr('Valider pour le Jour J', 'Approve for the big day')}
+            </Button>
+          )}
         </div>
       </header>
 
