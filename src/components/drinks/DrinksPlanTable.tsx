@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Plus, Trash2, Share2, Copy, Link2Off, Printer } from 'lucide-react';
+import { Plus, Trash2, Share2, Link2Off, Printer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { supabase } from '@/integrations/supabase/client';
@@ -124,7 +124,6 @@ const DrinksPlanTable: React.FC = () => {
   const addRow = (moment?: string) => setRows((prev) => [...prev, createEmptyRow(moment)]);
   const deleteRow = (rowId: string) => setRows((prev) => prev.filter((row) => row.id !== rowId));
 
-  const shareUrl = shareToken ? `${window.location.origin}/boissons-partagees/${shareToken}` : '';
 
   const handleCreateShareLink = async () => {
     const token = shareToken || crypto.randomUUID().replace(/-/g, '');
