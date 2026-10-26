@@ -376,6 +376,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
             </div>
           </CardContent>
         </Card>
+        </>
       )}
 
       <GuestImportDialog
