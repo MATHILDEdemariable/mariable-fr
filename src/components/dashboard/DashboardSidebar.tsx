@@ -5,12 +5,13 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact
+  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact, Camera
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card';
 import { ProblemModal } from '@/components/support/ProblemModal';
 import SiteInternetModal from './SiteInternetModal';
 import { useWedding } from '@/contexts/WeddingContext';
