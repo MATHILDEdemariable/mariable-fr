@@ -2,9 +2,10 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Calendar, Users, FileText, Lightbulb, ListChecks, Camera } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, FileText, Lightbulb } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SharePublicButton from './SharePublicButton';
+import LanguageToggle from '@/components/LanguageToggle';
 import { useWedding } from '@/contexts/WeddingContext';
 
 interface MonJourMLayoutProps {
@@ -36,16 +37,17 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
               <h1 className="text-lg sm:text-2xl font-semibold text-gray-900 truncate">{t('layout.title')}</h1>
             </div>
 
-            {coordinationId && currentPath.includes('/planning') && (
-              <div className="shrink-0">
+            <div className="flex items-center gap-2 shrink-0">
+              <LanguageToggle />
+              {coordinationId && currentPath.includes('/planning') && (
                 <SharePublicButton coordinationId={coordinationId} />
-              </div>
-            )}
+              )}
+            </div>
           </div>
 
           <div className="mt-2 sm:mt-4 pb-3 sm:pb-4">
             <div className="bg-gray-100 rounded-lg p-1">
-              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 max-w-4xl">
+              <div className="grid grid-cols-4 gap-1 max-w-3xl">
                 <Link 
                   to="/mon-jour-m/equipe" 
                   className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
@@ -80,17 +82,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                   <span className="text-center leading-tight font-medium">{t('layout.tabs.documents')}</span>
                 </Link>
                 <Link 
-                  to="/mon-jour-m/photos" 
-                  className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
-                    currentPath.includes('/photos') 
-                      ? 'bg-wedding-olive text-white shadow-sm' 
-                      : 'text-gray-600 hover:bg-white hover:text-wedding-olive'
-                  }`}
-                >
-                  <Camera className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">{isEnglish ? 'Photos' : 'Liste photos'}</span>
-                </Link>
-                <Link 
                   to="/mon-jour-m/conseils" 
                   className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
                     currentPath.includes('/conseils') 
@@ -100,17 +91,6 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 >
                   <Lightbulb className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                   <span className="text-center leading-tight font-medium">{t('layout.tabs.advice')}</span>
-                </Link>
-                <Link 
-                  to="/mon-jour-m/conducteur" 
-                  className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
-                    currentPath.includes('/conducteur') 
-                      ? 'bg-wedding-olive text-white shadow-sm' 
-                      : 'text-gray-600 hover:bg-white hover:text-wedding-olive'
-                  }`}
-                >
-                  <ListChecks className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="text-center leading-tight font-medium">{t('layout.tabs.live')}</span>
                 </Link>
               </div>
             </div>
