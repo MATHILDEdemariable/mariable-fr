@@ -8,6 +8,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
 import { toast } from 'sonner';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
+import DrinksMagicImport from '@/components/drinks/DrinksMagicImport';
 
 export interface DrinkPlanRow {
   id: string;
@@ -182,6 +183,7 @@ const DrinksPlanTable: React.FC = () => {
           <JourJHandoffButton module="drinks" className="mt-3" />
         </div>
         <div className="flex flex-wrap gap-2">
+          <DrinksMagicImport isEnglish={!!isEnglish} onImport={(newRows) => setRows((prev) => [...prev, ...newRows])} />
           <Button onClick={handleCreateShareLink} className="bg-editorial-olive hover:bg-editorial-olive/90 text-white min-h-[44px]">
             <Share2 className="h-4 w-4 mr-2" />
             {tr('Partager en consultation', 'Share view-only')}
