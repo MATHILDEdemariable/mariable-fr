@@ -3,6 +3,8 @@ import { z } from 'npm:zod@3';
 
 const NOTION_URL = 'https://wary-grease-34e.notion.site/Livre-blanc-l-IA-pour-les-Wedding-Planners-3eb894d36ac481e3a65dde6c3659a78a';
 const PDF_URL = 'https://mariable.fr/__l5e/assets-v1/03788ddd-359f-45ef-89cc-34196952ad81/playbook-ia-wedding-planner.pdf';
+const NOTION_ENGLISH_URL = 'https://wary-grease-34e.notion.site/White-paper-AI-for-Wedding-Planners-3f1894d36ac4815b83eeca7b1b307215';
+const PDF_ENGLISH_URL = 'https://mariable.fr/__l5e/assets-v1/b2ce1330-ac07-4f5e-9790-b56ee348fd50/ai-playbook-wedding-planner-en.pdf';
 
 const BodySchema = z.object({
   fullName: z.string().trim().min(1).max(100),
@@ -28,13 +30,18 @@ Deno.serve(async (req) => {
     const button = (href: string, label: string, dark: boolean) =>
       `<a href="${href}" style="display:inline-block;padding:14px 24px;margin:6px 6px 6px 0;text-decoration:none;letter-spacing:1px;font-size:13px;${dark ? 'background:#111;color:#fff' : 'border:1px solid #111;color:#111'}">${label}</a>`;
 
+    const versionBlock = (title: string, onlineUrl: string, onlineLabel: string, pdfUrl: string, pdfLabel: string) =>
+      `<p style="letter-spacing:2px;font-size:11px;color:#63745A;margin:24px 0 4px">${title}</p><p style="margin:0 0 8px">${button(onlineUrl, onlineLabel, true)}${button(pdfUrl, pdfLabel, false)}</p>`;
+    const frenchBlock = versionBlock('VERSION FRANÇAISE', NOTION_URL, 'LIRE EN LIGNE', PDF_URL, 'TÉLÉCHARGER LE PDF');
+    const englishBlock = versionBlock('ENGLISH VERSION', NOTION_ENGLISH_URL, 'READ ONLINE', PDF_ENGLISH_URL, 'DOWNLOAD PDF');
+
     const html = `
 <div style="background:#F8F5EF;padding:40px 16px;font-family:Arial,sans-serif;color:#111">
   <div style="max-width:560px;margin:0 auto;background:#fff;padding:40px">
     <p style="letter-spacing:3px;font-size:11px;color:#63745A;margin:0 0 12px">${isEnglish ? 'WHITE PAPER' : 'LIVRE BLANC'}</p>
     <h1 style="font-family:Georgia,serif;font-weight:400;font-size:28px;margin:0 0 20px">${isEnglish ? `Here is your AI Playbook, ${name}` : `Voici votre Playbook IA, ${name}`}</h1>
-    <p style="line-height:1.6">${isEnglish ? 'The AI Playbook for Wedding Planners (in French): a 4-step method, 6 real use cases and 11 ready-to-use prompts.' : "Le Playbook IA du Wedding Planner : une méthode en 4 étapes, 6 cas d'usage réels et 11 prompts prêts à copier-coller."}</p>
-    <p style="margin:24px 0">${button(NOTION_URL, isEnglish ? 'READ ONLINE' : 'LIRE EN LIGNE', true)}${button(PDF_URL, isEnglish ? 'DOWNLOAD PDF' : 'TÉLÉCHARGER LE PDF', false)}</p>
+    <p style="line-height:1.6">${isEnglish ? 'The AI Playbook for Wedding Planners: a 4-step method, 6 real use cases and 11 ready-to-use prompts. Available in English and French.' : "Le Playbook IA du Wedding Planner : une méthode en 4 étapes, 6 cas d'usage réels et 11 prompts prêts à copier-coller. Disponible en français et en anglais."}</p>
+    ${isEnglish ? `${englishBlock}${frenchBlock}` : `${frenchBlock}${englishBlock}`}
     <p style="line-height:1.6">${isEnglish ? 'For the wedding day itself, try Mariable Pro:' : 'Pour le jour J, découvrez Mariable Pro :'} <a href="https://mariable.fr/logiciel-wedding-planner" style="color:#63745A">mariable.fr/logiciel-wedding-planner</a></p>
     <p style="line-height:1.6">${isEnglish ? 'Enjoy,' : 'Bonne lecture,'}<br/><span style="color:#63745A">Mathilde de Mariable</span></p>
   </div>
