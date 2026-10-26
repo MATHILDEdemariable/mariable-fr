@@ -46,7 +46,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
 
   // Affichage & configuration de salle (mémorisés par plan sur cet appareil)
-  const roomStorageKey = `seating-room-${tables[0]?.plan_id ?? 'default'}`;
+  const roomStorageKey = `seating-room-${tables[0]?.seating_plan_id ?? 'default'}`;
   const [showGuestNames, setShowGuestNames] = useState(true);
   const [roomConfig, setRoomConfig] = useState<RoomConfig>(DEFAULT_ROOM);
   const [areaInput, setAreaInput] = useState('');
@@ -388,9 +388,9 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {/* Tables */}
       {tables.map(table => {
         const position = tablePositions[table.id] || { x: 100, y: 100 };
-        const comfortDiameter = Math.max(size.width, size.height) + 3 * ppm;
         const tableGuests = getTableGuests(table.id);
         const size = getTableSize(table.shape, table.capacity);
+        const comfortDiameter = Math.max(size.width, size.height) + 3 * ppm;
         const isFull = tableGuests.length >= table.capacity;
         const isDragging = draggingTable === table.id;
 
