@@ -188,27 +188,39 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h2 className="text-2xl font-bold">{tr("Liste d'invités", 'Guest list')}</h2>
-          <p className="text-muted-foreground">
+          <h2 className="text-2xl font-serif font-bold">{tr("Liste d'invités", 'Guest list')}</h2>
+          <div className="mt-3 grid grid-cols-3 gap-2 md:hidden">
+            {[
+              [guests.length, tr('Invités', 'Guests')],
+              [guests.filter(g => g.rsvp_status === 'confirmed').length, tr('Confirmés', 'Confirmed')],
+              [guests.filter(g => g.rsvp_status === 'pending').length, tr('En attente', 'Pending')],
+            ].map(([value, label]) => (
+              <div key={String(label)} className="border border-border p-2 text-center">
+                <p className="text-xl font-serif">{value}</p>
+                <p className="text-xs text-muted-foreground">{label}</p>
+              </div>
+            ))}
+          </div>
+          <p className="hidden md:block text-muted-foreground">
             {guests.length} {tr('invité', 'guest')}{guests.length > 1 ? 's' : ''} • 
             {guests.filter(g => g.guest_type === 'adult').length} {tr('adulte', 'adult')}{guests.filter(g => g.guest_type === 'adult').length > 1 ? 's' : ''} • 
             {guests.filter(g => g.guest_type === 'child').length} {tr('enfant', 'child')}{guests.filter(g => g.guest_type === 'child').length > 1 ? tr('s', 'ren') : ''}
           </p>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="hidden md:block text-sm text-muted-foreground mt-1">
             ✅ {guests.filter(g => g.rsvp_status === 'confirmed').length} {tr('confirmé', 'confirmed')}{!isEn && guests.filter(g => g.rsvp_status === 'confirmed').length > 1 ? 's' : ''} • 
             ⏳ {guests.filter(g => g.rsvp_status === 'pending').length} {tr('en attente', 'pending')} • 
             ❌ {guests.filter(g => g.rsvp_status === 'declined').length} {tr('absent', 'declined')}{!isEn && guests.filter(g => g.rsvp_status === 'declined').length > 1 ? 's' : ''}
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <Button variant="outline" onClick={exportToCSV}>
+        <div className="grid grid-cols-2 gap-2 md:flex md:items-center md:gap-3">
+          <Button variant="outline" className="hidden md:inline-flex" onClick={exportToCSV}>
             <Download className="h-4 w-4 mr-2" />
             {tr('Export tableur', 'Export spreadsheet')}
           </Button>
-          <Button variant="outline" onClick={() => setIsImportOpen(true)}>
+          <Button variant="outline" className="hidden md:inline-flex" onClick={() => setIsImportOpen(true)}>
             <Upload className="h-4 w-4 mr-2" />
             {tr('Importer un fichier', 'Import a file')}
           </Button>
