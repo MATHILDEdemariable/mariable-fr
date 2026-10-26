@@ -11,7 +11,7 @@ import { Plus, FileText, Download, Eye, Edit, Trash2, Upload, File, ExternalLink
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/components/ui/use-toast';
-import PhotoListTemplate from './PhotoListTemplate';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import ImportFromDashboardModal from './ImportFromDashboardModal';
 
 interface Document {
@@ -88,72 +88,37 @@ const MonJourMDocuments: React.FC = () => {
     description: ''
   });
 
+  // Même coordination que les fiches d'organisation et le lien de consultation (mariage partagé inclus)
+  const { coordination: sharedCoordination } = useMonJourMCoordination();
+
   useEffect(() => {
-    initializeData();
-  }, []);
+    if (!sharedCoordination) return;
+    const activeCoordination = sharedCoordination as WeddingCoordination;
+    setCoordination(activeCoordination);
+    setIsLoading(true);
+    Promise.all([
+      loadDocuments(activeCoordination.id),
+      loadPinterestLinks(activeCoordination.id),
+      loadTeamMembers(activeCoordination.id)
+    ])
+      .catch((error) => {
+        console.error('Erreur initialisation documents:', error);
+        toast({ title: t("documents.toasts.error"), description: t("documents.toasts.loadError"), variant: "destructive" });
+      })
+      .finally(() => setIsLoading(false));
 
-  const initializeData = async () => {
-    try {
-      setIsLoading(true);
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        toast({
-          title: t("documents.toasts.error"),
-          description: t("documents.toasts.loginRequired"),
-          variant: "destructive"
-        });
-        return;
-      }
-
-      // Récupérer ou créer la coordination
-      let { data: coordinations, error: coordError } = await supabase
-        .from('wedding_coordination')
-        .select('*')
-        .eq('user_id', user.id)
-        .order('created_at', { ascending: false });
-
-      if (coordError) throw coordError;
-
-      let activeCoordination: WeddingCoordination;
-
-      if (coordinations && coordinations.length > 0) {
-        activeCoordination = coordinations[0];
-      } else {
-        const { data: newCoordination, error: createError } = await supabase
-          .from('wedding_coordination')
-          .insert({
-            user_id: user.id,
-            title: 'Mon Mariage',
-            description: 'Organisation de mon mariage'
-          })
-          .select()
-          .single();
-
-        if (createError) throw createError;
-        activeCoordination = newCoordination;
-      }
-
-      setCoordination(activeCoordination);
-
-      // Charger les documents, Pinterest et l'équipe
-      await Promise.all([
-        loadDocuments(activeCoordination.id),
-        loadPinterestLinks(activeCoordination.id),
-        loadTeamMembers(activeCoordination.id)
-      ]);
-
-    } catch (error) {
-      console.error('Erreur initialisation:', error);
-      toast({
-        title: t("documents.toasts.error"),
-        description: t("documents.toasts.loadError"),
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    // Fiches publiées depuis l'organisation : apparition immédiate
+    const channel = supabase
+      .channel(`jour-m-docs-${activeCoordination.id}-${Math.random().toString(36).slice(2)}`)
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'coordination_documents', filter: `coordination_id=eq.${activeCoordination.id}` }, () => loadDocuments(activeCoordination.id))
+      .subscribe();
+    const handleDocumentsUpdated = () => loadDocuments(activeCoordination.id);
+    window.addEventListener('jour-m-documents-updated', handleDocumentsUpdated);
+    return () => {
+      supabase.removeChannel(channel);
+      window.removeEventListener('jour-m-documents-updated', handleDocumentsUpdated);
+    };
+  }, [sharedCoordination?.id]);
 
   const loadDocuments = async (coordId: string) => {
     try {
@@ -161,7 +126,7 @@ const MonJourMDocuments: React.FC = () => {
         .from('coordination_documents')
         .select('*')
         .eq('coordination_id', coordId)
-        .eq('category', 'jour-m')
+        .not('category', 'in', '(photo_list,photo_list_status)')
         .order('created_at', { ascending: false });
 
       if (error) throw error;
@@ -608,32 +573,6 @@ const MonJourMDocuments: React.FC = () => {
       </div>
 
       <Tabs defaultValue="documents" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.mine")}</TabsTrigger>
-          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.standard")}</TabsTrigger>
-        </TabsList>
-
-        {/* Onglet Documents Standard */}
-        <TabsContent value="standard" className="space-y-6">
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-wedding-olive" />
-              <h3 className="text-lg font-medium">{t("documents.preloaded")}</h3>
-            </div>
-            <p className="text-sm text-gray-600">
-              {t("documents.preloadedHint")}
-            </p>
-          </div>
-
-          <div className="grid gap-6">
-            {/* Liste Photos Jour-J */}
-            {coordination && (
-              <PhotoListTemplate coordinationId={coordination.id} />
-            )}
-
-          </div>
-        </TabsContent>
-
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">
           <div className="flex justify-between items-center gap-2 flex-wrap">
@@ -851,7 +790,7 @@ const MonJourMDocuments: React.FC = () => {
               ) : (
                 <div className="text-center py-12 text-gray-500">
                   <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg mb-2">{t("documents.toasts.deleted")}</p>
+                  <p className="text-lg mb-2">{t("documents.empty", { defaultValue: "Aucun document pour le moment" })}</p>
                 </div>
               )}
             </CardContent>

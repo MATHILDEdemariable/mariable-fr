@@ -37,3 +37,10 @@
 - [x] Décoration : responsables Traiteur/Décorateur/Fleuriste + vue « Par responsable »
 - [x] Budget identique couple/pro : sans calculatrice, 3 acomptes datés, rappel mail, ventilation cash/virement → Enveloppes Jour J
 - [x] Cérémonie religieuse/laïque (cortège, musiques, discours, fiche PDF) et Mairie (dossier, témoins, timing, badge partagé)
+
+- [x] Mon Jour J Documents : fiches publiées visibles dans l'app et la consultation
+- [x] Supprimer onglet Documents standard, onglet dédié Liste photos avec validation Jour J
+- [x] Menu : Décoration sous Jour J ; retirer Calculatrice budget en vue Pro
+- [x] Mairie : onglets Outil / Infos
+- [x] RSVP : bouton personnaliser -> onglet Mini-site
+- [x] Plan de table : lisibilité, vue épurée, PDF, salle à l'échelle

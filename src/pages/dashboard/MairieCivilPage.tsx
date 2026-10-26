@@ -34,6 +34,7 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import CeremonyPlanner from '@/components/ceremony/CeremonyPlanner';
 
 const CONDITION_ICONS = [Calendar, Heart, Users, Scale];
@@ -204,7 +205,15 @@ const MairieCivilPage: React.FC = () => {
           </div>
         </div>
 
-        <CeremonyPlanner type="civil" />
+        <Tabs defaultValue="outil" className="w-full">
+          <TabsList className="grid w-full grid-cols-2 rounded-none">
+            <TabsTrigger value="outil" className="rounded-none">{i18n.language?.startsWith('en') ? 'Planning tool' : 'Outil'}</TabsTrigger>
+            <TabsTrigger value="infos" className="rounded-none">{i18n.language?.startsWith('en') ? 'Info & formalities' : 'Infos'}</TabsTrigger>
+          </TabsList>
+          <TabsContent value="outil" className="mt-6">
+            <CeremonyPlanner type="civil" />
+          </TabsContent>
+          <TabsContent value="infos" className="mt-6 space-y-6">
 
         <Card className="border-amber-200 bg-amber-50">
           <CardContent className="flex items-start gap-3 py-4">
@@ -438,6 +447,8 @@ const MairieCivilPage: React.FC = () => {
             {t('mairie.printChecklist')}
           </Button>
         </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       <PremiumModal

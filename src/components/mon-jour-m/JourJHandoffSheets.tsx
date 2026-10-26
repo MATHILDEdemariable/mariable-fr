@@ -175,6 +175,7 @@ const JourJHandoffSheets: React.FC = () => {
         file_url: publicUrl, file_path: filePath, file_type: 'pdf', mime_type: 'application/pdf', file_size: blob.size,
       });
       if (insertError) throw insertError;
+      window.dispatchEvent(new Event('jour-m-documents-updated'));
       toast.success(tr('PDF ajouté aux documents, visible en consultation', 'PDF added to documents, visible in the shared view'));
     } catch (error) {
       console.error('❌ publishModulePdf failed:', error);

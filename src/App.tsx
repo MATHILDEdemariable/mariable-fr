@@ -64,6 +64,7 @@ const PlanningPublicProject = lazy(() => import("./pages/PlanningPublicProject")
 const MonJourMPlanningPage = lazy(() => import("./pages/MonJourMPlanning"));
 const MonJourMEquipePage = lazy(() => import("./pages/MonJourMEquipe"));
 const MonJourMDocumentsPage = lazy(() => import("./pages/MonJourMDocuments"));
+const MonJourMPhotosPage = lazy(() => import("./pages/MonJourMPhotos"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Pricing = lazy(() => import("./pages/Pricing"));
@@ -273,6 +274,7 @@ function App() {
                   <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
                   <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
                   <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
+                  <Route path="/mon-jour-m/photos" element={<MonJourMPhotosPage />} />
           <Route path="/mon-jour-m/conseils" element={<MonJourMConseils />} />
           <Route path="/mon-jour-m/pense-bete" element={<MonJourMPenseBete />} />
           <Route path="/mon-jour-m/conducteur" element={<MonJourMConducteur />} />

@@ -2,7 +2,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ArrowLeft, Calendar, Users, FileText, Lightbulb, ListChecks } from 'lucide-react';
+import { ArrowLeft, Calendar, Users, FileText, Lightbulb, ListChecks, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import SharePublicButton from './SharePublicButton';
 import { useWedding } from '@/contexts/WeddingContext';
@@ -45,7 +45,7 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
 
           <div className="mt-2 sm:mt-4 pb-3 sm:pb-4">
             <div className="bg-gray-100 rounded-lg p-1">
-              <div className="grid grid-cols-5 gap-1 max-w-4xl">
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-1 max-w-4xl">
                 <Link 
                   to="/mon-jour-m/equipe" 
                   className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
@@ -78,6 +78,17 @@ const MonJourMLayout: React.FC<MonJourMLayoutProps> = ({ children, coordinationI
                 >
                   <FileText className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
                   <span className="text-center leading-tight font-medium">{t('layout.tabs.documents')}</span>
+                </Link>
+                <Link 
+                  to="/mon-jour-m/photos" 
+                  className={`flex flex-col items-center justify-center gap-1 sm:gap-2 rounded-md py-2 sm:py-2.5 px-1 sm:px-3 text-xs sm:text-sm min-h-[50px] sm:min-h-[44px] touch-manipulation transition-all duration-200 ${
+                    currentPath.includes('/photos') 
+                      ? 'bg-wedding-olive text-white shadow-sm' 
+                      : 'text-gray-600 hover:bg-white hover:text-wedding-olive'
+                  }`}
+                >
+                  <Camera className="h-3 w-3 sm:h-4 sm:w-4 shrink-0" />
+                  <span className="text-center leading-tight font-medium">{isEnglish ? 'Photos' : 'Liste photos'}</span>
                 </Link>
                 <Link 
                   to="/mon-jour-m/conseils" 
