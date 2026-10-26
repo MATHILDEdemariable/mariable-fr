@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useWedding } from '@/contexts/WeddingContext';
 import { useAuth } from '@/contexts/AuthContext';
 
-export type JourJModule = 'seating' | 'drinks' | 'decor' | 'trombinoscope';
+export type JourJModule = 'seating' | 'drinks' | 'decor' | 'trombinoscope' | 'ceremony_religious' | 'ceremony_civil';
 
 const db = supabase as any;
 

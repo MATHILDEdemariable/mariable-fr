@@ -247,13 +247,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.drinksCalculator')}</span>
         </Link>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/ceremonie')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
+        <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={preventReader} className={linkClass(isActive('/dashboard/ceremonie'))}>
           <Heart className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
         </Link>
 
         {isProWeddingView && (
-        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mairie-civil')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
+        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
           <Building2 className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
         </Link>
@@ -285,7 +285,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         {!isJourJMode && !isProWeddingView && (<>
         <SectionLabel label={t('sidebar.sections.admin')} />
 
-        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mairie-civil')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
+        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
           <Building2 className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
         </Link>
