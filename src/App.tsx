@@ -64,6 +64,7 @@ const PlanningPublicProject = lazy(() => import("./pages/PlanningPublicProject")
 const MonJourMPlanningPage = lazy(() => import("./pages/MonJourMPlanning"));
 const MonJourMEquipePage = lazy(() => import("./pages/MonJourMEquipe"));
 const MonJourMDocumentsPage = lazy(() => import("./pages/MonJourMDocuments"));
+const MonJourMPhotosPage = lazy(() => import("./pages/MonJourMPhotos"));
 const Login = lazy(() => import("./pages/auth/Login"));
 const Register = lazy(() => import("./pages/auth/Register"));
 const Pricing = lazy(() => import("./pages/Pricing"));
