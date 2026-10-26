@@ -29,6 +29,7 @@ export interface GuestPageEventDetails {
 interface GuestPageCustomizerProps {
   eventId: string;
   initialCustomization?: GuestPageCustomization | null;
+  onOpenMiniSite?: () => void;
   /** Titre, message, date et lieu : modifiables depuis le mini-site */
   initialEventDetails?: GuestPageEventDetails;
   onSaved?: (customization: GuestPageCustomization, details?: GuestPageEventDetails) => void;
@@ -50,7 +51,7 @@ const SettingsCard: React.FC<{ title: string; subtitle?: string; children: React
 );
 
 /** Réglages du mini-site des mariés : couverture, programme, infos, contact et style. */
-const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, initialCustomization, initialEventDetails, onSaved, inline = false }) => {
+const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, initialCustomization, initialEventDetails, onSaved, inline = false, onOpenMiniSite }) => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith('en');
   const { toast } = useToast();
