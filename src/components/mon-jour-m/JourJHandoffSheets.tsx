@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Table, Wine, Sparkles, Users, CheckCircle2, Clock, Loader2, FileDown } from 'lucide-react';
+import { Table, Wine, Sparkles, Users, Heart, Building2, CheckCircle2, Clock, Loader2, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +12,7 @@ import { translateDrinkLabel } from '@/components/drinks/DrinksPlanTable';
 import { toast } from 'sonner';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import type { JourJModule } from '@/hooks/useJourJHandoff';
+import { buildCeremonyPdf } from '@/components/ceremony/CeremonyPlanner';
 
 const db = supabase as any;
 
@@ -26,7 +27,10 @@ const MODULES: { key: JourJModule; icon: typeof Table; fr: string; en: string; s
   { key: 'drinks', icon: Wine, fr: 'Boissons', en: 'Drinks', sourceFr: 'Fiche bar / traiteur', sourceEn: 'Bar / caterer sheet', path: '/dashboard/drinks' },
   { key: 'decor', icon: Sparkles, fr: 'Décoration', en: 'Decor', sourceFr: 'Mise en place par zone', sourceEn: 'Set-up by area', path: '/dashboard/decoration' },
   { key: 'trombinoscope', icon: Users, fr: 'Trombinoscope', en: 'Who’s who', sourceFr: 'Ajouté à l’équipe', sourceEn: 'Added to the team', path: '/mon-jour-m/equipe' },
+  { key: 'ceremony_religious', icon: Heart, fr: 'Cérémonie', en: 'Ceremony', sourceFr: 'Cortège, musiques, interventions', sourceEn: 'Procession, music, speeches', path: '/dashboard/ceremonie' },
+  { key: 'ceremony_civil', icon: Building2, fr: 'Mairie', en: 'Town hall', sourceFr: 'Témoins, dossier, timing', sourceEn: 'Witnesses, paperwork, timing', path: '/dashboard/mairie-civil' },
 ];
+const isCeremonyModule = (module: JourJModule) => module === 'ceremony_religious' || module === 'ceremony_civil';
 
 /** Fiches transmises par l'espace Organisation (validées par les mariés ou le pro), lues en direct. */
 const JourJHandoffSheets: React.FC = () => {
@@ -116,10 +120,17 @@ const JourJHandoffSheets: React.FC = () => {
     if (!coordination?.id || !user) return;
     setPublishingModule(module);
     try {
-      const data = await loadSheetData(module);
-      if (!data) throw new Error('Fiche introuvable');
       const meta = MODULES.find((entry) => entry.key === module)!;
       const title = isEnglish ? meta.en : meta.fr;
+      let pdf: any;
+      if (isCeremonyModule(module)) {
+        const ceremonyType = module === 'ceremony_civil' ? 'civil' : 'religious';
+        const { data: plan, error: planError } = await db.from('wedding_ceremony_plans').select('data').eq('wedding_id', weddingId).eq('ceremony_type', ceremonyType).maybeSingle();
+        if (planError) throw planError;
+        pdf = await buildCeremonyPdf(ceremonyType, plan?.data || {}, !!isEnglish);
+      } else {
+      const data = await loadSheetData(module);
+      if (!data) throw new Error('Fiche introuvable');
       const lines: { text: string; bold?: boolean }[] = [];
       if (data.module === 'seating') {
         data.tables.forEach((table) => { lines.push({ text: `${table.name} (${table.guests.length})`, bold: true }); lines.push({ text: table.guests.join(', ') || '—' }); });
@@ -136,7 +147,7 @@ const JourJHandoffSheets: React.FC = () => {
         data.people.forEach((person: any) => lines.push({ text: [person.full_name, person.key_role, person.phone].filter(Boolean).join(' · ') }));
       }
       const { default: jsPDF } = await import('jspdf');
-      const pdf = new jsPDF();
+      pdf = new jsPDF();
       pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
       pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
       pdf.setFont('times', 'normal'); pdf.setFontSize(12); pdf.text(title, 15, 24);
@@ -150,6 +161,7 @@ const JourJHandoffSheets: React.FC = () => {
         });
         if (line.bold) y += 1;
       });
+      }
       const blob = pdf.output('blob');
       const filePath = `${user.id}/coordination-${coordination.id}/fiche-${module}-${Date.now()}.pdf`;
       const { error: uploadError } = await supabase.storage.from('coordination-files').upload(filePath, blob, { contentType: 'application/pdf' });
@@ -181,7 +193,7 @@ const JourJHandoffSheets: React.FC = () => {
         <h2 id="handoff-sheets-title" className="font-serif text-xl">{tr('Transmis par l’organisation', 'Sent from the planning space')}</h2>
         <p className="text-sm text-muted-foreground">{tr('Dès qu’un module est validé côté organisation, sa fiche est disponible ici, toujours à jour.', 'As soon as a module is approved in the planning space, its sheet is available here, always up to date.')}</p>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {MODULES.map((module) => {
           const validatedAt = handoffs[module.key];
           const Icon = module.icon;
@@ -203,7 +215,7 @@ const JourJHandoffSheets: React.FC = () => {
                     {tr('Publier en PDF dans Documents', 'Publish as PDF to Documents')}
                   </Button>
                 )}
-                {validatedAt && module.key !== 'trombinoscope' ? (
+                {validatedAt && module.key !== 'trombinoscope' && !isCeremonyModule(module.key) ? (
                   <Button size="sm" variant="outline" className="min-h-[40px] w-full rounded-none" onClick={() => openModuleSheet(module.key)} disabled={loadingModule === module.key}>
                     {loadingModule === module.key && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
                     {tr('Voir la fiche', 'View sheet')}
