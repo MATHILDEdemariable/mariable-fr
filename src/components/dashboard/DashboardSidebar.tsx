@@ -146,10 +146,12 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.retroplanning')}</span>
         </Link>
 
+        {!isProWeddingView && (
         <Link to={isReaderMode ? '#' : '/dashboard/budget?tab=calculator'} onClick={preventReader} className={linkClass(isBudgetCalcActive())}>
           <Calculator className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.budgetCalculator')}</span>
         </Link>
+        )}
 
         <Link to={isReaderMode ? '#' : '/dashboard/budget?tab=detailed'} onClick={preventReader} className={linkClass(isBudgetMgmtActive())}>
           <BarChart3 className="h-4 w-4" />
@@ -193,10 +195,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </DropdownMenu>
         </>)}
 
-        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
-          <Sparkles className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
-        </Link>
 
         {/* JOUR-J */}
         <SectionLabel label={t('sidebar.sections.jourJ')} />
@@ -209,6 +207,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         <Link to={isReaderMode ? '#' : '/dashboard/trombinoscope'} onClick={preventReader} className={linkClass(isActive('/dashboard/trombinoscope'))}>
           <Contact className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Who’s who' : 'Trombinoscope'}</span>
+        </Link>
+
+        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
         </Link>
 
 
@@ -252,7 +255,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
         </Link>
 
-        {isProWeddingView && (
+        {(
         <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
           <Building2 className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
