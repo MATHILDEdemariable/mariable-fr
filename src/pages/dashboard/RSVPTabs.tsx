@@ -47,11 +47,11 @@ const GuestMiniSitePanel: React.FC<{ isEnglish: boolean; onCreateForm: () => voi
       {events.map((event) => {
         const publicUrl = `${window.location.origin}/rsvp/${event.unique_link_slug}`;
         return (
-          <section key={event.id} className="border border-border p-4 sm:p-6 space-y-4">
+          <section key={event.id} className="border border-border p-3 sm:p-6 space-y-4 min-w-0">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
               <h2 className="font-serif text-xl">{event.event_name}</h2>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="rounded-none" asChild>
+              <div className="grid grid-cols-2 sm:flex gap-2">
+                <Button variant="outline" size="sm" className="rounded-none min-h-[44px]" asChild>
                   <a href={publicUrl} target="_blank" rel="noopener noreferrer">
                     <ExternalLink className="h-4 w-4 mr-1" />{isEnglish ? 'Preview' : 'Prévisualiser'}
                   </a>
@@ -109,7 +109,7 @@ const RSVPTabs: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-serif">{isEnglish ? 'Guest management' : 'Gestion Invités'}</h1>
+        <h1 className="text-2xl sm:text-3xl font-serif">{isEnglish ? 'Guest management' : 'Gestion Invités'}</h1>
         <p className="text-muted-foreground mt-2">
           {isEnglish ? 'Your list, the response form and the page shared with your guests.' : 'Votre liste, le formulaire réponse et la page partagée à vos invités.'}
         </p>
