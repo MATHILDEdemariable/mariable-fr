@@ -274,10 +274,10 @@ function App() {
                   <Route path="/mon-jour-m/planning" element={<MonJourMPlanningPage />} />
                   <Route path="/mon-jour-m/equipe" element={<MonJourMEquipePage />} />
                   <Route path="/mon-jour-m/documents" element={<MonJourMDocumentsPage />} />
-                  <Route path="/mon-jour-m/photos" element={<MonJourMPhotosPage />} />
+                  <Route path="/mon-jour-m/photos" element={<Navigate to="/dashboard/liste-photos" replace />} />
           <Route path="/mon-jour-m/conseils" element={<MonJourMConseils />} />
           <Route path="/mon-jour-m/pense-bete" element={<MonJourMPenseBete />} />
-          <Route path="/mon-jour-m/conducteur" element={<MonJourMConducteur />} />
+          <Route path="/mon-jour-m/conducteur" element={<Navigate to="/mon-jour-m/planning?mode=live" replace />} />
 
                   {/* Auth routes */}
                    <Route path="/login" element={<Login />} />
