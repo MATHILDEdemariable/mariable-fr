@@ -183,11 +183,15 @@ const DrinksPlanTable: React.FC = () => {
           <JourJHandoffButton module="drinks" className="mt-3" />
         </div>
         <div className="flex flex-wrap gap-2">
-          <DrinksMagicImport isEnglish={!!isEnglish} onImport={(newRows) => setRows((prev) => [...prev, ...newRows])} />
           <Button onClick={handleCreateShareLink} className="bg-editorial-olive hover:bg-editorial-olive/90 text-white min-h-[44px]">
             <Share2 className="h-4 w-4 mr-2" />
             {tr('Partager en consultation', 'Share view-only')}
           </Button>
+          {shareActive && shareToken && (
+            <Button variant="ghost" onClick={handleDisableShare} className="min-h-[44px]">
+              <Link2Off className="h-4 w-4 mr-1" /> {tr('Désactiver le lien', 'Disable link')}
+            </Button>
+          )}
           <Button variant="outline" onClick={() => window.print()} className="min-h-[44px]">
             <Printer className="h-4 w-4 mr-2" />
             {tr('Imprimer', 'Print')}
@@ -195,19 +199,14 @@ const DrinksPlanTable: React.FC = () => {
         </div>
       </div>
 
-      {shareActive && shareToken && (
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2 bg-background border border-border p-3 text-sm">
-          <span className="truncate flex-1" title={shareUrl}>{shareUrl}</span>
-          <div className="flex gap-2">
-            <Button size="sm" variant="outline" onClick={handleCopyLink}>
-              <Copy className="h-4 w-4 mr-1" /> {tr('Copier', 'Copy')}
-            </Button>
-            <Button size="sm" variant="ghost" onClick={handleDisableShare}>
-              <Link2Off className="h-4 w-4 mr-1" /> {tr('Désactiver', 'Disable')}
-            </Button>
-          </div>
-        </div>
-      )}
+      <DrinksMagicImport isEnglish={!!isEnglish} onImport={(newRows) => setRows((prev) => [...prev, ...newRows])} />
+
+      <div className="flex items-center gap-3 text-xs uppercase tracking-wide text-muted-foreground">
+        <span className="h-px flex-1 bg-border" />{tr('ou saisie manuelle', 'or manual entry')}<span className="h-px flex-1 bg-border" />
+        <Button size="sm" variant="outline" onClick={() => addRow()} className="min-h-[44px] normal-case tracking-normal">
+          <Plus className="h-4 w-4 mr-1" /> {tr('Ajouter une boisson', 'Add a drink')}
+        </Button>
+      </div>
 
       {rows.length === 0 ? (
         <div className="text-center py-10 bg-background border border-dashed border-border">
