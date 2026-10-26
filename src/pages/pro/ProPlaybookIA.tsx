@@ -9,9 +9,11 @@ import SEO from '@/components/SEO';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import playbookAsset from '@/assets/playbook-ia-wedding-planner.pdf.asset.json';
+import playbookEnglishAsset from '@/assets/ai-playbook-wedding-planner-en.pdf.asset.json';
 
 const PAGE_PATH = '/pro/ia-organisation-mariage';
 const NOTION_URL = 'https://wary-grease-34e.notion.site/Livre-blanc-l-IA-pour-les-Wedding-Planners-3eb894d36ac481e3a65dde6c3659a78a';
+const NOTION_ENGLISH_URL = 'https://wary-grease-34e.notion.site/White-paper-AI-for-Wedding-Planners-3f1894d36ac4815b83eeca7b1b307215';
 
 const TEXTS = {
   fr: {
@@ -30,7 +32,9 @@ const TEXTS = {
     ],
     formTitle: 'Recevez le Playbook', name: 'Nom complet', email: 'Email', job: 'Métier', jobPlaceholder: 'Wedding planner, coordinatrice, lieu…',
     consent: "J'accepte que mes données soient utilisées pour recevoir le livre blanc et des informations de Mariable.", submit: 'RECEVOIR LE PLAYBOOK', sending: 'Envoi…',
-    successTitle: 'Votre Playbook est prêt', successText: 'Nous vous l’avons aussi envoyé par email.', readOnline: 'Lire en ligne', download: 'Télécharger le PDF',
+    successTitle: 'Votre Playbook est prêt', successText: 'Disponible en français et en anglais. Nous vous avons aussi envoyé les deux versions par email.', readOnline: 'Lire en ligne', download: 'Télécharger le PDF',
+    spamNotice: "Vous ne voyez pas l'email ? Pensez à vérifier vos spams ou courriers indésirables.",
+    frenchVersion: 'Version française', englishVersion: 'English version',
     error: 'Une erreur est survenue. Veuillez réessayer.', invalid: 'Merci de vérifier vos informations.', consentRequired: 'Consentement requis',
     pilier: "Pour le jour J, découvrez l'app Mariable Pro", home: 'Accueil',
   },
@@ -39,7 +43,7 @@ const TEXTS = {
     seoDescription: 'Free white paper: how wedding planners save 2 to 4 hours a week with AI. A 4-step method, 6 use cases and 11 free prompts.',
     eyebrow: 'Free white paper · 2026 edition',
     h1: 'The Wedding Planner AI Playbook',
-    answer: "Used well, AI can give a wedding planner back 2 to 4 hours a week. This practical guide by Mathilde, founder of Mariable and AI consultant, shows you how to build a real system for your job, without getting technical. The guide is written in French.",
+    answer: "Used well, AI can give a wedding planner back 2 to 4 hours a week. This practical guide by Mathilde, founder of Mariable and AI consultant, shows you how to build a real system for your job, without getting technical. Available in English and French.",
     insideTitle: "What's inside",
     inside: [
       ['Understand AI', 'Prompt, assistant, agent: the basics and an overview of tools (ChatGPT, Gemini, Claude…).'],
@@ -50,7 +54,9 @@ const TEXTS = {
     ],
     formTitle: 'Get the Playbook', name: 'Full name', email: 'Email', job: 'Job', jobPlaceholder: 'Wedding planner, coordinator, venue…',
     consent: 'I agree that my data may be used to send me the white paper and news from Mariable.', submit: 'GET THE PLAYBOOK', sending: 'Sending…',
-    successTitle: 'Your Playbook is ready', successText: 'We also sent it to you by email.', readOnline: 'Read online', download: 'Download the PDF',
+    successTitle: 'Your Playbook is ready', successText: 'Available in English and French. We also sent you both versions by email.', readOnline: 'Read online', download: 'Download the PDF',
+    spamNotice: "Can't see the email? Check your spam or junk folder.",
+    frenchVersion: 'Version française', englishVersion: 'English version',
     error: 'Something went wrong. Please try again.', invalid: 'Please check your details.', consentRequired: 'Consent required',
     pilier: 'For the wedding day, discover the Mariable Pro app', home: 'Home',
   },
@@ -99,7 +105,7 @@ const ProPlaybookIA = () => {
   const bookSchema = {
     '@context': 'https://schema.org', '@type': 'Book', name: 'Livre blanc : l’IA pour les Wedding Planners',
     author: { '@type': 'Person', name: 'Mathilde Lambert' }, publisher: { '@type': 'Organization', name: 'Mariable', url: 'https://mariable.fr' },
-    inLanguage: 'fr', isAccessibleForFree: true, url: `https://mariable.fr${PAGE_PATH}`,
+    inLanguage: ['fr', 'en'], isAccessibleForFree: true, url: `https://mariable.fr${PAGE_PATH}`,
   };
 
   return (
@@ -136,13 +142,24 @@ const ProPlaybookIA = () => {
                   <CheckCircle2 className="mx-auto mb-6 h-14 w-14 text-editorial-olive" aria-hidden />
                   <h2 className="mb-3 text-3xl">{text.successTitle}</h2>
                   <p className="mb-8 text-editorial-noir/70">{text.successText}</p>
-                  <div className="flex flex-col gap-3">
-                    <a href={NOTION_URL} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 bg-editorial-noir px-6 text-sm tracking-widest text-primary-foreground hover:bg-editorial-olive">
-                      <BookOpen className="h-4 w-4" aria-hidden />{text.readOnline.toUpperCase()}
-                    </a>
-                    <a href={playbookAsset.url} target="_blank" rel="noopener noreferrer" download className="inline-flex min-h-12 items-center justify-center gap-2 border border-editorial-noir px-6 text-sm tracking-widest hover:bg-editorial-noir hover:text-primary-foreground">
-                      <Download className="h-4 w-4" aria-hidden />{text.download.toUpperCase()}
-                    </a>
+                  <p className="mb-8 border border-editorial-olive/30 bg-editorial-beige/40 px-4 py-3 text-sm text-editorial-noir/80">{text.spamNotice}</p>
+                  <div className="space-y-8 text-left">
+                    {(language === 'en'
+                      ? [{ label: text.englishVersion, onlineUrl: NOTION_ENGLISH_URL, pdfUrl: playbookEnglishAsset.url, lang: 'en' }, { label: text.frenchVersion, onlineUrl: NOTION_URL, pdfUrl: playbookAsset.url, lang: 'fr' }]
+                      : [{ label: text.frenchVersion, onlineUrl: NOTION_URL, pdfUrl: playbookAsset.url, lang: 'fr' }, { label: text.englishVersion, onlineUrl: NOTION_ENGLISH_URL, pdfUrl: playbookEnglishAsset.url, lang: 'en' }]
+                    ).map((resource) => (
+                      <div key={resource.lang} lang={resource.lang}>
+                        <h3 className="mb-3 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{resource.label}</h3>
+                        <div className="flex flex-col gap-3">
+                          <a href={resource.onlineUrl} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-12 items-center justify-center gap-2 bg-editorial-noir px-6 text-sm tracking-widest text-primary-foreground hover:bg-editorial-olive">
+                            <BookOpen className="h-4 w-4" aria-hidden />{(resource.lang === 'en' ? 'Read online' : 'Lire en ligne').toUpperCase()}
+                          </a>
+                          <a href={resource.pdfUrl} target="_blank" rel="noopener noreferrer" download className="inline-flex min-h-12 items-center justify-center gap-2 border border-editorial-noir px-6 text-sm tracking-widest hover:bg-editorial-noir hover:text-primary-foreground">
+                            <Download className="h-4 w-4" aria-hidden />{(resource.lang === 'en' ? 'Download the PDF' : 'Télécharger le PDF').toUpperCase()}
+                          </a>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               ) : (
