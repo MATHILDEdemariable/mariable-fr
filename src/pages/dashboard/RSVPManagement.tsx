@@ -603,7 +603,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                 <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => openEditDialog(event)}>
                   ✏️ {t('rsvp.editBtn', { defaultValue: 'Modifier' })}
                 </Button>
-                <GuestPageCustomizer eventId={event.id} initialCustomization={event.customization} />
+                <GuestPageCustomizer eventId={event.id} initialCustomization={event.customization} onOpenMiniSite={() => navigate('/dashboard/rsvp?vue=mini-site')} />
               </div>
             ))}
           </div>

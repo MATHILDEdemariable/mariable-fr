@@ -384,7 +384,7 @@ const GuestPageCustomizer: React.FC<GuestPageCustomizerProps> = ({ eventId, init
 
   return (
     <>
-      <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => setOpen(true)}>
+      <Button variant="outline" size="sm" className="w-full rounded-none" onClick={() => (onOpenMiniSite ? onOpenMiniSite() : setOpen(true))}>
         <Palette className="h-4 w-4 mr-1" />
         {isEnglish ? 'Customise the guest page' : 'Personnaliser la page invités'}
       </Button>
