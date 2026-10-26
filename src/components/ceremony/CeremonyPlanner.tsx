@@ -53,6 +53,43 @@ const CIVIL_TIMING = [
   { key: 'exit', ...L('Sortie & félicitations sur le parvis', 'Exit & congratulations outside') },
 ];
 
+/** Construit la fiche PDF synthétique (charte Mariable), réutilisée par l'export et par Mon Jour J. */
+export const buildCeremonyPdf = async (type: CeremonyType, data: CeremonyData, isEnglish: boolean) => {
+  const t = (fr: string, en: string) => (isEnglish ? en : fr);
+  const l = (entry: { fr: string; en: string }) => (isEnglish ? entry.en : entry.fr);
+  const { default: jsPDF } = await import('jspdf');
+  const pdf = new jsPDF();
+    pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
+    pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
+    pdf.setFont('times', 'normal'); pdf.setFontSize(12);
+    pdf.text(type === 'civil' ? t('Fiche mairie', 'Town hall sheet') : t('Fiche officiant & wedding planner', 'Officiant & planner sheet'), 15, 24);
+    pdf.setTextColor(30, 30, 30);
+    let y = 42;
+    const write = (text: string, bold = false) => {
+      pdf.setFont('helvetica', bold ? 'bold' : 'normal'); pdf.setFontSize(bold ? 12 : 10);
+      pdf.splitTextToSize(text, 180).forEach((part: string) => { if (y > 280) { pdf.addPage(); y = 20; } pdf.text(part, 15, y); y += bold ? 7 : 5.5; });
+    };
+    if (type === 'civil') {
+      write(t('Timing', 'Timing'), true);
+      CIVIL_TIMING.forEach((step) => write(`${l(step)} : ${data.timing?.[step.key] || '—'}`));
+      write(`${t('Musique autorisée', 'Music allowed')} : ${data.music_allowed ? t('Oui', 'Yes') : t('Non / à confirmer', 'No / to confirm')}`);
+      write(t('Témoins', 'Witnesses'), true);
+      (data.witnesses || []).forEach((w) => write(`${w.name} · ${w.role} · ${w.phone} ${w.email}`));
+      write(t('Dossier', 'Paperwork'), true);
+      CIVIL_CHECKLIST.forEach((item) => write(`${data.checklist?.[item.key] ? '[x]' : '[ ]'} ${l(item)}`));
+    } else {
+      write(t('Cortège – entrée', 'Procession – in'), true);
+      (data.procession_in || []).forEach((p, i) => write(`${i + 1}. ${p.name} — ${p.role}${p.arm ? ` · ${t('bras', 'arm')} : ${p.arm}` : ''}${p.placement ? ` · ${p.placement}` : ''}`));
+      write(t('Cortège – sortie', 'Procession – out'), true);
+      (data.procession_out || []).forEach((p, i) => write(`${i + 1}. ${p.name} — ${p.role}`));
+      write(t('Musiques', 'Music'), true);
+      (data.music || []).forEach((m) => write(`${m.moment} : ${m.title || '—'}${m.artist ? ` (${m.artist})` : ''}${m.timecode ? ` · ${m.timecode}` : ''}${m.launcher ? ` · ${m.launcher}` : ''}`));
+      write(t('Interventions', 'Speeches'), true);
+      (data.speeches || []).forEach((s, i) => { write(`${i + 1}. ${s.speaker}${s.moment ? ` — ${s.moment}` : ''}`); if (s.text) write(s.text); });
+    }
+  return pdf;
+};
+
 interface Props { type: CeremonyType }
 
 /** Outil d'organisation de la cérémonie (religieuse/laïque ou mairie), partagé entre le wedding planner et les mariés. */
@@ -68,6 +105,8 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
   const [data, setData] = useState<CeremonyData>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validatedAt, setValidatedAt] = useState<string | null>(null);
   const [uploadingIndex, setUploadingIndex] = useState<number | null>(null);
   const saveTimer = useRef<number | null>(null);
 
@@ -136,37 +175,45 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
   };
 
   const exportSummary = async () => {
-    const { default: jsPDF } = await import('jspdf');
-    const pdf = new jsPDF();
-    pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
-    pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
-    pdf.setFont('times', 'normal'); pdf.setFontSize(12);
-    pdf.text(type === 'civil' ? tr('Fiche mairie', 'Town hall sheet') : tr('Fiche officiant & wedding planner', 'Officiant & planner sheet'), 15, 24);
-    pdf.setTextColor(30, 30, 30);
-    let y = 42;
-    const write = (text: string, bold = false) => {
-      pdf.setFont('helvetica', bold ? 'bold' : 'normal'); pdf.setFontSize(bold ? 12 : 10);
-      pdf.splitTextToSize(text, 180).forEach((part: string) => { if (y > 280) { pdf.addPage(); y = 20; } pdf.text(part, 15, y); y += bold ? 7 : 5.5; });
-    };
-    if (type === 'civil') {
-      write(tr('Timing', 'Timing'), true);
-      CIVIL_TIMING.forEach((step) => write(`${lab(step)} : ${data.timing?.[step.key] || '—'}`));
-      write(`${tr('Musique autorisée', 'Music allowed')} : ${data.music_allowed ? tr('Oui', 'Yes') : tr('Non / à confirmer', 'No / to confirm')}`);
-      write(tr('Témoins', 'Witnesses'), true);
-      (data.witnesses || []).forEach((w) => write(`${w.name} · ${w.role} · ${w.phone} ${w.email}`));
-      write(tr('Dossier', 'Paperwork'), true);
-      CIVIL_CHECKLIST.forEach((item) => write(`${data.checklist?.[item.key] ? '[x]' : '[ ]'} ${lab(item)}`));
-    } else {
-      write(tr('Cortège – entrée', 'Procession – in'), true);
-      (data.procession_in || []).forEach((p, i) => write(`${i + 1}. ${p.name} — ${p.role}${p.arm ? ` · ${tr('bras', 'arm')} : ${p.arm}` : ''}${p.placement ? ` · ${p.placement}` : ''}`));
-      write(tr('Cortège – sortie', 'Procession – out'), true);
-      (data.procession_out || []).forEach((p, i) => write(`${i + 1}. ${p.name} — ${p.role}`));
-      write(tr('Musiques', 'Music'), true);
-      (data.music || []).forEach((m) => write(`${m.moment} : ${m.title || '—'}${m.artist ? ` (${m.artist})` : ''}${m.timecode ? ` · ${m.timecode}` : ''}${m.launcher ? ` · ${m.launcher}` : ''}`));
-      write(tr('Interventions', 'Speeches'), true);
-      (data.speeches || []).forEach((s, i) => { write(`${i + 1}. ${s.speaker}${s.moment ? ` — ${s.moment}` : ''}`); if (s.text) write(s.text); });
-    }
+    const pdf = await buildCeremonyPdf(type, data, !!isEnglish);
     pdf.save(type === 'civil' ? 'fiche-mairie.pdf' : 'fiche-ceremonie.pdf');
+  };
+
+  /** Valide la fiche pour le Jour J : mémorise la validation et publie le PDF dans les Documents de Mon Jour J. */
+  const validateForJourJ = async () => {
+    if (!weddingId || !user) return;
+    setIsValidating(true);
+    try {
+      const module = type === 'civil' ? 'ceremony_civil' : 'ceremony_religious';
+      const now = new Date().toISOString();
+      const { error: handoffError } = await db.from('wedding_jour_j_handoffs')
+        .upsert({ wedding_id: weddingId, module, validated_by: user.id, validated_at: now }, { onConflict: 'wedding_id,module' });
+      if (handoffError) throw handoffError;
+      setValidatedAt(now);
+      const { data: coordination } = await db.from('wedding_coordination').select('id').eq('wedding_id', weddingId).order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if (coordination?.id) {
+        const pdf = await buildCeremonyPdf(type, data, !!isEnglish);
+        const blob = pdf.output('blob');
+        const filePath = `${user.id}/coordination-${coordination.id}/fiche-${module}-${Date.now()}.pdf`;
+        const { error: uploadError } = await supabase.storage.from('coordination-files').upload(filePath, blob, { contentType: 'application/pdf' });
+        if (uploadError) throw uploadError;
+        const { data: { publicUrl } } = supabase.storage.from('coordination-files').getPublicUrl(filePath);
+        await db.from('coordination_documents').delete().eq('coordination_id', coordination.id).eq('category', `organisation-${module}`);
+        const { error: insertError } = await db.from('coordination_documents').insert({
+          coordination_id: coordination.id, category: `organisation-${module}`,
+          title: type === 'civil' ? tr('Fiche mairie', 'Town hall sheet') : tr('Fiche cérémonie', 'Ceremony sheet'),
+          description: tr('Validée depuis l’organisation', 'Approved from the planning space'),
+          file_url: publicUrl, file_path: filePath, file_type: 'pdf', mime_type: 'application/pdf', file_size: blob.size,
+        });
+        if (insertError) throw insertError;
+      }
+      toast.success(tr('Validé pour le Jour J — PDF ajouté aux Documents', 'Approved for the big day — PDF added to Documents'));
+    } catch (error) {
+      console.error('❌ validateForJourJ failed:', error);
+      toast.error(tr('Validation impossible', 'Could not approve'));
+    } finally {
+      setIsValidating(false);
+    }
   };
 
   if (isLoading) return <div className="py-10 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-wedding-olive" /></div>;
