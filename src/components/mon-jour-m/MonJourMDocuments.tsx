@@ -573,32 +573,6 @@ const MonJourMDocuments: React.FC = () => {
       </div>
 
       <Tabs defaultValue="documents" className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
-          <TabsTrigger value="documents" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.mine")}</TabsTrigger>
-          <TabsTrigger value="standard" className="data-[state=active]:bg-wedding-olive data-[state=active]:text-white">{t("documents.tabs.standard")}</TabsTrigger>
-        </TabsList>
-
-        {/* Onglet Documents Standard */}
-        <TabsContent value="standard" className="space-y-6">
-          <div className="mb-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="h-5 w-5 text-wedding-olive" />
-              <h3 className="text-lg font-medium">{t("documents.preloaded")}</h3>
-            </div>
-            <p className="text-sm text-gray-600">
-              {t("documents.preloadedHint")}
-            </p>
-          </div>
-
-          <div className="grid gap-6">
-            {/* Liste Photos Jour-J */}
-            {coordination && (
-              <PhotoListTemplate coordinationId={coordination.id} />
-            )}
-
-          </div>
-        </TabsContent>
-
         {/* Onglet Documents */}
         <TabsContent value="documents" className="space-y-6">
           <div className="flex justify-between items-center gap-2 flex-wrap">
@@ -816,7 +790,7 @@ const MonJourMDocuments: React.FC = () => {
               ) : (
                 <div className="text-center py-12 text-gray-500">
                   <File className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-lg mb-2">{t("documents.toasts.deleted")}</p>
+                  <p className="text-lg mb-2">{t("documents.empty", { defaultValue: "Aucun document pour le moment" })}</p>
                 </div>
               )}
             </CardContent>
