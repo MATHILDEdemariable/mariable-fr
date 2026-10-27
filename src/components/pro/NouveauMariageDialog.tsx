@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -16,6 +17,8 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
   const { createWedding } = useWedding();
   const { toast } = useToast();
   const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   const [title, setTitle] = useState('');
   const [weddingDate, setWeddingDate] = useState('');
@@ -27,7 +30,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!title.trim()) {
-      toast({ title: 'Titre requis', description: 'Indiquez le nom du couple ou du mariage.', variant: 'destructive' });
+      toast({ title: tr('Titre requis', 'Title required'), description: tr('Indiquez le nom du couple ou du mariage.', 'Enter the couple or wedding name.'), variant: 'destructive' });
       return;
     }
 
@@ -49,8 +52,8 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
     } catch (error) {
       console.error('❌ NouveauMariageDialog: création impossible', error);
       toast({
-        title: 'Création impossible',
-        description: "Le mariage n'a pas pu être créé. Réessayez dans un instant.",
+        title: tr('Création impossible', 'Could not create'),
+        description: tr("Le mariage n'a pas pu être créé. Réessayez dans un instant.", 'The wedding could not be created. Please try again.'),
         variant: 'destructive',
       });
     } finally {
@@ -62,17 +65,17 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md bg-[#F8F5EF]">
         <DialogHeader>
-          <DialogTitle className="font-serif text-xl">Nouveau mariage</DialogTitle>
+          <DialogTitle className="font-serif text-xl">{tr('Nouveau mariage', 'New wedding')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <fieldset className="space-y-1.5">
-            <legend className="text-sm font-medium mb-1.5">Formule</legend>
+            <legend className="text-sm font-medium mb-1.5">{tr('Formule', 'Service')}</legend>
             <div className="grid grid-cols-2 gap-2" role="radiogroup">
               {([
-                { value: 'jourJ', label: 'Coordination Jour J', hint: 'Planning, équipe, plan de table' },
-                { value: 'organisation', label: 'Organisation complète', hint: 'Budget, rétroplanning, RSVP + Jour J' },
-              ] as const).map((option) => (
+                { value: 'jourJ', label: tr('Coordination Jour J', 'Wedding-day coordination'), hint: tr('Planning, équipe, plan de table', 'Schedule, team, seating plan') },
+                { value: 'organisation', label: tr('Organisation complète', 'Full planning'), hint: tr('Budget, rétroplanning, RSVP + Jour J', 'Budget, timeline, RSVP + wedding day') },
+              ]).map((option) => (
                 <button
                   key={option.value}
                   type="button"
@@ -89,7 +92,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
           </fieldset>
 
           <div className="space-y-1.5">
-            <Label htmlFor="wedding-title">Couple / titre</Label>
+            <Label htmlFor="wedding-title">{tr('Couple / titre', 'Couple / title')}</Label>
             <Input
               id="wedding-title"
               value={title}
@@ -105,17 +108,17 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="wedding-location">Lieu</Label>
+            <Label htmlFor="wedding-location">{tr('Lieu', 'Venue')}</Label>
             <Input
               id="wedding-location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Château de ..."
+              placeholder={tr('Château de ...', 'Château ...')}
             />
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="wedding-guests">Nombre d'invités</Label>
+            <Label htmlFor="wedding-guests">{tr("Nombre d'invités", 'Guest count')}</Label>
             <Input
               id="wedding-guests"
               type="number"
@@ -128,10 +131,10 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
 
           <DialogFooter>
             <Button type="button" variant="outline" className="rounded-none" onClick={() => onOpenChange(false)}>
-              Annuler
+              {tr('Annuler', 'Cancel')}
             </Button>
             <Button type="submit" className="rounded-none" disabled={saving}>
-              {saving ? 'Création...' : 'Créer et ouvrir'}
+              {saving ? tr('Création...', 'Creating...') : tr('Créer et ouvrir', 'Create & open')}
             </Button>
           </DialogFooter>
         </form>
