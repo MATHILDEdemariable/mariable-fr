@@ -238,6 +238,10 @@ const RetroplanningManuel = () => {
 
   const renderStepRow = (step: ManualStep) => (
     <div key={step.id} className="grid grid-cols-[auto_1fr_auto] sm:grid-cols-[auto_1fr_150px_160px_auto] items-center gap-2 border-b border-border py-2">
+      <div className="flex items-center gap-2">
+      <input type="checkbox" className="h-4 w-4 accent-primary" aria-label={isEnglish ? 'Select' : 'Sélectionner'}
+        checked={selectedStepIds.has(step.id)}
+        onChange={(e) => setSelectedStepIds((prev) => { const next = new Set(prev); if (e.target.checked) next.add(step.id); else next.delete(step.id); return next; })} />
       <Checkbox checked={step.status === 'completed'} aria-label={isEnglish ? 'Done' : 'Terminé'}
         onCheckedChange={(checked) => updateStep(step.id, { status: checked ? 'completed' : 'pending' })} />
       <Input defaultValue={step.title} maxLength={200} aria-label={isEnglish ? 'Title' : 'Titre'}
@@ -356,7 +360,25 @@ const RetroplanningManuel = () => {
         ) : view === 'frise' ? (
           <RetroplanningFrise steps={visibleSteps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (
-          <div>{visibleSteps.map(renderStepRow)}</div>
+          <div>
+            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-2 text-sm">
+              <label className="flex items-center gap-2 min-h-11 cursor-pointer">
+                <input type="checkbox" className="h-4 w-4 accent-primary"
+                  checked={visibleSteps.length > 0 && visibleSteps.every((step) => selectedStepIds.has(step.id))}
+                  onChange={(e) => setSelectedStepIds(e.target.checked ? new Set(visibleSteps.map((step) => step.id)) : new Set())} />
+                {isEnglish ? 'Select all' : 'Tout sélectionner'}
+              </label>
+              {selectedStepIds.size > 0 && (
+                <Button variant="destructive" size="sm" onClick={handleDeleteSelected}>
+                  <Trash2 className="h-4 w-4 mr-1" />{isEnglish ? `Delete selection (${selectedStepIds.size})` : `Supprimer la sélection (${selectedStepIds.size})`}
+                </Button>
+              )}
+              <Button variant="ghost" size="sm" className="ml-auto text-destructive" onClick={handleDeleteAll}>
+                {isEnglish ? 'Delete everything' : 'Tout supprimer'}
+              </Button>
+            </div>
+            {visibleSteps.map(renderStepRow)}
+          </div>
         ) : view === 'kanban' ? (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
             {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
