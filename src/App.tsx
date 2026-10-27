@@ -139,6 +139,7 @@ const QRCodeGeneratorPage = lazy(() => import("./pages/dashboard/QRCodeGenerator
 const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const CarnetAdresses = lazy(() => import("./pages/pro/CarnetAdresses"));
+const ProReferentiels = lazy(() => import("./pages/pro/Referentiels"));
 const ApercuEspacePro = lazy(() => import("./pages/pro/ApercuEspacePro"));
 const ApercuMariage = lazy(() => import("./pages/pro/ApercuMariage"));
 const ApercuEspaceCouple = lazy(() => import("./pages/ApercuEspaceCouple"));
@@ -328,6 +329,7 @@ function App() {
                   {/* Espace professionnel : liste des mariages */}
                   <Route path="/pro" element={<ProtectedRoute><MesMariages /></ProtectedRoute>} />
                   <Route path="/pro/carnet-adresses" element={<ProtectedRoute><CarnetAdresses /></ProtectedRoute>} />
+                  <Route path="/pro/referentiels" element={<ProtectedRoute><ProReferentiels /></ProtectedRoute>} />
 
                   {/* Dashboard Professionnel Mockup */}
                   
