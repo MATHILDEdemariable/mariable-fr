@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarHeart, Sun, BarChart3, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone, ExternalLink } from 'lucide-react';
+import { Building2, CalendarHeart, Sun, BarChart3, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone, ExternalLink, Library } from 'lucide-react';
 import { openProTutorial, openProHelp } from './ProSupportHost';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -62,6 +62,10 @@ const ProSidebar: React.FC = () => {
         <Link to="/pro/carnet-adresses" className={linkClass(location.pathname.startsWith('/pro/carnet-adresses'))}>
           <BookUser className="h-4 w-4" />
           <span className="ml-3 leading-tight">{t('nav.addressBook')}</span>
+        </Link>
+        <Link to="/pro/referentiels" className={linkClass(location.pathname.startsWith('/pro/referentiels'))}>
+          <Library className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{isEnglish ? 'Templates & catalogues' : 'Modèles & catalogues'}</span>
         </Link>
         <button onClick={openProTutorial} className={cn(linkClass(false), 'w-full text-left')}>
           <GraduationCap className="h-4 w-4" />

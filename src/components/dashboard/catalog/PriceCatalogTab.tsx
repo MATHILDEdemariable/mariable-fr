@@ -17,7 +17,8 @@ import type { CatalogImportSelection } from './ImportFromCatalogDialog';
 
 interface PriceCatalogTabProps {
   guestsCount: number;
-  onAddToBudget: (selections: CatalogImportSelection[]) => void;
+  /** Absent sur /pro : le catalogue est alors consulté/édité sans envoi vers un budget */
+  onAddToBudget?: (selections: CatalogImportSelection[]) => void;
 }
 
 const PriceCatalogTab: React.FC<PriceCatalogTabProps> = ({ guestsCount, onAddToBudget }) => {
@@ -67,7 +68,7 @@ const PriceCatalogTab: React.FC<PriceCatalogTabProps> = ({ guestsCount, onAddToB
 
     if (selections.length === 0) return;
     console.log('🚀 catalog selection to budget:', { count: selections.length });
-    onAddToBudget(selections);
+    onAddToBudget?.(selections);
     setSelectedIds([]);
   };
 
@@ -242,7 +243,7 @@ const PriceCatalogTab: React.FC<PriceCatalogTabProps> = ({ guestsCount, onAddToB
         </motion.div>
       )}
 
-      {selectedIds.length > 0 && (
+      {onAddToBudget && selectedIds.length > 0 && (
         <div className="fixed bottom-0 left-0 right-0 z-40 bg-background border-t p-3 flex items-center justify-end gap-2 shadow-lg">
           <Button variant="ghost" size="sm" onClick={() => setSelectedIds([])}>
             {t('catalog.selection.clear')}
