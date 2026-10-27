@@ -177,23 +177,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        {/* Checklist (dropdown) */}
-        <DropdownMenu>
-          <DropdownMenuTrigger className={cn(linkClass(isChecklistActive()), 'w-full justify-start', coupleLockedClass)} disabled={isReaderMode || isWeddingCollaborator}>
-            <CheckSquare className="h-4 w-4" />
-            <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.checklist')}</span>
-            <ChevronDown className="ml-auto h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 bg-white shadow-lg border border-gray-200" align="end">
-            {checklistItems.map(subItem => (
-              <DropdownMenuItem key={subItem.path} asChild>
-                <Link to={isReaderMode ? '#' : subItem.path} onClick={preventReader} className="flex items-center px-2 py-2 text-sm w-full text-gray-600 hover:bg-gray-50">
-                  {subItem.icon}<span className="ml-2">{subItem.label}</span>
-                </Link>
-              </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {/* Check-list fusionnée dans « Planning & tâches » */}
         </>)}
 
 
