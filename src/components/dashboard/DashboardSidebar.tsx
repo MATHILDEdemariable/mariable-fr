@@ -133,25 +133,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
       )}
 
       <nav className="py-2 sm:py-3 px-2 sm:px-3 space-y-0.5">
-        {/* Cockpit Jour J en n°1 */}
-        <HoverCard openDelay={150} closeDelay={100}>
-          <HoverCardTrigger asChild>
-            <Link to={isReaderMode ? '#' : '/mon-jour-m'} onClick={preventReader} className={linkClass(isJourMActive())}>
-              <Calendar className="h-4 w-4" />
-              <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Wedding day run' : 'Déroulé Jour J'}</span>
-              <span className={cn('ml-auto px-1.5 py-0.5 text-[10px] font-semibold tracking-wider', isJourMActive() ? 'bg-background text-wedding-olive' : 'bg-wedding-olive text-white')}>LIVE</span>
-            </Link>
-          </HoverCardTrigger>
-          <HoverCardContent side="right" align="start" className="w-80 rounded-none bg-[#F8F5EF] border-wedding-olive/30">
-            <p className="font-serif text-lg mb-3">{isEnglish ? 'Your wedding day cockpit' : 'Votre cockpit pour le Jour J'}</p>
-            <ul className="space-y-2.5 text-sm">
-              <li><strong>{isEnglish ? 'Live schedule' : 'Planning & conducteur'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Minute-by-minute run sheet, steps ticked live on the day.' : 'Déroulé minute par minute, étapes cochées en direct le jour J.'}</span></li>
-              <li><strong>{isEnglish ? 'Team & contacts' : 'Équipe & contacts'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Vendors and key people at hand.' : 'Prestataires et personnes clés sous la main.'}</span></li>
-              <li><strong>{isEnglish ? 'Official sheets' : 'Fiches officielles'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Validated seating, ceremony, decor and photos as PDFs.' : 'Plan de table, cérémonie, déco et photos validés en PDF.'}</span></li>
-            </ul>
-          </HoverCardContent>
-        </HoverCard>
-
         {/* ORGANISATION */}
         <SectionLabel label={t('sidebar.sections.organisation')} />
 
@@ -202,6 +183,26 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
         {/* JOUR-J */}
         <SectionLabel label={t('sidebar.sections.jourJ')} />
+
+        {/* Cockpit Jour J en 1re position de la section Jour J */}
+        <HoverCard openDelay={150} closeDelay={100}>
+          <HoverCardTrigger asChild>
+            <Link to={isReaderMode ? '#' : '/mon-jour-m'} onClick={preventReader} className={linkClass(isJourMActive())}>
+              <Calendar className="h-4 w-4" />
+              <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Wedding day run' : 'Déroulé Jour J'}</span>
+              <span className={cn('ml-auto px-1.5 py-0.5 text-[10px] font-semibold tracking-wider', isJourMActive() ? 'bg-background text-wedding-olive' : 'bg-wedding-olive text-white')}>LIVE</span>
+            </Link>
+          </HoverCardTrigger>
+          <HoverCardContent side="right" align="start" className="w-80 rounded-none bg-[#F8F5EF] border-wedding-olive/30">
+            <p className="font-serif text-lg mb-3">{isEnglish ? 'Your wedding day cockpit' : 'Votre cockpit pour le Jour J'}</p>
+            <ul className="space-y-2.5 text-sm">
+              <li><strong>{isEnglish ? 'Live schedule' : 'Planning & conducteur'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Minute-by-minute run sheet, steps ticked live on the day.' : 'Déroulé minute par minute, étapes cochées en direct le jour J.'}</span></li>
+              <li><strong>{isEnglish ? 'Team & contacts' : 'Équipe & contacts'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Vendors and key people at hand.' : 'Prestataires et personnes clés sous la main.'}</span></li>
+              <li><strong>{isEnglish ? 'Official sheets' : 'Fiches officielles'}</strong><br /><span className="text-muted-foreground">{isEnglish ? 'Validated seating, ceremony, decor and photos as PDFs.' : 'Plan de table, cérémonie, déco et photos validés en PDF.'}</span></li>
+            </ul>
+          </HoverCardContent>
+        </HoverCard>
+
 
         <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
           <UserCheck className="h-4 w-4" />
