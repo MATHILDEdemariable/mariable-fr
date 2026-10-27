@@ -196,11 +196,11 @@
         "name": "Mariable Pro",
         "price": "149 €",
         "frequency": "par an",
-        "description": "Pour les wedding planners, coordinatrices et lieux de mariage. Plusieurs formules selon votre activité, à partir de :",
+        "description": "Pour les wedding planners, coordinatrices et lieux de mariage. Deux formules selon votre activité, à partir de :",
         "features": [
-          "Multi-mariages",
-          "Collaboration avec vos couples",
-          "Référencement Mariable"
+          "Coordination Jour J : appli mobile, invités & RSVP, plan de table",
+          "Organisation complète à 259 € : planning, budget, prestataires",
+          "Collaboration interactive avec vos couples"
         ],
         "cta": "Voir les formules Pro",
         "href": "/pro-solutions",
