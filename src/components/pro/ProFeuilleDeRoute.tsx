@@ -3,116 +3,79 @@ import { useTranslation } from 'react-i18next';
 import { supabase } from '@/integrations/supabase/client';
 import type { Wedding } from '@/contexts/WeddingContext';
 
-interface RoadmapTask {
-  id: string;
-  title: string;
-  due_date: string | null;
-  priority: string;
-  wedding_id: string | null;
-}
-
-type Quadrant = 'urgentImportant' | 'important' | 'urgent';
-
 interface ProFeuilleDeRouteProps {
   weddings: Wedding[];
   onOpenWedding: (weddingId: string, targetPath?: string) => void;
 }
 
-/**
- * Feuille de route multi-mariages calculée automatiquement depuis la checklist
- * de chaque mariage (échéance + priorité). Aucune saisie supplémentaire.
- */
-export const classifyRoadmapTask = (task: RoadmapTask, today: Date): Quadrant | null => {
-  const isHighPriority = task.priority === 'haute' || task.priority === 'high';
-  if (!task.due_date) return isHighPriority ? 'important' : null;
-  const daysLeft = Math.ceil((new Date(task.due_date).getTime() - today.getTime()) / 86400000);
-  const isUrgent = daysLeft <= 7;
-  if (isUrgent && (isHighPriority || daysLeft < 0)) return 'urgentImportant';
-  if (isUrgent) return 'urgent';
-  if (isHighPriority) return 'important';
-  return null;
-};
+interface MonthPriority { id: string; title: string; date: string; weddingId: string }
 
+/**
+ * Feuille de route multi-mariages : priorités du mois calculées depuis le « Planning & tâches »
+ * de chaque mariage (étapes non terminées, en retard ou datées ce mois-ci).
+ */
 const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenWedding }) => {
   const { i18n } = useTranslation('pro');
   const isEnglish = i18n.language?.startsWith('en');
-  const [roadmapTasks, setRoadmapTasks] = useState<RoadmapTask[]>([]);
-  const [monthPriorities, setMonthPriorities] = useState<{ id: string; title: string; date: string; weddingId: string }[]>([]);
+  const [monthPriorities, setMonthPriorities] = useState<MonthPriority[]>([]);
   const [loading, setLoading] = useState(true);
   const weddingIds = weddings.map((wedding) => wedding.id).join(',');
 
   useEffect(() => {
-    const loadRoadmapTasks = async () => {
-      if (!weddingIds) { setRoadmapTasks([]); setMonthPriorities([]); setLoading(false); return; }
+    const loadPriorities = async () => {
+      if (!weddingIds) { setMonthPriorities([]); setLoading(false); return; }
       try {
-        const [checklistResult, planningResult] = await Promise.all([
-          supabase
-            .from('checklist_mariage_manuel')
-            .select('id, title, due_date, priority, wedding_id')
-            .in('wedding_id', weddingIds.split(','))
-            .eq('completed', false)
-            .order('due_date', { ascending: true, nullsFirst: false })
-            .limit(200),
-          (supabase as any)
-            .from('wedding_retroplanning')
-            .select('wedding_id, timeline_data')
-            .in('wedding_id', weddingIds.split(','))
-            .eq('mode', 'manual'),
-        ]);
-        if (checklistResult.error) throw checklistResult.error;
-        setRoadmapTasks((checklistResult.data ?? []) as RoadmapTask[]);
-        // Priorités du mois : étapes non terminées du « Planning & tâches » datées ce mois-ci
-        const monthKey = new Date().toISOString().slice(0, 7);
-        const priorities = ((planningResult.data ?? []) as { wedding_id: string; timeline_data: any }[]).flatMap((row) =>
+        const { data, error } = await (supabase as any)
+          .from('wedding_retroplanning')
+          .select('wedding_id, timeline_data')
+          .in('wedding_id', weddingIds.split(','))
+          .eq('mode', 'manual');
+        if (error) throw error;
+        const monthEnd = new Date();
+        monthEnd.setMonth(monthEnd.getMonth() + 1, 0);
+        const monthEndKey = monthEnd.toISOString().slice(0, 10);
+        const priorities = ((data ?? []) as { wedding_id: string; timeline_data: any }[]).flatMap((row) =>
           (Array.isArray(row.timeline_data) ? row.timeline_data : [])
-            .filter((step: any) => step?.status !== 'completed' && typeof step?.date === 'string' && step.date.startsWith(monthKey))
+            .filter((step: any) => step?.status !== 'completed' && typeof step?.date === 'string' && step.date && step.date <= monthEndKey)
             .map((step: any) => ({ id: `${row.wedding_id}-${step.id}`, title: step.title, date: step.date, weddingId: row.wedding_id }))
         ).sort((a, b) => a.date.localeCompare(b.date));
         setMonthPriorities(priorities);
       } catch (error) {
-        console.error('❌ ProFeuilleDeRoute: tâches illisibles', error);
+        console.error('❌ ProFeuilleDeRoute: priorités illisibles', error);
       } finally {
         setLoading(false);
       }
     };
-    loadRoadmapTasks();
+    loadPriorities();
   }, [weddingIds]);
 
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
+  const todayKey = new Date().toISOString().slice(0, 10);
   const weddingTitleById = new Map(weddings.map((wedding) => [wedding.id, wedding.title]));
-  const grouped: Record<Quadrant, RoadmapTask[]> = { urgentImportant: [], important: [], urgent: [] };
-  roadmapTasks.forEach((task) => {
-    const quadrant = classifyRoadmapTask(task, today);
-    if (quadrant) grouped[quadrant].push(task);
-  });
-
-  const columns: { key: Quadrant; label: string; hint: string }[] = [
-    { key: 'urgentImportant', label: isEnglish ? 'Urgent & important' : 'Urgent & important', hint: isEnglish ? 'Overdue or due within 7 days' : 'En retard ou sous 7 jours' },
-    { key: 'important', label: isEnglish ? 'Important, not urgent' : 'Important, pas urgent', hint: isEnglish ? 'High priority, to plan' : 'Priorité haute, à planifier' },
-    { key: 'urgent', label: isEnglish ? 'To follow up' : 'À relancer', hint: isEnglish ? 'Due soon, normal priority' : 'Échéance proche, priorité normale' },
-  ];
 
   return (
     <section aria-labelledby="pro-roadmap-title" className="space-y-3">
       <div>
         <h2 id="pro-roadmap-title" className="font-serif text-2xl font-bold">
-          {isEnglish ? 'My roadmap' : 'Ma feuille de route'}
+          {isEnglish ? 'My priorities this month' : 'Mes priorités du mois'}
         </h2>
         <p className="text-sm text-muted-foreground">
-          {isEnglish ? 'Built automatically from each wedding’s checklist (due dates and priorities).' : 'Calculée automatiquement depuis la checklist de chaque mariage (échéances et priorités).'}
+          {isEnglish ? 'Unfinished tasks from each wedding’s Planning & tasks (overdue or due this month).' : 'Tâches non terminées du Planning & tâches de chaque mariage (en retard ou prévues ce mois-ci).'}
         </p>
       </div>
-      {!loading && monthPriorities.length > 0 && (
-        <div className="border border-primary/40 bg-primary/5 p-4">
-          <p className="font-serif text-lg mb-2">{isEnglish ? 'Priorities this month' : 'Priorités du mois'}</p>
+      <div className="border border-primary/40 bg-primary/5 p-4">
+        {loading ? (
+          <p className="text-sm text-muted-foreground">…</p>
+        ) : monthPriorities.length === 0 ? (
+          <p className="text-sm text-muted-foreground">{isEnglish ? 'Nothing here 🎉' : 'Rien à signaler 🎉'}</p>
+        ) : (
           <ul className="divide-y divide-border">
-            {monthPriorities.slice(0, 10).map((priority) => (
+            {monthPriorities.slice(0, 12).map((priority) => (
               <li key={priority.id} className="flex flex-col sm:flex-row sm:items-center gap-2 py-2">
                 <div className="flex-1 text-sm">
                   <span className="block font-medium">{priority.title}</span>
-                  <span className="block text-xs text-muted-foreground">
+                  <span className={`block text-xs ${priority.date < todayKey ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {weddingTitleById.get(priority.weddingId) ?? ''} · {new Date(`${priority.date}T12:00:00`).toLocaleDateString(isEnglish ? 'en-GB' : 'fr-FR')}
+                    {priority.date < todayKey ? (isEnglish ? ' · overdue' : ' · en retard') : ''}
                   </span>
                 </div>
                 <button
@@ -125,38 +88,7 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
               </li>
             ))}
           </ul>
-        </div>
-      )}
-      <div className="grid gap-3 md:grid-cols-3">
-        {columns.map((column) => (
-          <div key={column.key} className="border border-border bg-background p-4">
-            <p className="text-xs font-bold uppercase tracking-widest text-wedding-olive">{column.label}</p>
-            <p className="text-xs text-muted-foreground mb-3">{column.hint}</p>
-            {loading ? (
-              <p className="text-sm text-muted-foreground">…</p>
-            ) : grouped[column.key].length === 0 ? (
-              <p className="text-sm text-muted-foreground">{isEnglish ? 'Nothing here 🎉' : 'Rien à signaler 🎉'}</p>
-            ) : (
-              <ul className="space-y-2">
-                {grouped[column.key].slice(0, 6).map((task) => (
-                  <li key={task.id}>
-                    <button
-                      type="button"
-                      onClick={() => task.wedding_id && onOpenWedding(task.wedding_id, '/dashboard/checklist-mariage?tab=pro')}
-                      className="w-full min-h-[44px] text-left text-sm hover:text-wedding-olive"
-                    >
-                      <span className="block font-medium">{task.title}</span>
-                      <span className="block text-xs text-muted-foreground">
-                        {weddingTitleById.get(task.wedding_id ?? '') ?? ''}
-                        {task.due_date ? ` · ${new Date(task.due_date).toLocaleDateString(isEnglish ? 'en-GB' : 'fr-FR')}` : ''}
-                      </span>
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-        ))}
+        )}
       </div>
     </section>
   );
