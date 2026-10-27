@@ -194,6 +194,28 @@ const RetroplanningManuel = () => {
     toast({ title: isEnglish ? `${newSteps.length} tasks added` : `${newSteps.length} tâches ajoutées` });
   };
 
+  // Trame standard : charge tout le catalogue en 1 clic (sans doublons de titre), dates calculées depuis la date du mariage
+  const handleLoadStandardTemplate = () => {
+    const existingTitles = new Set(steps.map((step) => step.title.toLowerCase()));
+    const newSteps = RETROPLANNING_TASK_CATALOG
+      .map((catalogTask) => ({
+        ...EMPTY_STEP,
+        id: uuidv4(),
+        title: isEnglish ? catalogTask.en : catalogTask.fr,
+        date: computeStepDate(weddingDate, catalogTask.monthsBefore),
+        period: periodLabel(catalogTask.monthsBefore, isEnglish),
+        category: catalogTask.category,
+        stakeholder: catalogTask.stakeholder,
+      }))
+      .filter((step) => !existingTitles.has(step.title.toLowerCase()));
+    if (!newSteps.length) {
+      toast({ title: isEnglish ? 'Standard template already loaded' : 'Trame standard déjà chargée' });
+      return;
+    }
+    persistSteps([...steps, ...newSteps]);
+    toast({ title: isEnglish ? `${newSteps.length} tasks added — edit them freely` : `${newSteps.length} tâches ajoutées — modifiez-les librement` });
+  };
+
   const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
     persistSteps(steps.map((item) => (item.id === stepId ? { ...item, ...patch } : item)));
 
