@@ -61,3 +61,11 @@ export const RETROPLANNING_TASK_CATALOG: RetroplanningCatalogTask[] = [
   task('setup', 0.25, 'Décoration', 'planner', 'Installer la décoration', 'Set up the decor'),
   task('rest', 0.25, 'Organisation', 'couple', 'Se reposer et profiter', 'Rest and enjoy'),
 ];
+
+/** Libellés anglais des catégories du catalogue (les données restent en français). */
+export const CATALOG_CATEGORY_EN: Record<string, string> = {
+  Organisation: 'Planning', Invités: 'Guests', Réception: 'Reception', Prestataires: 'Vendors',
+  Papeterie: 'Stationery', Tenues: 'Attire', Cérémonie: 'Ceremony', Décoration: 'Decoration', Logistique: 'Logistics',
+};
+export const translateCatalogCategory = (category: string, isEnglish: boolean) =>
+  isEnglish ? CATALOG_CATEGORY_EN[category] ?? category : category;

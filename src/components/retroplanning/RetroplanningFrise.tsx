@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { differenceInCalendarDays, format, isSameMonth } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
 import { Check, Heart } from 'lucide-react';
+import { translateCatalogCategory } from '@/data/retroplanningTaskCatalog';
 import { STAKEHOLDER_LABELS, type ManualStep } from './RetroplanningManuel';
 
 interface RetroplanningFriseProps {
@@ -83,7 +84,7 @@ const RetroplanningFrise = ({ steps, weddingDate, isEnglish }: RetroplanningFris
                         {[
                           step.date && format(new Date(step.date), 'dd MMM', { locale: dateLocale }),
                           step.period || (daysBefore !== null && daysBefore >= 0 ? `J-${daysBefore}` : ''),
-                          step.category,
+                          translateCatalogCategory(step.category, isEnglish),
                           isLate ? (isEnglish ? 'Late' : 'En retard') : '',
                         ].filter(Boolean).join(' · ')}
                       </p>
