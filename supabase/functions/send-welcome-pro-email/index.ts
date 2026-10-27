@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
     const proUrl = "https://mariable.fr/pro";
 
     const button = (label: string) =>
-      `<p style="margin:28px 0;"><a href="${proUrl}" style="background:#63745A;color:#ffffff;padding:14px 26px;text-decoration:none;font-family:Georgia,serif;">${label}</a></p>`;
+      `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0;"><tr><td bgcolor="#63745A" style="background-color:#63745A;"><a href="${proUrl}" style="display:inline-block;background-color:#63745A;color:#ffffff !important;padding:14px 26px;text-decoration:none;font-family:Georgia,serif;font-weight:bold;"><span style="color:#ffffff;">${label}</span></a></td></tr></table>`;
 
     const html = `
 <div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:24px;background:#F8F5EF;color:#1a1a1a;">

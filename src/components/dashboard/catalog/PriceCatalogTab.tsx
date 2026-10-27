@@ -104,6 +104,11 @@ const PriceCatalogTab: React.FC<PriceCatalogTabProps> = ({ guestsCount, onAddToB
 
   return (
     <div className="space-y-4 pb-20">
+      <p className="text-xs text-muted-foreground border-l-2 border-wedding-olive pl-3 py-1">
+        {isEnglish
+          ? 'Indicative prices based on the French wedding market — this catalogue is intentionally kept in French.'
+          : 'Tarifs indicatifs basés sur le marché français du mariage.'}
+      </p>
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
