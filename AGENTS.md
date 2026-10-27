@@ -11,3 +11,4 @@
 - Budget deposits live in `budgets_detail.payment_schedule` (jsonb: up to 3 installments + cash_day); paid installments drive the deposit column and cash_day feeds the Jour J envelopes. The daily `budget-deposit-reminders` edge function (pg_cron) emails the owner and collaborators — keeps one budget module for couples and pros.
 - Ceremony planning (religious/civil) is stored per wedding in `wedding_ceremony_plans.data`; owner and planner collaborators edit, couple collaborators read only — matches the shared-module rights matrix.
 - Photo-list "done" ticks are a separate `coordination_documents` row (category `photo_list_status`) so the Conducteur never overwrites the list editor.
+- Pro client forms (`pro_client_forms` + `pro_client_form_responses`) are reached anonymously only through the `get_public_client_form` / `submit_client_form_response` RPCs by share token; each response stores a `questions_snapshot` so later question edits never break old one-pagers.
