@@ -58,12 +58,14 @@ export const downloadClientFormOnePager = (options: ClientFormOnePagerOptions) =
 
   const ensureSpace = (height: number) => {
     if (columnY[column] + height <= bottom) return;
-    if (column === 0) { column = 1; return; }
+    if (column === 0 && columnY[1] + height <= bottom) { column = 1; return; }
     doc.addPage();
     columnY[0] = startY - 20; columnY[1] = startY - 20; column = 0;
   };
 
   sections.forEach((section) => {
+    // Chaque rubrique va dans la colonne la moins remplie pour équilibrer la page
+    column = columnY[0] <= columnY[1] ? 0 : 1;
     ensureSpace(14);
     const x = margin + column * (columnWidth + columnGap);
     doc.setFont('times', 'bold');
