@@ -26,7 +26,7 @@ interface ImportTaskCatalogDialogProps {
 interface CatalogRow { id: string; monthsBefore: number; title: string; category: string; stakeholder: string; source: 'catalog' | 'ai' }
 
 // Date estimée à partir de la date du mariage (0.5 = 2 semaines, 0.25 = 1 semaine)
-const computeStepDate = (weddingDate: string, monthsBefore: number) => {
+export const computeStepDate = (weddingDate: string, monthsBefore: number) => {
   if (!weddingDate) return '';
   const wedding = new Date(`${weddingDate}T12:00:00`);
   if (isNaN(wedding.getTime())) return '';
@@ -34,7 +34,7 @@ const computeStepDate = (weddingDate: string, monthsBefore: number) => {
   return format(date, 'yyyy-MM-dd');
 };
 
-const periodLabel = (monthsBefore: number, isEnglish: boolean) => {
+export const periodLabel = (monthsBefore: number, isEnglish: boolean) => {
   if (monthsBefore >= 1) return isEnglish ? `${Math.round(monthsBefore)} months before` : `J-${Math.round(monthsBefore)} mois`;
   const weeks = Math.max(1, Math.round(monthsBefore * 4));
   return isEnglish ? `${weeks} week${weeks > 1 ? 's' : ''} before` : `J-${weeks} semaine${weeks > 1 ? 's' : ''}`;
