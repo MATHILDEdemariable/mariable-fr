@@ -23,7 +23,11 @@ const RetroplanningPublic = () => {
   const dateLocale = isEnglish ? enUS : fr;
   const [retroplanning, setRetroplanning] = useState<PublicRetroplanning | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [stakeholderFilter, setStakeholderFilter] = useState('all');
+  // Lien par rôle : ?role=couple|vendor|… pré-filtre et verrouille la vue sur les tâches de ce rôle
+  const [searchParams] = useSearchParams();
+  const sharedRole = searchParams.get('role');
+  const lockedRole = sharedRole && STAKEHOLDER_LABELS[sharedRole] ? sharedRole : null;
+  const [stakeholderFilter, setStakeholderFilter] = useState(lockedRole ?? 'all');
 
   useEffect(() => {
     const loadPublicRetroplanning = async () => {
