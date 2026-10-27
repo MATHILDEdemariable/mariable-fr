@@ -54,7 +54,7 @@ const RetroplanningPublic = () => {
   return (
     <main className="min-h-screen bg-editorial-beige text-editorial-noir px-4 py-10 sm:py-16">
       <Helmet>
-        <title>{isEnglish ? 'Shared wedding timeline | Mariable' : 'Rétroplanning partagé | Mariable'}</title>
+        <title>{isEnglish ? 'Overall wedding planning | Mariable' : 'Planning global du mariage | Mariable'}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="max-w-3xl mx-auto space-y-6">
@@ -66,8 +66,8 @@ const RetroplanningPublic = () => {
           <>
             <header className="text-center space-y-3 border-b border-editorial-olive/30 pb-8">
               <img src="/cachet_M.webp" alt="Mariable" className="h-12 w-auto mx-auto" width={48} height={48} />
-              <p className="text-xs uppercase tracking-[0.3em] text-editorial-olive">{isEnglish ? 'Read-only view' : 'Consultation'}</p>
-              <h1 className="text-4xl sm:text-5xl font-serif">{retroplanning.mode === 'manual' && retroplanning.title && !/manuel|manual/i.test(retroplanning.title) ? retroplanning.title : (isEnglish ? 'Wedding timeline' : 'Rétroplanning')}</h1>
+              <p className="text-xs uppercase tracking-[0.3em] text-editorial-olive">{isEnglish ? 'Read-only consultation' : 'Consultation en lecture seule'}</p>
+              <h1 className="text-4xl sm:text-5xl font-serif">{retroplanning.mode === 'manual' && retroplanning.title && !/manuel|manual/i.test(retroplanning.title) ? retroplanning.title : (isEnglish ? 'Overall wedding planning' : 'Planning global du mariage')}</h1>
               {retroplanning.mode !== 'manual' && retroplanning.wedding_date && (
                 <p className="text-muted-foreground">{format(new Date(retroplanning.wedding_date), 'dd MMMM yyyy', { locale: dateLocale })}</p>
               )}
