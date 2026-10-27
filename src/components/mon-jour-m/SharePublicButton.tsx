@@ -89,32 +89,32 @@ const SharePublicButton: React.FC<SharePublicButtonProps> = ({ coordinationId })
           <span className="sm:hidden">{t('share.buttonShort')}</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md mx-3 sm:mx-auto max-h-[90vh] overflow-y-auto">
+      <DialogContent className="w-[calc(100vw-1.5rem)] sm:max-w-md max-h-[90vh] overflow-y-auto overflow-x-hidden rounded-none">
         <DialogHeader>
           <DialogTitle>{t('share.dialogTitle')}</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4">
-          <p className="text-sm text-gray-600">{t('share.intro')}</p>
-          
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2">
-            <Input value={publicUrl} readOnly className="flex-1 text-xs sm:text-sm" />
-            <Button
-              size="sm"
-              onClick={handleCopy}
-              className="flex items-center gap-1 justify-center min-h-[44px] touch-manipulation px-3 sm:px-4"
-            >
-              {copied ? <Check className="h-3 w-3 sm:h-4 sm:w-4" /> : <Copy className="h-3 w-3 sm:h-4 sm:w-4" />}
-              <span className="text-xs sm:text-sm">{copied ? t('share.copied') : t('share.copy')}</span>
-            </Button>
-          </div>
+        <div className="space-y-4 min-w-0">
+          <p className="text-sm text-muted-foreground">{t('share.intro')}</p>
 
-          <div className="flex gap-2">
-            <Button 
-              variant="outline" 
-              onClick={handlePreview}
-              className="flex items-center gap-2 flex-1 min-h-[44px] touch-manipulation text-xs sm:text-sm"
-            >
-              <Eye className="h-3 w-3 sm:h-4 sm:w-4" />
+          <p className="text-xs break-all border bg-muted/40 px-3 py-2 select-all">{publicUrl}</p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <Button onClick={handleCopy} className="min-h-[44px] rounded-none gap-2">
+              {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              {copied ? t('share.copied') : t('share.copy')}
+            </Button>
+            {typeof navigator !== 'undefined' && 'share' in navigator && (
+              <Button
+                variant="outline"
+                className="min-h-[44px] rounded-none gap-2"
+                onClick={() => navigator.share({ title: t('share.dialogTitle'), url: publicUrl }).catch(() => undefined)}
+              >
+                <Share className="h-4 w-4" />
+                {isEnglish ? 'Send' : 'Envoyer'}
+              </Button>
+            )}
+            <Button variant="outline" onClick={handlePreview} className="min-h-[44px] rounded-none gap-2">
+              <Eye className="h-4 w-4" />
               {t('share.preview')}
             </Button>
           </div>
