@@ -2473,6 +2473,36 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_task_templates: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          months_before: number
+          owner_id: string
+          stakeholder: string
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          id?: string
+          months_before?: number
+          owner_id: string
+          stakeholder?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          months_before?: number
+          owner_id?: string
+          stakeholder?: string
+          title?: string
+        }
+        Relationships: []
+      }
       professional_payment_leads: {
         Row: {
           admin_notes: string | null
