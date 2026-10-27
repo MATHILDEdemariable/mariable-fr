@@ -73,8 +73,8 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
             <legend className="text-sm font-medium mb-1.5">{tr('Formule', 'Service')}</legend>
             <div className="grid grid-cols-2 gap-2" role="radiogroup">
               {([
-                { value: 'jourJ', label: tr('Coordination Jour J', 'Wedding-day coordination'), hint: tr('Planning, équipe, plan de table', 'Schedule, team, seating plan') },
-                { value: 'organisation', label: tr('Organisation complète', 'Full planning'), hint: tr('Budget, rétroplanning, RSVP + Jour J', 'Budget, timeline, RSVP + wedding day') },
+                { value: 'jourJ' as const, label: tr('Coordination Jour J', 'Wedding-day coordination'), hint: tr('Planning, équipe, plan de table', 'Schedule, team, seating plan') },
+                { value: 'organisation' as const, label: tr('Organisation complète', 'Full planning'), hint: tr('Budget, rétroplanning, RSVP + Jour J', 'Budget, timeline, RSVP + wedding day') },
               ]).map((option) => (
                 <button
                   key={option.value}
