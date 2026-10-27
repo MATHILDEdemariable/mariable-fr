@@ -37,22 +37,38 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
   const { i18n } = useTranslation('pro');
   const isEnglish = i18n.language?.startsWith('en');
   const [roadmapTasks, setRoadmapTasks] = useState<RoadmapTask[]>([]);
+  const [monthPriorities, setMonthPriorities] = useState<{ id: string; title: string; date: string; weddingId: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const weddingIds = weddings.map((wedding) => wedding.id).join(',');
 
   useEffect(() => {
     const loadRoadmapTasks = async () => {
-      if (!weddingIds) { setRoadmapTasks([]); setLoading(false); return; }
+      if (!weddingIds) { setRoadmapTasks([]); setMonthPriorities([]); setLoading(false); return; }
       try {
-        const { data, error } = await supabase
-          .from('checklist_mariage_manuel')
-          .select('id, title, due_date, priority, wedding_id')
-          .in('wedding_id', weddingIds.split(','))
-          .eq('completed', false)
-          .order('due_date', { ascending: true, nullsFirst: false })
-          .limit(200);
-        if (error) throw error;
-        setRoadmapTasks((data ?? []) as RoadmapTask[]);
+        const [checklistResult, planningResult] = await Promise.all([
+          supabase
+            .from('checklist_mariage_manuel')
+            .select('id, title, due_date, priority, wedding_id')
+            .in('wedding_id', weddingIds.split(','))
+            .eq('completed', false)
+            .order('due_date', { ascending: true, nullsFirst: false })
+            .limit(200),
+          (supabase as any)
+            .from('wedding_retroplanning')
+            .select('wedding_id, timeline_data')
+            .in('wedding_id', weddingIds.split(','))
+            .eq('mode', 'manual'),
+        ]);
+        if (checklistResult.error) throw checklistResult.error;
+        setRoadmapTasks((checklistResult.data ?? []) as RoadmapTask[]);
+        // Priorités du mois : étapes non terminées du « Planning & tâches » datées ce mois-ci
+        const monthKey = new Date().toISOString().slice(0, 7);
+        const priorities = ((planningResult.data ?? []) as { wedding_id: string; timeline_data: any }[]).flatMap((row) =>
+          (Array.isArray(row.timeline_data) ? row.timeline_data : [])
+            .filter((step: any) => step?.status !== 'completed' && typeof step?.date === 'string' && step.date.startsWith(monthKey))
+            .map((step: any) => ({ id: `${row.wedding_id}-${step.id}`, title: step.title, date: step.date, weddingId: row.wedding_id }))
+        ).sort((a, b) => a.date.localeCompare(b.date));
+        setMonthPriorities(priorities);
       } catch (error) {
         console.error('❌ ProFeuilleDeRoute: tâches illisibles', error);
       } finally {
@@ -87,6 +103,30 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
           {isEnglish ? 'Built automatically from each wedding’s checklist (due dates and priorities).' : 'Calculée automatiquement depuis la checklist de chaque mariage (échéances et priorités).'}
         </p>
       </div>
+      {!loading && monthPriorities.length > 0 && (
+        <div className="border border-primary/40 bg-primary/5 p-4">
+          <p className="font-serif text-lg mb-2">{isEnglish ? 'Priorities this month' : 'Priorités du mois'}</p>
+          <ul className="divide-y divide-border">
+            {monthPriorities.slice(0, 10).map((priority) => (
+              <li key={priority.id} className="flex flex-col sm:flex-row sm:items-center gap-2 py-2">
+                <div className="flex-1 text-sm">
+                  <span className="block font-medium">{priority.title}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {weddingTitleById.get(priority.weddingId) ?? ''} · {new Date(`${priority.date}T12:00:00`).toLocaleDateString(isEnglish ? 'en-GB' : 'fr-FR')}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onOpenWedding(priority.weddingId, '/dashboard/mon-mariage/retroplanning')}
+                  className="min-h-[44px] px-4 text-xs uppercase tracking-wider border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  {isEnglish ? 'Open planning' : 'Ouvrir le planning'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="grid gap-3 md:grid-cols-3">
         {columns.map((column) => (
           <div key={column.key} className="border border-border bg-background p-4">

@@ -15,25 +15,16 @@ interface RetroplanningFriseProps {
 export const RetroplanningSummary = ({ steps, weddingDate, isEnglish }: RetroplanningFriseProps) => {
   const completedCount = steps.filter((step) => step.status === 'completed').length;
   const progressPercent = steps.length ? Math.round((completedCount / steps.length) * 100) : 0;
-  const daysLeft = weddingDate ? differenceInCalendarDays(new Date(weddingDate), new Date()) : null;
   const currentPriorities = steps.filter(
     (step) => step.status !== 'completed' && step.date && isSameMonth(new Date(step.date), new Date())
   );
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-3">
-        <div className="border border-border p-4 bg-card">
-          <p className="text-sm text-muted-foreground">{isEnglish ? 'Countdown' : 'Compte à rebours'}</p>
-          <p className="text-2xl font-serif">
-            {daysLeft === null ? '—' : daysLeft > 0 ? `J-${daysLeft}` : daysLeft === 0 ? (isEnglish ? 'D-Day' : 'Jour J') : (isEnglish ? 'Done' : 'Passé')}
-          </p>
-        </div>
-        <div className="border border-border p-4 bg-card">
-          <p className="text-sm text-muted-foreground">{isEnglish ? 'Progress' : 'Avancement'}</p>
-          <p className="text-2xl font-serif">{progressPercent}% <span className="text-sm text-muted-foreground">({completedCount}/{steps.length})</span></p>
-          <div className="h-1.5 bg-muted mt-2"><div className="h-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} /></div>
-        </div>
+      <div className="border border-border p-4 bg-card">
+        <p className="text-sm text-muted-foreground">{isEnglish ? 'Progress' : 'Avancement'}</p>
+        <p className="text-2xl font-serif">{progressPercent}% <span className="text-sm text-muted-foreground">({completedCount}/{steps.length})</span></p>
+        <div className="h-1.5 bg-muted mt-2"><div className="h-full bg-primary transition-all" style={{ width: `${progressPercent}%` }} /></div>
       </div>
       {currentPriorities.length > 0 && (
         <div className="border border-primary/40 bg-primary/5 p-4">

@@ -7,6 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { STAKEHOLDER_LABELS } from './RetroplanningManuel';
 
 interface RetroplanningShareButtonProps {
   retroplanningId: string | null;
@@ -75,9 +76,10 @@ const RetroplanningShareButton = ({ retroplanningId }: RetroplanningShareButtonP
     }
   };
 
-  const copyLink = async () => {
-    await navigator.clipboard.writeText(shareLink);
+  const copyLink = async (linkToCopy: string) => {
+    await navigator.clipboard.writeText(linkToCopy);
     setIsCopied(true);
+    toast({ title: isEnglish ? 'Link copied' : 'Lien copié' });
     setTimeout(() => setIsCopied(false), 2000);
   };
 
@@ -100,12 +102,22 @@ const RetroplanningShareButton = ({ retroplanningId }: RetroplanningShareButtonP
           {isLoading ? (
             <Loader2 className="h-6 w-6 animate-spin mx-auto" />
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-4 overflow-x-hidden">
               <div className="flex gap-2">
                 <Input value={shareLink} readOnly aria-label={isEnglish ? 'Share link' : 'Lien de partage'} />
-                <Button onClick={copyLink} aria-label={isEnglish ? 'Copy' : 'Copier'}>
+                <Button onClick={() => copyLink(shareLink)} aria-label={isEnglish ? 'Copy' : 'Copier'}>
                   {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
                 </Button>
+              </div>
+              <div className="space-y-2">
+                <p className="text-sm font-medium">{isEnglish ? 'Link per role (only their tasks)' : 'Lien par rôle (uniquement ses tâches)'}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {Object.keys(STAKEHOLDER_LABELS).map((roleKey) => (
+                    <Button key={roleKey} variant="outline" size="sm" className="justify-start min-h-11" onClick={() => copyLink(`${shareLink}?role=${roleKey}`)}>
+                      <Copy className="h-3 w-3 mr-2" />{STAKEHOLDER_LABELS[roleKey][isEnglish ? 'en' : 'fr']}
+                    </Button>
+                  ))}
+                </div>
               </div>
               <Button variant="ghost" size="sm" onClick={disableLink}>
                 {isEnglish ? 'Disable this link' : 'Désactiver ce lien'}
