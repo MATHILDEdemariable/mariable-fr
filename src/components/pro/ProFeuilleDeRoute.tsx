@@ -103,6 +103,30 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
           {isEnglish ? 'Built automatically from each wedding’s checklist (due dates and priorities).' : 'Calculée automatiquement depuis la checklist de chaque mariage (échéances et priorités).'}
         </p>
       </div>
+      {!loading && monthPriorities.length > 0 && (
+        <div className="border border-primary/40 bg-primary/5 p-4">
+          <p className="font-serif text-lg mb-2">{isEnglish ? 'Priorities this month' : 'Priorités du mois'}</p>
+          <ul className="divide-y divide-border">
+            {monthPriorities.slice(0, 10).map((priority) => (
+              <li key={priority.id} className="flex flex-col sm:flex-row sm:items-center gap-2 py-2">
+                <div className="flex-1 text-sm">
+                  <span className="block font-medium">{priority.title}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {weddingTitleById.get(priority.weddingId) ?? ''} · {new Date(`${priority.date}T12:00:00`).toLocaleDateString(isEnglish ? 'en-GB' : 'fr-FR')}
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onOpenWedding(priority.weddingId, '/dashboard/mon-mariage/retroplanning')}
+                  className="min-h-[44px] px-4 text-xs uppercase tracking-wider border border-primary text-primary hover:bg-primary hover:text-primary-foreground transition-colors"
+                >
+                  {isEnglish ? 'Open planning' : 'Ouvrir le planning'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="grid gap-3 md:grid-cols-3">
         {columns.map((column) => (
           <div key={column.key} className="border border-border bg-background p-4">
