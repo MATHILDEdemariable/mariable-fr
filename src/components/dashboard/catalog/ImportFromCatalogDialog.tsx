@@ -28,16 +28,20 @@ const ImportFromCatalogDialog: React.FC<ImportFromCatalogDialogProps> = ({ open,
 
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Record<string, number>>({});
+  // Onglet : catalogue Mariable (marché français) ou catalogue personnel du pro
+  const [source, setSource] = useState<'mariable' | 'mine'>('mariable');
 
   const defaultQuantity = (item: PriceCatalogItem) => (item.price_unit === 'per_person' ? Math.max(guestsCount || 1, 1) : 1);
 
   const filtered = useMemo(() => {
     const query = search.trim().toLowerCase();
-    if (!query) return items;
-    return items.filter(item =>
-      item.name.toLowerCase().includes(query) || (item.description || '').toLowerCase().includes(query)
-    );
-  }, [items, search]);
+    const seen = new Set<string>();
+    return items
+      .filter(item => (source === 'mariable' ? item.is_standard : !item.is_standard))
+      // Doublons (même nom, catégorie, prix) masqués
+      .filter(item => { const key = `${item.category}|${item.name.toLowerCase()}|${item.base_price}|${item.price_unit}`; if (seen.has(key)) return false; seen.add(key); return true; })
+      .filter(item => !query || item.name.toLowerCase().includes(query) || (item.description || '').toLowerCase().includes(query));
+  }, [items, search, source]);
 
   const toggle = (item: PriceCatalogItem, checked: boolean) => {
     setSelected(prev => {
@@ -71,6 +75,18 @@ const ImportFromCatalogDialog: React.FC<ImportFromCatalogDialogProps> = ({ open,
           <DialogTitle className="font-serif">{t('catalog.import.title')}</DialogTitle>
         </DialogHeader>
 
+        <div className="flex gap-1 bg-muted p-1 w-fit" role="tablist">
+          <Button role="tab" aria-selected={source === 'mariable'} variant={source === 'mariable' ? 'outline' : 'ghost'} size="sm" onClick={() => setSource('mariable')}>
+            {isEnglish ? 'Mariable catalog*' : 'Catalogue Mariable*'}
+          </Button>
+          <Button role="tab" aria-selected={source === 'mine'} variant={source === 'mine' ? 'outline' : 'ghost'} size="sm" onClick={() => setSource('mine')}>
+            {isEnglish ? 'My price catalog' : 'Mon catalogue de prix'}
+          </Button>
+        </div>
+        {source === 'mariable' && (
+          <p className="text-xs text-muted-foreground">{isEnglish ? '* Indicative prices based on the French wedding market.' : '* Tarifs indicatifs basés sur le marché français du mariage.'}</p>
+        )}
+
         <Input
           value={search}
           onChange={e => setSearch(e.target.value)}
@@ -81,7 +97,7 @@ const ImportFromCatalogDialog: React.FC<ImportFromCatalogDialogProps> = ({ open,
           {isLoading ? (
             <p className="text-center py-8 text-muted-foreground">{t('catalog.loading')}</p>
           ) : filtered.length === 0 ? (
-            <p className="text-center py-8 text-muted-foreground">{t('catalog.import.empty')}</p>
+            <p className="text-center py-8 text-muted-foreground">{source === 'mine' ? (isEnglish ? 'Your price catalog is empty. Add your rates in Pro space → Templates & catalogs.' : 'Votre catalogue est vide. Ajoutez vos tarifs dans Espace pro → Modèles & catalogues.') : t('catalog.import.empty')}</p>
           ) : (
             <div className="space-y-2">
               {filtered.map(item => {
