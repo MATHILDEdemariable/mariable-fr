@@ -79,7 +79,7 @@ const RetroplanningPublic = () => {
                   <p className="text-center font-serif italic text-lg text-editorial-olive -mt-2">{format(new Date(retroplanning.wedding_date), 'dd MMMM yyyy', { locale: dateLocale })}</p>
                 )}
                 <RetroplanningSummary steps={timeline as ManualStep[]} weddingDate={retroplanning.wedding_date} isEnglish={isEnglish} />
-                {usedStakeholders.length > 0 && (
+                {!lockedRole && usedStakeholders.length > 0 && (
                   <div className="flex flex-wrap gap-2 justify-center" role="group" aria-label={isEnglish ? 'Filter by stakeholder' : 'Filtrer par partie prenante'}>
                     {['all', ...usedStakeholders].map((key) => (
                       <button key={key} type="button" onClick={() => setStakeholderFilter(key)}
