@@ -459,7 +459,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             {/* Table shape */}
             <div
               className={cn(
-                "table-shape flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shadow-lg border-2",
+                "table-shape relative flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shadow-lg border-2",
                 getTableShape(table.shape),
                 isFull 
                   ? "bg-wedding-olive text-white border-premium-olive-dark" 
