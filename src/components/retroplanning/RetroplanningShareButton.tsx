@@ -51,7 +51,7 @@ const RetroplanningShareButton = ({ retroplanningId }: RetroplanningShareButtonP
           .insert({ retroplanning_id: retroplanningId, token, created_by: user.id });
         if (insertError) throw insertError;
       }
-      setShareLink(`${window.location.origin}/retroplanning-public/${token}`);
+      setShareLink(`${window.location.origin}/retroplanning-public/${token}?lang=${isEnglish ? 'en' : 'fr'}`);
     } catch (error) {
       console.error('❌ openShareDialog failed:', error);
       toast({ title: isEnglish ? 'Error' : 'Erreur', description: isEnglish ? 'Unable to create the link' : 'Impossible de créer le lien', variant: 'destructive' });
@@ -113,7 +113,7 @@ const RetroplanningShareButton = ({ retroplanningId }: RetroplanningShareButtonP
                 <p className="text-sm font-medium">{isEnglish ? 'Link per role (only their tasks)' : 'Lien par rôle (uniquement ses tâches)'}</p>
                 <div className="grid grid-cols-2 gap-2">
                   {Object.keys(STAKEHOLDER_LABELS).map((roleKey) => (
-                    <Button key={roleKey} variant="outline" size="sm" className="justify-start min-h-11" onClick={() => copyLink(`${shareLink}?role=${roleKey}`)}>
+                    <Button key={roleKey} variant="outline" size="sm" className="justify-start min-h-11" onClick={() => copyLink(`${shareLink}&role=${roleKey}`)}>
                       <Copy className="h-3 w-3 mr-2" />{STAKEHOLDER_LABELS[roleKey][isEnglish ? 'en' : 'fr']}
                     </Button>
                   ))}

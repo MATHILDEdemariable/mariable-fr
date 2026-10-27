@@ -28,6 +28,11 @@ const RetroplanningPublic = () => {
   const sharedRole = searchParams.get('role');
   const lockedRole = sharedRole && STAKEHOLDER_LABELS[sharedRole] ? sharedRole : null;
   const [stakeholderFilter, setStakeholderFilter] = useState(lockedRole ?? 'all');
+  // Langue du lien (?lang=en|fr) : le planning s'affiche dans la langue de celui qui partage
+  const sharedLang = searchParams.get('lang');
+  useEffect(() => {
+    if ((sharedLang === 'en' || sharedLang === 'fr') && !i18n.language.startsWith(sharedLang)) i18n.changeLanguage(sharedLang);
+  }, [sharedLang, i18n]);
 
   useEffect(() => {
     const loadPublicRetroplanning = async () => {
@@ -64,6 +69,12 @@ const RetroplanningPublic = () => {
           <p className="text-center text-muted-foreground">{isEnglish ? 'This link is invalid or has been disabled.' : 'Ce lien est invalide ou a été désactivé.'}</p>
         ) : (
           <>
+            <div className="flex justify-end gap-1 text-xs" role="group" aria-label="Langue / Language">
+              {(['fr', 'en'] as const).map((langCode) => (
+                <button key={langCode} type="button" onClick={() => i18n.changeLanguage(langCode)}
+                  className={`min-h-11 px-3 uppercase tracking-wider border ${(langCode === 'en') === isEnglish ? 'bg-editorial-olive text-editorial-beige border-editorial-olive' : 'border-editorial-olive/40 text-editorial-olive'}`}>{langCode}</button>
+              ))}
+            </div>
             <header className="text-center space-y-3 border-b border-editorial-olive/30 pb-8">
               <img src="/cachet_M.webp" alt="Mariable" className="h-12 w-auto mx-auto" width={48} height={48} />
               <p className="text-xs uppercase tracking-[0.3em] text-editorial-olive">{isEnglish ? 'Read-only consultation' : 'Consultation en lecture seule'}</p>

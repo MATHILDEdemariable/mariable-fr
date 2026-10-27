@@ -22,6 +22,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 import RetroplanningShareButton from './RetroplanningShareButton';
 import ImportTaskCatalogDialog, { type CatalogStepDraft } from './ImportTaskCatalogDialog';
 import RetroplanningFrise, { RetroplanningSummary } from './RetroplanningFrise';
+import { exportRetroplanningPdf } from '@/services/retroplanningPdfExport';
 
 export type ManualStepStatus = 'pending' | 'in_progress' | 'completed';
 
@@ -256,12 +257,20 @@ const RetroplanningManuel = () => {
     toast({ title: isEnglish ? `${newSteps.length} tasks added` : `${newSteps.length} tâches ajoutées` });
   };
 
-  // Export PDF : affiche la vue et le rôle choisis puis lance l'impression
+  // Export PDF : génère un vrai fichier selon la vue et le rôle choisis, téléchargé directement
   const handleExportPdf = () => {
-    setView(exportView);
-    setStakeholderFilter(exportRole);
-    setIsExportOpen(false);
-    setTimeout(() => window.print(), 400);
+    try {
+      const exportSteps = exportRole === 'all' ? sortedSteps : sortedSteps.filter((step) => step.stakeholder === exportRole);
+      exportRetroplanningPdf({
+        steps: exportSteps, view: exportView, weddingDate, calendarMonth, isEnglish,
+        roleLabel: exportRole === 'all' ? '' : stakeholderLabel(exportRole),
+        stakeholderLabel,
+      });
+      setIsExportOpen(false);
+    } catch (error) {
+      console.error('❌ handleExportPdf failed:', error);
+      toast({ title: isEnglish ? 'PDF export failed' : 'Échec de l\'export PDF', variant: 'destructive' });
+    }
   };
 
   const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
@@ -506,7 +515,7 @@ const RetroplanningManuel = () => {
                 </SelectContent>
               </Select>
             </div>
-            <p className="text-xs text-muted-foreground">{isEnglish ? 'In the print window, choose "Save as PDF".' : 'Dans la fenêtre d\'impression, choisissez « Enregistrer au format PDF ».'}</p>
+            <p className="text-xs text-muted-foreground">{isEnglish ? 'The PDF downloads directly to your computer.' : 'Le PDF se télécharge directement sur votre ordinateur.'}</p>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsExportOpen(false)}>{isEnglish ? 'Cancel' : 'Annuler'}</Button>
