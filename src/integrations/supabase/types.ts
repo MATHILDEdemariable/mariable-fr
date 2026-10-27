@@ -2473,6 +2473,86 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_client_form_responses: {
+        Row: {
+          answers: Json
+          created_at: string
+          form_id: string
+          id: string
+          questions_snapshot: Json
+          respondent_email: string | null
+          respondent_name: string | null
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          form_id: string
+          id?: string
+          questions_snapshot?: Json
+          respondent_email?: string | null
+          respondent_name?: string | null
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          form_id?: string
+          id?: string
+          questions_snapshot?: Json
+          respondent_email?: string | null
+          respondent_name?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pro_client_form_responses_form_id_fkey"
+            columns: ["form_id"]
+            isOneToOne: false
+            referencedRelation: "pro_client_forms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pro_client_forms: {
+        Row: {
+          created_at: string
+          form_type: string
+          id: string
+          intro: string | null
+          is_open: boolean
+          language: string
+          owner_id: string
+          questions: Json
+          share_token: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          form_type?: string
+          id?: string
+          intro?: string | null
+          is_open?: boolean
+          language?: string
+          owner_id: string
+          questions?: Json
+          share_token?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          form_type?: string
+          id?: string
+          intro?: string | null
+          is_open?: boolean
+          language?: string
+          owner_id?: string
+          questions?: Json
+          share_token?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       pro_task_templates: {
         Row: {
           category: string
@@ -4624,6 +4704,16 @@ export type Database = {
           wedding_title: string
         }[]
       }
+      get_public_client_form: {
+        Args: { token_value: string }
+        Returns: {
+          intro: string
+          is_open: boolean
+          language: string
+          questions: Json
+          title: string
+        }[]
+      }
       get_public_coordination: {
         Args: { target_coordination_id: string }
         Returns: Json
@@ -4685,6 +4775,15 @@ export type Database = {
       }
       respond_wedding_invitation: {
         Args: { accept_invitation: boolean; target_invitation_id: string }
+        Returns: boolean
+      }
+      submit_client_form_response: {
+        Args: {
+          answers_value: Json
+          respondent_email_value: string
+          respondent_name_value: string
+          token_value: string
+        }
         Returns: boolean
       }
       sync_key_people_to_jour_j: {

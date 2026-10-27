@@ -140,6 +140,8 @@ const SeatingPlan = lazy(() => import("./pages/SeatingPlan"));
 const MesMariages = lazy(() => import("./pages/pro/MesMariages"));
 const CarnetAdresses = lazy(() => import("./pages/pro/CarnetAdresses"));
 const ProReferentiels = lazy(() => import("./pages/pro/Referentiels"));
+const ProFormulairesClients = lazy(() => import("./pages/pro/FormulairesClients"));
+const FormulaireClientPublic = lazy(() => import("./pages/FormulaireClientPublic"));
 const ApercuEspacePro = lazy(() => import("./pages/pro/ApercuEspacePro"));
 const ApercuMariage = lazy(() => import("./pages/pro/ApercuMariage"));
 const ApercuEspaceCouple = lazy(() => import("./pages/ApercuEspaceCouple"));
@@ -330,6 +332,8 @@ function App() {
                   <Route path="/pro" element={<ProtectedRoute><MesMariages /></ProtectedRoute>} />
                   <Route path="/pro/carnet-adresses" element={<ProtectedRoute><CarnetAdresses /></ProtectedRoute>} />
                   <Route path="/pro/referentiels" element={<ProtectedRoute><ProReferentiels /></ProtectedRoute>} />
+                  <Route path="/pro/formulaires" element={<ProtectedRoute><ProFormulairesClients /></ProtectedRoute>} />
+                  <Route path="/formulaire/:token" element={<FormulaireClientPublic />} />
 
                   {/* Dashboard Professionnel Mockup */}
                   

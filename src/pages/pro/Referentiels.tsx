@@ -5,6 +5,7 @@ import { Plus, Trash2 } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -42,6 +43,8 @@ const Referentiels: React.FC = () => {
   const { toast } = useToast();
   const [tasks, setTasks] = useState<ProTaskTemplate[]>([]);
   const [form, setForm] = useState(emptyTaskForm);
+  const [noteText, setNoteText] = useState('');
+  const [isImportingNote, setIsImportingNote] = useState(false);
 
   useEffect(() => { fetchProTaskTemplates().then(setTasks); }, []);
 
@@ -62,6 +65,34 @@ const Referentiels: React.FC = () => {
       return;
     }
     setForm(emptyTaskForm);
+    setTasks(await fetchProTaskTemplates());
+  };
+
+  // Une ligne de la note = une tâche (puces et numéros retirés), avec le responsable et la période choisis ci-dessus
+  const handleImportNote = async () => {
+    const titles = noteText
+      .split('\n')
+      .map((line) => line.replace(/^\s*([-*•–]|\d+[.)]|\[[ xX]?\])\s*/, '').trim())
+      .filter((line) => line.length > 1);
+    if (titles.length === 0) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+    setIsImportingNote(true);
+    const { error } = await taskTemplatesTable().insert(titles.map((title) => ({
+      owner_id: user.id,
+      title: title.slice(0, 200),
+      category: form.category.trim() || 'Organisation',
+      stakeholder: form.stakeholder,
+      months_before: Number(form.months_before),
+    })));
+    setIsImportingNote(false);
+    if (error) {
+      console.error('❌ import note tasks failed:', error);
+      toast({ title: isEnglish ? 'Import failed' : 'Import impossible', variant: 'destructive' });
+      return;
+    }
+    toast({ title: isEnglish ? `${titles.length} task(s) added` : `${titles.length} tâche(s) ajoutée(s)` });
+    setNoteText('');
     setTasks(await fetchProTaskTemplates());
   };
 
@@ -86,8 +117,8 @@ const Referentiels: React.FC = () => {
           <h1 className="font-serif text-3xl font-bold">{isEnglish ? 'Templates & catalogues' : 'Modèles & catalogues'}</h1>
           <p className="text-sm text-muted-foreground">
             {isEnglish
-              ? 'Your in-house references, reusable in every wedding: your tasks are added by the “Standard template” button, your prices are available in each Budget.'
-              : 'Vos référentiels internes, réutilisables dans chaque mariage : vos tâches sont ajoutées par le bouton « Trame standard », vos prix sont disponibles dans chaque Budget.'}
+              ? 'Your in-house references, reusable in every wedding: your tasks are added in each wedding with the “My usual tasks” button, your prices are available in each Budget.'
+              : 'Vos référentiels internes, réutilisables dans chaque mariage : vos tâches s’ajoutent dans chaque mariage avec le bouton « Mes tâches habituelles », vos prix sont disponibles dans chaque Budget.'}
           </p>
         </div>
         <Tabs defaultValue="tasks">
@@ -108,6 +139,22 @@ const Referentiels: React.FC = () => {
               </select>
               <Button onClick={handleAddTask} className="rounded-none"><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Add' : 'Ajouter'}</Button>
             </div>
+            <details className="border border-border bg-background p-4">
+              <summary className="cursor-pointer text-sm font-medium text-wedding-olive">
+                {isEnglish ? 'Import from a text note' : 'Importer depuis une note texte'}
+              </summary>
+              <div className="space-y-2 pt-3">
+                <p className="text-xs text-muted-foreground">
+                  {isEnglish
+                    ? 'Paste your list: one line = one task. The category, person in charge and timing selected above are applied to all of them; you can adjust each task later in the wedding.'
+                    : 'Collez votre liste : une ligne = une tâche. La catégorie, le responsable et la période choisis ci-dessus s’appliquent à toutes ; vous ajusterez chaque tâche ensuite dans le mariage.'}
+                </p>
+                <Textarea rows={6} className="rounded-none" placeholder={isEnglish ? '- Book the venue\n- Send save-the-dates\n- Taste the menu' : '- Réserver le lieu\n- Envoyer les save-the-date\n- Dégustation traiteur'} value={noteText} onChange={(event) => setNoteText(event.target.value)} />
+                <Button variant="outline" className="rounded-none" onClick={handleImportNote} disabled={isImportingNote || !noteText.trim()}>
+                  <Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Create the tasks' : 'Créer les tâches'}
+                </Button>
+              </div>
+            </details>
             {tasks.length === 0 ? (
               <p className="text-sm text-muted-foreground">
                 {isEnglish ? 'No task yet. Add your usual method: it will be loaded with the standard template in each wedding.' : 'Aucune tâche pour l’instant. Ajoutez votre méthodologie habituelle : elle sera chargée avec la trame standard dans chaque mariage.'}
