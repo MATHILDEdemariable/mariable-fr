@@ -1,87 +1,61 @@
-
 project_id = "bgidfcqktsttzlwlumtz"
 
-[functions.compress-photo]
-verify_jwt = true
-
-[functions.migrate-google-photos]
-verify_jwt = true
-
-[functions.stripe-webhook]
-verify_jwt = false
-
-[functions.generate-checklist-ai]
-verify_jwt = true
-
-[functions.send-auth-email]
-verify_jwt = false
-
-[functions.google-venues-scraper]
-verify_jwt = false
-
-[functions.vibe-wedding-ai]
-verify_jwt = false
-
-[functions.wedding-vendor-matcher]
-verify_jwt = false
-
-[functions.generate-wedding-retroplanning]
-verify_jwt = true
-
-[functions.ai-wedding-planner]
-verify_jwt = true
-
-[functions.analyze-document]
-verify_jwt = true
-
-[functions.cancel-subscription]
-verify_jwt = true
-
-[functions.register-professional]
-verify_jwt = false
-
-[functions.compress-with-tinypng]
-verify_jwt = true
-
-[functions.analyze-moodboard-colors]
-verify_jwt = false
-
-[functions.send-welcome-couple-email]
-verify_jwt = false
-
-[functions.reply-contact-request]
-verify_jwt = false
-
-[functions.generate-sitemap]
-verify_jwt = false
-
-[functions.notify-vendor-message]
-verify_jwt = false
-
-[functions.notify-partenariat-contact]
-verify_jwt = false
-
-[functions.create-ebook-checkout]
-verify_jwt = false
-
-[functions.send-ebook-email]
-verify_jwt = false
-
-[functions.get-ebook-download-url]
-verify_jwt = false
-
-
-[functions.album-public-info]
-verify_jwt = false
-
-[functions.album-request-upload]
-verify_jwt = false
-
-[functions.album-confirm-upload]
-verify_jwt = false
-
-[functions.album-media-url]
-verify_jwt = false
-
-[functions.send-welcome-pro-email]
-verify_jwt = false
+[functions]
+  [functions.ai-wedding-planner]
+    verify_jwt = true
+  [functions.album-confirm-upload]
+    verify_jwt = false
+  [functions.album-media-url]
+    verify_jwt = false
+  [functions.album-public-info]
+    verify_jwt = false
+  [functions.album-request-upload]
+    verify_jwt = false
+  [functions.analyze-document]
+    verify_jwt = true
+  [functions.analyze-moodboard-colors]
+    verify_jwt = false
+  [functions.auth-email-hook]
+    verify_jwt = false
+  [functions.cancel-subscription]
+    verify_jwt = true
+  [functions.compress-photo]
+    verify_jwt = true
+  [functions.compress-with-tinypng]
+    verify_jwt = true
+  [functions.create-ebook-checkout]
+    verify_jwt = false
+  [functions.generate-checklist-ai]
+    verify_jwt = true
+  [functions.generate-sitemap]
+    verify_jwt = false
+  [functions.generate-wedding-retroplanning]
+    verify_jwt = true
+  [functions.get-ebook-download-url]
+    verify_jwt = false
+  [functions.google-venues-scraper]
+    verify_jwt = false
+  [functions.migrate-google-photos]
+    verify_jwt = true
+  [functions.notify-partenariat-contact]
+    verify_jwt = false
+  [functions.notify-vendor-message]
+    verify_jwt = false
+  [functions.register-professional]
+    verify_jwt = false
+  [functions.reply-contact-request]
+    verify_jwt = false
+  [functions.send-auth-email]
+    verify_jwt = false
+  [functions.send-ebook-email]
+    verify_jwt = false
+  [functions.send-welcome-couple-email]
+    verify_jwt = false
+  [functions.send-welcome-pro-email]
+    verify_jwt = false
+  [functions.stripe-webhook]
+    verify_jwt = false
+  [functions.vibe-wedding-ai]
+    verify_jwt = false
+  [functions.wedding-vendor-matcher]
+    verify_jwt = false
