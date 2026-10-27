@@ -152,6 +152,18 @@ const RetroplanningManuel = () => {
     persistSteps(steps.filter((step) => step.id !== stepId));
   };
 
+  const handleDeleteSelected = () => {
+    if (!confirm(isEnglish ? `Delete ${selectedStepIds.size} selected steps?` : `Supprimer les ${selectedStepIds.size} étapes sélectionnées ?`)) return;
+    persistSteps(steps.filter((step) => !selectedStepIds.has(step.id)));
+    setSelectedStepIds(new Set());
+  };
+
+  const handleDeleteAll = () => {
+    if (!confirm(isEnglish ? 'Delete ALL steps and start over? This cannot be undone.' : 'Supprimer TOUTES les étapes pour recommencer ? Action irréversible.')) return;
+    persistSteps([]);
+    setSelectedStepIds(new Set());
+  };
+
   const handleGenerateFromNote = async () => {
     if (noteText.trim().length < 3) return;
     setIsGenerating(true);
@@ -244,6 +256,7 @@ const RetroplanningManuel = () => {
         onChange={(e) => setSelectedStepIds((prev) => { const next = new Set(prev); if (e.target.checked) next.add(step.id); else next.delete(step.id); return next; })} />
       <Checkbox checked={step.status === 'completed'} aria-label={isEnglish ? 'Done' : 'Terminé'}
         onCheckedChange={(checked) => updateStep(step.id, { status: checked ? 'completed' : 'pending' })} />
+      </div>
       <Input defaultValue={step.title} maxLength={200} aria-label={isEnglish ? 'Title' : 'Titre'}
         className={`border-0 shadow-none px-1 h-9 focus-visible:ring-1 ${step.status === 'completed' ? 'line-through text-muted-foreground' : ''}`}
         onBlur={(e) => e.target.value.trim() && e.target.value.trim() !== step.title && updateStep(step.id, { title: e.target.value.trim() })}
