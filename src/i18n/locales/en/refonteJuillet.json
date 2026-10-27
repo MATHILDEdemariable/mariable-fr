@@ -196,11 +196,11 @@
         "name": "Mariable Pro",
         "price": "€149",
         "frequency": "per year",
-        "description": "For wedding planners, coordinators and venues. Several plans for your business, starting at:",
+        "description": "For wedding planners, coordinators and venues. Two plans for your business, starting at:",
         "features": [
-          "Multiple weddings",
-          "Collaboration with your couples",
-          "Mariable listing"
+          "Wedding-day coordination: mobile app, guests & RSVP, seating plan",
+          "Full planning at €259: planning, budget, vendors",
+          "Interactive collaboration with your couples"
         ],
         "cta": "See Pro plans",
         "href": "/pro-solutions",
