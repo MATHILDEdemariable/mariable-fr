@@ -16,6 +16,7 @@ import { useCart } from '@/components/cart/CartProvider';
 import { mapCartCategoryToBudget } from '@/utils/categoryMapping';
 import { useWedding } from '@/contexts/WeddingContext';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
 import PaymentScheduleDialog, { paidFromSchedule, type PaymentSchedule } from '@/components/dashboard/budget/PaymentScheduleDialog';
 import { CalendarClock } from 'lucide-react';
@@ -95,6 +96,8 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   const isPremium = isPremiumProfile || isWeddingCollaborator;
   const { items: cartItems } = useCart();
   const { weddingId } = useWeddingScope();
+  const { coordination: jourJCoordination } = useMonJourMCoordination();
+  const [isPublishingEnvelopes, setIsPublishingEnvelopes] = useState(false);
   const isEnglishBudget = i18n.language.startsWith('en');
   const plannerFeeStorageKey = `mariable-planner-fee-${weddingId || 'perso'}`;
   const [plannerFee, setPlannerFee] = useState<{ mode: 'percent' | 'fixed'; value: number }>({ mode: 'percent', value: 0 });
@@ -867,6 +870,57 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
       .filter((item) => item.remaining > 0)
   );
 
+  // Enveloppes → PDF dans les documents du Jour J (même logique que les autres modules)
+  async function handlePublishEnvelopes() {
+    if (!jourJCoordination?.id) return;
+    setIsPublishingEnvelopes(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Non connecté');
+      const { default: jsPDF } = await import('jspdf');
+      const pdf = new jsPDF();
+      const title = isEnglishBudget ? 'Wedding-day envelopes' : 'Enveloppes Jour J';
+      pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
+      pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
+      pdf.setFont('times', 'normal'); pdf.setFontSize(12); pdf.text(title, 15, 24);
+      pdf.setTextColor(30, 30, 30);
+      let y = 44;
+      pdf.setFont('helvetica', 'bold'); pdf.setFontSize(10);
+      pdf.text(isEnglishBudget ? 'Vendor' : 'Prestataire', 15, y); pdf.text(isEnglishBudget ? 'Amount' : 'Montant', 130, y); pdf.text(isEnglishBudget ? 'Signature' : 'Émargement', 160, y);
+      pdf.setFont('helvetica', 'normal');
+      dayEnvelopes.forEach((envelope) => {
+        y += 10;
+        if (y > 275) { pdf.addPage(); y = 20; }
+        pdf.text(`${envelope.name} · ${envelope.category}`.slice(0, 60), 15, y);
+        pdf.text(`${envelope.remaining.toFixed(2)} €`, 130, y);
+        pdf.line(160, y + 1, 195, y + 1);
+      });
+      y += 12;
+      pdf.setFont('helvetica', 'bold');
+      pdf.text('Total', 15, y);
+      pdf.text(`${dayEnvelopes.reduce((sum, envelope) => sum + envelope.remaining, 0).toFixed(2)} €`, 130, y);
+      const blob = pdf.output('blob');
+      const filePath = `${user.id}/coordination-${jourJCoordination.id}/fiche-budget-${Date.now()}.pdf`;
+      const { error: uploadError } = await supabase.storage.from('coordination-files').upload(filePath, blob, { contentType: 'application/pdf' });
+      if (uploadError) throw uploadError;
+      const { data: { publicUrl } } = supabase.storage.from('coordination-files').getPublicUrl(filePath);
+      const db = supabase as any;
+      await db.from('coordination_documents').delete().eq('coordination_id', jourJCoordination.id).eq('category', 'organisation-budget');
+      const { error: insertError } = await db.from('coordination_documents').insert({
+        coordination_id: jourJCoordination.id, title, category: 'organisation-budget',
+        description: isEnglishBudget ? 'Generated from the budget' : 'Générée depuis le budget',
+        file_url: publicUrl, file_path: filePath, file_type: 'pdf', mime_type: 'application/pdf', file_size: blob.size,
+      });
+      if (insertError) throw insertError;
+      toast({ title: isEnglishBudget ? 'PDF added to wedding-day documents' : 'PDF ajouté aux documents du Jour J' });
+    } catch (error) {
+      console.error('❌ handlePublishEnvelopes failed:', error);
+      toast({ title: isEnglishBudget ? 'Could not send the PDF' : 'Impossible de transmettre le PDF', variant: 'destructive' });
+    } finally {
+      setIsPublishingEnvelopes(false);
+    }
+  }
+
   return (
     <>
       <PremiumModal
@@ -1215,6 +1269,16 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
                 <span>{dayEnvelopes.reduce((sum, envelope) => sum + envelope.remaining, 0).toFixed(2)} €</span>
               </li>
             </ul>
+          )}
+          {dayEnvelopes.length > 0 && (
+            <Button
+              className="mt-3 min-h-[44px] rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white"
+              onClick={handlePublishEnvelopes}
+              disabled={isPublishingEnvelopes || !jourJCoordination?.id}
+            >
+              <Download className="h-4 w-4 mr-2" />
+              {isEnglishBudget ? 'Approve and send to wedding day (PDF)' : 'Valider et transmettre au Jour J (PDF)'}
+            </Button>
           )}
         </div>
       </CardContent>

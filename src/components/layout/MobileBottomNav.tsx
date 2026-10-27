@@ -49,7 +49,6 @@ const mainNavItems: NavItem[] = [
 ];
 
 const proNavItems: NavItem[] = [
-  { icon: LayoutDashboard, label: 'Aujourd\'hui', path: '/pro' },
   { icon: Calendar, label: 'Mariages', path: '/pro#mes-mariages' },
   { icon: BookOpen, label: 'Carnet', path: '/pro/carnet-adresses' },
 ];

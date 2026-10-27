@@ -200,43 +200,23 @@ const JourJHandoffSheets: React.FC = () => {
         ))}
         {tr(' pour retrouver les fiches ici en un clic.', ' to find the sheets here in one click.')}
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {MODULES.filter((module) => handoffs[module.key]).map((module) => {
-          const validatedAt = handoffs[module.key];
-          const Icon = module.icon;
-          return (
-            <article key={module.key} className="border border-wedding-olive/25 bg-background p-3 flex flex-col gap-2">
-              <div className="flex items-center gap-2">
-                <Icon className="h-4 w-4 text-wedding-olive" />
-                <h3 className="font-serif text-base">{isEnglish ? module.en : module.fr}</h3>
-              </div>
-              <p className="text-xs text-muted-foreground">{isEnglish ? module.sourceEn : module.sourceFr}</p>
-              <p className={`text-xs inline-flex items-center gap-1 ${validatedAt ? 'text-wedding-olive' : 'text-muted-foreground'}`}>
-                {validatedAt ? <CheckCircle2 className="h-3 w-3" /> : <Clock className="h-3 w-3" />}
-                {validatedAt ? `${tr('Validé le', 'Approved')} ${formatDate(validatedAt)}` : tr('Pas encore validé', 'Not approved yet')}
-              </p>
-              <div className="mt-auto space-y-2">
-                {validatedAt && (
-                  <Button size="sm" className="min-h-[40px] w-full rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white" onClick={() => publishModulePdf(module.key)} disabled={publishingModule === module.key}>
-                    {publishingModule === module.key ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileDown className="h-4 w-4 mr-2" />}
-                    {tr('Publier en PDF dans Documents', 'Publish as PDF to Documents')}
-                  </Button>
-                )}
-                {validatedAt && module.key !== 'trombinoscope' && !isCeremonyModule(module.key) ? (
-                  <Button size="sm" variant="outline" className="min-h-[40px] w-full rounded-none" onClick={() => openModuleSheet(module.key)} disabled={loadingModule === module.key}>
-                    {loadingModule === module.key && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                    {tr('Voir la fiche', 'View sheet')}
-                  </Button>
-                ) : (
-                  <Button size="sm" variant="ghost" className="min-h-[40px] w-full rounded-none" asChild>
-                    <Link to={module.path}>{module.key === 'trombinoscope' && validatedAt ? tr('Voir l’équipe', 'View team') : tr('Ouvrir le module', 'Open module')}</Link>
-                  </Button>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
+      {MODULES.some((module) => handoffs[module.key]) && (
+        <div className="flex flex-wrap gap-2">
+          {MODULES.filter((module) => handoffs[module.key]).map((module) => (
+            <button
+              key={module.key}
+              type="button"
+              onClick={() => publishModulePdf(module.key)}
+              disabled={publishingModule === module.key}
+              className="inline-flex items-center gap-1 min-h-[36px] px-3 text-xs border border-wedding-olive/30 bg-background hover:bg-wedding-olive/10"
+              title={tr('Publier en PDF dans Documents', 'Publish as PDF to Documents')}
+            >
+              {publishingModule === module.key ? <Loader2 className="h-3 w-3 animate-spin" /> : <FileDown className="h-3 w-3 text-wedding-olive" />}
+              {isEnglish ? module.en : module.fr}
+            </button>
+          ))}
+        </div>
+      )}
 
       <Dialog open={!!openSheet} onOpenChange={(open) => !open && setOpenSheet(null)}>
         <DialogContent className="max-w-2xl rounded-none max-h-[85vh] overflow-y-auto">
