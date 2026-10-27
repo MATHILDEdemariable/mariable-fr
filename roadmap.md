@@ -44,3 +44,8 @@
 - [x] Mairie : onglets Outil / Infos
 - [x] RSVP : bouton personnaliser -> onglet Mini-site
 - [x] Plan de table : lisibilité, vue épurée, PDF, salle à l'échelle
+
+## Sprint B (oct. 2026)
+- [ ] Tutoriel Pro complet : 2 niveaux (outils pro / espace mariage) + choix partage lecture seule vs collaboration
+- [ ] Catalogue de tâches : import depuis une note texte (une ligne = une tâche)
+- [ ] Formulaires clients : modèles Découverte & devis / Cadrage Jour J, éditables, lien sans compte, réponses + one-pager PDF
