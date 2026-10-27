@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import {
   Dialog,
@@ -53,6 +54,8 @@ const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVP
   const [responses, setResponses] = useState<RSVPResponse[]>([]);
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   useEffect(() => {
     if (open) {
@@ -212,7 +215,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Users className="h-5 w-5" />
-            Importer depuis RSVP
+            {tr('Importer depuis RSVP', 'Import from RSVP')}
           </DialogTitle>
         </DialogHeader>
 
@@ -300,13 +303,13 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {tr('Annuler', 'Cancel')}
           </Button>
           <Button
             onClick={handleImport}
             disabled={loading || selectedGuests.size === 0}
           >
-            {loading ? 'Import...' : `Importer ${selectedGuests.size} invité(s)`}
+            {loading ? 'Import...' : tr(`Importer ${selectedGuests.size} invité(s)`, `Import ${selectedGuests.size} guest(s)`)}
           </Button>
         </DialogFooter>
       </DialogContent>

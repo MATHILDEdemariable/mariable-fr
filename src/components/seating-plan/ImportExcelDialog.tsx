@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import Papa from 'papaparse';
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,8 @@ interface ImportExcelDialogProps {
 
 export const ImportExcelDialog = ({ open, onOpenChange, planId, onImported }: ImportExcelDialogProps) => {
   const [loading, setLoading] = useState(false);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const [preview, setPreview] = useState<any[]>([]);
   const [fullData, setFullData] = useState<any[]>([]);
 
@@ -102,7 +105,7 @@ export const ImportExcelDialog = ({ open, onOpenChange, planId, onImported }: Im
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <FileSpreadsheet className="h-5 w-5" />
-            Importer depuis Excel/CSV
+            {tr('Importer depuis Excel/CSV', 'Import from Excel/CSV')}
           </DialogTitle>
         </DialogHeader>
 
@@ -118,11 +121,11 @@ export const ImportExcelDialog = ({ open, onOpenChange, planId, onImported }: Im
             />
             <label htmlFor="file-upload" className="cursor-pointer">
               <Button variant="outline" asChild>
-                <span>Choisir un fichier tableur</span>
+                <span>{tr('Choisir un fichier tableur', 'Choose a spreadsheet file')}</span>
               </Button>
             </label>
             <p className="text-sm text-muted-foreground mt-2">
-              Format CSV avec colonnes : <strong>Nom</strong>, Type, Restrictions, Notes
+              {tr('Format CSV avec colonnes :', 'CSV format with columns:')} <strong>Nom</strong>, Type, Restrictions, Notes
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               (Seule la colonne "Nom" est obligatoire)
@@ -156,10 +159,10 @@ export const ImportExcelDialog = ({ open, onOpenChange, planId, onImported }: Im
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {tr('Annuler', 'Cancel')}
           </Button>
           <Button onClick={handleImport} disabled={loading || fullData.length === 0}>
-            {loading ? 'Import...' : `Importer ${fullData.length} invité(s)`}
+            {loading ? 'Import...' : tr(`Importer ${fullData.length} invité(s)`, `Import ${fullData.length} guest(s)`)}
           </Button>
         </DialogFooter>
       </DialogContent>
