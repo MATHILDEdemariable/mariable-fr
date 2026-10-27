@@ -6,6 +6,7 @@ import { fr, enUS } from 'date-fns/locale';
 import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer, LayoutGrid, Wand2 } from 'lucide-react';
 import { RETROPLANNING_TASK_CATALOG } from '@/data/retroplanningTaskCatalog';
 import { computeStepDate, periodLabel } from './ImportTaskCatalogDialog';
+import { fetchProTaskTemplates } from '@/pages/pro/Referentiels';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -209,19 +210,25 @@ const RetroplanningManuel = () => {
   };
 
   // Trame standard : charge tout le catalogue en 1 clic (sans doublons de titre), dates calculées depuis la date du mariage
-  const handleLoadStandardTemplate = () => {
+  const handleLoadStandardTemplate = async () => {
     const existingTitles = new Set(steps.map((step) => step.title.toLowerCase()));
-    const newSteps = RETROPLANNING_TASK_CATALOG
+    // Catalogue de tâches du pro (/pro/referentiels) ajouté à la trame Mariable
+    const proTemplates = await fetchProTaskTemplates();
+    const templateTasks = [
+      ...RETROPLANNING_TASK_CATALOG.map((catalogTask) => ({ title: isEnglish ? catalogTask.en : catalogTask.fr, monthsBefore: catalogTask.monthsBefore, category: catalogTask.category, stakeholder: catalogTask.stakeholder })),
+      ...proTemplates.map((proTask) => ({ title: proTask.title, monthsBefore: proTask.months_before, category: proTask.category, stakeholder: proTask.stakeholder })),
+    ];
+    const newSteps = templateTasks
       .map((catalogTask) => ({
         ...EMPTY_STEP,
         id: uuidv4(),
-        title: isEnglish ? catalogTask.en : catalogTask.fr,
+        title: catalogTask.title,
         date: computeStepDate(weddingDate, catalogTask.monthsBefore),
         period: periodLabel(catalogTask.monthsBefore, isEnglish),
         category: catalogTask.category,
         stakeholder: catalogTask.stakeholder,
       }))
-      .filter((step) => !existingTitles.has(step.title.toLowerCase()));
+      .filter((step) => !existingTitles.has(step.title.toLowerCase()) && existingTitles.add(step.title.toLowerCase()));
     if (!newSteps.length) {
       toast({ title: isEnglish ? 'Standard template already loaded' : 'Trame standard déjà chargée' });
       return;
