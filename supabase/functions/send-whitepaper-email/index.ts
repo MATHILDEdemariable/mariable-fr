@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     <h1 style="font-family:Georgia,serif;font-weight:400;font-size:28px;margin:0 0 20px">${isEnglish ? `Here is your AI Playbook, ${name}` : `Voici votre Playbook IA, ${name}`}</h1>
     <p style="line-height:1.6">${isEnglish ? 'The AI Playbook for Wedding Planners: a 4-step method, 6 real use cases and 11 ready-to-use prompts. Available in English and French.' : "Le Playbook IA du Wedding Planner : une méthode en 4 étapes, 6 cas d'usage réels et 11 prompts prêts à copier-coller. Disponible en français et en anglais."}</p>
     ${isEnglish ? `${englishBlock}${frenchBlock}` : `${frenchBlock}${englishBlock}`}
-    <p style="line-height:1.6">${isEnglish ? 'For the wedding day itself, try Mariable Pro:' : 'Pour le jour J, découvrez Mariable Pro :'} <a href="https://mariable.fr/logiciel-wedding-planner" style="color:#63745A">mariable.fr/logiciel-wedding-planner</a></p>
+    <p style="line-height:1.6">${isEnglish ? 'For the AI-Powered wedding planning, try it for free &amp; more info here:' : "Pour l'organisation de mariage assistée par l'IA, essayez gratuitement &amp; plus d'infos ici :"} <a href="https://mariable.fr/pro-solutions" style="color:#63745A">mariable.fr/pro-solutions</a></p>
     <p style="line-height:1.6">${isEnglish ? 'Enjoy,' : 'Bonne lecture,'}<br/><span style="color:#63745A">Mathilde de Mariable</span></p>
   </div>
 </div>`;
