@@ -37,22 +37,38 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
   const { i18n } = useTranslation('pro');
   const isEnglish = i18n.language?.startsWith('en');
   const [roadmapTasks, setRoadmapTasks] = useState<RoadmapTask[]>([]);
+  const [monthPriorities, setMonthPriorities] = useState<{ id: string; title: string; date: string; weddingId: string }[]>([]);
   const [loading, setLoading] = useState(true);
   const weddingIds = weddings.map((wedding) => wedding.id).join(',');
 
   useEffect(() => {
     const loadRoadmapTasks = async () => {
-      if (!weddingIds) { setRoadmapTasks([]); setLoading(false); return; }
+      if (!weddingIds) { setRoadmapTasks([]); setMonthPriorities([]); setLoading(false); return; }
       try {
-        const { data, error } = await supabase
-          .from('checklist_mariage_manuel')
-          .select('id, title, due_date, priority, wedding_id')
-          .in('wedding_id', weddingIds.split(','))
-          .eq('completed', false)
-          .order('due_date', { ascending: true, nullsFirst: false })
-          .limit(200);
-        if (error) throw error;
-        setRoadmapTasks((data ?? []) as RoadmapTask[]);
+        const [checklistResult, planningResult] = await Promise.all([
+          supabase
+            .from('checklist_mariage_manuel')
+            .select('id, title, due_date, priority, wedding_id')
+            .in('wedding_id', weddingIds.split(','))
+            .eq('completed', false)
+            .order('due_date', { ascending: true, nullsFirst: false })
+            .limit(200),
+          (supabase as any)
+            .from('wedding_retroplanning')
+            .select('wedding_id, timeline_data')
+            .in('wedding_id', weddingIds.split(','))
+            .eq('mode', 'manual'),
+        ]);
+        if (checklistResult.error) throw checklistResult.error;
+        setRoadmapTasks((checklistResult.data ?? []) as RoadmapTask[]);
+        // Priorités du mois : étapes non terminées du « Planning & tâches » datées ce mois-ci
+        const monthKey = new Date().toISOString().slice(0, 7);
+        const priorities = ((planningResult.data ?? []) as { wedding_id: string; timeline_data: any }[]).flatMap((row) =>
+          (Array.isArray(row.timeline_data) ? row.timeline_data : [])
+            .filter((step: any) => step?.status !== 'completed' && typeof step?.date === 'string' && step.date.startsWith(monthKey))
+            .map((step: any) => ({ id: `${row.wedding_id}-${step.id}`, title: step.title, date: step.date, weddingId: row.wedding_id }))
+        ).sort((a, b) => a.date.localeCompare(b.date));
+        setMonthPriorities(priorities);
       } catch (error) {
         console.error('❌ ProFeuilleDeRoute: tâches illisibles', error);
       } finally {
