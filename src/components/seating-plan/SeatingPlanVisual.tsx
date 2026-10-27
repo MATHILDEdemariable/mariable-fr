@@ -30,12 +30,14 @@ interface SeatingPlanVisualProps {
   tables: SeatingTable[];
   guests: SeatingAssignment[];
   onTablePositionUpdate: () => void;
+  onEditTable?: (table: SeatingTable) => void;
 }
 
 const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   tables,
   guests,
-  onTablePositionUpdate
+  onTablePositionUpdate,
+  onEditTable
 }) => {
   const { i18n } = useTranslation();
   const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
@@ -412,6 +414,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
         <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
+        <p className="mb-1">• {tr('Cliquez sur ✎ pour modifier une table','Click ✎ to edit a table')}</p>
         <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
         <div className="mt-2 pt-2 border-t border-gray-200">
           <p className="text-[#7F9474] font-medium">
@@ -469,7 +472,18 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                 backgroundColor: table.color || (isFull ? undefined : '#fff')
               }}
               onMouseDown={(e) => handleMouseDown(e, table.id)}
+              onDoubleClick={() => onEditTable?.(table)}
+              title={tr('Double-cliquez pour modifier la table', 'Double-click to edit the table')}
             >
+              {onEditTable && (
+                <button
+                  type="button"
+                  onMouseDown={(e) => e.stopPropagation()}
+                  onClick={(e) => { e.stopPropagation(); onEditTable(table); }}
+                  className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-wedding-olive text-white text-xs shadow flex items-center justify-center z-30"
+                  aria-label={tr('Modifier la table', 'Edit table')}
+                >✎</button>
+              )}
               <span className="font-semibold text-sm truncate max-w-[90%]">
                 {table.table_name}
               </span>
