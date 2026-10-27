@@ -3,7 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer, LayoutGrid, Wand2 } from 'lucide-react';
+import { RETROPLANNING_TASK_CATALOG } from '@/data/retroplanningTaskCatalog';
+import { computeStepDate, periodLabel } from './ImportTaskCatalogDialog';
 import { v4 as uuidv4 } from 'uuid';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -63,7 +65,7 @@ const RetroplanningManuel = () => {
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'frise' | 'list' | 'calendar'>('list');
+  const [view, setView] = useState<'frise' | 'list' | 'kanban' | 'calendar'>('list');
   const [editingStep, setEditingStep] = useState<ManualStep | null>(null);
   const [weddingDate, setWeddingDate] = useState('');
   const [inputMode, setInputMode] = useState<'quick' | 'notes'>('quick');
@@ -192,6 +194,28 @@ const RetroplanningManuel = () => {
     toast({ title: isEnglish ? `${newSteps.length} tasks added` : `${newSteps.length} tâches ajoutées` });
   };
 
+  // Trame standard : charge tout le catalogue en 1 clic (sans doublons de titre), dates calculées depuis la date du mariage
+  const handleLoadStandardTemplate = () => {
+    const existingTitles = new Set(steps.map((step) => step.title.toLowerCase()));
+    const newSteps = RETROPLANNING_TASK_CATALOG
+      .map((catalogTask) => ({
+        ...EMPTY_STEP,
+        id: uuidv4(),
+        title: isEnglish ? catalogTask.en : catalogTask.fr,
+        date: computeStepDate(weddingDate, catalogTask.monthsBefore),
+        period: periodLabel(catalogTask.monthsBefore, isEnglish),
+        category: catalogTask.category,
+        stakeholder: catalogTask.stakeholder,
+      }))
+      .filter((step) => !existingTitles.has(step.title.toLowerCase()));
+    if (!newSteps.length) {
+      toast({ title: isEnglish ? 'Standard template already loaded' : 'Trame standard déjà chargée' });
+      return;
+    }
+    persistSteps([...steps, ...newSteps]);
+    toast({ title: isEnglish ? `${newSteps.length} tasks added — edit them freely` : `${newSteps.length} tâches ajoutées — modifiez-les librement` });
+  };
+
   const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
     persistSteps(steps.map((item) => (item.id === stepId ? { ...item, ...patch } : item)));
 
@@ -258,6 +282,7 @@ const RetroplanningManuel = () => {
             <Button variant={inputMode === 'quick' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('quick')}><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Quick add' : 'Saisie rapide'}</Button>
             <Button variant={inputMode === 'notes' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('notes')}><Sparkles className="h-4 w-4 mr-1" />{isEnglish ? 'Notes → AI' : 'Notes en vrac (IA)'}</Button>
             <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(true)}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'Catalogue' : 'Catalogue'}</Button>
+            <Button variant="ghost" size="sm" onClick={handleLoadStandardTemplate}><Wand2 className="h-4 w-4 mr-1" />{isEnglish ? 'Standard template' : 'Trame standard'}</Button>
           </div>
           {inputMode === 'quick' ? (
             <>
@@ -311,6 +336,7 @@ const RetroplanningManuel = () => {
         <div className="flex flex-col sm:flex-row justify-between gap-3">
           <div className="flex gap-1 bg-muted p-1 w-fit">
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
+            <Button variant={view === 'kanban' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('kanban')}><LayoutGrid className="h-4 w-4 mr-1" />Kanban</Button>
             <Button variant={view === 'calendar' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('calendar')}><CalendarDays className="h-4 w-4 mr-1" />{isEnglish ? 'Calendar' : 'Calendrier'}</Button>
             <Button variant={view === 'frise' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('frise')}><GitCommitVertical className="h-4 w-4 mr-1" />{isEnglish ? 'Timeline' : 'Frise'}</Button>
           </div>
@@ -329,6 +355,29 @@ const RetroplanningManuel = () => {
           <RetroplanningFrise steps={visibleSteps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (
           <div>{visibleSteps.map(renderStepRow)}</div>
+        ) : view === 'kanban' ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
+              <div key={status} className="bg-muted/40 border border-border p-3 space-y-2 min-h-[120px]">
+                <p className="font-serif text-lg">{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']} <span className="text-sm text-muted-foreground">({visibleSteps.filter((step) => step.status === status).length})</span></p>
+                {visibleSteps.filter((step) => step.status === status).map((step) => (
+                  <div key={step.id} className="bg-card border border-border p-3 space-y-2">
+                    <button type="button" className="text-left text-sm font-medium w-full" onClick={() => setEditingStep(step)}>{step.title}</button>
+                    <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                      {step.date && <span>{format(new Date(`${step.date}T12:00:00`), 'd MMM yyyy', { locale: dateLocale })}</span>}
+                      {step.stakeholder && <span>· {stakeholderLabel(step.stakeholder)}</span>}
+                    </div>
+                    <Select value={step.status} onValueChange={(value) => updateStep(step.id, { status: value as ManualStepStatus })}>
+                      <SelectTrigger className="h-8 text-xs" aria-label={isEnglish ? 'Status' : 'Statut'}><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((key) => <SelectItem key={key} value={key}>{MANUAL_STATUS_LABELS[key][isEnglish ? 'en' : 'fr']}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
         ) : (
           <div className="space-y-3">
             <div className="flex items-center justify-between">
