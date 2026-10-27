@@ -122,12 +122,14 @@ const PlanningPublic: React.FC = () => {
       const teamMembers = (publicData as any)?.team || [];
 
       // Récupérer les documents selon le type (avec file_url pour vraie visualisation)
-      const { data: documents, error: docsError } = await supabase
+      // Tous les documents (y compris ceux transmis depuis les modules), sauf l'état interne de la liste photos
+      let documentsQuery = supabase
         .from('coordination_documents')
         .select('*')
         .eq('coordination_id', id)
-        .eq('category', planningType)
-        .order('created_at', { ascending: false });
+        .neq('category', 'photo_list_status');
+      if (planningType === 'project') documentsQuery = documentsQuery.eq('category', 'project');
+      const { data: documents, error: docsError } = await documentsQuery.order('created_at', { ascending: false });
 
       // Récupérer les liens Pinterest
       const { data: pinterest, error: pinterestError } = await supabase
