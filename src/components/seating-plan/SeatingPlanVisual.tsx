@@ -291,16 +291,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     <div className="space-y-3">
       {/* Barre d'outils : lisibilité & salle à l'échelle */}
       <div className="flex flex-wrap items-center gap-2 text-sm">
-        <button type="button" onClick={() => setShowGuestNames((v) => !v)} className="min-h-[44px] px-3 border border-premium-sage/40 bg-white hover:bg-premium-cream" aria-pressed={!showGuestNames}>
+        <button type="button" onClick={() => setShowGuestNames((v) => !v)} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showGuestNames}>
           {showGuestNames ? tr('Vue épurée (tables et compteurs)', 'Clean view (tables & counts)') : tr('Afficher les noms des invités', 'Show guest names')}
         </button>
-        <button type="button" onClick={() => updateRoom({ enabled: !roomConfig.enabled })} className={cn('min-h-[44px] px-3 border border-premium-sage/40', roomConfig.enabled ? 'bg-premium-sage text-white' : 'bg-white hover:bg-premium-cream')} aria-pressed={roomConfig.enabled}>
+        <button type="button" onClick={() => updateRoom({ enabled: !roomConfig.enabled })} className={cn('min-h-[44px] px-3 border border-wedding-olive/40', roomConfig.enabled ? 'bg-wedding-olive text-white' : 'bg-white hover:bg-editorial-cream')} aria-pressed={roomConfig.enabled}>
           📐 {tr('Configuration de la salle à l’échelle', 'Room setup to scale')}
         </button>
       </div>
 
       {roomConfig.enabled && (
-        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 p-3 bg-white border border-premium-sage/30 text-sm">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 p-3 bg-white border border-wedding-olive/30 text-sm">
           <label className="flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{tr('Forme', 'Shape')}</span>
             <select className="min-h-[44px] border px-2 bg-white" value={roomConfig.shape} onChange={(e) => updateRoom({ shape: e.target.value as RoomShape })}>
@@ -347,10 +347,10 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         </div>
       )}
 
-    <div className="w-full overflow-auto rounded-xl border-2 border-dashed border-premium-sage/30">
+    <div className="w-full overflow-auto rounded-xl border-2 border-dashed border-wedding-olive/30">
     <div
       ref={containerRef}
-      className="relative bg-gradient-to-br from-premium-cream to-white cursor-crosshair"
+      className="relative bg-gradient-to-br from-editorial-cream to-white cursor-crosshair"
       style={{ width: roomConfig.enabled ? Math.max(roomW + ROOM_MARGIN * 2, 600) : '100%', height: roomConfig.enabled ? Math.max(roomL + ROOM_MARGIN * 2, 600) : 600 }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
@@ -373,7 +373,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         return (
           <div
             key={element.id}
-            className="table-shape absolute flex items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-premium-sage bg-premium-sage-light/70 cursor-grab z-0"
+            className="table-shape absolute flex items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab z-0"
             style={{ left: position.x - (config.w * ppm) / 2, top: position.y - (config.h * ppm) / 2, width: config.w * ppm, height: config.h * ppm }}
             onMouseDown={(e) => handleMouseDown(e, key)}
             onDoubleClick={() => updateRoom({ fixedElements: roomConfig.fixedElements.filter((el) => el.id !== element.id) })}
@@ -395,15 +395,15 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {/* Legend */}
       {!roomConfig.enabled && <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs space-y-1">
         <div className="flex items-center gap-2">
-          <div className="w-4 h-4 rounded-full bg-premium-sage" />
+          <div className="w-4 h-4 rounded-full bg-wedding-olive" />
           <span>{tr('Table ronde','Round table')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-5 h-3 rounded-lg bg-premium-sage" />
+          <div className="w-5 h-3 rounded-lg bg-wedding-olive" />
           <span>{tr('Table rectangle','Rectangular table')}</span>
         </div>
         <div className="flex items-center gap-2">
-          <div className="w-5 h-3 rounded-[50%] bg-premium-sage" />
+          <div className="w-5 h-3 rounded-[50%] bg-wedding-olive" />
           <span>{tr('Table ovale','Oval table')}</span>
         </div>
       </div>}
@@ -422,7 +422,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
 
       {/* Selected guest indicator */}
       {selectedGuest && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-premium-sage text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-wedding-olive text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
           {tr('Cliquez sur un autre invité de la même table pour échanger','Click another guest at the same table to swap')}
         </div>
       )}
@@ -451,7 +451,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             }}
           >
             {roomConfig.enabled && roomConfig.showComfort && (
-              <div className="absolute rounded-full border border-dashed border-premium-sage/60 bg-premium-sage/5 pointer-events-none" style={{ width: comfortDiameter, height: comfortDiameter, left: size.width / 2 - comfortDiameter / 2, top: size.height / 2 - comfortDiameter / 2 }} aria-hidden="true" />
+              <div className="absolute rounded-full border border-dashed border-wedding-olive/60 bg-wedding-olive/5 pointer-events-none" style={{ width: comfortDiameter, height: comfortDiameter, left: size.width / 2 - comfortDiameter / 2, top: size.height / 2 - comfortDiameter / 2 }} aria-hidden="true" />
             )}
             {/* Table shape */}
             <div
@@ -459,9 +459,9 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                 "table-shape flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shadow-lg border-2",
                 getTableShape(table.shape),
                 isFull 
-                  ? "bg-premium-sage text-white border-premium-sage-dark" 
-                  : "bg-white text-foreground border-premium-sage/50 hover:border-premium-sage",
-                isDragging && "shadow-2xl ring-2 ring-premium-sage ring-offset-2"
+                  ? "bg-wedding-olive text-white border-premium-olive-dark" 
+                  : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive",
+                isDragging && "shadow-2xl ring-2 ring-wedding-olive ring-offset-2"
               )}
               style={{
                 width: size.width,
@@ -497,8 +497,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                   className={cn(
                     "absolute rounded-full border-2 shadow-sm flex items-center justify-center font-medium cursor-pointer transition-all duration-200 hover:scale-110",
                     isSelected 
-                      ? "bg-premium-sage text-white border-white ring-2 ring-premium-sage ring-offset-1 scale-110 z-20 px-2 py-1 min-w-max text-[10px]" 
-                      : "bg-white text-premium-sage-dark border-premium-sage/40 hover:bg-premium-sage hover:text-white px-2 py-0.5 max-w-[110px] truncate text-[10px] z-10"
+                      ? "bg-wedding-olive text-white border-white ring-2 ring-wedding-olive ring-offset-1 scale-110 z-20 px-2 py-1 min-w-max text-[10px]" 
+                      : "bg-white text-premium-olive-dark border-wedding-olive/40 hover:bg-wedding-olive hover:text-white px-2 py-0.5 max-w-[110px] truncate text-[10px] z-10"
                   )}
                   style={{
                     left: size.width / 2 + guestX,
