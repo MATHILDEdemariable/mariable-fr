@@ -42,6 +42,7 @@ export const STAKEHOLDER_LABELS: Record<string, { fr: string; en: string }> = {
   groom: { fr: 'Le marié', en: 'The groom' },
   parents: { fr: 'Les parents', en: 'Parents' },
   witnesses: { fr: 'Les témoins', en: 'Witnesses' },
+  vendor: { fr: 'Prestataire', en: 'Vendor' },
 };
 
 export const MANUAL_STATUS_LABELS: Record<ManualStepStatus, { fr: string; en: string; className: string }> = {
@@ -77,6 +78,7 @@ const RetroplanningManuel = () => {
   const [noteText, setNoteText] = useState('');
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [selectedStepIds, setSelectedStepIds] = useState<Set<string>>(new Set());
   const db = supabase as any;
 
   useEffect(() => {
