@@ -28,7 +28,7 @@ const MODULES: { key: JourJModule; icon: typeof Table; fr: string; en: string; s
   { key: 'decor', icon: Sparkles, fr: 'Décoration', en: 'Decor', sourceFr: 'Mise en place par zone', sourceEn: 'Set-up by area', path: '/dashboard/decoration' },
   { key: 'trombinoscope', icon: Users, fr: 'Trombinoscope', en: 'Who’s who', sourceFr: 'Ajouté à l’équipe', sourceEn: 'Added to the team', path: '/mon-jour-m/equipe' },
   { key: 'ceremony_religious', icon: Heart, fr: 'Cérémonie', en: 'Ceremony', sourceFr: 'Cortège, musiques, interventions', sourceEn: 'Procession, music, speeches', path: '/dashboard/ceremonie' },
-  { key: 'ceremony_civil', icon: Building2, fr: 'Mairie', en: 'Town hall', sourceFr: 'Témoins, dossier, timing', sourceEn: 'Witnesses, paperwork, timing', path: '/dashboard/mairie-civil' },
+  { key: 'ceremony_civil', icon: Building2, fr: 'Mairie', en: 'City hall', sourceFr: 'Témoins, dossier, timing', sourceEn: 'Witnesses, paperwork, timing', path: '/dashboard/mairie-civil' },
 ];
 const isCeremonyModule = (module: JourJModule) => module === 'ceremony_religious' || module === 'ceremony_civil';
 

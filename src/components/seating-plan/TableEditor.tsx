@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { SeatingTable } from '@/types/seating';
+import { useTranslation } from 'react-i18next';
 
 interface TableEditorProps {
   open: boolean;
@@ -29,6 +30,8 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
   const [shape, setShape] = useState<'round' | 'rectangle' | 'oval'>('round');
   const [color, setColor] = useState('#8B7355');
   const [loading, setLoading] = useState(false);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   useEffect(() => {
     if (table) {
@@ -48,13 +51,13 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
 
   const handleSave = async () => {
     if (!tableName.trim()) {
-      toast({ title: 'Erreur', description: 'Le nom de la table est requis', variant: 'destructive' });
+      toast({ title: tr('Erreur', 'Error'), description: tr('Le nom de la table est requis', 'Table name is required'), variant: 'destructive' });
       return;
     }
 
     const capacityNum = parseInt(capacity);
     if (capacityNum < 2 || capacityNum > 20) {
-      toast({ title: 'Erreur', description: 'La capacité doit être entre 2 et 20', variant: 'destructive' });
+      toast({ title: tr('Erreur', 'Error'), description: tr('La capacité doit être entre 2 et 20', 'Capacity must be between 2 and 20'), variant: 'destructive' });
       return;
     }
 
@@ -74,7 +77,7 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
           .eq('id', table.id);
 
         if (error) throw error;
-        toast({ title: 'Table mise à jour' });
+        toast({ title: tr('Table mise à jour', 'Table updated') });
       } else {
         const { error } = await supabase
           .from('seating_tables')
@@ -84,17 +87,20 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
             table_number: parseInt(tableNumber),
             capacity: capacityNum,
             shape,
-            color
+            color,
+            // Nouvelle table placée au centre de la vue visuelle
+            position_x: 420,
+            position_y: 300
           });
 
         if (error) throw error;
-        toast({ title: 'Table créée' });
+        toast({ title: tr('Table créée', 'Table created') });
       }
 
       onSaved();
       onOpenChange(false);
     } catch (error: any) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: tr('Erreur', 'Error'), description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -104,23 +110,23 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{table ? 'Modifier la table' : 'Nouvelle table'}</DialogTitle>
+          <DialogTitle>{table ? tr('Modifier la table', 'Edit table') : tr('Nouvelle table', 'New table')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="tableName">Nom de la table *</Label>
+            <Label htmlFor="tableName">{tr('Nom de la table *', 'Table name *')}</Label>
             <Input
               id="tableName"
               value={tableName}
               onChange={(e) => setTableName(e.target.value)}
-              placeholder="Ex: Table des Mariés, Table 1..."
+              placeholder={tr('Ex : Table des mariés, Table 1...', 'e.g. Head table, Table 1...')}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="tableNumber">Numéro</Label>
+              <Label htmlFor="tableNumber">{tr('Numéro', 'Number')}</Label>
               <Input
                 id="tableNumber"
                 type="number"
@@ -131,7 +137,7 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
             </div>
 
             <div>
-              <Label htmlFor="capacity">Capacité *</Label>
+              <Label htmlFor="capacity">{tr('Capacité *', 'Capacity *')}</Label>
               <Input
                 id="capacity"
                 type="number"
@@ -144,21 +150,21 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
           </div>
 
           <div>
-            <Label htmlFor="shape">Forme</Label>
+            <Label htmlFor="shape">{tr('Forme', 'Shape')}</Label>
             <Select value={shape} onValueChange={(v) => setShape(v as any)}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="round">Ronde</SelectItem>
+                <SelectItem value="round">{tr('Ronde', 'Round')}</SelectItem>
                 <SelectItem value="rectangle">Rectangle</SelectItem>
-                <SelectItem value="oval">Ovale</SelectItem>
+                <SelectItem value="oval">{tr('Ovale', 'Oval')}</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="color">Couleur</Label>
+            <Label htmlFor="color">{tr('Couleur', 'Colour')}</Label>
             <Input
               id="color"
               type="color"
@@ -170,10 +176,10 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {tr('Annuler', 'Cancel')}
           </Button>
           <Button onClick={handleSave} disabled={loading}>
-            {loading ? 'Enregistrement...' : 'Enregistrer'}
+            {loading ? tr('Enregistrement...', 'Saving...') : tr('Enregistrer', 'Save')}
           </Button>
         </DialogFooter>
       </DialogContent>

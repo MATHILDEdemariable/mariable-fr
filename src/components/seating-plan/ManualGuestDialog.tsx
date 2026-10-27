@@ -14,6 +14,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { SeatingTable } from '@/types/seating';
+import { useTranslation } from 'react-i18next';
 
 interface ManualGuestDialogProps {
   open: boolean;
@@ -30,10 +31,12 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
   const [notes, setNotes] = useState('');
   const [tableId, setTableId] = useState<string>('unassigned');
   const [loading, setLoading] = useState(false);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   const handleAdd = async () => {
     if (!guestName.trim()) {
-      toast({ title: 'Erreur', description: 'Le nom est requis', variant: 'destructive' });
+      toast({ title: tr('Erreur', 'Error'), description: tr('Le nom est requis', 'Name is required'), variant: 'destructive' });
       return;
     }
 
@@ -53,7 +56,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
 
       if (error) throw error;
 
-      toast({ title: 'Invité ajouté' });
+      toast({ title: tr('Invité ajouté', 'Guest added') });
       onAdded();
       onOpenChange(false);
 
@@ -64,7 +67,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
       setNotes('');
       setTableId('unassigned');
     } catch (error: any) {
-      toast({ title: 'Erreur', description: error.message, variant: 'destructive' });
+      toast({ title: tr('Erreur', 'Error'), description: error.message, variant: 'destructive' });
     } finally {
       setLoading(false);
     }
@@ -74,17 +77,17 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Ajouter un invité manuellement</DialogTitle>
+          <DialogTitle>{tr('Ajouter un invité manuellement', 'Add a guest manually')}</DialogTitle>
         </DialogHeader>
 
         <div className="space-y-4">
           <div>
-            <Label htmlFor="guestName">Nom de l'invité *</Label>
+            <Label htmlFor="guestName">{tr("Nom de l'invité *", 'Guest name *')}</Label>
             <Input
               id="guestName"
               value={guestName}
               onChange={(e) => setGuestName(e.target.value)}
-              placeholder="Prénom Nom"
+              placeholder={tr('Prénom Nom', 'First Last')}
             />
           </div>
 
@@ -95,21 +98,21 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="adult">Adulte</SelectItem>
-                <SelectItem value="child">Enfant</SelectItem>
+                <SelectItem value="adult">{tr('Adulte', 'Adult')}</SelectItem>
+                <SelectItem value="child">{tr('Enfant', 'Child')}</SelectItem>
                 <SelectItem value="vip">VIP</SelectItem>
               </SelectContent>
             </Select>
           </div>
 
           <div>
-            <Label htmlFor="table">Table (optionnel)</Label>
+            <Label htmlFor="table">{tr('Table (optionnel)', 'Table (optional)')}</Label>
             <Select value={tableId} onValueChange={setTableId}>
               <SelectTrigger>
-                <SelectValue placeholder="Non assigné" />
+                <SelectValue placeholder={tr('Non assigné', 'Unassigned')} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="unassigned">Non assigné</SelectItem>
+                <SelectItem value="unassigned">{tr('Non assigné', 'Unassigned')}</SelectItem>
                 {tables.map(table => (
                   <SelectItem key={table.id} value={table.id}>
                     {table.table_name}
@@ -120,12 +123,12 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
           </div>
 
           <div>
-            <Label htmlFor="dietary">Restrictions alimentaires</Label>
+            <Label htmlFor="dietary">{tr('Restrictions alimentaires', 'Dietary requirements')}</Label>
             <Textarea
               id="dietary"
               value={dietaryRestrictions}
               onChange={(e) => setDietaryRestrictions(e.target.value)}
-              placeholder="Ex: Végétarien, allergie aux fruits de mer..."
+              placeholder={tr('Ex : végétarien, allergie aux fruits de mer...', 'e.g. Vegetarian, shellfish allergy...')}
             />
           </div>
 
@@ -135,17 +138,17 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes personnelles..."
+              placeholder={tr('Notes personnelles...', 'Personal notes...')}
             />
           </div>
         </div>
 
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Annuler
+            {tr('Annuler', 'Cancel')}
           </Button>
           <Button onClick={handleAdd} disabled={loading}>
-            {loading ? 'Ajout...' : 'Ajouter'}
+            {loading ? tr('Ajout...', 'Adding...') : tr('Ajouter', 'Add')}
           </Button>
         </DialogFooter>
       </DialogContent>

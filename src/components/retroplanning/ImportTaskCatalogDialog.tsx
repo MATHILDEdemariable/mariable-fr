@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
 import { supabase } from '@/integrations/supabase/client';
-import { RETROPLANNING_CATALOG_PERIODS, RETROPLANNING_TASK_CATALOG } from '@/data/retroplanningTaskCatalog';
+import { RETROPLANNING_CATALOG_PERIODS, RETROPLANNING_TASK_CATALOG, translateCatalogCategory } from '@/data/retroplanningTaskCatalog';
 
 export interface CatalogStepDraft {
   title: string;
@@ -128,7 +128,7 @@ const ImportTaskCatalogDialog = ({ open, onOpenChange, weddingDate, isEnglish, o
                   <label key={row.id} className="flex items-center gap-3 py-2 min-h-[44px] cursor-pointer">
                     <Checkbox checked={selectedIds.has(row.id)} onCheckedChange={(checked) => toggleIds([row.id], !!checked)} />
                     <span className="text-sm flex-1">{row.title}</span>
-                    {row.category && <span className="text-xs text-muted-foreground">{row.category}</span>}
+                    {row.category && <span className="text-xs text-muted-foreground">{translateCatalogCategory(row.category, isEnglish)}</span>}
                   </label>
                 ))}
               </section>

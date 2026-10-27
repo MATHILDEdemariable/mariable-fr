@@ -366,6 +366,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                   tables={tables}
                   guests={guests}
                   onTablePositionUpdate={loadSeatingPlan}
+                  onEditTable={handleEditTable}
                 />
               </div>
             </div>

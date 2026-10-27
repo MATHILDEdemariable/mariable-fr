@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Search, Users, Trash2, X } from 'lucide-react';
 import { SeatingAssignment } from '@/types/seating';
 import GuestCard from './GuestCard';
+import { useTranslation } from 'react-i18next';
 
 interface GuestListProps {
   guests: SeatingAssignment[];
@@ -15,6 +16,8 @@ interface GuestListProps {
 
 const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps) => {
   const [search, setSearch] = useState('');
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   const filteredGuests = guests.filter(g => 
     g.guest_name.toLowerCase().includes(search.toLowerCase())
@@ -22,7 +25,7 @@ const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps)
 
   const handleDeleteAll = () => {
     if (guests.length === 0) return;
-    if (confirm(`Supprimer ${guests.length} invité(s) non placé(s) ?`)) {
+    if (confirm(tr(`Supprimer ${guests.length} invité(s) non placé(s) ?`, `Delete ${guests.length} unseated guest(s)?`))) {
       onDeleteAllGuests?.();
     }
   };
@@ -33,7 +36,7 @@ const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps)
         <div className="flex items-center justify-between">
           <CardTitle className="text-sm font-medium flex items-center gap-2">
             <Users className="h-4 w-4" />
-            Invités Non Placés ({guests.length})
+            {tr('Invités non placés', 'Guests waiting for placement')} ({guests.length})
           </CardTitle>
           {onDeleteAllGuests && guests.length > 0 && (
             <Button
@@ -41,7 +44,7 @@ const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps)
               size="sm"
               onClick={handleDeleteAll}
               className="h-7 px-2 text-muted-foreground hover:text-destructive"
-              title="Supprimer tous les invités non placés"
+              title={tr('Supprimer tous les invités non placés', 'Delete all unseated guests')}
             >
               <Trash2 className="h-4 w-4" />
             </Button>
@@ -53,7 +56,7 @@ const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps)
           <div className="relative">
             <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Rechercher..."
+              placeholder={tr('Rechercher...', 'Search...')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-8"
@@ -72,7 +75,7 @@ const GuestList = ({ guests, onDeleteGuest, onDeleteAllGuests }: GuestListProps)
             >
               {filteredGuests.length === 0 ? (
                 <div className="text-center py-8 text-sm text-muted-foreground">
-                  {search ? 'Aucun invité trouvé' : 'Tous les invités sont placés'}
+                  {search ? tr('Aucun invité trouvé', 'No guest found') : tr('Tous les invités sont placés', 'All guests are seated')}
                 </div>
               ) : (
                 filteredGuests.map((guest, index) => (

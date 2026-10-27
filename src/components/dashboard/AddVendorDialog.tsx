@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -20,6 +21,12 @@ interface AddVendorDialogProps {
   onVendorAdded: () => void;
   projectId?: string;
 }
+
+const VENDOR_CATEGORY_EN: Record<string, string> = {
+  'Lieu de réception': 'Venue', 'Traiteur': 'Caterer', 'Photographe': 'Photographer', 'Vidéaste': 'Videographer',
+  'DJ': 'DJ', 'Fleuriste': 'Florist', 'Décoration': 'Decoration', 'Organisateur de mariage': 'Wedding planner',
+  'Tenues': 'Attire', 'Bijoux': 'Jewellery', 'Beauté': 'Beauty', 'Transport': 'Transport', 'Animation': 'Entertainment', 'Autre': 'Other',
+};
 
 const vendorCategories = [
   'Lieu de réception',
@@ -54,12 +61,14 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const { currentWeddingId } = useWedding();
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   const handleAddVendor = async () => {
     if (!vendorName || !category) {
       toast({
-        title: 'Champs requis',
-        description: 'Veuillez saisir un nom et une catégorie pour le prestataire.',
+        title: tr('Champs requis', 'Required fields'),
+        description: tr('Veuillez saisir un nom et une catégorie pour le prestataire.', 'Please enter a name and a category for the vendor.'),
         variant: 'destructive',
       });
       return;
@@ -94,8 +103,8 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
       if (error) throw error;
 
       toast({
-        title: 'Prestataire ajouté',
-        description: `${vendorName} a été ajouté à votre liste de prestataires.`,
+        title: tr('Prestataire ajouté', 'Vendor added'),
+        description: tr(`${vendorName} a été ajouté à votre liste de prestataires.`, `${vendorName} was added to your vendor list.`),
       });
 
       // Reset form and close dialog
@@ -112,8 +121,8 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
     } catch (error: any) {
       console.error('Error adding vendor:', error);
       toast({
-        title: 'Erreur',
-        description: error.message || 'Une erreur est survenue lors de l\'ajout du prestataire',
+        title: tr('Erreur', 'Error'),
+        description: error.message || tr('Une erreur est survenue lors de l\'ajout du prestataire', 'Something went wrong while adding the vendor'),
         variant: 'destructive',
       });
     } finally {
@@ -125,39 +134,39 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="font-serif">Ajouter un prestataire personnel</DialogTitle>
+          <DialogTitle className="font-serif">{tr('Ajouter un prestataire personnel', 'Add a personal vendor')}</DialogTitle>
           <DialogDescription>
-            Ajoutez un prestataire de votre choix à votre liste de suivi.
+            {tr('Ajoutez un prestataire de votre choix à votre liste de suivi.', 'Add any vendor you like to your tracking list.')}
           </DialogDescription>
         </DialogHeader>
         
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
-            <Label htmlFor="vendor-name">Nom du prestataire *</Label>
+            <Label htmlFor="vendor-name">{tr('Nom du prestataire *', 'Vendor name *')}</Label>
             <Input
               id="vendor-name"
               value={vendorName}
               onChange={(e) => setVendorName(e.target.value)}
-              placeholder="ex: Château des Fleurs"
+              placeholder={tr('ex : Château des Fleurs', 'e.g. Château des Fleurs')}
             />
           </div>
           
           <div className="grid gap-2">
-            <Label htmlFor="category">Catégorie *</Label>
+            <Label htmlFor="category">{tr('Catégorie *', 'Category *')}</Label>
             <Select value={category} onValueChange={setCategory}>
               <SelectTrigger>
-                <SelectValue placeholder="Sélectionnez une catégorie" />
+                <SelectValue placeholder={tr('Sélectionnez une catégorie', 'Select a category')} />
               </SelectTrigger>
               <SelectContent>
                 {vendorCategories.map((cat) => (
-                  <SelectItem key={cat} value={cat}>{cat}</SelectItem>
+                  <SelectItem key={cat} value={cat}>{tr(cat, VENDOR_CATEGORY_EN[cat] ?? cat)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="email">Email du prestataire</Label>
+            <Label htmlFor="email">{tr('Email du prestataire', 'Vendor email')}</Label>
             <Input
               id="email"
               type="email"
@@ -168,7 +177,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="phone">Téléphone</Label>
+            <Label htmlFor="phone">{tr('Téléphone', 'Phone')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -179,7 +188,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="website">Site web</Label>
+            <Label htmlFor="website">{tr('Site web', 'Website')}</Label>
             <Input
               id="website"
               type="url"
@@ -190,12 +199,12 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
           </div>
 
           <div className="grid gap-2">
-            <Label htmlFor="location">Localisation</Label>
+            <Label htmlFor="location">{tr('Localisation', 'Location')}</Label>
             <Input
               id="location"
               value={location}
               onChange={(e) => setLocation(e.target.value)}
-              placeholder="Ville, Région"
+              placeholder={tr('Ville, Région', 'City, Region')}
             />
           </div>
           
@@ -203,7 +212,7 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
             <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
-              placeholder="Informations supplémentaires, prix estimé, etc."
+              placeholder={tr('Informations supplémentaires, prix estimé, etc.', 'Extra details, estimated price, etc.')}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               rows={3}
@@ -212,14 +221,14 @@ const AddVendorDialog: React.FC<AddVendorDialogProps> = ({
         </div>
         
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{tr('Annuler', 'Cancel')}</Button>
           <Button 
             onClick={handleAddVendor} 
             className="bg-wedding-olive hover:bg-wedding-olive/90"
             disabled={isLoading}
           >
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Ajouter
+            {tr('Ajouter', 'Add')}
           </Button>
         </DialogFooter>
       </DialogContent>

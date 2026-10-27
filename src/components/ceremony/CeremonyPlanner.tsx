@@ -43,7 +43,7 @@ const CIVIL_CHECKLIST = [
   { key: 'id_witnesses', ...L('Pièces d’identité des témoins (2 à 4)', 'Witnesses’ ID (2 to 4)') },
   { key: 'family_book', ...L('Livret de famille (si enfants)', 'Family record book (if children)') },
   { key: 'rings', ...L('Alliances (si échange en mairie)', 'Rings (if exchanged at the town hall)') },
-  { key: 'convocation', ...L('Convocation / confirmation de la mairie', 'Town hall confirmation') },
+  { key: 'convocation', ...L('Convocation / confirmation de la mairie', 'City hall confirmation') },
 ];
 
 const CIVIL_TIMING = [
@@ -62,7 +62,7 @@ export const buildCeremonyPdf = async (type: CeremonyType, data: CeremonyData, i
     pdf.setFillColor(99, 116, 90); pdf.rect(0, 0, 210, 30, 'F');
     pdf.setTextColor(255, 255, 255); pdf.setFont('times', 'bold'); pdf.setFontSize(20); pdf.text('MARIABLE', 15, 15);
     pdf.setFont('times', 'normal'); pdf.setFontSize(12);
-    pdf.text(type === 'civil' ? t('Fiche mairie', 'Town hall sheet') : t('Fiche officiant & wedding planner', 'Officiant & planner sheet'), 15, 24);
+    pdf.text(type === 'civil' ? t('Fiche mairie', 'City hall sheet') : t('Fiche officiant & wedding planner', 'Officiant & planner sheet'), 15, 24);
     pdf.setTextColor(30, 30, 30);
     let y = 42;
     const write = (text: string, bold = false) => {
@@ -204,7 +204,7 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
         await db.from('coordination_documents').delete().eq('coordination_id', coordination.id).eq('category', `organisation-${module}`);
         const { error: insertError } = await db.from('coordination_documents').insert({
           coordination_id: coordination.id, category: `organisation-${module}`,
-          title: type === 'civil' ? tr('Fiche mairie', 'Town hall sheet') : tr('Fiche cérémonie', 'Ceremony sheet'),
+          title: type === 'civil' ? tr('Fiche mairie', 'City hall sheet') : tr('Fiche cérémonie', 'Ceremony sheet'),
           description: tr('Validée depuis l’organisation', 'Approved from the planning space'),
           file_url: publicUrl, file_path: filePath, file_type: 'pdf', mime_type: 'application/pdf', file_size: blob.size,
         });
@@ -265,7 +265,7 @@ const CeremonyPlanner: React.FC<Props> = ({ type }) => {
     <div className="space-y-4">
       <header className="bg-editorial-beige border border-border p-4 sm:p-5 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
         <div>
-          <h2 className="font-serif text-2xl">{type === 'civil' ? tr('Organisation de la mairie', 'Town hall planning') : tr('Organisation de la cérémonie', 'Ceremony planning')}</h2>
+          <h2 className="font-serif text-2xl">{type === 'civil' ? tr('Organisation de la mairie', 'Civil wedding') : tr('Organisation de la cérémonie', 'Ceremony planning')}</h2>
           <p className="text-sm text-muted-foreground max-w-xl">
             {type === 'civil'
               ? tr('Dossier, témoins officiels et timing minuté : une cérémonie courte (15 à 20 min) qui ne laisse pas de place à l’improvisation.', 'Paperwork, official witnesses and a precise timing for a short (15–20 min) ceremony.')

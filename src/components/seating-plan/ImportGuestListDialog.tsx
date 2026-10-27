@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
@@ -28,6 +29,8 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
   const [guests, setGuests] = useState<Guest[]>([]);
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
   const [loading, setLoading] = useState(false);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const [importing, setImporting] = useState(false);
 
   useEffect(() => {
@@ -114,17 +117,17 @@ else importQuery = importQuery.eq('user_id', user.id);
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2"><Users className="h-5 w-5" />Importer liste manuelle</DialogTitle>
+          <DialogTitle className="flex items-center gap-2"><Users className="h-5 w-5" />{tr('Importer liste manuelle', 'Import manual list')}</DialogTitle>
         </DialogHeader>
         {loading ? (
           <div className="flex items-center justify-center py-8"><Loader2 className="h-8 w-8 animate-spin text-muted-foreground" /></div>
         ) : guests.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground"><Users className="h-12 w-12 mx-auto mb-3 opacity-50" /><p>Aucun invité dans votre liste</p><Button asChild variant="outline" className="mt-4"><Link to="/dashboard/rsvp">Créer ma liste d'invités</Link></Button><p className="text-xs mt-3">Ou fermez cette fenêtre et utilisez « Ajouter un invité ».</p></div>
+          <div className="text-center py-8 text-muted-foreground"><Users className="h-12 w-12 mx-auto mb-3 opacity-50" /><p>{tr('Aucun invité dans votre liste', 'No guests in your list')}</p><Button asChild variant="outline" className="mt-4"><Link to="/dashboard/rsvp">{tr("Créer ma liste d'invités", 'Create my guest list')}</Link></Button><p className="text-xs mt-3">{tr('Ou fermez cette fenêtre et utilisez « Ajouter un invité ».', 'Or close this window and use “Add a guest”.')}</p></div>
         ) : (
           <>
             <div className="flex items-center justify-between py-2 border-b">
               <span className="text-sm text-muted-foreground">{selectedGuests.size} sur {guests.length}</span>
-              <Button variant="ghost" size="sm" onClick={toggleAll}>{selectedGuests.size === guests.length ? 'Tout désélectionner' : 'Tout sélectionner'}</Button>
+              <Button variant="ghost" size="sm" onClick={toggleAll}>{selectedGuests.size === guests.length ? tr('Tout désélectionner', 'Deselect all') : tr('Tout sélectionner', 'Select all')}</Button>
             </div>
             <ScrollArea className="h-64">
               <div className="space-y-1">
@@ -139,9 +142,9 @@ else importQuery = importQuery.eq('user_id', user.id);
           </>
         )}
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>Annuler</Button>
+          <Button variant="outline" onClick={() => onOpenChange(false)}>{tr('Annuler', 'Cancel')}</Button>
           <Button onClick={handleImport} disabled={importing || selectedGuests.size === 0} className="bg-editorial-noir hover:bg-editorial-noir/80">
-            {importing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}Importer ({selectedGuests.size})
+            {importing && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}{tr('Importer', 'Import')} ({selectedGuests.size})
           </Button>
         </DialogFooter>
       </DialogContent>
