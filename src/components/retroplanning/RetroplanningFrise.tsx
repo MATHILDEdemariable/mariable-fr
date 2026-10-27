@@ -15,7 +15,6 @@ interface RetroplanningFriseProps {
 export const RetroplanningSummary = ({ steps, weddingDate, isEnglish }: RetroplanningFriseProps) => {
   const completedCount = steps.filter((step) => step.status === 'completed').length;
   const progressPercent = steps.length ? Math.round((completedCount / steps.length) * 100) : 0;
-  const daysLeft = weddingDate ? differenceInCalendarDays(new Date(weddingDate), new Date()) : null;
   const currentPriorities = steps.filter(
     (step) => step.status !== 'completed' && step.date && isSameMonth(new Date(step.date), new Date())
   );
