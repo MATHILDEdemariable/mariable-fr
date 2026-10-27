@@ -4,7 +4,6 @@ import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
 import { Copy, Share, Check, Eye } from 'lucide-react';
 import { useToast } from '@/components/ui/use-toast';
 
