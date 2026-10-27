@@ -80,6 +80,9 @@ const RetroplanningManuel = () => {
   const [isCatalogOpen, setIsCatalogOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [selectedStepIds, setSelectedStepIds] = useState<Set<string>>(new Set());
+  const [isExportOpen, setIsExportOpen] = useState(false);
+  const [exportView, setExportView] = useState<'list' | 'kanban' | 'calendar' | 'frise'>('list');
+  const [exportRole, setExportRole] = useState('all');
   const db = supabase as any;
 
   useEffect(() => {
@@ -237,6 +240,30 @@ const RetroplanningManuel = () => {
     toast({ title: isEnglish ? `${newSteps.length} tasks added — edit them freely` : `${newSteps.length} tâches ajoutées — modifiez-les librement` });
   };
 
+  // Mes tâches habituelles : injecte uniquement le catalogue de tâches du pro
+  const handleLoadMyTasks = async () => {
+    const proTemplates = await fetchProTaskTemplates();
+    if (!proTemplates.length) {
+      toast({ title: isEnglish ? 'Your task catalog is empty' : 'Votre catalogue de tâches est vide', description: isEnglish ? 'Add your usual tasks in Pro space → Templates & catalogs.' : 'Ajoutez vos tâches habituelles dans Espace pro → Modèles & catalogues.' });
+      return;
+    }
+    const existingTitles = new Set(steps.map((step) => step.title.toLowerCase()));
+    const newSteps = proTemplates
+      .map((proTask) => ({ ...EMPTY_STEP, id: uuidv4(), title: proTask.title, date: computeStepDate(weddingDate, proTask.months_before), period: periodLabel(proTask.months_before, isEnglish), category: proTask.category, stakeholder: proTask.stakeholder }))
+      .filter((step) => !existingTitles.has(step.title.toLowerCase()) && existingTitles.add(step.title.toLowerCase()));
+    if (!newSteps.length) { toast({ title: isEnglish ? 'Already added' : 'Déjà ajoutées' }); return; }
+    persistSteps([...steps, ...newSteps]);
+    toast({ title: isEnglish ? `${newSteps.length} tasks added` : `${newSteps.length} tâches ajoutées` });
+  };
+
+  // Export PDF : affiche la vue et le rôle choisis puis lance l'impression
+  const handleExportPdf = () => {
+    setView(exportView);
+    setStakeholderFilter(exportRole);
+    setIsExportOpen(false);
+    setTimeout(() => window.print(), 400);
+  };
+
   const updateStep = (stepId: string, patch: Partial<ManualStep>) =>
     persistSteps(steps.map((item) => (item.id === stepId ? { ...item, ...patch } : item)));
 
@@ -290,25 +317,26 @@ const RetroplanningManuel = () => {
     <Card>
       <CardContent className="p-4 sm:p-6 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <h2 className="text-2xl font-serif">{isEnglish ? 'Build your own timeline' : 'Créez votre rétroplanning'}</h2>
+          <h2 className="text-2xl font-serif">{isEnglish ? 'Overall wedding planning' : 'Planning global du mariage'}{stakeholderFilter !== 'all' && <span className="hidden print:inline"> — {stakeholderLabel(stakeholderFilter)}</span>}</h2>
           <div className="flex flex-wrap gap-2 print:hidden">
-            <Button variant="outline" onClick={() => window.print()}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
+            <Button variant="outline" onClick={() => { setExportView(view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
             <RetroplanningShareButton retroplanningId={retroplanningId} />
           </div>
         </div>
 
-        <div className="sm:w-56">
+        <div className="sm:w-56 print:hidden">
           <Label htmlFor="retro-wedding-date">{isEnglish ? 'Wedding date' : 'Date du mariage'}</Label>
           <Input id="retro-wedding-date" type="date" value={weddingDate} onChange={(e) => { setWeddingDate(e.target.value); if (e.target.value) persistSteps(steps, e.target.value); }} />
         </div>
 
         {/* Espace de création unique */}
-        <div className="border border-editorial-olive/30 bg-editorial-beige p-4 space-y-3">
+        <div className="border border-editorial-olive/30 bg-editorial-beige p-4 space-y-3 print:hidden">
           <div className="flex flex-wrap gap-1 bg-background p-1 w-fit">
             <Button variant={inputMode === 'quick' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('quick')}><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Quick add' : 'Saisie rapide'}</Button>
             <Button variant={inputMode === 'notes' ? 'default' : 'ghost'} size="sm" onClick={() => setInputMode('notes')}><Sparkles className="h-4 w-4 mr-1" />{isEnglish ? 'Notes → AI' : 'Notes en vrac (IA)'}</Button>
             <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(true)}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'Catalogue' : 'Catalogue'}</Button>
             <Button variant="ghost" size="sm" onClick={handleLoadStandardTemplate}><Wand2 className="h-4 w-4 mr-1" />{isEnglish ? 'Standard template' : 'Trame standard'}</Button>
+            <Button variant="ghost" size="sm" onClick={handleLoadMyTasks}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'My usual tasks' : 'Mes tâches habituelles'}</Button>
           </div>
           {inputMode === 'quick' ? (
             <>
@@ -350,7 +378,7 @@ const RetroplanningManuel = () => {
 
         {steps.length > 0 && <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />}
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-3 gap-3 print:hidden">
           {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
             <div key={status} className="border border-border p-3 sm:p-4">
               <p className="text-sm text-muted-foreground">{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']}</p>
@@ -359,7 +387,7 @@ const RetroplanningManuel = () => {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between gap-3">
+        <div className="flex flex-col sm:flex-row justify-between gap-3 print:hidden">
           <div className="flex gap-1 bg-muted p-1 w-fit">
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
             <Button variant={view === 'kanban' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('kanban')}><LayoutGrid className="h-4 w-4 mr-1" />Kanban</Button>
@@ -381,7 +409,7 @@ const RetroplanningManuel = () => {
           <RetroplanningFrise steps={visibleSteps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (
           <div>
-            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-2 text-sm">
+            <div className="flex flex-wrap items-center gap-3 border-b border-border pb-2 text-sm print:hidden">
               <label className="flex items-center gap-2 min-h-11 cursor-pointer">
                 <input type="checkbox" className="h-4 w-4 accent-primary"
                   checked={visibleSteps.length > 0 && visibleSteps.every((step) => selectedStepIds.has(step.id))}
@@ -453,6 +481,39 @@ const RetroplanningManuel = () => {
           </div>
         )}
       </CardContent>
+
+      <Dialog open={isExportOpen} onOpenChange={setIsExportOpen}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{isEnglish ? 'Export as PDF' : 'Exporter en PDF'}</DialogTitle></DialogHeader>
+          <div className="space-y-3">
+            <div><Label>{isEnglish ? 'View to export' : 'Vue à exporter'}</Label>
+              <Select value={exportView} onValueChange={(value) => setExportView(value as typeof exportView)}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="list">{isEnglish ? 'List' : 'Liste'}</SelectItem>
+                  <SelectItem value="kanban">Kanban</SelectItem>
+                  <SelectItem value="calendar">{isEnglish ? 'Calendar (current month)' : 'Calendrier (mois affiché)'}</SelectItem>
+                  <SelectItem value="frise">{isEnglish ? 'Timeline' : 'Frise'}</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div><Label>{isEnglish ? 'Tasks of' : 'Tâches de'}</Label>
+              <Select value={exportRole} onValueChange={setExportRole}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">{isEnglish ? 'Everyone' : 'Tout le monde'}</SelectItem>
+                  {Object.keys(STAKEHOLDER_LABELS).map((key) => <SelectItem key={key} value={key}>{stakeholderLabel(key)}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <p className="text-xs text-muted-foreground">{isEnglish ? 'In the print window, choose "Save as PDF".' : 'Dans la fenêtre d\'impression, choisissez « Enregistrer au format PDF ».'}</p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsExportOpen(false)}>{isEnglish ? 'Cancel' : 'Annuler'}</Button>
+            <Button onClick={handleExportPdf}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Generate PDF' : 'Générer le PDF'}</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!editingStep} onOpenChange={(isOpen) => !isOpen && setEditingStep(null)}>
         <DialogContent>
