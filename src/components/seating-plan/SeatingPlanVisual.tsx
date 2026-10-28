@@ -444,9 +444,24 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
               ))}
             </select>
           </div>
-          <p className="col-span-full text-xs text-muted-foreground">
-            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; cliquez dessus pour modifier leurs dimensions.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; click one to edit its size.')}
-          </p>
+          {(() => {
+            const elementsM2 = roomConfig.fixedElements.reduce((sum, el) => sum + (el.w ?? FIXED_ELEMENTS[el.kind].w) * (el.h ?? FIXED_ELEMENTS[el.kind].h), 0);
+            const usable = Math.max(0, surfaceM2 - elementsM2);
+            const cap = getRoomCapacity(usable);
+            const seatsPlaced = tables.reduce((sum, t) => sum + t.capacity, 0);
+            return (
+              <div className="col-span-full text-xs text-muted-foreground space-y-1">
+                <p>
+                  <strong className="text-foreground">{tr('Pour', 'For')} {surfaceM2} m²</strong>
+                  {elementsM2 > 0 && <> ({tr('dont', 'incl.')} {Math.round(elementsM2)} m² {tr('d’éléments', 'of elements')})</>}
+                  {' · '}{tr('on recommande', 'we recommend')} : <strong className="text-foreground">~{cap.seatedRound}</strong> {tr('assis en tables rondes', 'seated at round tables')} · <strong className="text-foreground">~{cap.seatedBanquet}</strong> {tr('assis en banquets', 'seated at banquet tables')} · <strong className="text-foreground">~{cap.standing}</strong> {tr('debout (cocktail)', 'standing (cocktail)')}
+                </p>
+                <p className={seatsPlaced > cap.seatedRound ? 'text-destructive' : ''}>
+                  {tr('Places prévues sur le plan', 'Seats on the plan')} : {seatsPlaced}{seatsPlaced > cap.seatedRound ? ` — ${tr('salle un peu juste pour un dîner confortable', 'room is tight for a comfortable dinner')}` : ''}
+                </p>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -479,7 +494,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         return (
           <div
             key={element.id}
-            className={cn("table-shape absolute flex flex-col items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab z-0", isSelected && "ring-2 ring-wedding-olive ring-offset-2 border-solid")}
+            className={cn("table-shape absolute flex flex-col items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab select-none", isSelected ? "z-40 ring-2 ring-wedding-olive ring-offset-2 border-solid" : "z-[5]")}
             style={{ left: position.x - (elW * ppm) / 2, top: position.y - (elH * ppm) / 2, width: elW * ppm, height: elH * ppm }}
             onMouseDown={(e) => { setSelectedItem(key); handleMouseDown(e, key); }}
             title={tr('Cliquez pour modifier', 'Click to edit')}
@@ -491,7 +506,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       })}
       {/* Grid background */}
       <div 
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(circle, #4a5568 1px, transparent 1px)',
           backgroundSize: '30px 30px'
@@ -518,19 +533,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
         <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
-        <p className="mb-1">• {tr('Cliquez sur une table pour la modifier ou changer sa taille','Click a table to edit it or change its size')}</p>
-        <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
-        <div className="mt-2 pt-2 border-t border-gray-200">
-          <p className="text-[#7F9474] font-medium">
-            💡 {tr('Pour déplacer un invité vers une autre table, utilisez l\'onglet « Liste »','To move a guest to another table, use the "List" tab')}
-          </p>
-        </div>
+        <p className="mb-1">• {tr('Double-cliquez sur une table pour la modifier','Double-click a table to edit it')}</p>
+        <p className="mb-1">• {tr('Cliquez sur 2 invités pour échanger leurs places, même entre deux tables','Click 2 guests to swap seats, even across tables')}</p>
+        <p className="mb-1">• {tr('Cliquez sur un invité puis sur une table pour l’y déplacer','Click a guest then a table to move them there')}</p>
       </div>}
 
       {/* Selected guest indicator */}
       {selectedGuest && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-wedding-olive text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
-          {tr('Cliquez sur un autre invité de la même table pour échanger','Click another guest at the same table to swap')}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-wedding-olive text-white px-4 py-2 rounded-full text-sm shadow-lg z-50 flex items-center gap-3">
+          {tr('Cliquez sur un invité pour échanger, ou sur une table pour le déplacer', 'Click a guest to swap, or a table to move them')}
+          <button type="button" className="underline" onClick={() => setSelectedGuest(null)}>{tr('Annuler', 'Cancel')}</button>
         </div>
       )}
 
@@ -563,35 +575,44 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             {/* Table shape */}
             <div
               className={cn(
-                "table-shape relative flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shadow-lg border-2",
-                getTableShape(table.shape),
-                isFull 
-                  ? "bg-wedding-olive text-white border-premium-olive-dark" 
-                  : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive",
-                (isDragging || selectedItem === table.id) && "shadow-2xl ring-2 ring-wedding-olive ring-offset-2"
+                "table-shape relative flex flex-col items-center justify-center cursor-grab active:cursor-grabbing",
+                table.shape === 'serpentine' ? "" : cn("shadow-lg border-2", getTableShape(table.shape)),
+                table.shape !== 'serpentine' && (isFull
+                  ? "bg-wedding-olive text-white border-premium-olive-dark"
+                  : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive"),
+                selectedGuest && "ring-2 ring-dashed ring-wedding-olive/60",
+                (isDragging || selectedItem === table.id) && "ring-2 ring-wedding-olive ring-offset-2"
               )}
               style={{
                 width: size.width,
                 height: size.height,
-                backgroundColor: table.color || (isFull ? undefined : '#fff')
+                ...(table.shape === 'serpentine' ? {} : { backgroundColor: table.color || (isFull ? undefined : '#fff') })
               }}
-              onMouseDown={(e) => { setSelectedItem(table.id); handleMouseDown(e, table.id); }}
+              onMouseDown={(e) => {
+                if (selectedGuest) { e.preventDefault(); moveSelectedGuestToTable(table.id); return; }
+                setSelectedItem(table.id); handleMouseDown(e, table.id);
+              }}
               onDoubleClick={() => onEditTable?.(table)}
               title={`${table.table_name} · ${tableGuests.length}/${table.capacity}`}
             >
+              {table.shape === 'serpentine' && (
+                <svg className="absolute inset-0 pointer-events-none" width={size.width} height={size.height} viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M2,20 C18,2 32,2 50,20 C68,38 82,38 98,20" fill="none" stroke={table.color || '#63745A'} strokeWidth={14} strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ strokeWidth: Math.max(10, size.height * 0.35) }} />
+                </svg>
+              )}
               {showTableNames && (
-                <span className="font-semibold text-xs leading-tight text-center line-clamp-2 max-w-[90%] break-words">
+                <span className="relative font-semibold text-xs leading-tight text-center line-clamp-2 max-w-[90%] break-words">
                   {table.table_name}
                 </span>
               )}
-              <span className="text-xs opacity-80">
+              <span className="relative text-xs opacity-80">
                 {tableGuests.length}/{table.capacity}
               </span>
             </div>
 
             {/* Guest indicators around the table */}
-            {showGuestNames && tableGuests.slice(0, 12).map((guest, index) => {
-              const totalGuests = Math.min(tableGuests.length, 12);
+            {showGuestNames && tableGuests.slice(0, 30).map((guest, index) => {
+              const totalGuests = Math.min(tableGuests.length, 30);
               const angle = (index / totalGuests) * 2 * Math.PI - Math.PI / 2;
               const radius = Math.max(size.width, size.height) / 2 + 22 + Math.max(0, totalGuests - 6) * 4;
               const guestX = Math.cos(angle) * radius;
