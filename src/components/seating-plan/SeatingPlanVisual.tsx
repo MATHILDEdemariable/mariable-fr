@@ -158,44 +158,51 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       // Same guest clicked: deselect
       setSelectedGuest(null);
     } else {
-      // Different guest clicked: swap seats if same table
+      // Autre invité : échange de places, y compris entre deux tables différentes
       const guest1 = guests.find(g => g.id === selectedGuest);
       const guest2 = guests.find(g => g.id === guestId);
-
-      if (guest1 && guest2 && guest1.table_id === guest2.table_id) {
-        // Swap seat numbers
-        const seat1 = guest1.seat_number ?? 0;
-        const seat2 = guest2.seat_number ?? 0;
-
+      if (guest1 && guest2) {
         try {
-          // Update both guests
-          await Promise.all([
-            supabase.from('seating_assignments').update({ seat_number: seat2 }).eq('id', guest1.id),
-            supabase.from('seating_assignments').update({ seat_number: seat1 }).eq('id', guest2.id)
+          const results = await Promise.all([
+            supabase.from('seating_assignments').update({ table_id: guest2.table_id, seat_number: guest2.seat_number }).eq('id', guest1.id),
+            supabase.from('seating_assignments').update({ table_id: guest1.table_id, seat_number: guest1.seat_number }).eq('id', guest2.id)
           ]);
-
-          toast({
-            title: tr('Places échangées','Seats swapped'),
-            description: `${guest1.guest_name} et ${guest2.guest_name} ont échangé leurs places`
-          });
-
+          const failed = results.find((r) => r.error);
+          if (failed?.error) throw failed.error;
+          toast({ title: tr('Places échangées', 'Seats swapped'), description: `${guest1.guest_name} ⇄ ${guest2.guest_name}` });
           onTablePositionUpdate();
         } catch (error) {
-          toast({
-            title: tr('Erreur','Error'),
-            description: tr("Impossible d'échanger les places",'Unable to swap seats'),
-            variant: 'destructive'
-          });
+          console.error('❌ Échange de places échoué:', error);
+          toast({ title: tr('Erreur', 'Error'), description: tr("Impossible d'échanger les places", 'Unable to swap seats'), variant: 'destructive' });
         }
-      } else {
-        toast({
-          title: tr('Action impossible','Action not allowed'),
-          description: tr('Vous ne pouvez échanger que des invités sur la même table','You can only swap guests at the same table'),
-          variant: 'destructive'
-        });
       }
       setSelectedGuest(null);
     }
+  };
+
+  // Invité sélectionné puis clic sur une autre table : déplacement si place libre
+  const moveSelectedGuestToTable = async (tableId: string) => {
+    const guest = guests.find(g => g.id === selectedGuest);
+    const table = tables.find(t => t.id === tableId);
+    if (!guest || !table) return;
+    setSelectedGuest(null);
+    if (guest.table_id === tableId) return;
+    const seated = guests.filter(g => g.table_id === tableId);
+    if (seated.length >= table.capacity) {
+      toast({ title: tr('Table complète', 'Table full'), description: tr('Cliquez sur un invité de cette table pour échanger.', 'Click a guest at this table to swap instead.'), variant: 'destructive' });
+      return;
+    }
+    const usedSeats = new Set(seated.map(g => g.seat_number));
+    let seat = 1;
+    while (usedSeats.has(seat)) seat++;
+    const { error } = await supabase.from('seating_assignments').update({ table_id: tableId, seat_number: seat }).eq('id', guest.id);
+    if (error) {
+      console.error('❌ Déplacement invité échoué:', error);
+      toast({ title: tr('Erreur', 'Error'), description: tr("Impossible de déplacer l'invité", 'Unable to move guest'), variant: 'destructive' });
+      return;
+    }
+    toast({ title: tr('Invité déplacé', 'Guest moved'), description: `${guest.guest_name} → ${table.table_name}` });
+    onTablePositionUpdate();
   };
 
   const handleMouseDown = (e: React.MouseEvent, tableId: string) => {
