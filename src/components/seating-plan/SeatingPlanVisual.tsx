@@ -315,6 +315,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     if (roomConfig.shape === 'U') return [[0,0],[w*0.33,0],[w*0.33,l*0.5],[w*0.67,l*0.5],[w*0.67,0],[w,0],[w,l],[0,l]].map(([x,y]) => `${x0+x},${y0+y}`).join(' ');
     return [[0,0],[w,0],[w,l],[0,l]].map(([x,y]) => `${x0+x},${y0+y}`).join(' ');
   };
+  const showTableNames = roomConfig.showTableNames !== false;
+  const selectedTable = selectedItem && !selectedItem.startsWith('fixed:') ? tables.find((t) => t.id === selectedItem) : undefined;
+  const selectedFixed = selectedItem?.startsWith('fixed:') ? roomConfig.fixedElements.find((el) => el.id === selectedItem.slice(6)) : undefined;
+  const updateFixedElement = (elementId: string, patch: { w?: number; h?: number }) => {
+    updateRoom({ fixedElements: roomConfig.fixedElements.map((el) => el.id === elementId ? { ...el, ...patch } : el) });
+  };
+  const removeFixedElement = (elementId: string) => {
+    updateRoom({ fixedElements: roomConfig.fixedElements.filter((el) => el.id !== elementId) });
+    setSelectedItem(null);
+  };
   const surfaceM2 = Math.round(roomConfig.widthM * (roomConfig.shape === 'square' ? roomConfig.widthM : roomConfig.lengthM) * (roomConfig.shape === 'L' ? 0.75 : roomConfig.shape === 'U' ? 0.83 : 1));
   const addFixedElement = (kind: FixedElementKind) => {
     const id = `${kind}-${Date.now()}`;
@@ -331,7 +341,59 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         <button type="button" onClick={() => updateRoom({ enabled: !roomConfig.enabled })} className={cn('min-h-[44px] px-3 border border-wedding-olive/40', roomConfig.enabled ? 'bg-wedding-olive text-white' : 'bg-white hover:bg-editorial-cream')} aria-pressed={roomConfig.enabled}>
           📐 {tr('Configuration de la salle à l’échelle', 'Room setup to scale')}
         </button>
+        <button type="button" onClick={() => updateRoom({ showTableNames: !showTableNames })} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showTableNames}>
+          {showTableNames ? tr('Masquer les noms des tables', 'Hide table names') : tr('Afficher les noms des tables', 'Show table names')}
+        </button>
       </div>
+
+      {/* Panneau de l'élément sélectionné */}
+      {selectedTable && (() => {
+        const meters = getTableMeters(selectedTable.id, selectedTable.shape, selectedTable.capacity);
+        return (
+          <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
+            <div className="min-w-[140px]">
+              <p className="text-xs text-muted-foreground">{tr('Table sélectionnée', 'Selected table')}</p>
+              <p className="font-semibold">{selectedTable.table_name}</p>
+            </div>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">{selectedTable.shape === 'round' ? tr('Diamètre (m)', 'Diameter (m)') : tr('Longueur (m)', 'Length (m)')}</span>
+              <input type="number" min={0.6} max={10} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.w} onChange={(e) => updateTableSize(selectedTable.id, { w: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
+            </label>
+            {selectedTable.shape !== 'round' && (
+              <label className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
+                <input type="number" min={0.6} max={5} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.h} onChange={(e) => updateTableSize(selectedTable.id, { h: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
+              </label>
+            )}
+            {onEditTable && (
+              <button type="button" onClick={() => onEditTable(selectedTable)} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium">
+                ✎ {tr('Modifier la table', 'Edit table')}
+              </button>
+            )}
+            <button type="button" onClick={() => setSelectedItem(null)} className="min-h-[44px] px-3 border">{tr('Fermer', 'Close')}</button>
+          </div>
+        );
+      })()}
+      {selectedFixed && (
+        <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
+          <div className="min-w-[140px]">
+            <p className="text-xs text-muted-foreground">{tr('Élément sélectionné', 'Selected element')}</p>
+            <p className="font-semibold">{tr(FIXED_ELEMENTS[selectedFixed.kind].fr, FIXED_ELEMENTS[selectedFixed.kind].en)}</p>
+          </div>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{tr('Longueur (m)', 'Length (m)')}</span>
+            <input type="number" min={0.5} max={30} step={0.5} className="min-h-[44px] w-24 border px-2" value={selectedFixed.w ?? FIXED_ELEMENTS[selectedFixed.kind].w} onChange={(e) => updateFixedElement(selectedFixed.id, { w: Math.max(0.5, Number(e.target.value) || 0.5) })} />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
+            <input type="number" min={0.5} max={30} step={0.5} className="min-h-[44px] w-24 border px-2" value={selectedFixed.h ?? FIXED_ELEMENTS[selectedFixed.kind].h} onChange={(e) => updateFixedElement(selectedFixed.id, { h: Math.max(0.5, Number(e.target.value) || 0.5) })} />
+          </label>
+          <button type="button" onClick={() => removeFixedElement(selectedFixed.id)} className="min-h-[44px] px-4 border border-destructive text-destructive font-medium">
+            ✕ {tr('Supprimer', 'Delete')}
+          </button>
+          <button type="button" onClick={() => setSelectedItem(null)} className="min-h-[44px] px-3 border">{tr('Fermer', 'Close')}</button>
+        </div>
+      )}
 
       {roomConfig.enabled && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 p-3 bg-white border border-wedding-olive/30 text-sm">
@@ -376,7 +438,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             </select>
           </div>
           <p className="col-span-full text-xs text-muted-foreground">
-            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; double-cliquez sur un élément pour le retirer.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; double-click an element to remove it.')}
+            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; cliquez dessus pour modifier leurs dimensions.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; click one to edit its size.')}
           </p>
         </div>
       )}
@@ -449,7 +511,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
         <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
-        <p className="mb-1">• {tr('Cliquez sur ✎ pour modifier une table','Click ✎ to edit a table')}</p>
+        <p className="mb-1">• {tr('Cliquez sur une table pour la modifier ou changer sa taille','Click a table to edit it or change its size')}</p>
         <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
         <div className="mt-2 pt-2 border-t border-gray-200">
           <p className="text-[#7F9474] font-medium">
