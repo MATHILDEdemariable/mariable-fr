@@ -25,7 +25,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
 
 const SeatingPlan = () => {
-  const { t } = useTranslation('seating');
+  const { t, i18n } = useTranslation('seating');
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [guests, setGuests] = useState<SeatingAssignment[]>([]);
