@@ -15,7 +15,7 @@ export interface SeatingTable {
   table_name: string;
   table_number: number;
   capacity: number;
-  shape: 'round' | 'rectangle' | 'oval';
+  shape: 'round' | 'rectangle' | 'oval' | 'standing' | 'serpentine';
   position_x: number;
   position_y: number;
   color: string;

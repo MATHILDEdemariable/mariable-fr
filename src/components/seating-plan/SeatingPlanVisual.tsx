@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { normalizeGuestName } from '@/lib/guestTags';
+import { getStandardTableMeters, getRoomCapacity } from '@/lib/seatingStandards';
 
 type RoomShape = 'rectangle' | 'square' | 'L' | 'U';
 type FixedElementKind = 'dancefloor' | 'stage' | 'buffet' | 'door';
@@ -158,44 +159,51 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       // Same guest clicked: deselect
       setSelectedGuest(null);
     } else {
-      // Different guest clicked: swap seats if same table
+      // Autre invité : échange de places, y compris entre deux tables différentes
       const guest1 = guests.find(g => g.id === selectedGuest);
       const guest2 = guests.find(g => g.id === guestId);
-
-      if (guest1 && guest2 && guest1.table_id === guest2.table_id) {
-        // Swap seat numbers
-        const seat1 = guest1.seat_number ?? 0;
-        const seat2 = guest2.seat_number ?? 0;
-
+      if (guest1 && guest2) {
         try {
-          // Update both guests
-          await Promise.all([
-            supabase.from('seating_assignments').update({ seat_number: seat2 }).eq('id', guest1.id),
-            supabase.from('seating_assignments').update({ seat_number: seat1 }).eq('id', guest2.id)
+          const results = await Promise.all([
+            supabase.from('seating_assignments').update({ table_id: guest2.table_id, seat_number: guest2.seat_number }).eq('id', guest1.id),
+            supabase.from('seating_assignments').update({ table_id: guest1.table_id, seat_number: guest1.seat_number }).eq('id', guest2.id)
           ]);
-
-          toast({
-            title: tr('Places échangées','Seats swapped'),
-            description: `${guest1.guest_name} et ${guest2.guest_name} ont échangé leurs places`
-          });
-
+          const failed = results.find((r) => r.error);
+          if (failed?.error) throw failed.error;
+          toast({ title: tr('Places échangées', 'Seats swapped'), description: `${guest1.guest_name} ⇄ ${guest2.guest_name}` });
           onTablePositionUpdate();
         } catch (error) {
-          toast({
-            title: tr('Erreur','Error'),
-            description: tr("Impossible d'échanger les places",'Unable to swap seats'),
-            variant: 'destructive'
-          });
+          console.error('❌ Échange de places échoué:', error);
+          toast({ title: tr('Erreur', 'Error'), description: tr("Impossible d'échanger les places", 'Unable to swap seats'), variant: 'destructive' });
         }
-      } else {
-        toast({
-          title: tr('Action impossible','Action not allowed'),
-          description: tr('Vous ne pouvez échanger que des invités sur la même table','You can only swap guests at the same table'),
-          variant: 'destructive'
-        });
       }
       setSelectedGuest(null);
     }
+  };
+
+  // Invité sélectionné puis clic sur une autre table : déplacement si place libre
+  const moveSelectedGuestToTable = async (tableId: string) => {
+    const guest = guests.find(g => g.id === selectedGuest);
+    const table = tables.find(t => t.id === tableId);
+    if (!guest || !table) return;
+    setSelectedGuest(null);
+    if (guest.table_id === tableId) return;
+    const seated = guests.filter(g => g.table_id === tableId);
+    if (seated.length >= table.capacity) {
+      toast({ title: tr('Table complète', 'Table full'), description: tr('Cliquez sur un invité de cette table pour échanger.', 'Click a guest at this table to swap instead.'), variant: 'destructive' });
+      return;
+    }
+    const usedSeats = new Set(seated.map(g => g.seat_number));
+    let seat = 1;
+    while (usedSeats.has(seat)) seat++;
+    const { error } = await supabase.from('seating_assignments').update({ table_id: tableId, seat_number: seat }).eq('id', guest.id);
+    if (error) {
+      console.error('❌ Déplacement invité échoué:', error);
+      toast({ title: tr('Erreur', 'Error'), description: tr("Impossible de déplacer l'invité", 'Unable to move guest'), variant: 'destructive' });
+      return;
+    }
+    toast({ title: tr('Invité déplacé', 'Guest moved'), description: `${guest.guest_name} → ${table.table_name}` });
+    onTablePositionUpdate();
   };
 
   const handleMouseDown = (e: React.MouseEvent, tableId: string) => {
@@ -273,40 +281,34 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     }
   };
 
-  const defaultTableMeters = (shape: string, capacity: number) => {
-    if (shape === 'rectangle') return { w: 2, h: 0.9 };
-    if (shape === 'oval') return { w: 2, h: 1.1 };
-    const d = capacity <= 8 ? 1.5 : 1.8;
-    return { w: d, h: d };
+  // Taille proportionnelle à la capacité (standards traiteurs), à l'échelle de la salle ou à 55 px/m
+  const getTableSize = (shape: string, capacity: number, _tableId?: string) => {
+    const meters = getStandardTableMeters(shape, capacity);
+    const scale = roomConfig.enabled ? ppm : 55;
+    return { width: Math.max(36, meters.w * scale), height: Math.max(36, meters.h * scale) };
   };
-  const getTableMeters = (tableId: string, shape: string, capacity: number) => roomConfig.tableSizes?.[tableId] ?? defaultTableMeters(shape, capacity);
-  const updateTableSize = (tableId: string, patch: Partial<{ w: number; h: number }>, shape: string, capacity: number) => {
-    const current = getTableMeters(tableId, shape, capacity);
-    const next = { ...current, ...patch };
-    if (shape === 'round') next.h = next.w;
-    updateRoom({ tableSizes: { ...(roomConfig.tableSizes || {}), [tableId]: next } });
-  };
-  const getTableSize = (shape: string, capacity: number, tableId?: string) => {
-    const custom = tableId ? roomConfig.tableSizes?.[tableId] : undefined;
-    if (custom) {
-      // Hors mode salle : échelle d'affichage fixe pour garder les proportions
-      const scale = roomConfig.enabled ? ppm : 55;
-      return { width: custom.w * scale, height: (shape === 'round' ? custom.w : custom.h) * scale };
+
+  // Sauvegarde explicite : positions de toutes les tables + configuration de salle
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const saveAllPositions = async () => {
+    setSaveStatus('saving');
+    try {
+      const results = await Promise.all(tables.map((table) => {
+        const position = tablePositions[table.id];
+        if (!position) return Promise.resolve({ error: null });
+        return supabase.from('seating_tables').update({ position_x: Math.round(position.x), position_y: Math.round(position.y) }).eq('id', table.id);
+      }));
+      const failed = results.find((r) => r.error);
+      if (failed?.error) throw failed.error;
+      saveRoomConfig(roomConfig);
+      setSaveStatus('saved');
+      toast({ title: tr('Plan enregistré', 'Plan saved') });
+      setTimeout(() => setSaveStatus('idle'), 2500);
+    } catch (error) {
+      console.error('❌ Sauvegarde du plan échouée:', error);
+      setSaveStatus('idle');
+      toast({ title: tr('Erreur', 'Error'), description: tr('Impossible d’enregistrer le plan', 'Unable to save the plan'), variant: 'destructive' });
     }
-    if (roomConfig.enabled) {
-      if (shape === 'rectangle') return { width: 2 * ppm, height: 0.9 * ppm };
-      if (shape === 'oval') return { width: 2 * ppm, height: 1.1 * ppm };
-      const diameter = (capacity <= 8 ? 1.5 : 1.8) * ppm;
-      return { width: diameter, height: diameter };
-    }
-    const baseSize = Math.max(80, Math.min(140, 60 + capacity * 8));
-    if (shape === 'rectangle') {
-      return { width: baseSize * 1.5, height: baseSize };
-    }
-    if (shape === 'oval') {
-      return { width: baseSize * 1.3, height: baseSize };
-    }
-    return { width: baseSize, height: baseSize };
   };
 
   const roomPolygon = () => {
@@ -344,27 +346,25 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         <button type="button" onClick={() => updateRoom({ showTableNames: !showTableNames })} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showTableNames}>
           {showTableNames ? tr('Masquer les noms des tables', 'Hide table names') : tr('Afficher les noms des tables', 'Show table names')}
         </button>
+        <button type="button" onClick={saveAllPositions} disabled={saveStatus === 'saving'} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium ml-auto disabled:opacity-60">
+          {saveStatus === 'saving' ? tr('Enregistrement…', 'Saving…') : saveStatus === 'saved' ? `✓ ${tr('Enregistré', 'Saved')}` : tr('Enregistrer le plan', 'Save plan')}
+        </button>
       </div>
 
       {/* Panneau de l'élément sélectionné */}
       {selectedTable && (() => {
-        const meters = getTableMeters(selectedTable.id, selectedTable.shape, selectedTable.capacity);
+        const meters = getStandardTableMeters(selectedTable.shape, selectedTable.capacity);
+        const dims = selectedTable.shape === 'round' || selectedTable.shape === 'standing' ? `Ø ${meters.w.toFixed(2)} m` : `${meters.w.toFixed(1)} × ${meters.h.toFixed(1)} m`;
         return (
           <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
             <div className="min-w-[140px]">
               <p className="text-xs text-muted-foreground">{tr('Table sélectionnée', 'Selected table')}</p>
               <p className="font-semibold">{selectedTable.table_name}</p>
             </div>
-            <label className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">{selectedTable.shape === 'round' ? tr('Diamètre (m)', 'Diameter (m)') : tr('Longueur (m)', 'Length (m)')}</span>
-              <input type="number" min={0.6} max={10} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.w} onChange={(e) => updateTableSize(selectedTable.id, { w: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
-            </label>
-            {selectedTable.shape !== 'round' && (
-              <label className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
-                <input type="number" min={0.6} max={5} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.h} onChange={(e) => updateTableSize(selectedTable.id, { h: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
-              </label>
-            )}
+            <div className="min-w-[160px]">
+              <p className="text-xs text-muted-foreground">{tr('Capacité · encombrement standard', 'Capacity · standard footprint')}</p>
+              <p className="font-semibold">{selectedTable.capacity} {tr('pers.', 'seats')} · {dims}</p>
+            </div>
             {onEditTable && (
               <button type="button" onClick={() => onEditTable(selectedTable)} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium">
                 ✎ {tr('Modifier la table', 'Edit table')}
@@ -437,9 +437,24 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
               ))}
             </select>
           </div>
-          <p className="col-span-full text-xs text-muted-foreground">
-            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; cliquez dessus pour modifier leurs dimensions.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; click one to edit its size.')}
-          </p>
+          {(() => {
+            const elementsM2 = roomConfig.fixedElements.reduce((sum, el) => sum + (el.w ?? FIXED_ELEMENTS[el.kind].w) * (el.h ?? FIXED_ELEMENTS[el.kind].h), 0);
+            const usable = Math.max(0, surfaceM2 - elementsM2);
+            const cap = getRoomCapacity(usable);
+            const seatsPlaced = tables.reduce((sum, t) => sum + t.capacity, 0);
+            return (
+              <div className="col-span-full text-xs text-muted-foreground space-y-1">
+                <p>
+                  <strong className="text-foreground">{tr('Pour', 'For')} {surfaceM2} m²</strong>
+                  {elementsM2 > 0 && <> ({tr('dont', 'incl.')} {Math.round(elementsM2)} m² {tr('d’éléments', 'of elements')})</>}
+                  {' · '}{tr('on recommande', 'we recommend')} : <strong className="text-foreground">~{cap.seatedRound}</strong> {tr('assis en tables rondes', 'seated at round tables')} · <strong className="text-foreground">~{cap.seatedBanquet}</strong> {tr('assis en banquets', 'seated at banquet tables')} · <strong className="text-foreground">~{cap.standing}</strong> {tr('debout (cocktail)', 'standing (cocktail)')}
+                </p>
+                <p className={seatsPlaced > cap.seatedRound ? 'text-destructive' : ''}>
+                  {tr('Places prévues sur le plan', 'Seats on the plan')} : {seatsPlaced}{seatsPlaced > cap.seatedRound ? ` — ${tr('salle un peu juste pour un dîner confortable', 'room is tight for a comfortable dinner')}` : ''}
+                </p>
+              </div>
+            );
+          })()}
         </div>
       )}
 
@@ -472,7 +487,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         return (
           <div
             key={element.id}
-            className={cn("table-shape absolute flex flex-col items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab z-0", isSelected && "ring-2 ring-wedding-olive ring-offset-2 border-solid")}
+            className={cn("table-shape absolute flex flex-col items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab select-none", isSelected ? "z-40 ring-2 ring-wedding-olive ring-offset-2 border-solid" : "z-[5]")}
             style={{ left: position.x - (elW * ppm) / 2, top: position.y - (elH * ppm) / 2, width: elW * ppm, height: elH * ppm }}
             onMouseDown={(e) => { setSelectedItem(key); handleMouseDown(e, key); }}
             title={tr('Cliquez pour modifier', 'Click to edit')}
@@ -484,7 +499,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       })}
       {/* Grid background */}
       <div 
-        className="absolute inset-0 opacity-10"
+        className="absolute inset-0 opacity-10 pointer-events-none"
         style={{
           backgroundImage: 'radial-gradient(circle, #4a5568 1px, transparent 1px)',
           backgroundSize: '30px 30px'
@@ -511,19 +526,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
         <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
-        <p className="mb-1">• {tr('Cliquez sur une table pour la modifier ou changer sa taille','Click a table to edit it or change its size')}</p>
-        <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
-        <div className="mt-2 pt-2 border-t border-gray-200">
-          <p className="text-[#7F9474] font-medium">
-            💡 {tr('Pour déplacer un invité vers une autre table, utilisez l\'onglet « Liste »','To move a guest to another table, use the "List" tab')}
-          </p>
-        </div>
+        <p className="mb-1">• {tr('Double-cliquez sur une table pour la modifier','Double-click a table to edit it')}</p>
+        <p className="mb-1">• {tr('Cliquez sur 2 invités pour échanger leurs places, même entre deux tables','Click 2 guests to swap seats, even across tables')}</p>
+        <p className="mb-1">• {tr('Cliquez sur un invité puis sur une table pour l’y déplacer','Click a guest then a table to move them there')}</p>
       </div>}
 
       {/* Selected guest indicator */}
       {selectedGuest && (
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-wedding-olive text-white px-4 py-2 rounded-full text-sm shadow-lg z-50">
-          {tr('Cliquez sur un autre invité de la même table pour échanger','Click another guest at the same table to swap')}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-wedding-olive text-white px-4 py-2 rounded-full text-sm shadow-lg z-50 flex items-center gap-3">
+          {tr('Cliquez sur un invité pour échanger, ou sur une table pour le déplacer', 'Click a guest to swap, or a table to move them')}
+          <button type="button" className="underline" onClick={() => setSelectedGuest(null)}>{tr('Annuler', 'Cancel')}</button>
         </div>
       )}
 
@@ -556,35 +568,44 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             {/* Table shape */}
             <div
               className={cn(
-                "table-shape relative flex flex-col items-center justify-center cursor-grab active:cursor-grabbing shadow-lg border-2",
-                getTableShape(table.shape),
-                isFull 
-                  ? "bg-wedding-olive text-white border-premium-olive-dark" 
-                  : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive",
-                (isDragging || selectedItem === table.id) && "shadow-2xl ring-2 ring-wedding-olive ring-offset-2"
+                "table-shape relative flex flex-col items-center justify-center cursor-grab active:cursor-grabbing",
+                table.shape === 'serpentine' ? "" : cn("shadow-lg border-2", getTableShape(table.shape)),
+                table.shape !== 'serpentine' && (isFull
+                  ? "bg-wedding-olive text-white border-premium-olive-dark"
+                  : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive"),
+                selectedGuest && "ring-2 ring-dashed ring-wedding-olive/60",
+                (isDragging || selectedItem === table.id) && "ring-2 ring-wedding-olive ring-offset-2"
               )}
               style={{
                 width: size.width,
                 height: size.height,
-                backgroundColor: table.color || (isFull ? undefined : '#fff')
+                ...(table.shape === 'serpentine' ? {} : { backgroundColor: table.color || (isFull ? undefined : '#fff') })
               }}
-              onMouseDown={(e) => { setSelectedItem(table.id); handleMouseDown(e, table.id); }}
+              onMouseDown={(e) => {
+                if (selectedGuest) { e.preventDefault(); moveSelectedGuestToTable(table.id); return; }
+                setSelectedItem(table.id); handleMouseDown(e, table.id);
+              }}
               onDoubleClick={() => onEditTable?.(table)}
               title={`${table.table_name} · ${tableGuests.length}/${table.capacity}`}
             >
+              {table.shape === 'serpentine' && (
+                <svg className="absolute inset-0 pointer-events-none" width={size.width} height={size.height} viewBox="0 0 100 40" preserveAspectRatio="none" aria-hidden="true">
+                  <path d="M2,20 C18,2 32,2 50,20 C68,38 82,38 98,20" fill="none" stroke={table.color || '#63745A'} strokeWidth={14} strokeLinecap="round" vectorEffect="non-scaling-stroke" style={{ strokeWidth: Math.max(10, size.height * 0.35) }} />
+                </svg>
+              )}
               {showTableNames && (
-                <span className="font-semibold text-xs leading-tight text-center line-clamp-2 max-w-[90%] break-words">
+                <span className="relative font-semibold text-xs leading-tight text-center line-clamp-2 max-w-[90%] break-words">
                   {table.table_name}
                 </span>
               )}
-              <span className="text-xs opacity-80">
+              <span className="relative text-xs opacity-80">
                 {tableGuests.length}/{table.capacity}
               </span>
             </div>
 
             {/* Guest indicators around the table */}
-            {showGuestNames && tableGuests.slice(0, 12).map((guest, index) => {
-              const totalGuests = Math.min(tableGuests.length, 12);
+            {showGuestNames && tableGuests.slice(0, 30).map((guest, index) => {
+              const totalGuests = Math.min(tableGuests.length, 30);
               const angle = (index / totalGuests) * 2 * Math.PI - Math.PI / 2;
               const radius = Math.max(size.width, size.height) / 2 + 22 + Math.max(0, totalGuests - 6) * 4;
               const guestX = Math.cos(angle) * radius;

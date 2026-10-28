@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { SeatingTable } from '@/types/seating';
 import { useTranslation } from 'react-i18next';
+import { getStandardTableMeters } from '@/lib/seatingStandards';
 
 interface TableEditorProps {
   open: boolean;
@@ -27,7 +28,7 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
   const [tableName, setTableName] = useState('');
   const [tableNumber, setTableNumber] = useState('1');
   const [capacity, setCapacity] = useState('8');
-  const [shape, setShape] = useState<'round' | 'rectangle' | 'oval'>('round');
+  const [shape, setShape] = useState<SeatingTable['shape']>('round');
   const [color, setColor] = useState('#8B7355');
   const [loading, setLoading] = useState(false);
   const { i18n } = useTranslation();
@@ -56,8 +57,8 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
     }
 
     const capacityNum = parseInt(capacity);
-    if (capacityNum < 2 || capacityNum > 20) {
-      toast({ title: tr('Erreur', 'Error'), description: tr('La capacité doit être entre 2 et 20', 'Capacity must be between 2 and 20'), variant: 'destructive' });
+    if (!(capacityNum >= 2 && capacityNum <= 30)) {
+      toast({ title: tr('Erreur', 'Error'), description: tr('La capacité doit être entre 2 et 30', 'Capacity must be between 2 and 30'), variant: 'destructive' });
       return;
     }
 
@@ -144,7 +145,7 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
                 value={capacity}
                 onChange={(e) => setCapacity(e.target.value)}
                 min="2"
-                max="20"
+                max="30"
               />
             </div>
           </div>
@@ -157,10 +158,17 @@ const TableEditor = ({ open, onOpenChange, table, planId, onSaved }: TableEditor
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="round">{tr('Ronde', 'Round')}</SelectItem>
-                <SelectItem value="rectangle">Rectangle</SelectItem>
+                <SelectItem value="rectangle">{tr('Rectangle / impériale', 'Rectangle / banquet')}</SelectItem>
                 <SelectItem value="oval">{tr('Ovale', 'Oval')}</SelectItem>
+                <SelectItem value="serpentine">{tr('Serpentine (en S)', 'Serpentine (S-shape)')}</SelectItem>
+                <SelectItem value="standing">{tr('Mange-debout', 'Cocktail / standing')}</SelectItem>
               </SelectContent>
             </Select>
+            {(() => {
+              const m = getStandardTableMeters(shape, parseInt(capacity) || 2);
+              const dims = shape === 'round' || shape === 'standing' ? `Ø ${m.w.toFixed(2)} m` : `${m.w.toFixed(1)} × ${m.h.toFixed(1)} m`;
+              return <p className="text-xs text-muted-foreground mt-1">{tr('Encombrement standard', 'Standard footprint')} ≈ {dims}</p>;
+            })()}
           </div>
 
           <div>
