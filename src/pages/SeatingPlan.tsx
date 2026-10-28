@@ -25,7 +25,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
 
 const SeatingPlan = () => {
-  const { t } = useTranslation('seating');
+  const { t, i18n } = useTranslation('seating');
   const [plan, setPlan] = useState<SeatingPlanType | null>(null);
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [guests, setGuests] = useState<SeatingAssignment[]>([]);
@@ -359,6 +359,22 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                 </div>
+                <div className="border border-wedding-olive/40 bg-editorial-cream p-4 text-sm space-y-2">
+                  <p className="font-semibold">{i18n.language?.startsWith('en') ? 'How it works' : 'Mode d’emploi'}</p>
+                  {(i18n.language?.startsWith('en') ? [
+                    '🔄 Swap guests: click one guest, then another — even across tables.',
+                    '➡️ Move a guest: click a guest, then a table with free seats.',
+                    '✋ Move: click and hold a table or element, then drag it.',
+                    '✎ Edit: a single click selects a table or element to change it.',
+                    '🔍 Zoom: + / − buttons, or Ctrl + mouse wheel / trackpad pinch.',
+                  ] : [
+                    '🔄 Échanger : cliquez sur un invité puis sur un autre, même entre deux tables.',
+                    '➡️ Déplacer un invité : cliquez sur l’invité puis sur une table avec des places libres.',
+                    '✋ Déplacer : maintenez le clic sur une table ou un élément et faites-le glisser.',
+                    '✎ Modifier : un simple clic sélectionne la table ou l’élément.',
+                    '🔍 Zoomer : boutons + / −, ou Ctrl + molette / pincement du trackpad.',
+                  ]).map((tip) => <p key={tip} className="text-muted-foreground">{tip}</p>)}
+                </div>
               </div>
 
               {/* Visual canvas */}
@@ -366,7 +382,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                 <SeatingPlanVisual
                   tables={tables}
                   guests={guests}
-                  onTablePositionUpdate={loadSeatingPlan}
+                  onTablePositionUpdate={() => loadSeatingPlan(true)}
                   onEditTable={handleEditTable}
                 />
               </div>

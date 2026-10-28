@@ -52,6 +52,26 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  zoomRef.current = zoom;
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const movedRef = useRef(false);
+  const downPointRef = useRef({ x: 0, y: 0 });
+  const clampZoom = (z: number) => Math.min(2, Math.max(0.3, z));
+  // Ctrl + molette / pincement trackpad : zoom sans faire défiler la page
+  useEffect(() => {
+    const el = viewportRef.current;
+    if (!el) return;
+    const onWheel = (e: WheelEvent) => {
+      if (!e.ctrlKey && !e.metaKey) return;
+      e.preventDefault();
+      const dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? 100 : 1);
+      setZoom((z) => clampZoom(z * Math.exp(-dy * 0.002)));
+    };
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => el.removeEventListener('wheel', onWheel);
+  }, []);
   const [guestColors, setGuestColors] = useState<Record<string, string>>({});
 
   // Configuration de salle partagée en ligne (wedding_tool_states, accès par mariage : pro + couple)
@@ -208,11 +228,13 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
 
   const handleMouseDown = (e: React.MouseEvent, tableId: string) => {
     e.preventDefault();
+    movedRef.current = false;
+    downPointRef.current = { x: e.clientX, y: e.clientY };
     const rect = (e.target as HTMLElement).closest('.table-shape')?.getBoundingClientRect();
     if (rect) {
       setDragOffset({
-        x: e.clientX - rect.left - rect.width / 2,
-        y: e.clientY - rect.top - rect.height / 2
+        x: (e.clientX - rect.left - rect.width / 2) / zoom,
+        y: (e.clientY - rect.top - rect.height / 2) / zoom
       });
     }
     setDraggingTable(tableId);
@@ -221,13 +243,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const handleMouseMove = (e: React.MouseEvent) => {
     if (!draggingTable || !containerRef.current) return;
 
+    // Simple clic = moins de 4 px de mouvement : pas de déplacement
+    if (!movedRef.current && Math.hypot(e.clientX - downPointRef.current.x, e.clientY - downPointRef.current.y) < 4) return;
+    movedRef.current = true;
     const containerRect = containerRef.current.getBoundingClientRect();
-    const newX = e.clientX - containerRect.left - dragOffset.x;
-    const newY = e.clientY - containerRect.top - dragOffset.y;
+    const newX = (e.clientX - containerRect.left) / zoom - dragOffset.x;
+    const newY = (e.clientY - containerRect.top) / zoom - dragOffset.y;
 
-    // Keep within bounds
-    const boundedX = Math.max(20, Math.min(containerRect.width - 20, newX));
-    const boundedY = Math.max(20, Math.min(containerRect.height - 20, newY));
+    // Keep within bounds (coordonnées non zoomées)
+    const boundedX = Math.max(20, Math.min(containerRef.current.offsetWidth - 20, newX));
+    const boundedY = Math.max(20, Math.min(containerRef.current.offsetHeight - 20, newY));
 
     setTablePositions(prev => ({
       ...prev,
@@ -237,6 +262,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
 
   const handleMouseUp = async () => {
     if (!draggingTable) return;
+    // Simple clic : on garde la sélection, sans sauvegarde ni rechargement
+    if (!movedRef.current) { setDraggingTable(null); return; }
     if (draggingTable.startsWith('fixed:')) {
       const elementId = draggingTable.slice(6);
       const position = tablePositions[draggingTable];
@@ -333,6 +360,9 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     updateRoom({ fixedElements: [...roomConfig.fixedElements, { id, kind, x: ROOM_MARGIN + roomW / 2, y: ROOM_MARGIN + roomL / 2 }] });
   };
 
+  const canvasW = roomConfig.enabled ? Math.max(roomW + ROOM_MARGIN * 2, 600) : 1000;
+  const canvasH = roomConfig.enabled ? Math.max(roomL + ROOM_MARGIN * 2, 600) : 600;
+
   return (
     <div className="space-y-3">
       {/* Barre d'outils : lisibilité & salle à l'échelle */}
@@ -346,6 +376,12 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         <button type="button" onClick={() => updateRoom({ showTableNames: !showTableNames })} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showTableNames}>
           {showTableNames ? tr('Masquer les noms des tables', 'Hide table names') : tr('Afficher les noms des tables', 'Show table names')}
         </button>
+        <div className="flex items-center border border-wedding-olive/40 bg-white" role="group" aria-label={tr('Zoom', 'Zoom')}>
+          <button type="button" onClick={() => setZoom((z) => clampZoom(z / 1.2))} className="min-h-[44px] min-w-[44px] hover:bg-editorial-cream" aria-label={tr('Dézoomer', 'Zoom out')}>−</button>
+          <button type="button" onClick={() => setZoom(1)} className="min-h-[44px] px-2 text-xs hover:bg-editorial-cream" aria-label={tr('Zoom 100 %', 'Zoom 100%')}>{Math.round(zoom * 100)}%</button>
+          <button type="button" onClick={() => setZoom((z) => clampZoom(z * 1.2))} className="min-h-[44px] min-w-[44px] hover:bg-editorial-cream" aria-label={tr('Zoomer', 'Zoom in')}>+</button>
+          <button type="button" onClick={() => { const vw = viewportRef.current?.clientWidth ?? canvasW; setZoom(clampZoom((vw - 8) / canvasW)); }} className="min-h-[44px] px-3 text-xs border-l border-wedding-olive/40 hover:bg-editorial-cream">{tr('Adapter', 'Fit')}</button>
+        </div>
         <button type="button" onClick={saveAllPositions} disabled={saveStatus === 'saving'} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium ml-auto disabled:opacity-60">
           {saveStatus === 'saving' ? tr('Enregistrement…', 'Saving…') : saveStatus === 'saved' ? `✓ ${tr('Enregistré', 'Saved')}` : tr('Enregistrer le plan', 'Save plan')}
         </button>
@@ -458,11 +494,12 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         </div>
       )}
 
-    <div className="w-full overflow-auto rounded-xl border-2 border-dashed border-wedding-olive/30">
+    <div ref={viewportRef} className="w-full overflow-auto rounded-xl border-2 border-dashed border-wedding-olive/30">
+    <div style={{ width: canvasW * zoom, height: canvasH * zoom }}>
     <div
       ref={containerRef}
       className="relative bg-gradient-to-br from-editorial-cream to-white cursor-crosshair"
-      style={{ width: roomConfig.enabled ? Math.max(roomW + ROOM_MARGIN * 2, 600) : '100%', height: roomConfig.enabled ? Math.max(roomL + ROOM_MARGIN * 2, 600) : 600 }}
+      style={{ width: canvasW, height: canvasH, transform: `scale(${zoom})`, transformOrigin: '0 0' }}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp}
@@ -525,8 +562,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {/* Instructions */}
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
-        <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
-        <p className="mb-1">• {tr('Double-cliquez sur une table pour la modifier','Double-click a table to edit it')}</p>
+        <p className="mb-1">• {tr('Clic maintenu : déplacer une table','Click and hold: move a table')}</p>
+        <p className="mb-1">• {tr('Clic simple : modifier la table','Single click: edit the table')}</p>
         <p className="mb-1">• {tr('Cliquez sur 2 invités pour échanger leurs places, même entre deux tables','Click 2 guests to swap seats, even across tables')}</p>
         <p className="mb-1">• {tr('Cliquez sur un invité puis sur une table pour l’y déplacer','Click a guest then a table to move them there')}</p>
       </div>}
@@ -650,6 +687,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
           </div>
         </div>
       )}
+    </div>
     </div>
     </div>
     </div>
