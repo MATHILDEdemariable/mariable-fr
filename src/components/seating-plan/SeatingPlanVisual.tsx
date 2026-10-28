@@ -5,6 +5,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
 import { normalizeGuestName } from '@/lib/guestTags';
+import { getStandardTableMeters, getRoomCapacity } from '@/lib/seatingStandards';
 
 type RoomShape = 'rectangle' | 'square' | 'L' | 'U';
 type FixedElementKind = 'dancefloor' | 'stage' | 'buffet' | 'door';
@@ -280,40 +281,34 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     }
   };
 
-  const defaultTableMeters = (shape: string, capacity: number) => {
-    if (shape === 'rectangle') return { w: 2, h: 0.9 };
-    if (shape === 'oval') return { w: 2, h: 1.1 };
-    const d = capacity <= 8 ? 1.5 : 1.8;
-    return { w: d, h: d };
+  // Taille proportionnelle à la capacité (standards traiteurs), à l'échelle de la salle ou à 55 px/m
+  const getTableSize = (shape: string, capacity: number, _tableId?: string) => {
+    const meters = getStandardTableMeters(shape, capacity);
+    const scale = roomConfig.enabled ? ppm : 55;
+    return { width: Math.max(36, meters.w * scale), height: Math.max(36, meters.h * scale) };
   };
-  const getTableMeters = (tableId: string, shape: string, capacity: number) => roomConfig.tableSizes?.[tableId] ?? defaultTableMeters(shape, capacity);
-  const updateTableSize = (tableId: string, patch: Partial<{ w: number; h: number }>, shape: string, capacity: number) => {
-    const current = getTableMeters(tableId, shape, capacity);
-    const next = { ...current, ...patch };
-    if (shape === 'round') next.h = next.w;
-    updateRoom({ tableSizes: { ...(roomConfig.tableSizes || {}), [tableId]: next } });
-  };
-  const getTableSize = (shape: string, capacity: number, tableId?: string) => {
-    const custom = tableId ? roomConfig.tableSizes?.[tableId] : undefined;
-    if (custom) {
-      // Hors mode salle : échelle d'affichage fixe pour garder les proportions
-      const scale = roomConfig.enabled ? ppm : 55;
-      return { width: custom.w * scale, height: (shape === 'round' ? custom.w : custom.h) * scale };
+
+  // Sauvegarde explicite : positions de toutes les tables + configuration de salle
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
+  const saveAllPositions = async () => {
+    setSaveStatus('saving');
+    try {
+      const results = await Promise.all(tables.map((table) => {
+        const position = tablePositions[table.id];
+        if (!position) return Promise.resolve({ error: null });
+        return supabase.from('seating_tables').update({ position_x: Math.round(position.x), position_y: Math.round(position.y) }).eq('id', table.id);
+      }));
+      const failed = results.find((r) => r.error);
+      if (failed?.error) throw failed.error;
+      saveRoomConfig(roomConfig);
+      setSaveStatus('saved');
+      toast({ title: tr('Plan enregistré', 'Plan saved') });
+      setTimeout(() => setSaveStatus('idle'), 2500);
+    } catch (error) {
+      console.error('❌ Sauvegarde du plan échouée:', error);
+      setSaveStatus('idle');
+      toast({ title: tr('Erreur', 'Error'), description: tr('Impossible d’enregistrer le plan', 'Unable to save the plan'), variant: 'destructive' });
     }
-    if (roomConfig.enabled) {
-      if (shape === 'rectangle') return { width: 2 * ppm, height: 0.9 * ppm };
-      if (shape === 'oval') return { width: 2 * ppm, height: 1.1 * ppm };
-      const diameter = (capacity <= 8 ? 1.5 : 1.8) * ppm;
-      return { width: diameter, height: diameter };
-    }
-    const baseSize = Math.max(80, Math.min(140, 60 + capacity * 8));
-    if (shape === 'rectangle') {
-      return { width: baseSize * 1.5, height: baseSize };
-    }
-    if (shape === 'oval') {
-      return { width: baseSize * 1.3, height: baseSize };
-    }
-    return { width: baseSize, height: baseSize };
   };
 
   const roomPolygon = () => {
@@ -351,27 +346,25 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         <button type="button" onClick={() => updateRoom({ showTableNames: !showTableNames })} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showTableNames}>
           {showTableNames ? tr('Masquer les noms des tables', 'Hide table names') : tr('Afficher les noms des tables', 'Show table names')}
         </button>
+        <button type="button" onClick={saveAllPositions} disabled={saveStatus === 'saving'} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium ml-auto disabled:opacity-60">
+          {saveStatus === 'saving' ? tr('Enregistrement…', 'Saving…') : saveStatus === 'saved' ? `✓ ${tr('Enregistré', 'Saved')}` : tr('Enregistrer le plan', 'Save plan')}
+        </button>
       </div>
 
       {/* Panneau de l'élément sélectionné */}
       {selectedTable && (() => {
-        const meters = getTableMeters(selectedTable.id, selectedTable.shape, selectedTable.capacity);
+        const meters = getStandardTableMeters(selectedTable.shape, selectedTable.capacity);
+        const dims = selectedTable.shape === 'round' || selectedTable.shape === 'standing' ? `Ø ${meters.w.toFixed(2)} m` : `${meters.w.toFixed(1)} × ${meters.h.toFixed(1)} m`;
         return (
           <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
             <div className="min-w-[140px]">
               <p className="text-xs text-muted-foreground">{tr('Table sélectionnée', 'Selected table')}</p>
               <p className="font-semibold">{selectedTable.table_name}</p>
             </div>
-            <label className="flex flex-col gap-1">
-              <span className="text-xs text-muted-foreground">{selectedTable.shape === 'round' ? tr('Diamètre (m)', 'Diameter (m)') : tr('Longueur (m)', 'Length (m)')}</span>
-              <input type="number" min={0.6} max={10} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.w} onChange={(e) => updateTableSize(selectedTable.id, { w: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
-            </label>
-            {selectedTable.shape !== 'round' && (
-              <label className="flex flex-col gap-1">
-                <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
-                <input type="number" min={0.6} max={5} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.h} onChange={(e) => updateTableSize(selectedTable.id, { h: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
-              </label>
-            )}
+            <div className="min-w-[160px]">
+              <p className="text-xs text-muted-foreground">{tr('Capacité · encombrement standard', 'Capacity · standard footprint')}</p>
+              <p className="font-semibold">{selectedTable.capacity} {tr('pers.', 'seats')} · {dims}</p>
+            </div>
             {onEditTable && (
               <button type="button" onClick={() => onEditTable(selectedTable)} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium">
                 ✎ {tr('Modifier la table', 'Edit table')}
