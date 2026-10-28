@@ -229,12 +229,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
         </Link>
 
-        {isJourJMode && (
-        <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
-          <UserCheck className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
-        </Link>
-        )}
 
         <Link to={isReaderMode ? '#' : '/dashboard/drinks'} onClick={preventReader} className={linkClass(isActive('/dashboard/drinks'))}>
           <Wine className="h-4 w-4" />
