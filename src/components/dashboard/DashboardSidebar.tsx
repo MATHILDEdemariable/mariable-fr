@@ -209,26 +209,24 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
         </Link>
 
+        <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={preventReader} className={linkClass(isActive('/dashboard/seating-plan'))}>
+          <Table className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.seatingPlan')}</span>
+        </Link>
+
         <Link to={isReaderMode ? '#' : '/dashboard/trombinoscope'} onClick={preventReader} className={linkClass(isActive('/dashboard/trombinoscope'))}>
           <Contact className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Who’s who' : 'Trombinoscope'}</span>
         </Link>
-
-        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
-          <Sparkles className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
-        </Link>
-
-
 
         <Link to={isReaderMode ? '#' : '/dashboard/liste-photos'} onClick={preventReader} className={linkClass(isActive('/dashboard/liste-photos'))}>
           <Camera className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Photo list' : 'Liste de photos'}</span>
         </Link>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={preventReader} className={linkClass(isActive('/dashboard/seating-plan'))}>
-          <Table className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.seatingPlan')}</span>
+        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
         </Link>
 
         {isJourJMode && (
