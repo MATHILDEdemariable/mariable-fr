@@ -56,9 +56,10 @@ const SeatingPlan = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weddingId]);
 
-  const loadSeatingPlan = async () => {
+  // silent = rafraîchissement en arrière-plan (vue visuelle) sans démonter l'écran
+  const loadSeatingPlan = async (silent = false) => {
     try {
-      setLoading(true);
+      if (!silent) setLoading(true);
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
