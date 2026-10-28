@@ -1,0 +1,1 @@
+ALTER TABLE public.wedding_guest_list ADD COLUMN IF NOT EXISTS guest_color text;

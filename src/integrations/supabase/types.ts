@@ -4081,6 +4081,7 @@ export type Database = {
         Row: {
           created_at: string | null
           guest_address: string | null
+          guest_color: string | null
           guest_email: string | null
           guest_first_name: string
           guest_last_name: string
@@ -4098,6 +4099,7 @@ export type Database = {
         Insert: {
           created_at?: string | null
           guest_address?: string | null
+          guest_color?: string | null
           guest_email?: string | null
           guest_first_name: string
           guest_last_name: string
@@ -4115,6 +4117,7 @@ export type Database = {
         Update: {
           created_at?: string | null
           guest_address?: string | null
+          guest_color?: string | null
           guest_email?: string | null
           guest_first_name?: string
           guest_last_name?: string
