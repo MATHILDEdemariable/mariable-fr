@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users, Sparkles } from 'lucide-react';
+import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users, Sparkles, Inbox } from 'lucide-react';
+import { GUEST_TAG_LABELS, detectGuestTags, normalizeGuestName } from '@/lib/guestTags';
 import GuestImportDialog from './GuestImportDialog';
 import GuestManualAdd from './GuestManualAdd';
 import GuestBulkNotesDialog from './GuestBulkNotesDialog';
@@ -25,6 +26,7 @@ interface Guest {
   rsvp_status: 'pending' | 'confirmed' | 'declined';
   source: string;
   created_at: string;
+  guest_color?: string | null;
 }
 
 const GuestListManager: React.FC = () => {
@@ -99,6 +101,78 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
         variant: 'destructive',
       });
     }
+  };
+
+  // Import des réponses du formulaire RSVP en ligne vers la liste (sans doublon de nom)
+  const [importingRsvp, setImportingRsvp] = useState(false);
+  const handleImportFromRsvp = async () => {
+    console.log('🚀 handleImportFromRsvp started');
+    setImportingRsvp(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      let eventsQuery: any = supabase.from('wedding_rsvp_events').select('id');
+      eventsQuery = weddingId ? eventsQuery.eq('wedding_id', weddingId) : eventsQuery.eq('user_id', user.id);
+      const { data: events, error: eventsError } = await eventsQuery;
+      if (eventsError) throw eventsError;
+      const eventIds = (events || []).map((e: { id: string }) => e.id);
+      if (eventIds.length === 0) {
+        toast({ title: tr('Aucun formulaire RSVP', 'No RSVP form'), description: tr("Créez d'abord votre page invités.", 'Create your guest page first.') });
+        return;
+      }
+      const { data: responses, error: responsesError } = await supabase
+        .from('wedding_rsvp_responses')
+        .select('id, guest_name, guest_email, guest_phone, guest_address, attendance_status, dietary_restrictions, message')
+        .in('event_id', eventIds);
+      if (responsesError) throw responsesError;
+      const responseIds = (responses || []).map((r) => r.id);
+      const { data: companions } = responseIds.length
+        ? await supabase.from('wedding_rsvp_guests').select('response_id, guest_first_name, guest_last_name, guest_type, dietary_restrictions').in('response_id', responseIds)
+        : { data: [] as any[] };
+
+      const existingNames = new Set(guests.map((g) => normalizeGuestName(`${g.guest_first_name} ${g.guest_last_name}`)));
+      const rows: any[] = [];
+      const pushRow = (first: string, last: string, extra: Record<string, unknown>) => {
+        const key = normalizeGuestName(`${first} ${last}`);
+        if (!first.trim() || existingNames.has(key)) return;
+        existingNames.add(key);
+        rows.push({ user_id: user.id, wedding_id: weddingId || null, guest_first_name: first.trim(), guest_last_name: last.trim() || '-', source: 'rsvp', ...extra });
+      };
+      (responses || []).forEach((response) => {
+        const status = response.attendance_status === 'oui' ? 'confirmed' : response.attendance_status === 'non' ? 'declined' : 'pending';
+        const [first, ...rest] = (response.guest_name || '').trim().split(/\s+/);
+        const notes = [response.dietary_restrictions, response.message].filter(Boolean).join(' · ') || null;
+        pushRow(first || '', rest.join(' '), { guest_email: response.guest_email, guest_phone: response.guest_phone, guest_address: response.guest_address, guest_type: 'adult', rsvp_status: status, notes });
+        (companions || []).filter((c: any) => c.response_id === response.id).forEach((c: any) => {
+          pushRow(c.guest_first_name || '', c.guest_last_name || '', { guest_type: c.guest_type === 'child' ? 'child' : 'adult', rsvp_status: status, notes: c.dietary_restrictions || null });
+        });
+      });
+      if (rows.length === 0) {
+        toast({ title: tr('Déjà à jour', 'Already up to date'), description: tr('Toutes les réponses RSVP sont déjà dans la liste.', 'All RSVP answers are already in the list.') });
+        return;
+      }
+      const { error } = await supabase.from('wedding_guest_list').insert(rows);
+      if (error) throw error;
+      toast({ title: tr('Import réussi', 'Import complete'), description: tr(`${rows.length} invité(s) ajouté(s) depuis le RSVP`, `${rows.length} guest(s) added from RSVP`) });
+      await loadGuests();
+    } catch (error) {
+      console.error('❌ handleImportFromRsvp failed:', error);
+      toast({ title: tr('Erreur', 'Error'), description: tr("Impossible d'importer les réponses RSVP", 'Unable to import RSVP answers'), variant: 'destructive' });
+    } finally {
+      setImportingRsvp(false);
+    }
+  };
+
+  const renderGuestTags = (notes: string | null) => {
+    const tags = detectGuestTags(notes);
+    if (tags.length === 0) return null;
+    return (
+      <div className="flex flex-wrap gap-1 mt-1">
+        {tags.map((tag) => (
+          <span key={tag} className={`text-[10px] border px-1.5 py-0.5 ${GUEST_TAG_LABELS[tag].className}`}>{tr(GUEST_TAG_LABELS[tag].fr, GUEST_TAG_LABELS[tag].en)}</span>
+        ))}
+      </div>
+    );
   };
 
   const handleEdit = (guest: Guest) => {
@@ -224,6 +298,10 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
             <Upload className="h-4 w-4 mr-2" />
             {tr('Importer un fichier', 'Import a file')}
           </Button>
+          <Button variant="outline" onClick={handleImportFromRsvp} disabled={importingRsvp}>
+            {importingRsvp ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Inbox className="h-4 w-4 mr-2" />}
+            {tr('Importer depuis le RSVP', 'Import from RSVP')}
+          </Button>
           <Button variant="outline" onClick={() => setIsBulkNotesOpen(true)}>
             <Sparkles className="h-4 w-4 mr-2" />
             {tr('Notes en vrac (IA)', 'Quick notes (AI)')}
@@ -277,7 +355,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
             <li key={guest.id} className="border border-border bg-background p-3">
               <div className="flex items-start justify-between gap-2">
                 <div className="min-w-0">
-                  <p className="font-medium truncate">{guest.guest_first_name} {guest.guest_last_name}</p>
+                  <p className="font-medium truncate flex items-center gap-2">{guest.guest_color && <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: guest.guest_color }} aria-hidden="true" />}{guest.guest_first_name} {guest.guest_last_name}</p>
                   <p className="text-xs text-muted-foreground truncate">{[guest.guest_email, guest.guest_phone].filter(Boolean).join(' · ') || '-'}</p>
                 </div>
                 <div className="flex shrink-0">
@@ -299,6 +377,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                 </select>
               </div>
               {guest.notes && <p className="text-xs text-muted-foreground mt-2 line-clamp-2">{guest.notes}</p>}
+              {renderGuestTags(guest.notes)}
             </li>
           ))}
         </ul>
@@ -313,7 +392,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                     <th className="text-left p-4 font-medium">{tr('Téléphone', 'Phone')}</th>
                     <th className="text-left p-4 font-medium">Type</th>
                     <th className="text-left p-4 font-medium">{tr('Statut', 'Status')}</th>
-                    <th className="text-left p-4 font-medium">{tr('Commentaire', 'Comment')}</th>
+                    <th className="text-left p-4 font-medium">{tr('Menu & commentaires', 'Menu & comments')}</th>
                     <th className="text-left p-4 font-medium">Source</th>
                     <th className="text-right p-4 font-medium">Actions</th>
                   </tr>
@@ -322,7 +401,8 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                   {filteredGuests.map((guest) => (
                     <tr key={guest.id} className="border-b hover:bg-muted/20">
                       <td className="p-4">
-                        <div className="font-medium">
+                        <div className="font-medium flex items-center gap-2">
+                          {guest.guest_color && <span className="h-3 w-3 rounded-full shrink-0" style={{ backgroundColor: guest.guest_color }} aria-hidden="true" />}
                           {guest.guest_first_name} {guest.guest_last_name}
                         </div>
                         {guest.guest_address && (
@@ -349,18 +429,20 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
                           <option value="declined">{tr('Absent', 'Declined')}</option>
                         </select>
                       </td>
-                      <td className="p-4 text-sm text-muted-foreground max-w-[150px]">
+                      <td className="p-4 text-sm text-muted-foreground max-w-[180px]">
                         {guest.notes ? (
                           <span className="truncate block" title={guest.notes}>
                             {guest.notes}
                           </span>
                         ) : '-'}
+                        {renderGuestTags(guest.notes)}
                       </td>
                       <td className="p-4">
                         <Badge variant="outline">
                           {guest.source === 'manual' && tr('Manuel', 'Manual')}
                           {guest.source === 'excel' && 'Excel'}
                           {guest.source === 'txt' && tr('Texte', 'Text')}
+                          {guest.source === 'rsvp' && 'RSVP'}
                         </Badge>
                       </td>
                       <td className="p-4 text-right">
