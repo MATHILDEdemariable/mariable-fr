@@ -4,6 +4,7 @@ import { SeatingTable, SeatingAssignment } from '@/types/seating';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { normalizeGuestName } from '@/lib/guestTags';
 
 type RoomShape = 'rectangle' | 'square' | 'L' | 'U';
 type FixedElementKind = 'dancefloor' | 'stage' | 'buffet' | 'door';
@@ -14,7 +15,10 @@ interface RoomConfig {
   lengthM: number;
   pxPerMeter: number;
   showComfort: boolean;
-  fixedElements: Array<{ id: string; kind: FixedElementKind; x: number; y: number }>;
+  fixedElements: Array<{ id: string; kind: FixedElementKind; x: number; y: number; w?: number; h?: number }>;
+  // Dimensions physiques par table (mètres) : w = diamètre ou longueur, h = largeur
+  tableSizes?: Record<string, { w: number; h: number }>;
+  showTableNames?: boolean;
 }
 const ROOM_MARGIN = 50;
 const DEFAULT_ROOM: RoomConfig = { enabled: false, shape: 'rectangle', widthM: 16, lengthM: 10, pxPerMeter: 35, showComfort: true, fixedElements: [] };
@@ -46,6 +50,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
+  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [guestColors, setGuestColors] = useState<Record<string, string>>({});
 
   // Configuration de salle partagée en ligne (wedding_tool_states, accès par mariage : pro + couple)
   const seatingPlanId = tables[0]?.seating_plan_id;
@@ -66,6 +72,13 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         const { data, error } = await query.order('updated_at', { ascending: false }).limit(1);
         if (error) throw error;
         roomStateRef.current = { id: data?.[0]?.id ?? null, weddingId };
+        // Couleurs choisies dans la gestion des invités (rapprochement par nom)
+        if (weddingId) {
+          const { data: colored } = await supabase.from('wedding_guest_list').select('guest_first_name, guest_last_name, guest_color').eq('wedding_id', weddingId).not('guest_color', 'is', null);
+          const map: Record<string, string> = {};
+          (colored as any[] | null)?.forEach((g) => { if (g.guest_color) map[normalizeGuestName(`${g.guest_first_name} ${g.guest_last_name}`)] = g.guest_color; });
+          setGuestColors(map);
+        }
         if (data?.[0]) {
           setRoomConfig({ ...DEFAULT_ROOM, ...(data[0].state as Partial<RoomConfig>) });
         } else {
@@ -260,7 +273,26 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     }
   };
 
-  const getTableSize = (shape: string, capacity: number) => {
+  const defaultTableMeters = (shape: string, capacity: number) => {
+    if (shape === 'rectangle') return { w: 2, h: 0.9 };
+    if (shape === 'oval') return { w: 2, h: 1.1 };
+    const d = capacity <= 8 ? 1.5 : 1.8;
+    return { w: d, h: d };
+  };
+  const getTableMeters = (tableId: string, shape: string, capacity: number) => roomConfig.tableSizes?.[tableId] ?? defaultTableMeters(shape, capacity);
+  const updateTableSize = (tableId: string, patch: Partial<{ w: number; h: number }>, shape: string, capacity: number) => {
+    const current = getTableMeters(tableId, shape, capacity);
+    const next = { ...current, ...patch };
+    if (shape === 'round') next.h = next.w;
+    updateRoom({ tableSizes: { ...(roomConfig.tableSizes || {}), [tableId]: next } });
+  };
+  const getTableSize = (shape: string, capacity: number, tableId?: string) => {
+    const custom = tableId ? roomConfig.tableSizes?.[tableId] : undefined;
+    if (custom) {
+      // Hors mode salle : échelle d'affichage fixe pour garder les proportions
+      const scale = roomConfig.enabled ? ppm : 55;
+      return { width: custom.w * scale, height: (shape === 'round' ? custom.w : custom.h) * scale };
+    }
     if (roomConfig.enabled) {
       if (shape === 'rectangle') return { width: 2 * ppm, height: 0.9 * ppm };
       if (shape === 'oval') return { width: 2 * ppm, height: 1.1 * ppm };
@@ -283,6 +315,16 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
     if (roomConfig.shape === 'U') return [[0,0],[w*0.33,0],[w*0.33,l*0.5],[w*0.67,l*0.5],[w*0.67,0],[w,0],[w,l],[0,l]].map(([x,y]) => `${x0+x},${y0+y}`).join(' ');
     return [[0,0],[w,0],[w,l],[0,l]].map(([x,y]) => `${x0+x},${y0+y}`).join(' ');
   };
+  const showTableNames = roomConfig.showTableNames !== false;
+  const selectedTable = selectedItem && !selectedItem.startsWith('fixed:') ? tables.find((t) => t.id === selectedItem) : undefined;
+  const selectedFixed = selectedItem?.startsWith('fixed:') ? roomConfig.fixedElements.find((el) => el.id === selectedItem.slice(6)) : undefined;
+  const updateFixedElement = (elementId: string, patch: { w?: number; h?: number }) => {
+    updateRoom({ fixedElements: roomConfig.fixedElements.map((el) => el.id === elementId ? { ...el, ...patch } : el) });
+  };
+  const removeFixedElement = (elementId: string) => {
+    updateRoom({ fixedElements: roomConfig.fixedElements.filter((el) => el.id !== elementId) });
+    setSelectedItem(null);
+  };
   const surfaceM2 = Math.round(roomConfig.widthM * (roomConfig.shape === 'square' ? roomConfig.widthM : roomConfig.lengthM) * (roomConfig.shape === 'L' ? 0.75 : roomConfig.shape === 'U' ? 0.83 : 1));
   const addFixedElement = (kind: FixedElementKind) => {
     const id = `${kind}-${Date.now()}`;
@@ -299,7 +341,59 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         <button type="button" onClick={() => updateRoom({ enabled: !roomConfig.enabled })} className={cn('min-h-[44px] px-3 border border-wedding-olive/40', roomConfig.enabled ? 'bg-wedding-olive text-white' : 'bg-white hover:bg-editorial-cream')} aria-pressed={roomConfig.enabled}>
           📐 {tr('Configuration de la salle à l’échelle', 'Room setup to scale')}
         </button>
+        <button type="button" onClick={() => updateRoom({ showTableNames: !showTableNames })} className="min-h-[44px] px-3 border border-wedding-olive/40 bg-white hover:bg-editorial-cream" aria-pressed={!showTableNames}>
+          {showTableNames ? tr('Masquer les noms des tables', 'Hide table names') : tr('Afficher les noms des tables', 'Show table names')}
+        </button>
       </div>
+
+      {/* Panneau de l'élément sélectionné */}
+      {selectedTable && (() => {
+        const meters = getTableMeters(selectedTable.id, selectedTable.shape, selectedTable.capacity);
+        return (
+          <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
+            <div className="min-w-[140px]">
+              <p className="text-xs text-muted-foreground">{tr('Table sélectionnée', 'Selected table')}</p>
+              <p className="font-semibold">{selectedTable.table_name}</p>
+            </div>
+            <label className="flex flex-col gap-1">
+              <span className="text-xs text-muted-foreground">{selectedTable.shape === 'round' ? tr('Diamètre (m)', 'Diameter (m)') : tr('Longueur (m)', 'Length (m)')}</span>
+              <input type="number" min={0.6} max={10} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.w} onChange={(e) => updateTableSize(selectedTable.id, { w: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
+            </label>
+            {selectedTable.shape !== 'round' && (
+              <label className="flex flex-col gap-1">
+                <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
+                <input type="number" min={0.6} max={5} step={0.1} className="min-h-[44px] w-24 border px-2" value={meters.h} onChange={(e) => updateTableSize(selectedTable.id, { h: Math.max(0.6, Number(e.target.value) || 0.6) }, selectedTable.shape, selectedTable.capacity)} />
+              </label>
+            )}
+            {onEditTable && (
+              <button type="button" onClick={() => onEditTable(selectedTable)} className="min-h-[44px] px-4 bg-wedding-olive text-white font-medium">
+                ✎ {tr('Modifier la table', 'Edit table')}
+              </button>
+            )}
+            <button type="button" onClick={() => setSelectedItem(null)} className="min-h-[44px] px-3 border">{tr('Fermer', 'Close')}</button>
+          </div>
+        );
+      })()}
+      {selectedFixed && (
+        <div className="flex flex-wrap items-end gap-3 p-3 bg-white border-2 border-wedding-olive text-sm">
+          <div className="min-w-[140px]">
+            <p className="text-xs text-muted-foreground">{tr('Élément sélectionné', 'Selected element')}</p>
+            <p className="font-semibold">{tr(FIXED_ELEMENTS[selectedFixed.kind].fr, FIXED_ELEMENTS[selectedFixed.kind].en)}</p>
+          </div>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{tr('Longueur (m)', 'Length (m)')}</span>
+            <input type="number" min={0.5} max={30} step={0.5} className="min-h-[44px] w-24 border px-2" value={selectedFixed.w ?? FIXED_ELEMENTS[selectedFixed.kind].w} onChange={(e) => updateFixedElement(selectedFixed.id, { w: Math.max(0.5, Number(e.target.value) || 0.5) })} />
+          </label>
+          <label className="flex flex-col gap-1">
+            <span className="text-xs text-muted-foreground">{tr('Largeur (m)', 'Width (m)')}</span>
+            <input type="number" min={0.5} max={30} step={0.5} className="min-h-[44px] w-24 border px-2" value={selectedFixed.h ?? FIXED_ELEMENTS[selectedFixed.kind].h} onChange={(e) => updateFixedElement(selectedFixed.id, { h: Math.max(0.5, Number(e.target.value) || 0.5) })} />
+          </label>
+          <button type="button" onClick={() => removeFixedElement(selectedFixed.id)} className="min-h-[44px] px-4 border border-destructive text-destructive font-medium">
+            ✕ {tr('Supprimer', 'Delete')}
+          </button>
+          <button type="button" onClick={() => setSelectedItem(null)} className="min-h-[44px] px-3 border">{tr('Fermer', 'Close')}</button>
+        </div>
+      )}
 
       {roomConfig.enabled && (
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-3 p-3 bg-white border border-wedding-olive/30 text-sm">
@@ -344,7 +438,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
             </select>
           </div>
           <p className="col-span-full text-xs text-muted-foreground">
-            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; double-cliquez sur un élément pour le retirer.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; double-click an element to remove it.')}
+            {tr('Surface', 'Area')} ≈ {surfaceM2} m² · {tr('Tables rondes 150 cm (8 pers.) / 180 cm (10 pers.), rectangles 200 × 90 cm. Glissez tables et éléments ; cliquez dessus pour modifier leurs dimensions.', 'Round tables 150 cm (8 seats) / 180 cm (10 seats), rectangles 200 × 90 cm. Drag tables and elements; click one to edit its size.')}
           </p>
         </div>
       )}
@@ -372,16 +466,19 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         const config = FIXED_ELEMENTS[element.kind];
         const key = `fixed:${element.id}`;
         const position = tablePositions[key] || { x: element.x, y: element.y };
+        const elW = element.w ?? config.w;
+        const elH = element.h ?? config.h;
+        const isSelected = selectedItem === key;
         return (
           <div
             key={element.id}
-            className="table-shape absolute flex items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab z-0"
-            style={{ left: position.x - (config.w * ppm) / 2, top: position.y - (config.h * ppm) / 2, width: config.w * ppm, height: config.h * ppm }}
-            onMouseDown={(e) => handleMouseDown(e, key)}
-            onDoubleClick={() => updateRoom({ fixedElements: roomConfig.fixedElements.filter((el) => el.id !== element.id) })}
-            title={tr('Double-cliquez pour retirer', 'Double-click to remove')}
+            className={cn("table-shape absolute flex flex-col items-center justify-center text-[11px] font-medium text-center border-2 border-dashed border-wedding-olive bg-editorial-olive-light/70 cursor-grab z-0", isSelected && "ring-2 ring-wedding-olive ring-offset-2 border-solid")}
+            style={{ left: position.x - (elW * ppm) / 2, top: position.y - (elH * ppm) / 2, width: elW * ppm, height: elH * ppm }}
+            onMouseDown={(e) => { setSelectedItem(key); handleMouseDown(e, key); }}
+            title={tr('Cliquez pour modifier', 'Click to edit')}
           >
-            {tr(config.fr, config.en)}
+            <span>{tr(config.fr, config.en)}</span>
+            <span className="text-[10px] opacity-70">{elW} × {elH} m</span>
           </div>
         );
       })}
@@ -414,7 +511,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {!roomConfig.enabled && <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3 shadow-sm text-xs text-muted-foreground max-w-[220px]">
         <p className="font-medium text-foreground mb-2">{tr('Mode Vue Visuelle','Visual view mode')}</p>
         <p className="mb-1">• {tr('Glissez les tables pour les repositionner','Drag tables to reposition them')}</p>
-        <p className="mb-1">• {tr('Cliquez sur ✎ pour modifier une table','Click ✎ to edit a table')}</p>
+        <p className="mb-1">• {tr('Cliquez sur une table pour la modifier ou changer sa taille','Click a table to edit it or change its size')}</p>
         <p className="mb-1">• {tr("Cliquez sur 2 invités d'une même table pour échanger leurs places",'Click 2 guests at the same table to swap seats')}</p>
         <div className="mt-2 pt-2 border-t border-gray-200">
           <p className="text-[#7F9474] font-medium">
@@ -434,7 +531,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
       {tables.map(table => {
         const position = tablePositions[table.id] || { x: 100, y: 100 };
         const tableGuests = getTableGuests(table.id);
-        const size = getTableSize(table.shape, table.capacity);
+        const size = getTableSize(table.shape, table.capacity, table.id);
         const comfortDiameter = Math.max(size.width, size.height) + 3 * ppm;
         const isFull = tableGuests.length >= table.capacity;
         const isDragging = draggingTable === table.id;
@@ -464,29 +561,22 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                 isFull 
                   ? "bg-wedding-olive text-white border-premium-olive-dark" 
                   : "bg-white text-foreground border-wedding-olive/50 hover:border-wedding-olive",
-                isDragging && "shadow-2xl ring-2 ring-wedding-olive ring-offset-2"
+                (isDragging || selectedItem === table.id) && "shadow-2xl ring-2 ring-wedding-olive ring-offset-2"
               )}
               style={{
                 width: size.width,
                 height: size.height,
                 backgroundColor: table.color || (isFull ? undefined : '#fff')
               }}
-              onMouseDown={(e) => handleMouseDown(e, table.id)}
+              onMouseDown={(e) => { setSelectedItem(table.id); handleMouseDown(e, table.id); }}
               onDoubleClick={() => onEditTable?.(table)}
-              title={tr('Double-cliquez pour modifier la table', 'Double-click to edit the table')}
+              title={`${table.table_name} · ${tableGuests.length}/${table.capacity}`}
             >
-              {onEditTable && (
-                <button
-                  type="button"
-                  onMouseDown={(e) => e.stopPropagation()}
-                  onClick={(e) => { e.stopPropagation(); onEditTable(table); }}
-                  className="absolute -top-2 -right-2 h-7 w-7 rounded-full bg-wedding-olive text-white text-xs shadow flex items-center justify-center z-30"
-                  aria-label={tr('Modifier la table', 'Edit table')}
-                >✎</button>
+              {showTableNames && (
+                <span className="font-semibold text-xs leading-tight text-center line-clamp-2 max-w-[90%] break-words">
+                  {table.table_name}
+                </span>
               )}
-              <span className="font-semibold text-sm truncate max-w-[90%]">
-                {table.table_name}
-              </span>
               <span className="text-xs opacity-80">
                 {tableGuests.length}/{table.capacity}
               </span>
@@ -517,7 +607,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                   style={{
                     left: size.width / 2 + guestX,
                     top: size.height / 2 + guestY - 10,
-                    transform: 'translateX(-50%)'
+                    transform: 'translateX(-50%)',
+                    ...(guestColors[normalizeGuestName(guest.guest_name)] && !isSelected ? { borderColor: guestColors[normalizeGuestName(guest.guest_name)], borderWidth: 3 } : {})
                   }}
                   title={`${guest.guest_name}${guest.seat_number ? ` (${tr('Place','Seat')} ${guest.seat_number})` : ''} - ${tr('Cliquez pour échanger','Click to swap')}`}
                 >

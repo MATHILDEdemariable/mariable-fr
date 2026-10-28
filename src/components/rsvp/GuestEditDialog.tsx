@@ -9,6 +9,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { GUEST_COLOR_PALETTE, GUEST_TAG_LABELS, detectGuestTags } from '@/lib/guestTags';
 
 interface Guest {
   id: string;
@@ -20,6 +22,7 @@ interface Guest {
   guest_type: 'adult' | 'child';
   notes: string | null;
   rsvp_status: 'pending' | 'confirmed' | 'declined';
+  guest_color?: string | null;
 }
 
 interface GuestEditDialogProps {
@@ -49,6 +52,9 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
   const [guestType, setGuestType] = useState<'adult' | 'child'>(guest.guest_type);
   const [notes, setNotes] = useState(guest.notes || '');
   const [rsvpStatus, setRsvpStatus] = useState<'pending' | 'confirmed' | 'declined'>(guest.rsvp_status);
+  const [guestColor, setGuestColor] = useState<string | null>(guest.guest_color ?? null);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
@@ -81,14 +87,15 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
           guest_type: guestType,
           notes: notes.trim() || null,
           rsvp_status: rsvpStatus,
-        })
+          guest_color: guestColor,
+        } as any)
         .eq('id', guest.id);
 
       if (error) throw error;
 
       toast({
-        title: 'Invité modifié',
-        description: `${firstName} ${lastName} a été mis à jour`,
+        title: tr('Invité modifié', 'Guest updated'),
+        description: `${firstName} ${lastName}`,
       });
 
       onUpdated();
@@ -105,8 +112,8 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
       } else {
         console.error('Erreur lors de la modification:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible de modifier l\'invité',
+          title: tr('Erreur', 'Error'),
+          description: tr("Impossible de modifier l'invité", 'Unable to update guest'),
           variant: 'destructive',
         });
       }
@@ -119,12 +126,12 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modifier l'invité</DialogTitle>
+          <DialogTitle>{tr("Modifier l'invité", 'Edit guest')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom *</Label>
+            <Label htmlFor="firstName">{tr('Prénom', 'First name')} *</Label>
             <Input
               id="firstName"
               value={firstName}
@@ -137,7 +144,7 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lastName">Nom *</Label>
+            <Label htmlFor="lastName">{tr('Nom', 'Last name')} *</Label>
             <Input
               id="lastName"
               value={lastName}
@@ -163,7 +170,7 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Téléphone</Label>
+            <Label htmlFor="phone">{tr('Téléphone', 'Phone')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -173,7 +180,7 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Adresse postale</Label>
+            <Label htmlFor="address">{tr('Adresse postale', 'Postal address')}</Label>
             <Textarea
               id="address"
               value={address}
@@ -183,60 +190,78 @@ const GuestEditDialog: React.FC<GuestEditDialogProps> = ({ guest, isOpen, onClos
           </div>
 
           <div className="space-y-3">
-            <Label>Type d'invité *</Label>
+            <Label>{tr("Type d'invité", 'Guest type')} *</Label>
             <RadioGroup value={guestType} onValueChange={(value) => setGuestType(value as 'adult' | 'child')}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="adult" id="adult" />
                 <Label htmlFor="adult" className="font-normal cursor-pointer">
-                  Adulte
+                  {tr('Adulte', 'Adult')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="child" id="child" />
                 <Label htmlFor="child" className="font-normal cursor-pointer">
-                  Enfant
+                  {tr('Enfant', 'Child')}
                 </Label>
               </div>
             </RadioGroup>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="rsvpStatus">Statut de confirmation *</Label>
+            <Label htmlFor="rsvpStatus">{tr('Statut de confirmation', 'RSVP status')} *</Label>
             <select
               id="rsvpStatus"
               value={rsvpStatus}
               onChange={(e) => setRsvpStatus(e.target.value as 'pending' | 'confirmed' | 'declined')}
               className="w-full h-10 px-3 rounded-md border border-input bg-background"
             >
-              <option value="pending">En attente</option>
-              <option value="confirmed">Confirmé</option>
-              <option value="declined">Absent</option>
+              <option value="pending">{tr('En attente', 'Pending')}</option>
+              <option value="confirmed">{tr('Confirmé', 'Confirmed')}</option>
+              <option value="declined">{tr('Absent', 'Declined')}</option>
             </select>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Commentaires</Label>
+            <Label htmlFor="notes">{tr('Menu & commentaires', 'Menu & comments')}</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes, régimes alimentaires, allergies..."
+              placeholder={tr('Végétarien, allergie, PMR…', 'Vegetarian, allergy, wheelchair…')}
               rows={3}
             />
+            {detectGuestTags(notes).length > 0 && (
+              <div className="flex flex-wrap gap-1">
+                {detectGuestTags(notes).map((tag) => (
+                  <span key={tag} className={`text-xs border px-2 py-0.5 ${GUEST_TAG_LABELS[tag].className}`}>{tr(GUEST_TAG_LABELS[tag].fr, GUEST_TAG_LABELS[tag].en)}</span>
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="space-y-2">
+            <Label>{tr('Couleur', 'Colour')}</Label>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => setGuestColor(null)} className={`h-8 px-2 text-xs border ${!guestColor ? 'ring-2 ring-foreground' : ''}`}>{tr('Aucune', 'None')}</button>
+              {GUEST_COLOR_PALETTE.map((c) => (
+                <button key={c} type="button" onClick={() => setGuestColor(c)} aria-label={c} className={`h-8 w-8 rounded-full border ${guestColor === c ? 'ring-2 ring-offset-2 ring-foreground' : ''}`} style={{ backgroundColor: c }} />
+              ))}
+              <input type="color" value={guestColor || '#63745A'} onChange={(e) => setGuestColor(e.target.value)} className="h-8 w-10 border" aria-label={tr('Couleur personnalisée', 'Custom colour')} />
+            </div>
           </div>
 
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
+              {tr('Annuler', 'Cancel')}
             </Button>
             <Button type="submit" disabled={submitting}>
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Enregistrement...
+                  {tr('Enregistrement...', 'Saving...')}
                 </>
               ) : (
-                'Enregistrer'
+                tr('Enregistrer', 'Save')
               )}
             </Button>
           </div>

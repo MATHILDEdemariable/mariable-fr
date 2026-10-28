@@ -9,6 +9,8 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { z } from 'zod';
+import { useTranslation } from 'react-i18next';
+import { GUEST_COLOR_PALETTE } from '@/lib/guestTags';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface GuestManualAddProps {
@@ -39,6 +41,9 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { toast } = useToast();
+  const [guestColor, setGuestColor] = useState<string | null>(null);
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   const resetForm = () => {
     setFirstName('');
@@ -82,14 +87,15 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           guest_address: address.trim() || null,
           guest_type: guestType,
           notes: notes.trim() || null,
+          guest_color: guestColor,
           source: 'manual',
         });
 
       if (error) throw error;
 
       toast({
-        title: 'Invité ajouté',
-        description: `${firstName} ${lastName} a été ajouté à la liste`,
+        title: tr('Invité ajouté', 'Guest added'),
+        description: `${firstName} ${lastName}`,
       });
 
       resetForm();
@@ -107,8 +113,8 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
       } else {
         console.error('Erreur lors de l\'ajout:', error);
         toast({
-          title: 'Erreur',
-          description: 'Impossible d\'ajouter l\'invité',
+          title: tr('Erreur', 'Error'),
+          description: tr("Impossible d'ajouter l'invité", 'Unable to add guest'),
           variant: 'destructive',
         });
       }
@@ -121,12 +127,12 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Ajouter un invité</DialogTitle>
+          <DialogTitle>{tr('Ajouter un invité', 'Add a guest')}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4 py-4">
           <div className="space-y-2">
-            <Label htmlFor="firstName">Prénom *</Label>
+            <Label htmlFor="firstName">{tr('Prénom', 'First name')} *</Label>
             <Input
               id="firstName"
               value={firstName}
@@ -140,7 +146,7 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="lastName">Nom *</Label>
+            <Label htmlFor="lastName">{tr('Nom', 'Last name')} *</Label>
             <Input
               id="lastName"
               value={lastName}
@@ -168,7 +174,7 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="phone">Téléphone</Label>
+            <Label htmlFor="phone">{tr('Téléphone', 'Phone')}</Label>
             <Input
               id="phone"
               type="tel"
@@ -179,7 +185,7 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="address">Adresse postale</Label>
+            <Label htmlFor="address">{tr('Adresse postale', 'Postal address')}</Label>
             <Textarea
               id="address"
               value={address}
@@ -190,46 +196,57 @@ const GuestManualAdd: React.FC<GuestManualAddProps> = ({ isOpen, onClose, onAdde
           </div>
 
           <div className="space-y-3">
-            <Label>Type d'invité *</Label>
+            <Label>{tr("Type d'invité", 'Guest type')} *</Label>
             <RadioGroup value={guestType} onValueChange={(value) => setGuestType(value as 'adult' | 'child')}>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="adult" id="adult" />
                 <Label htmlFor="adult" className="font-normal cursor-pointer">
-                  Adulte
+                  {tr('Adulte', 'Adult')}
                 </Label>
               </div>
               <div className="flex items-center space-x-2">
                 <RadioGroupItem value="child" id="child" />
                 <Label htmlFor="child" className="font-normal cursor-pointer">
-                  Enfant
+                  {tr('Enfant', 'Child')}
                 </Label>
               </div>
             </RadioGroup>
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Commentaires</Label>
+            <Label htmlFor="notes">{tr('Menu & commentaires', 'Menu & comments')}</Label>
             <Textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Notes, régimes alimentaires, allergies..."
+              placeholder={tr('Végétarien, allergie, PMR…', 'Vegetarian, allergy, wheelchair…')}
               rows={3}
             />
           </div>
 
+          <div className="space-y-2">
+            <Label>{tr('Couleur', 'Colour')}</Label>
+            <div className="flex flex-wrap items-center gap-2">
+              <button type="button" onClick={() => setGuestColor(null)} className={`h-8 px-2 text-xs border ${!guestColor ? 'ring-2 ring-foreground' : ''}`}>{tr('Aucune', 'None')}</button>
+              {GUEST_COLOR_PALETTE.map((c) => (
+                <button key={c} type="button" onClick={() => setGuestColor(c)} aria-label={c} className={`h-8 w-8 rounded-full border ${guestColor === c ? 'ring-2 ring-offset-2 ring-foreground' : ''}`} style={{ backgroundColor: c }} />
+              ))}
+              <input type="color" value={guestColor || '#63745A'} onChange={(e) => setGuestColor(e.target.value)} className="h-8 w-10 border" aria-label={tr('Couleur personnalisée', 'Custom colour')} />
+            </div>
+          </div>
+
           <div className="flex justify-end gap-3 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
-              Annuler
+              {tr('Annuler', 'Cancel')}
             </Button>
             <Button type="submit" disabled={submitting}>
               {submitting ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Ajout...
+                  {tr('Ajout...', 'Adding...')}
                 </>
               ) : (
-                'Ajouter'
+                tr('Ajouter', 'Add')
               )}
             </Button>
           </div>
