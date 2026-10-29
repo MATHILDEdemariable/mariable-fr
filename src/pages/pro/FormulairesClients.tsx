@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
 import { format } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { ArrowDown, ArrowLeft, ArrowUp, Copy, ExternalLink, FileDown, FileText, Plus, Save, Trash2, ClipboardList, CalendarClock, FilePlus2 } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowUp, Copy, ExternalLink, FileDown, FileText, Plus, Save, Trash2, ClipboardList, CalendarClock, FilePlus2, Sparkles, Loader2, Eye } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -38,6 +38,7 @@ interface ClientFormResponse {
   respondent_email: string | null;
   answers: Record<string, unknown>;
   questions_snapshot: ClientFormQuestion[];
+  wedding_id: string | null;
   created_at: string;
 }
 
@@ -62,6 +63,10 @@ const FormulairesClients: React.FC = () => {
   const [responses, setResponses] = useState<ClientFormResponse[]>([]);
   const [openResponseId, setOpenResponseId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('questions');
+  const [aiSourceText, setAiSourceText] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [proWeddings, setProWeddings] = useState<{ id: string; title: string }[]>([]);
 
   const loadClientForms = async () => {
     try {
@@ -81,14 +86,61 @@ const FormulairesClients: React.FC = () => {
 
   const loadResponses = async (formId: string) => {
     const { data, error } = await clientFormResponsesTable()
-      .select('id, form_id, respondent_name, respondent_email, answers, questions_snapshot, created_at')
+      .select('id, form_id, respondent_name, respondent_email, answers, questions_snapshot, wedding_id, created_at')
       .eq('form_id', formId)
       .order('created_at', { ascending: false });
     if (error) { console.error('❌ loadResponses failed:', error); return; }
     setResponses(data ?? []);
   };
 
-  useEffect(() => { loadClientForms(); }, []);
+  useEffect(() => {
+    loadClientForms();
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const { data, error } = await (supabase as any).from('weddings').select('id, title').eq('owner_id', user.id).order('created_at', { ascending: false });
+      if (error) { console.error('❌ loadProWeddings failed:', error); return; }
+      setProWeddings(data ?? []);
+    })();
+  }, []);
+
+  const handleGenerateForm = async () => {
+    if (aiSourceText.trim().length < 3) return;
+    setIsGenerating(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const language = isEnglish ? 'en' : 'fr';
+      const { data: generated, error: aiError } = await supabase.functions.invoke('generate-client-form', { body: { sourceText: aiSourceText, language } });
+      if (aiError || generated?.error || !generated?.questions?.length) {
+        console.error('❌ generateClientForm failed:', aiError ?? generated?.error);
+        toast({ title: tr('Génération impossible', 'Could not generate the form'), description: generated?.error, variant: 'destructive' });
+        return;
+      }
+      const questions = generated.questions.map((question: Omit<ClientFormQuestion, 'id'>) => ({ ...createEmptyQuestion(question.section || tr('Questions', 'Questions')), ...question }));
+      const { data, error } = await clientFormsTable()
+        .insert({ owner_id: user.id, title: generated.title || tr('Nouveau formulaire', 'New form'), intro: generated.intro ?? '', form_type: 'custom', language, questions })
+        .select('id, title, intro, form_type, language, questions, share_token, is_open, created_at')
+        .single();
+      if (error) throw error;
+      setAiSourceText('');
+      await loadClientForms();
+      handleOpenForm(data as ClientForm);
+      toast({ title: tr('Formulaire créé', 'Form created'), description: tr('Relisez et ajustez les questions, puis copiez le lien.', 'Review and adjust the questions, then copy the link.') });
+    } catch (error) {
+      console.error('❌ generateClientForm failed:', error);
+      toast({ title: tr('Génération impossible', 'Could not generate the form'), variant: 'destructive' });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleLinkResponseToWedding = async (responseId: string, weddingId: string) => {
+    const { error } = await clientFormResponsesTable().update({ wedding_id: weddingId || null }).eq('id', responseId);
+    if (error) { console.error('❌ linkResponseToWedding failed:', error); toast({ title: tr('Rattachement impossible', 'Could not link'), variant: 'destructive' }); return; }
+    setResponses((current) => current.map((response) => (response.id === responseId ? { ...response, wedding_id: weddingId || null } : response)));
+    toast({ title: weddingId ? tr('Réponses visibles dans le tableau de bord du mariage', 'Answers now shown on the wedding dashboard') : tr('Rattachement retiré', 'Link removed') });
+  };
 
   const handleCreateForm = async (formType: ClientFormType) => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -115,7 +167,8 @@ const FormulairesClients: React.FC = () => {
     handleOpenForm(data as ClientForm);
   };
 
-  const handleOpenForm = (clientForm: ClientForm) => {
+  const handleOpenForm = (clientForm: ClientForm, tab = 'questions') => {
+    setActiveTab(tab);
     setSelectedForm({ ...clientForm, questions: Array.isArray(clientForm.questions) ? clientForm.questions : [] });
     setOpenResponseId(null);
     loadResponses(clientForm.id);
@@ -220,6 +273,16 @@ const FormulairesClients: React.FC = () => {
             </p>
           </div>
 
+          <div className="border border-wedding-olive/40 bg-background p-4 space-y-3">
+            <h2 className="flex items-center gap-2 font-serif text-xl text-wedding-olive"><Sparkles className="h-5 w-5" />{tr('Créer un formulaire en un clic', 'Create a form in one click')}</h2>
+            <p className="text-sm text-muted-foreground">{tr('Collez vos notes ou votre liste de questions en vrac : l’IA crée le formulaire pour cadrer le mariage. Tout reste modifiable.', 'Paste your notes or a rough list of questions: AI builds the form to frame the wedding. Everything stays editable.')}</p>
+            <Textarea rows={4} className="rounded-none text-base" aria-label={tr('Vos notes', 'Your notes')} placeholder={tr('Ex. date, nombre d’invités, budget, style souhaité, lieu trouvé ou non, cérémonie laïque ?…', 'E.g. date, guest count, budget, style, venue booked or not, symbolic ceremony?…')} value={aiSourceText} onChange={(event) => setAiSourceText(event.target.value)} />
+            <Button className="rounded-none min-h-[44px]" onClick={handleGenerateForm} disabled={isGenerating || aiSourceText.trim().length < 3}>
+              {isGenerating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {isGenerating ? tr('Création en cours…', 'Creating…') : tr('Générer le formulaire', 'Generate the form')}
+            </Button>
+          </div>
+
           <div className="grid gap-3 md:grid-cols-3">
             {templateCards.map((card) => (
               <button key={card.type} onClick={() => handleCreateForm(card.type)} className="text-left border border-border bg-background p-4 hover:border-wedding-olive transition-colors min-h-[44px]">
@@ -245,6 +308,7 @@ const FormulairesClients: React.FC = () => {
                       </span>
                     </button>
                     <span className="text-sm text-wedding-olive font-medium">{responseCounts[clientForm.id] ?? 0} {tr('réponse(s)', 'response(s)')}</span>
+                    <Button variant="outline" size="sm" className="rounded-none" onClick={() => handleOpenForm(clientForm, 'responses')}><Eye className="h-4 w-4 mr-1" />{tr('Voir les résultats', 'View results')}</Button>
                     <Button variant="outline" size="sm" className="rounded-none" onClick={() => handleCopyLink(clientForm.share_token)}><Copy className="h-4 w-4 mr-1" />{tr('Copier le lien', 'Copy link')}</Button>
                   </li>
                 ))}
@@ -283,7 +347,7 @@ const FormulairesClients: React.FC = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="questions">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
             <TabsList className="rounded-none">
               <TabsTrigger value="questions" className="rounded-none">{tr('Questions', 'Questions')} ({selectedForm.questions.length})</TabsTrigger>
               <TabsTrigger value="responses" className="rounded-none">{tr('Réponses', 'Responses')} ({responses.length})</TabsTrigger>
@@ -352,6 +416,10 @@ const FormulairesClients: React.FC = () => {
                           <FileDown className="h-4 w-4 mr-1" />{tr('One-pager PDF', 'One-pager PDF')}
                         </Button>
                         <Button variant="ghost" size="sm" className="rounded-none" onClick={() => setOpenResponseId(isOpen ? null : response.id)}><FileText className="h-4 w-4 mr-1" />{isOpen ? tr('Masquer', 'Hide') : tr('Voir', 'View')}</Button>
+                        <select aria-label={tr('Rattacher à un mariage', 'Link to a wedding')} className="h-9 border border-input bg-background px-2 text-sm max-w-[200px]" value={response.wedding_id ?? ''} onChange={(event) => handleLinkResponseToWedding(response.id, event.target.value)}>
+                          <option value="">{tr('Rattacher à un mariage…', 'Link to a wedding…')}</option>
+                          {proWeddings.map((wedding) => <option key={wedding.id} value={wedding.id}>{wedding.title}</option>)}
+                        </select>
                         <Button variant="ghost" size="icon" aria-label={tr('Supprimer la réponse', 'Delete response')} onClick={() => handleDeleteResponse(response.id)}><Trash2 className="h-4 w-4" /></Button>
                       </div>
                       {isOpen && (

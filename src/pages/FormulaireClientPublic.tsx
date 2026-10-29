@@ -152,13 +152,12 @@ const FormulaireClientPublic: React.FC = () => {
   return (
     <main className="min-h-screen bg-editorial-beige px-4 py-8">
       <Helmet>
-        <title>{clientForm?.title ? `${clientForm.title} — Mariable` : 'Mariable'}</title>
+        <title>{clientForm?.title || 'Formulaire'}</title>
         <meta name="robots" content="noindex, nofollow" />
       </Helmet>
       <div className="max-w-2xl mx-auto">
-        <header className="flex items-center gap-3 mb-8">
-          <img src="/cachet_M.webp" alt="Mariable" className="h-12" onError={(event) => (event.currentTarget.style.display = 'none')} />
-          <h1 className="font-serif text-3xl">{clientForm?.title ?? 'Mariable'}</h1>
+        <header className="mb-8">
+          <h1 className="font-serif text-3xl">{clientForm?.title ?? ''}</h1>
         </header>
 
         {isLoading ? (
@@ -211,6 +210,10 @@ const FormulaireClientPublic: React.FC = () => {
             <p className="text-xs text-muted-foreground text-center">{tr('Vos réponses sont transmises uniquement à votre wedding planner.', 'Your answers are only shared with your wedding planner.')}</p>
           </form>
         )}
+        <footer className="mt-12 flex items-center justify-center gap-2 text-xs text-muted-foreground">
+          <img src="/cachet_M.webp" alt="" aria-hidden="true" className="h-5" onError={(event) => (event.currentTarget.style.display = 'none')} />
+          <a href="https://mariable.fr" target="_blank" rel="noopener noreferrer" className="hover:underline">{tr('Formulaire créé avec Mariable', 'Form created with Mariable')}</a>
+        </footer>
       </div>
     </main>
   );
