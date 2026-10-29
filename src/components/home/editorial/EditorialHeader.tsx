@@ -13,7 +13,8 @@ interface Props {
 }
 
 const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
-  const { t } = useTranslation('refonteJuillet');
+  const { t, i18n } = useTranslation('refonteJuillet');
+  const isEnglishHeader = !!i18n.language?.startsWith('en');
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
@@ -111,6 +112,13 @@ const EditorialHeader: React.FC<Props> = ({ transparent = false }) => {
             <div>
               <LanguageToggle variant={isOverlay ? 'light' : 'dark'} />
             </div>
+            <span className="hidden md:inline opacity-30" aria-hidden="true">|</span>
+            <Link
+              to="/pro-solutions"
+              className="hidden md:inline text-xs tracking-[0.2em] uppercase font-medium border-b border-current pb-0.5 hover:opacity-70 transition-opacity"
+            >
+              {isEnglishHeader ? 'For wedding professionals' : 'Espace professionnel'}
+            </Link>
             <button
               onClick={() => setOpen(true)}
               className="flex flex-col justify-center items-end gap-[5px] w-8 h-8 group"

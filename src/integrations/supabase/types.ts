@@ -2482,6 +2482,7 @@ export type Database = {
           questions_snapshot: Json
           respondent_email: string | null
           respondent_name: string | null
+          wedding_id: string | null
         }
         Insert: {
           answers?: Json
@@ -2491,6 +2492,7 @@ export type Database = {
           questions_snapshot?: Json
           respondent_email?: string | null
           respondent_name?: string | null
+          wedding_id?: string | null
         }
         Update: {
           answers?: Json
@@ -2500,6 +2502,7 @@ export type Database = {
           questions_snapshot?: Json
           respondent_email?: string | null
           respondent_name?: string | null
+          wedding_id?: string | null
         }
         Relationships: [
           {
@@ -2507,6 +2510,13 @@ export type Database = {
             columns: ["form_id"]
             isOneToOne: false
             referencedRelation: "pro_client_forms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pro_client_form_responses_wedding_id_fkey"
+            columns: ["wedding_id"]
+            isOneToOne: false
+            referencedRelation: "weddings"
             referencedColumns: ["id"]
           },
         ]

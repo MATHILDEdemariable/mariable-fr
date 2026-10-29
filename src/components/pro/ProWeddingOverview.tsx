@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import type { Wedding } from '@/contexts/WeddingContext';
 import InviteCoupleDialog from './InviteCoupleDialog';
+import ClientFormBriefPanel from './ClientFormBriefPanel';
 import weddingHeroPhoto from '@/assets/editorial/baiser-arche-oliviers.png.asset.json';
 
 type OverviewModule = { labelFr: string; labelEn: string; hintFr: string; hintEn: string; icon: typeof Calendar; path: string };
@@ -80,6 +81,8 @@ const ProWeddingOverview: React.FC<{ wedding: Wedding }> = ({ wedding }) => {
           )}
         </div>
       </section>
+
+      <ClientFormBriefPanel weddingId={wedding.id} isEnglish={!!isEnglish} />
 
       <section aria-labelledby="pro-wedding-tools">
         <h2 id="pro-wedding-tools" className="font-serif text-2xl text-foreground mb-3">
