@@ -7,7 +7,8 @@ import VideoBackground from '@/components/VideoBackground';
 
 const PremiumHeroSection = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation('home');
+  const { t, i18n } = useTranslation('home');
+  const isEnglishHero = !!i18n.language?.startsWith('en');
   const [weddingDate, setWeddingDate] = useState('');
 
   const handleGetStarted = () => {
@@ -63,6 +64,11 @@ const PremiumHeroSection = () => {
             className="underline hover:text-white transition-colors"
           >
             {t('hero.signIn')}
+          </button>
+        </p>
+        <p className="text-white/70 text-sm mt-3">
+          <button onClick={() => navigate('/pro-solutions')} className="underline-offset-4 hover:underline hover:text-white transition-colors">
+            {isEnglishHero ? 'Wedding professional? Discover our pro tools →' : 'Vous êtes un professionnel du mariage ? Découvrir l’espace pro →'}
           </button>
         </p>
       </div>
