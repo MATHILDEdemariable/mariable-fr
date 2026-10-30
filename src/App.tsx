@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { lazyWithRetry as lazy } from '@/lib/lazyWithRetry';
 import { Toaster } from "@/components/ui/toaster";
+const DemoVideos = lazy(() => import("./pages/DemoVideos"));
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -314,6 +315,7 @@ function App() {
                   <Route path="/professionnels" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/partenariat" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/demo-pro" element={<DemoPro />} />
+                  <Route path="/demo" element={<DemoVideos />} />
                   <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
                   <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />
                   <Route path="/pro/apercu-espace-pro" element={<ApercuEspacePro />} />
