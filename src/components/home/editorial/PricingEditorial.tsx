@@ -7,7 +7,7 @@ const PricingEditorial: React.FC = () => {
   const { t } = useTranslation('refonteJuillet');
   const plans = t('pricing.plans', { returnObjects: true }) as Array<{
     name: string;
-    price: string; priceOld?: string;
+    price: string; priceOld?: string; tag?: string; badge?: string;
     frequency: string;
     description: string;
     features: string[];
@@ -30,7 +30,9 @@ const PricingEditorial: React.FC = () => {
         <div className="mx-auto grid max-w-6xl gap-px bg-editorial-noir/20 md:grid-cols-3">
           {plans.map((plan, index) => (
             <article key={plan.name} className={index === 1 ? 'flex flex-col bg-editorial-olive p-7 text-primary-foreground md:p-9' : 'flex flex-col bg-editorial-beige p-7 text-editorial-noir md:p-9'}>
+              {plan.tag && <p className="mb-2 text-[11px] uppercase tracking-[0.25em] opacity-60">{plan.tag}</p>}
               <h3 className="font-serif text-2xl">{plan.name}</h3>
+              {plan.badge && <p className="mt-3 self-start border border-editorial-olive px-2 py-1 text-[11px] uppercase tracking-widest text-editorial-olive">{plan.badge}</p>}
               <div className="mt-5 flex min-h-16 items-baseline gap-2">
                 {plan.priceOld && <span className={/\d/.test(plan.priceOld) ? 'font-serif text-xl line-through opacity-50' : 'text-sm opacity-70'}>{plan.priceOld}</span>}
                 <span className="font-serif text-4xl">{plan.price}</span>
