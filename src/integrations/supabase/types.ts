@@ -4227,6 +4227,56 @@ export type Database = {
         }
         Relationships: []
       }
+      wedding_meeting_logs: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: string
+          meeting_date: string
+          next_actions: string | null
+          next_meeting_date: string | null
+          summary: string | null
+          title: string | null
+          type: string
+          updated_at: string
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          meeting_date?: string
+          next_actions?: string | null
+          next_meeting_date?: string | null
+          summary?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: string
+          meeting_date?: string
+          next_actions?: string | null
+          next_meeting_date?: string | null
+          summary?: string | null
+          title?: string | null
+          type?: string
+          updated_at?: string
+          wedding_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "wedding_meeting_logs_wedding_id_fkey"
+            columns: ["wedding_id"]
+            isOneToOne: false
+            referencedRelation: "weddings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       wedding_projects: {
         Row: {
           budget_breakdown: Json

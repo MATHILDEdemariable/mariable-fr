@@ -8,6 +8,7 @@ import {
 import type { Wedding } from '@/contexts/WeddingContext';
 import InviteCoupleDialog from './InviteCoupleDialog';
 import ClientFormBriefPanel from './ClientFormBriefPanel';
+import MeetingLogsPanel from './MeetingLogsPanel';
 import weddingHeroPhoto from '@/assets/editorial/baiser-arche-oliviers.png.asset.json';
 
 type OverviewModule = { labelFr: string; labelEn: string; hintFr: string; hintEn: string; icon: typeof Calendar; path: string };
@@ -82,6 +83,7 @@ const ProWeddingOverview: React.FC<{ wedding: Wedding }> = ({ wedding }) => {
         </div>
       </section>
 
+      <MeetingLogsPanel weddingId={wedding.id} isEnglish={!!isEnglish} />
       <ClientFormBriefPanel weddingId={wedding.id} isEnglish={!!isEnglish} />
 
       <section aria-labelledby="pro-wedding-tools">
