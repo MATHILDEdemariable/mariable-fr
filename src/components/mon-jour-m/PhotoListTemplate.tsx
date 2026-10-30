@@ -322,12 +322,12 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
   const toCaptureCount = photos.filter(p => p.toCapture).length;
 
   return (
-    <Card className="border-pink-200 bg-gradient-to-br from-pink-50 to-white">
+    <Card className="border-border bg-card">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-pink-100 rounded-lg">
-              <Camera className="h-5 w-5 text-pink-600" />
+            <div className="p-2 bg-muted">
+              <Camera className="h-5 w-5 text-wedding-olive" />
             </div>
             <div>
               <CardTitle className="text-lg">{t('photoList.title')}</CardTitle>
@@ -368,7 +368,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
               size="sm"
               onClick={handleSave}
               disabled={isSaving || !hasChanges}
-              className="bg-pink-600 hover:bg-pink-700"
+              className="bg-wedding-olive hover:bg-wedding-olive/90"
             >
               <Save className="h-4 w-4 mr-1" />
               {isSaving ? t('photoList.saving') : t('photoList.save')}
@@ -417,7 +417,7 @@ const PhotoListTemplate: React.FC<PhotoListTemplateProps> = ({ coordinationId })
                     />
                   ) : (
                     <span
-                      className={`text-sm cursor-pointer hover:text-pink-600 ${
+                      className={`text-sm cursor-pointer hover:text-wedding-olive ${
                         !photo.toCapture ? 'line-through text-gray-400' : ''
                       }`}
                       onClick={() => startEditing({ ...photo, title: displayTitle(photo.title) })}

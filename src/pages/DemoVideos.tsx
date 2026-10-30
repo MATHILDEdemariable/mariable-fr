@@ -6,6 +6,7 @@ import EditorialHeader from '@/components/home/editorial/EditorialHeader';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import coupleVideo from '@/assets/mariable-couple-9x16-voix.mp4.asset.json';
 import proVideo from '@/assets/mariable-pro-9x16-EN-mathilde.mp4.asset.json';
+import proVideoFr from '@/assets/mariable-pro-9x16-FR-mathilde.mp4.asset.json';
 
 const TEXTS = {
   fr: {
@@ -13,6 +14,7 @@ const TEXTS = {
     subtitle: 'Choisissez votre univers et découvrez l’application en moins de deux minutes.',
     coupleTitle: 'Démo couples', coupleText: 'Budget, invités, rétroplanning et Jour J : préparez votre mariage sereinement.', coupleLang: 'Vidéo en français',
     proTitle: 'Démo wedding planners', proText: 'Espace collaboratif, prestataires et coordination du Jour J pour les pros.', proLang: 'Vidéo en anglais',
+    proFrTitle: 'Démo wedding planners (FR)', proFrLang: 'Vidéo en français',
     watch: 'Lancer la vidéo', close: 'Fermer la vidéo',
   },
   en: {
@@ -20,6 +22,7 @@ const TEXTS = {
     subtitle: 'Pick your world and discover the app in under two minutes.',
     coupleTitle: 'Couples demo', coupleText: 'Budget, guests, timeline and wedding day: plan your wedding calmly.', coupleLang: 'Video in French',
     proTitle: 'Wedding planners demo', proText: 'Collaborative workspace, vendors and wedding-day coordination for pros.', proLang: 'Video in English',
+    proFrTitle: 'Wedding planners demo (FR)', proFrLang: 'Video in French',
     watch: 'Watch the video', close: 'Close video',
   },
 };
@@ -32,6 +35,7 @@ const DemoVideos = () => {
   const demoCards = [
     { title: text.coupleTitle, body: text.coupleText, lang: text.coupleLang, url: coupleVideo.url },
     { title: text.proTitle, body: text.proText, lang: text.proLang, url: proVideo.url },
+    { title: text.proFrTitle, body: text.proText, lang: text.proFrLang, url: proVideoFr.url },
   ];
 
   return (

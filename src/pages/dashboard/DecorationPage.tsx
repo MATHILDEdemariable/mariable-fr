@@ -12,6 +12,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useWedding } from '@/contexts/WeddingContext';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
+import InspirationLinksPanel from '@/components/mon-jour-m/InspirationLinksPanel';
+import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import {
   DECOR_CATEGORIES, DECOR_ZONES, DECOR_RESPONSIBLES, DECOR_STATUSES, DECOR_STARTER_KIT, decorLabel, type DecorStatus,
 } from '@/data/decorCatalog';
@@ -39,6 +41,7 @@ const DecorationPage: React.FC = () => {
   const { user } = useAuth();
   const { currentWeddingId } = useWedding();
   const weddingId = currentWeddingId || user?.id || null;
+  const { coordination } = useMonJourMCoordination();
 
   const [items, setItems] = useState<DecorItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -222,6 +225,7 @@ const DecorationPage: React.FC = () => {
           </div>
           <JourJHandoffButton module="decor" />
         </header>
+        {coordination && <InspirationLinksPanel coordinationId={coordination.id} isEnglish={!!isEnglish} />}
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="grid grid-cols-3 border border-wedding-olive/30 w-full sm:w-auto" role="group" aria-label={tr('Affichage', 'View')}>
