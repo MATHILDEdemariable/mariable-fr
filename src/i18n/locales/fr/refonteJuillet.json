@@ -166,23 +166,24 @@
     "title": "Commencez gratuitement. Avancez selon vos besoins.",
     "plans": [
       {
-        "name": "Mariable Gratuit",
+        "name": "Couple Découverte",
         "price": "0 €",
-        "frequency": "pour commencer",
-        "description": "Créez votre espace et découvrez les outils essentiels.",
+        "frequency": "pour les futurs mariés",
+        "description": "Pour organiser votre propre mariage en toute autonomie.",
         "features": [
-          "1 mariage",
-          "Outil de préparation essentiel",
-          "Accès aux guides de prestataires"
+          "Organisation personnelle (1 mariage)",
+          "Outils essentiels : budget, rétroplanning",
+          "Accès au carnet de prestataires"
         ],
-        "cta": "Créer mon espace gratuitement",
-        "href": "/register-gratuit"
+        "cta": "Créer mon espace couple gratuit",
+        "href": "/register-gratuit",
+        "tag": "Couples"
       },
       {
-        "name": "Mariable Couple",
+        "name": "Couple Premium",
         "price": "29 €",
         "frequency": "par mariage · paiement unique",
-        "description": "Tous les outils Mariable sans abonnement pour organiser votre mariage.",
+        "description": "Pour les couples qui veulent tout débloquer, sans abonnement.",
         "features": [
           "Tout ce qui est inclus dans le gratuit, plus :",
           "Fonctionnalités IA, stockage et exports illimités",
@@ -190,21 +191,24 @@
         ],
         "cta": "Choisir Mariable Couple",
         "href": "/paiement",
-        "priceOld": "59 €"
+        "priceOld": "59 €",
+        "tag": "Couples"
       },
       {
         "name": "Mariable Pro",
         "price": "149 €",
         "frequency": "par an",
-        "description": "Pour les wedding planners, coordinatrices et lieux de mariage. Deux formules selon votre activité, à partir de :",
+        "description": "Le logiciel de gestion des wedding planners et coordinatrices.",
         "features": [
-          "Coordination Jour J : appli mobile, invités & RSVP, plan de table",
-          "Organisation complète à 259 € : planning, budget, prestataires",
-          "Collaboration interactive avec vos couples"
+          "2 mois d'essai gratuit sur un projet client complet",
+          "Deux formules : Jour J (149 €) ou Organisation complète (259 €)",
+          "Espace collaboratif partagé avec vos couples"
         ],
-        "cta": "Voir les formules Pro",
+        "cta": "Tester Pro gratuitement (2 mois)",
         "href": "/pro-solutions",
-        "priceOld": "À partir de"
+        "priceOld": "À partir de",
+        "badge": "2 mois offerts sur 1 mariage",
+        "tag": "Professionnels"
       }
     ]
   },

@@ -285,7 +285,7 @@ const LogicielWeddingPlanner = () => {
           <div className="mx-auto max-w-5xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-editorial-olive">{isEnglish ? "Discover · Video" : "Découverte · En vidéo"}</p>
             <h2 id="demo-title" className="mt-3 text-3xl md:text-4xl">{isEnglish ? "Mariable Pro in action: coordination reinvented" : "Mariable Pro en action : la coordination réinventée"}</h2>
-            <div className="mt-10 grid items-start gap-10 md:grid-cols-[minmax(0,340px)_1fr]">
+            <div className="mt-10 grid items-center gap-10 md:gap-14 md:grid-cols-[minmax(0,340px)_1fr]">
               <div>
                 <div className="mb-3 flex gap-2">
                   {(["fr", "en"] as const).map((lang) => (
