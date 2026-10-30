@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
+import { useTranslation } from 'react-i18next';
 
 type VendorStatus = Database['public']['Enums']['vendor_status'];
 
@@ -26,6 +27,7 @@ interface Vendor {
   email?: string | null;
   phone?: string | null;
   website?: string | null;
+  instagram?: string | null;
   notes?: string | null;
   budget?: string | null;
   user_notes?: string | null;
@@ -53,6 +55,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
     email: '',
     phone: '',
     website: '',
+    instagram: '',
     location: '',
     notes: '',
     budget: '',
@@ -63,6 +66,8 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
   });
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const { i18n } = useTranslation();
+  const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
 
   React.useEffect(() => {
     if (vendor) {
@@ -73,6 +78,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
         email: vendor.email || '',
         phone: vendor.phone || '',
         website: vendor.website || '',
+        instagram: vendor.instagram || '',
         location: vendor.location || '',
         notes: vendor.notes || '',
         budget: vendor.budget || '',
@@ -98,6 +104,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
         email: formData.email || null,
         phone: formData.phone || null,
         website: formData.website || null,
+        instagram: formData.instagram || null,
         location: formData.location || null,
         notes: formData.notes || null,
         budget: formData.budget || null,
@@ -123,8 +130,8 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
       console.log('✅ Vendor updated successfully');
 
       toast({
-        title: "Prestataire mis à jour",
-        description: "Les informations du prestataire ont été mises à jour avec succès.",
+        title: tr("Prestataire mis à jour", "Vendor updated"),
+        description: tr("Les informations du prestataire ont été mises à jour avec succès.", "Vendor details were saved."),
       });
 
       onVendorUpdated();
@@ -132,8 +139,8 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
     } catch (error) {
       console.error('❌ Error updating vendor:', error);
       toast({
-        title: "Erreur",
-        description: "Impossible de mettre à jour le prestataire.",
+        title: tr("Erreur", "Error"),
+        description: tr("Impossible de mettre à jour le prestataire.", "Could not update the vendor."),
         variant: "destructive",
       });
     } finally {
@@ -147,13 +154,13 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Modifier le prestataire</DialogTitle>
+          <DialogTitle>{tr('Modifier le prestataire', 'Edit vendor')}</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Informations de base */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="vendor_name">Nom du prestataire *</Label>
+              <Label htmlFor="vendor_name">{tr('Nom du prestataire *', 'Vendor name *')}</Label>
               <Input
                 id="vendor_name"
                 value={formData.vendor_name}
@@ -163,26 +170,26 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="status">Statut</Label>
+              <Label htmlFor="status">{tr('Statut', 'Status')}</Label>
               <Select value={formData.status} onValueChange={(value) => setFormData(prev => ({ ...prev, status: value as VendorStatus }))}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="à contacter">À contacter</SelectItem>
-                  <SelectItem value="contactés">Contactés</SelectItem>
-                  <SelectItem value="en attente">En attente</SelectItem>
-                  <SelectItem value="réponse reçue">Réponse reçue</SelectItem>
-                  <SelectItem value="à valider">À valider</SelectItem>
-                  <SelectItem value="validé">Validé</SelectItem>
-                  <SelectItem value="annuler">Annuler</SelectItem>
+                  <SelectItem value="à contacter">{tr('À contacter', 'To contact')}</SelectItem>
+                  <SelectItem value="contactés">{tr('Contactés', 'Contacted')}</SelectItem>
+                  <SelectItem value="en attente">{tr('En attente', 'Pending')}</SelectItem>
+                  <SelectItem value="réponse reçue">{tr('Réponse reçue', 'Reply received')}</SelectItem>
+                  <SelectItem value="à valider">{tr('À valider', 'To approve')}</SelectItem>
+                  <SelectItem value="validé">{tr('Validé', 'Approved')}</SelectItem>
+                  <SelectItem value="annuler">{tr('Annulé', 'Cancelled')}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
 
           {/* Contact */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
@@ -194,7 +201,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phone">Téléphone</Label>
+              <Label htmlFor="phone">{tr('Téléphone', 'Phone')}</Label>
               <Input
                 id="phone"
                 value={formData.phone}
@@ -203,9 +210,9 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="website">Site web</Label>
+              <Label htmlFor="website">{tr('Site web', 'Website')}</Label>
               <Input
                 id="website"
                 type="url"
@@ -215,7 +222,7 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="location">Localisation</Label>
+              <Label htmlFor="location">{tr('Localisation', 'Location')}</Label>
               <Input
                 id="location"
                 value={formData.location}
@@ -224,10 +231,20 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="instagram">Instagram</Label>
+            <Input
+              id="instagram"
+              value={formData.instagram}
+              onChange={(e) => setFormData(prev => ({ ...prev, instagram: e.target.value }))}
+              placeholder={tr('@compte ou https://instagram.com/…', '@account or https://instagram.com/…')}
+            />
+          </div>
+
           {/* Budget et Feeling */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="budget">Budget estimé</Label>
+              <Label htmlFor="budget">{tr('Budget estimé', 'Estimated budget')}</Label>
               <Input
                 id="budget"
                 value={formData.budget}
@@ -237,16 +254,16 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="feeling">Feeling général</Label>
+              <Label htmlFor="feeling">{tr('Feeling général', 'Overall feeling')}</Label>
               <Select value={formData.feeling || undefined} onValueChange={(value) => setFormData(prev => ({ ...prev, feeling: value }))}>
                 <SelectTrigger>
-                  <SelectValue placeholder="Sélectionnez votre impression" />
+                  <SelectValue placeholder={tr('Sélectionnez votre impression', 'Select your impression')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="Excellent">Excellent ⭐⭐⭐⭐⭐</SelectItem>
-                  <SelectItem value="Bon">Bon ⭐⭐⭐⭐</SelectItem>
-                  <SelectItem value="Moyen">Moyen ⭐⭐⭐</SelectItem>
-                  <SelectItem value="Mauvais">Mauvais ⭐⭐</SelectItem>
+                  <SelectItem value="Bon">{tr('Bon', 'Good')} ⭐⭐⭐⭐</SelectItem>
+                  <SelectItem value="Moyen">{tr('Moyen', 'Average')} ⭐⭐⭐</SelectItem>
+                  <SelectItem value="Mauvais">{tr('Mauvais', 'Poor')} ⭐⭐</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -254,58 +271,58 @@ const EditVendorModal: React.FC<EditVendorModalProps> = ({
 
           {/* Notes */}
           <div className="space-y-2">
-            <Label htmlFor="notes">Notes générales</Label>
+            <Label htmlFor="notes">{tr('Notes générales', 'General notes')}</Label>
             <Textarea
               id="notes"
               value={formData.notes}
               onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
               rows={2}
-              placeholder="Notes générales sur le prestataire..."
+              placeholder={tr('Notes générales sur le prestataire...', 'General notes about the vendor...')}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="user_notes">Notes personnelles</Label>
+            <Label htmlFor="user_notes">{tr('Notes personnelles', 'Personal notes')}</Label>
             <Textarea
               id="user_notes"
               value={formData.user_notes}
               onChange={(e) => setFormData(prev => ({ ...prev, user_notes: e.target.value }))}
               rows={2}
-              placeholder="Vos notes et impressions détaillées..."
+              placeholder={tr('Vos notes et impressions détaillées...', 'Your detailed notes and impressions...')}
             />
           </div>
 
           {/* Points forts et faibles */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="points_forts">Points forts</Label>
+              <Label htmlFor="points_forts">{tr('Points forts', 'Strengths')}</Label>
               <Textarea
                 id="points_forts"
                 value={formData.points_forts}
                 onChange={(e) => setFormData(prev => ({ ...prev, points_forts: e.target.value }))}
                 rows={3}
-                placeholder="Ce qui vous plaît chez ce prestataire..."
+                placeholder={tr('Ce qui vous plaît chez ce prestataire...', 'What you like about this vendor...')}
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="points_faibles">Points faibles</Label>
+              <Label htmlFor="points_faibles">{tr('Points faibles', 'Weaknesses')}</Label>
               <Textarea
                 id="points_faibles"
                 value={formData.points_faibles}
                 onChange={(e) => setFormData(prev => ({ ...prev, points_faibles: e.target.value }))}
                 rows={3}
-                placeholder="Ce qui vous inquiète ou déplaît..."
+                placeholder={tr('Ce qui vous inquiète ou déplaît...', 'What worries you...')}
               />
             </div>
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {tr('Annuler', 'Cancel')}
             </Button>
             <Button type="submit" disabled={loading} className="bg-wedding-olive hover:bg-wedding-olive/90">
-              {loading ? 'Mise à jour...' : 'Mettre à jour'}
+              {loading ? tr('Mise à jour...', 'Saving...') : tr('Mettre à jour', 'Update')}
             </Button>
           </div>
         </form>
