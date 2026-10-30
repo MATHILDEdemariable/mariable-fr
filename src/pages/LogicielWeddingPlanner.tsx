@@ -1,7 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowDown, ArrowRight, Play } from "lucide-react";
+import proVideoFr from "@/assets/mariable-pro-9x16-FR-mathilde.mp4.asset.json";
+import proVideoEn from "@/assets/mariable-pro-9x16-EN-mathilde.mp4.asset.json";
 import PremiumHeader from "@/components/home/PremiumHeader";
 import Footer from "@/components/Footer";
 import SEO from "@/components/SEO";
@@ -221,6 +223,7 @@ const LogicielWeddingPlanner = () => {
   const isEnglish = i18n.language?.startsWith("en");
   const content = isEnglish ? CONTENT.en : CONTENT.fr;
   const studio = isEnglish ? STUDIO.en : STUDIO.fr;
+  const [demoLanguage, setDemoLanguage] = useState<"fr" | "en">(isEnglish ? "en" : "fr");
 
   useEffect(() => {
     if (!window.location.hash) window.scrollTo(0, 0);
@@ -263,13 +266,61 @@ const LogicielWeddingPlanner = () => {
             <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">{content.eyebrow}</p>
             <h1 className="text-4xl leading-tight md:text-6xl">{content.h1}</h1>
             <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">{content.answer}</p>
-            <Button asChild className="mt-8 min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
-              <a href="#tarifs">{content.ctaPrices} <ArrowDown className="ml-2 h-4 w-4" /></a>
-            </Button>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Button asChild className="min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
+                <a href="#demo"><Play className="mr-2 h-4 w-4" /> {isEnglish ? "Watch the demo" : "Voir la démo"}</a>
+              </Button>
+              <Button asChild variant="outline" className="min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
+                <a href="#tarifs">{content.ctaPrices} <ArrowDown className="ml-2 h-4 w-4" /></a>
+              </Button>
+            </div>
             </div>
             <figure className="relative">
               <img src={heroPlannerPhoto.url} alt={isEnglish ? "Wedding planner checking the day-of schedule on her phone at a château" : "Wedding planner consultant le planning du jour J sur son téléphone devant un château"} className="aspect-[3/4] w-full object-cover object-top" width={1440} height={1920} fetchPriority="high" />
             </figure>
+          </div>
+        </section>
+
+        <section id="demo" aria-labelledby="demo-title" className="scroll-mt-24 px-4 py-16 md:py-20">
+          <div className="mx-auto max-w-5xl">
+            <p className="text-xs font-semibold uppercase tracking-widest text-editorial-olive">{isEnglish ? "Discover · Video" : "Découverte · En vidéo"}</p>
+            <h2 id="demo-title" className="mt-3 text-3xl md:text-4xl">{isEnglish ? "Mariable Pro in action: coordination reinvented" : "Mariable Pro en action : la coordination réinventée"}</h2>
+            <div className="mt-10 grid items-start gap-10 md:grid-cols-[minmax(0,340px)_1fr]">
+              <div>
+                <div className="mb-3 flex gap-2">
+                  {(["fr", "en"] as const).map((lang) => (
+                    <button key={lang} type="button" onClick={() => setDemoLanguage(lang)}
+                      className={`min-h-[40px] flex-1 border px-3 text-xs uppercase tracking-widest ${demoLanguage === lang ? "border-editorial-noir bg-editorial-noir text-primary-foreground" : "border-border"}`}>
+                      {lang === "fr" ? "Français" : "English"}
+                    </button>
+                  ))}
+                </div>
+                <video key={demoLanguage} src={demoLanguage === "fr" ? proVideoFr.url : proVideoEn.url} controls playsInline preload="metadata" className="aspect-[9/16] w-full bg-editorial-noir object-contain" />
+              </div>
+              <div className="space-y-8">
+                {(isEnglish ? [
+                  ["01", "Centralise and coordinate the wedding timeline", "One timeline, always up to date, shared by link with every vendor — no account needed."],
+                  ["02", "Collaboration mode with your couples", "Couples fill in guests, speeches and preferences without touching your pro logistics."],
+                  ["03", "Advanced, AI-powered tools", "Budget management, seating plan, smart planning and checklist."],
+                ] : [
+                  ["01", "Mariable centralise et coordonne le déroulé des mariages", "Un déroulé unique toujours à jour, partagé par lien avec chaque prestataire, sans compte à créer."],
+                  ["02", "Mode collaboration avec les couples", "Les mariés renseignent invités, discours et préférences sans toucher à votre logistique pro."],
+                  ["03", "Outils avancés et boostés à l'IA", "Gestion du budget, plan de table, rétroplanning et checklist."],
+                ]).map(([number, heading, copy]) => (
+                  <article key={number} className="border-l border-editorial-olive pl-5">
+                    <p className="text-xs tracking-widest text-editorial-olive">{number}</p>
+                    <h3 className="mt-1 font-serif text-xl">{heading}</h3>
+                    <p className="mt-2 text-editorial-noir/75">{copy}</p>
+                  </article>
+                ))}
+                <div className="flex flex-wrap items-center gap-4">
+                  <Button asChild className="min-h-12 rounded-none bg-editorial-olive px-7 text-primary-foreground hover:bg-editorial-noir">
+                    <Link to="/register-gratuit?type=pro">{isEnglish ? "Try free for 2 months" : "Essayer gratuitement 2 mois"}</Link>
+                  </Button>
+                  <a href="#tarifs" className="text-sm underline underline-offset-4">{isEnglish ? "See pricing ↓" : "Voir les tarifs ↓"}</a>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
 

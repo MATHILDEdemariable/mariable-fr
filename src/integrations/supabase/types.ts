@@ -3629,6 +3629,7 @@ export type Database = {
           feeling: string | null
           first_date_rdv: string | null
           id: string
+          instagram: string | null
           key_prestataire: string | null
           location: string | null
           notes: string | null
@@ -3661,6 +3662,7 @@ export type Database = {
           feeling?: string | null
           first_date_rdv?: string | null
           id?: string
+          instagram?: string | null
           key_prestataire?: string | null
           location?: string | null
           notes?: string | null
@@ -3693,6 +3695,7 @@ export type Database = {
           feeling?: string | null
           first_date_rdv?: string | null
           id?: string
+          instagram?: string | null
           key_prestataire?: string | null
           location?: string | null
           notes?: string | null

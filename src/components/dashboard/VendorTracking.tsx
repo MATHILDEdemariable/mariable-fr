@@ -32,7 +32,9 @@ import {
   Edit,
   Download,
   Play,
-  FileText
+  FileText,
+  Globe,
+  Instagram
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
@@ -64,6 +66,7 @@ interface Vendor {
   email?: string | null;
   phone?: string | null;
   website?: string | null;
+  instagram?: string | null;
   source?: string;
   budget?: string | null;
   user_notes?: string | null;
@@ -94,6 +97,27 @@ const statusIconMap: Record<VendorStatus, React.ReactNode> = {
 
 type VendorTrackingProps = {
   project_id?: string;
+};
+
+const toExternalUrl = (value: string) => (/^https?:\/\//i.test(value) ? value : `https://${value}`);
+const toInstagramUrl = (value: string) => (/^https?:\/\//i.test(value) || value.includes('instagram.com') ? toExternalUrl(value) : `https://instagram.com/${value.replace(/^@/, '')}`);
+
+const VendorLinks = ({ vendor, label }: { vendor: Vendor; label: string }) => {
+  if (!vendor.website && !vendor.instagram) return null;
+  return (
+    <div className="mt-1 flex flex-wrap gap-3 text-xs">
+      {vendor.website && (
+        <a href={toExternalUrl(vendor.website)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-wedding-olive hover:underline">
+          <Globe className="h-3.5 w-3.5" /> {label}
+        </a>
+      )}
+      {vendor.instagram && (
+        <a href={toInstagramUrl(vendor.instagram)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-wedding-olive hover:underline">
+          <Instagram className="h-3.5 w-3.5" /> Instagram
+        </a>
+      )}
+    </div>
+  );
 };
 
 const VendorTracking = ({ project_id }: VendorTrackingProps) => {
@@ -552,6 +576,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex-1">
                           <h3 className="font-medium text-lg">{vendor.vendor_name}</h3>
+                          <VendorLinks vendor={vendor} label={tr("Site web", "Website")} />
                           <div className="flex gap-2 mt-1">
                             <Badge variant="outline" className="text-xs">{vendor.category}</Badge>
                             <Badge 
@@ -749,6 +774,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           <div className="font-medium truncate" title={vendor.vendor_name}>
                             {vendor.vendor_name}
                           </div>
+                          <VendorLinks vendor={vendor} label={tr("Site web", "Website")} />
                           {vendor.source === 'personal' && (
                             <div className="mt-1 space-y-1 text-xs text-muted-foreground">
                               {vendor.email && (
