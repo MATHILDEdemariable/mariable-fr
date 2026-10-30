@@ -1,0 +1,1 @@
+ALTER TABLE public.vendors_tracking_preprod ADD COLUMN IF NOT EXISTS instagram text;
