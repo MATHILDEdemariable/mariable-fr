@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Calendar as CalendarIcon, Loader2, Save, Download, Sparkles, ChevronLeft, ChevronRight, ExternalLink, Link2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Calendar } from '@/components/ui/calendar';
@@ -66,6 +66,22 @@ const WeddingRetroplanning = () => {
   const [retroplanning, setRetroplanning] = useState<RetroPlanningData | null>(null);
   const [checkedTasks, setCheckedTasks] = useState<Set<string>>(new Set());
   const [checkedMilestones, setCheckedMilestones] = useState<Set<string>>(new Set());
+  const [taskLinks, setTaskLinks] = useState<Record<string, string>>({});
+
+  const editTaskLink = (taskId: string) => {
+    const input = window.prompt('Lien (prestataire, Google Drive, Pinterest…) — laisser vide pour supprimer', taskLinks[taskId] || '');
+    if (input === null) return;
+    const url = input.trim();
+    if (url && !/^https?:\/\//i.test(url)) {
+      setTaskLinks(prev => ({ ...prev, [taskId]: `https://${url}` }));
+      return;
+    }
+    setTaskLinks(prev => {
+      const next = { ...prev };
+      if (url) next[taskId] = url; else delete next[taskId];
+      return next;
+    });
+  };
   const [loadedRetroplanningId, setLoadedRetroplanningId] = useState<string | null>(null);
   const [selectedPeriodIndex, setSelectedPeriodIndex] = useState(0);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
@@ -188,8 +204,11 @@ const WeddingRetroplanning = () => {
           if (data.progress && typeof data.progress === 'object') {
             const tasksSet = new Set<string>();
             const milestonesSet = new Set<string>();
-            Object.entries(data.progress as Record<string, boolean>).forEach(([key, value]) => {
-              if (value) {
+            const linksMap: Record<string, string> = {};
+            Object.entries(data.progress as Record<string, boolean | string>).forEach(([key, value]) => {
+              if (key.startsWith('link:')) {
+                if (typeof value === 'string') linksMap[key.slice(5)] = value;
+              } else if (value) {
                 if (key.startsWith('milestone-')) {
                   milestonesSet.add(key);
                 } else {
@@ -199,6 +218,7 @@ const WeddingRetroplanning = () => {
             });
             setCheckedTasks(tasksSet);
             setCheckedMilestones(milestonesSet);
+            setTaskLinks(linksMap);
           }
 
           toast({
@@ -268,12 +288,15 @@ const WeddingRetroplanning = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Créez un compte pour sauvegarder votre rétroplanning');
 
-      const progressObj: Record<string, boolean> = {};
+      const progressObj: Record<string, boolean | string> = {};
       checkedTasks.forEach(taskId => {
         progressObj[taskId] = true;
       });
       checkedMilestones.forEach(milestoneId => {
         progressObj[milestoneId] = true;
+      });
+      Object.entries(taskLinks).forEach(([taskId, url]) => {
+        if (url) progressObj[`link:${taskId}`] = url;
       });
 
       if (loadedRetroplanningId) {
@@ -652,9 +675,17 @@ const WeddingRetroplanning = () => {
                               checked={checkedTasks.has(taskId)}
                               onCheckedChange={() => toggleTask(taskId)}
                             />
-                            <span className={checkedTasks.has(taskId) ? 'line-through text-muted-foreground' : ''}>
+                            <span className={`flex-1 ${checkedTasks.has(taskId) ? 'line-through text-muted-foreground' : ''}`}>
                               {task}
                             </span>
+                            {taskLinks[taskId] && (
+                              <a href={taskLinks[taskId]} target="_blank" rel="noopener noreferrer" aria-label="Ouvrir le lien" className="text-wedding-olive hover:opacity-70 p-1">
+                                <ExternalLink className="h-4 w-4" />
+                              </a>
+                            )}
+                            <button type="button" onClick={() => editTaskLink(taskId)} aria-label="Ajouter ou modifier un lien" className="text-muted-foreground hover:text-foreground p-1">
+                              <Link2 className="h-4 w-4" />
+                            </button>
                           </div>
                         ))}
                       </div>
