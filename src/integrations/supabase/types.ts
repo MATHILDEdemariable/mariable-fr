@@ -2648,6 +2648,7 @@ export type Database = {
           notify_club_mariable: boolean | null
           phone: string | null
           preferred_language: string
+          pro_trial_reminders: Json
           referral_source: string | null
           registration_purpose: string | null
           stripe_customer_id: string | null
@@ -2670,6 +2671,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           preferred_language?: string
+          pro_trial_reminders?: Json
           referral_source?: string | null
           registration_purpose?: string | null
           stripe_customer_id?: string | null
@@ -2692,6 +2694,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           preferred_language?: string
+          pro_trial_reminders?: Json
           referral_source?: string | null
           registration_purpose?: string | null
           stripe_customer_id?: string | null

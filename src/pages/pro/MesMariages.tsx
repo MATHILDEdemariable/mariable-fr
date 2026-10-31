@@ -22,6 +22,7 @@ import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
+import ProTrialGate from '@/components/pro/ProTrialGate';
 
 interface ProProfileForm {
   first_name: string;
@@ -227,6 +228,7 @@ const MesMariages: React.FC = () => {
         <meta name="description" content={t('meta.description')} />
       </Helmet>
 
+      <ProTrialGate>
       <div className="max-w-5xl mx-auto space-y-8">
         {/* En-tête éditorial */}
         <header id="aujourdhui" className="relative overflow-hidden min-h-[300px] flex items-end scroll-mt-32">
@@ -482,6 +484,7 @@ const MesMariages: React.FC = () => {
           </Tabs>
         </section>
       </div>
+      </ProTrialGate>
 
       {/* L'offre Mariable Pro s'ouvre ici, sans quitter l'espace pro */}
       <Dialog open={offerOpen} onOpenChange={setOfferOpen}>

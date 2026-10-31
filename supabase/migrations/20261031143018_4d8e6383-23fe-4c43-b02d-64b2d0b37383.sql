@@ -1,0 +1,1 @@
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS pro_trial_reminders jsonb NOT NULL DEFAULT '{}'::jsonb;
