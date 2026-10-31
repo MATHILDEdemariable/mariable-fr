@@ -484,6 +484,7 @@ const MesMariages: React.FC = () => {
           </Tabs>
         </section>
       </div>
+      </ProTrialGate>
 
       {/* L'offre Mariable Pro s'ouvre ici, sans quitter l'espace pro */}
       <Dialog open={offerOpen} onOpenChange={setOfferOpen}>
