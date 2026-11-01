@@ -21,7 +21,7 @@ const TEXT = {
     onQuote: "Sur devis",
     subscribe: "Souscrire",
     renewal: "Abonnement annuel, renouvelé à date anniversaire de votre souscription. Jusqu'à 30 mariages par an inclus ; au-delà, contactez-nous pour une offre agence sur mesure. Offert avec chaque formule : votre référencement dans la sélection des prestataires Mariable.",
-    trial: "Offre gratuite : 1 mariage pendant 2 mois pour essayer, sans engagement.",
+    trial: "Offre gratuite : 1 mariage pendant 1 mois pour essayer, sans engagement.",
     trialCta: "Démarrer l'essai gratuit",
     scope: "Mariable Pro est un outil de gestion d'événement : déroulé du jour J, coordination des prestataires, relation avec les mariés, rétroplanning et logistique.",
     plans: {
@@ -44,7 +44,7 @@ const TEXT = {
     onQuote: "On quote",
     subscribe: "Subscribe",
     renewal: "Yearly subscription, renewed on the anniversary of your sign-up date. Up to 30 weddings per year included; beyond that, contact us for a custom agency plan. Included with every plan: your listing in the Mariable vendor selection.",
-    trial: "Free offer: 1 wedding for 2 months to try it, no commitment.",
+    trial: "Free offer: 1 wedding for 1 month to try it, no commitment.",
     trialCta: "Start the free trial",
     scope: "",
     plans: {

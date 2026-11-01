@@ -7,7 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useUserProfile } from '@/hooks/useUserProfile';
 import { getProTrialDaysLeft } from '@/lib/proTrial';
 
-/** Grise l'espace pro quand l'essai de 2 mois est terminé sans abonnement Pro. Les données restent intactes. */
+/** Grise l'espace pro quand l'essai d'1 mois est terminé sans abonnement Pro. Les données restent intactes. */
 const ProTrialGate = ({ children }: { children: React.ReactNode }) => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith('en');
@@ -50,7 +50,7 @@ const ProTrialGate = ({ children }: { children: React.ReactNode }) => {
           <p className="text-sm leading-relaxed">
             {isEnglish
               ? 'Your 2-month trial has ended. Your data is safely kept. Choose a Pro plan (149 € or 259 €/year) to unlock your weddings.'
-              : "Votre période d'essai de 2 mois a pris fin. Vos données sont conservées en toute sécurité. Choisissez votre formule Pro (149 € ou 259 €/an) pour réactiver vos mariages."}
+              : "Votre période d'essai d'1 mois a pris fin. Vos données sont conservées en toute sécurité. Choisissez votre formule Pro (149 € ou 259 €/an) pour réactiver vos mariages."}
           </p>
         </div>
         <Button asChild className="rounded-none shrink-0"><a href={pricingUrl}>{isEnglish ? 'Unlock my account' : 'Débloquer mon compte'}</a></Button>

@@ -200,14 +200,14 @@
         "frequency": "par an",
         "description": "Le logiciel de gestion des wedding planners et coordinatrices.",
         "features": [
-          "2 mois d'essai gratuit sur un projet client complet",
+          "1 mois d'essai gratuit sur un projet client complet",
           "Deux formules : Jour J (149 €) ou Organisation complète (259 €)",
           "Espace collaboratif partagé avec vos couples"
         ],
-        "cta": "Tester Pro gratuitement (2 mois)",
+        "cta": "Tester Pro gratuitement (1 mois)",
         "href": "/pro-solutions",
         "priceOld": "À partir de",
-        "badge": "2 mois offerts sur 1 mariage",
+        "badge": "1 mois offert sur 1 mariage",
         "tag": "Professionnels"
       }
     ]
