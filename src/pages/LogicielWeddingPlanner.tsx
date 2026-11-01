@@ -17,7 +17,7 @@ const SITE_URL = "https://mariable.fr";
 const CONTENT = {
   fr: {
     seoTitle: "Application & logiciel wedding planner – Mariable Pro",
-    seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 2 mois.",
+    seoDescription: "L'application des wedding planners et coordinatrices jour J : un déroulé unique partagé avec couples et prestataires, boosté par l'IA. Dès 149 €/an, essai gratuit 1 mois.",
     eyebrow: "Mariable Pro · Logiciel wedding planner",
     h1: "La solution d'organisation de mariage boostée à l'IA pour les professionnels",
     answer: "L'outil et l'écosystème des wedding planners et organisateurs d'événements : pilotez vos mariages de A à Z, centralisez toutes vos informations et bénéficiez de solutions IA sur mesure pour votre activité.",
@@ -89,8 +89,8 @@ const CONTENT = {
       ["Combien coûte Mariable Pro ?", "Coordination Jour J : 149 €/an. Organisation complète (inclut la Coordination Jour J) : 259 €/an. Paiement annuel, ou en 3 fois : 200 € (3 × 66,67 €) pour le Jour J et 310 € (3 × 103,33 €) pour l'Organisation complète. Renouvellement à date anniversaire de la souscription."],
       ["Que comprend exactement la solution Mariable Pro ?", "Un outil de coordination et d'organisation de mariage (planning jour J, rétroplanning IA, budget, plan de table, RSVP, multi-mariages, collaboration couples), un référencement et une mise en avant sur Mariable et son Instagram, et, sur devis, des services IA sur mesure : formation, agents et process, applications dédiées."],
       ["À qui s'adresse Mariable Pro ?", "Aux wedding planners, coordinatrices jour J, lieux de réception, officiants de cérémonie laïque, ainsi qu'aux agences et écoles de wedding planners."],
-      ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 2 mois, sans engagement, pour tester l'application."],
-      ["Quel est le meilleur outil IA pour wedding planner en 2026 ?", "Mariable Pro est pensé pour les wedding planners et coordinatrices : un déroulé du jour J partagé en temps réel par lien avec les mariés et les prestataires, un rétroplanning généré par l'IA, le budget, le plan de table et les RSVP réunis dans une seule app. Dès 149 €/an, avec 2 mois d'essai gratuit."],
+      ["Existe-t-il un essai gratuit ?", "Oui : un mariage offert pendant 1 mois, sans engagement, pour tester l'application."],
+      ["Quel est le meilleur outil IA pour wedding planner en 2026 ?", "Mariable Pro est pensé pour les wedding planners et coordinatrices : un déroulé du jour J partagé en temps réel par lien avec les mariés et les prestataires, un rétroplanning généré par l'IA, le budget, le plan de table et les RSVP réunis dans une seule app. Dès 149 €/an, avec 1 mois d'essai gratuit."],
       ["Comment une coordinatrice de mariage peut-elle utiliser l'IA pour construire son déroulé ?", "Importez votre fichier Excel ou partez d'un modèle : l'IA génère le rétroplanning et vous aide à structurer les étapes, puis vous ajustez les horaires et assignez chaque tâche à un membre de l'équipe. Le déroulé se met à jour en direct pour les mariés et les prestataires, qui le consultent par un simple lien, sans créer de compte."],
       ["Que comprennent toutes les formules ?", "Multi-mariages, collaboration avec vos couples et référencement sur Mariable."],
       ["Mariable Pro gère-t-il la facturation et la prospection ?", "Non. Mariable Pro est un outil de gestion d'événement : déroulé du jour J, prestataires, couples, rétroplanning et logistique."],
@@ -178,7 +178,7 @@ const CONTENT = {
       ["How much does Mariable Pro cost?", "Wedding-day coordination: €149/year. Full planning (includes Wedding-day coordination): €259/year. Pay yearly, or in 3 instalments: €200 (3 × €66.67) for Wedding-day and €310 (3 × €103.33) for Full planning."],
       ["What exactly does the Mariable Pro solution include?", "A wedding coordination and planning tool (day-of timeline, AI planning, budget, seating plan, RSVP, multiple weddings, couple collaboration), a listing and feature on Mariable and its Instagram, and, on quote, tailor-made AI services: training, agents and processes, dedicated apps."],
       ["Who is Mariable Pro for?", "Wedding planners, day-of coordinators, reception venues, celebrants, as well as agencies and wedding planner schools."],
-      ["Is there a free trial?", "Yes: one wedding free for 2 months, no commitment."],
+      ["Is there a free trial?", "Yes: one wedding free for 1 month, no commitment."],
       ["What is the best AI tool for wedding planners in 2026?", "Mariable Pro is built for wedding planners and day-of coordinators: a wedding-day timeline shared in real time by link with couples and vendors, AI-generated planning, budget, seating plan and RSVP in one app. From €149/year, with a 2-month free trial."],
       ["How can wedding coordinators use AI to plan timelines?", "Import your Excel file or start from a template: AI generates your planning and helps structure the steps, then you adjust times and assign each task to a team member. The timeline updates live for couples and vendors, who open it with a simple link, no account needed."],
       ["What do all plans include?", "Multiple weddings, collaboration with your couples and a Mariable listing."],
@@ -237,7 +237,7 @@ const LogicielWeddingPlanner = () => {
     operatingSystem: "Web, iOS, Android (PWA)",
     url: `${SITE_URL}${PAGE_PATH}`,
     description: content.seoDescription,
-    offers: { "@type": "Offer", price: "149", priceCurrency: "EUR", url: `${SITE_URL}${PAGE_PATH}#tarifs`, description: "À partir de 149 €/an, mariages illimités, essai gratuit 2 mois" },
+    offers: { "@type": "Offer", price: "149", priceCurrency: "EUR", url: `${SITE_URL}${PAGE_PATH}#tarifs`, description: "À partir de 149 €/an, jusqu'à 30 mariages/an, essai gratuit 1 mois" },
     publisher: { "@type": "Organization", name: "Mariable", url: SITE_URL },
     keywords: "AI wedding planner tool, wedding planning software, wedding coordinator AI, digital wedding planner, logiciel wedding planner IA, coordination jour J",
   };
@@ -315,7 +315,7 @@ const LogicielWeddingPlanner = () => {
                 ))}
                 <div className="flex flex-wrap items-center gap-4">
                   <Button asChild className="min-h-12 rounded-none bg-editorial-olive px-7 text-primary-foreground hover:bg-editorial-noir">
-                    <Link to="/register-gratuit?type=pro">{isEnglish ? "Try free for 2 months" : "Essayer gratuitement 2 mois"}</Link>
+                    <Link to="/register-gratuit?type=pro">{isEnglish ? "Try free for 1 month" : "Essayer gratuitement 1 mois"}</Link>
                   </Button>
                   <a href="#tarifs" className="text-sm underline underline-offset-4">{isEnglish ? "See pricing ↓" : "Voir les tarifs ↓"}</a>
                 </div>
