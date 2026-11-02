@@ -1,14 +1,16 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 
-// Rappel quotidien des acomptes arrivant à échéance (J-3 et jour J), envoyé au propriétaire et aux collaborateurs du mariage.
+// Rappel quotidien (9 h Paris) des acomptes arrivant à échéance le jour même, envoyé au propriétaire et aux collaborateurs du mariage.
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   try {
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const resendKey = Deno.env.get('RESEND');
-    const today = new Date();
-    const inThreeDays = new Date(today.getTime() + 3 * 86400000).toISOString().slice(0, 10);
+    // Cron lancé à 7 h et 8 h UTC : on n'envoie qu'à 9 h heure de Paris (été comme hiver)
+    const parisHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(new Date()));
+    if (parisHour !== 9) return new Response(JSON.stringify({ skipped: true, parisHour }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    const todayParis = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date());
 
     const { data: rows, error } = await supabase
       .from('budgets_detail')
@@ -16,7 +18,7 @@ Deno.serve(async (req) => {
       .not('payment_schedule', 'eq', '{}');
     if (error) throw error;
 
-    const byRecipientGroup = new Map<string, { emails: Set<string>; lines: string[] }>();
+    const byRecipientGroup = new Map<string, { emails: Set<string>; lines: string[]; notifyCouple: boolean }>();
     const updates: { id: string; schedule: any }[] = [];
 
     for (const row of rows || []) {
@@ -27,9 +29,10 @@ Deno.serve(async (req) => {
       const paid = installments.filter((i) => i.paid).reduce((s, i) => s + (Number(i.amount) || 0), 0);
       installments.forEach((inst, index) => {
         if (!inst.reminder || inst.paid || inst.reminder_sent || !inst.due_date) return;
-        if (inst.due_date > inThreeDays) return;
+        if (inst.due_date > todayParis) return;
         const key = row.wedding_id || row.user_id;
-        if (!byRecipientGroup.has(key)) byRecipientGroup.set(key, { emails: new Set(), lines: [] });
+        if (!byRecipientGroup.has(key)) byRecipientGroup.set(key, { emails: new Set(), lines: [], notifyCouple: false });
+        if (inst.notify_couple !== false) byRecipientGroup.get(key)!.notifyCouple = true;
         byRecipientGroup.get(key)!.lines.push(
           `<li><strong>${row.item_name || row.category_name}</strong> — acompte n°${index + 1} : ${Number(inst.amount || 0).toFixed(2)} € à régler le ${inst.due_date} (reste à payer : ${(total - paid).toFixed(2)} €)</li>`,
         );
@@ -45,7 +48,7 @@ Deno.serve(async (req) => {
       const ownerId = wedding?.owner_id || key;
       const { data: owner } = await supabase.auth.admin.getUserById(ownerId);
       if (owner?.user?.email) group.emails.add(owner.user.email);
-      const { data: collaborators } = await supabase.from('wedding_collaborators').select('invited_email').eq('wedding_id', key).eq('status', 'accepted');
+      const { data: collaborators } = !group.notifyCouple ? { data: [] } : await supabase.from('wedding_collaborators').select('invited_email').eq('wedding_id', key).eq('status', 'accepted');
       (collaborators || []).forEach((c: any) => c.invited_email && group.emails.add(c.invited_email));
       if (!resendKey || group.emails.size === 0) continue;
       const html = `<div style="font-family:Georgia,serif;background:#F8F5EF;padding:24px;color:#1a1a1a">

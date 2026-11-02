@@ -20,6 +20,7 @@ import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import { CATALOG_TO_BUDGET_CATEGORY } from '@/data/constants';
 import PaymentScheduleDialog, { paidFromSchedule, type PaymentSchedule } from '@/components/dashboard/budget/PaymentScheduleDialog';
 import { CalendarClock } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import ImportFromCatalogDialog, { type CatalogImportSelection } from '@/components/dashboard/catalog/ImportFromCatalogDialog';
 
 // Type for budget category
@@ -471,7 +472,10 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
   });
 
   // Export budget to PDF (Premium only)
-  const handleExportPDF = async () => {
+  // Cautions (chèques non débités) : affichées à part, jamais comptées dans le budget
+  const totalSecurityDeposit = categories.reduce((sum, category) => sum + category.items.reduce((itemSum, item) => itemSum + (Number(item.payment_schedule?.security_deposit) || 0), 0), 0);
+
+  const handleExportPDF = async (pdfMode: 'actual' | 'estimated' = 'actual') => {
     if (!isPremium) {
       executeAction(() => {});
       return;
@@ -499,7 +503,9 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
         totalEstimated,
         totalActual,
         totalDeposit,
-        totalRemaining
+        totalRemaining,
+        mode: pdfMode,
+        totalSecurityDeposit
       });
 
       if (success) {
@@ -993,9 +999,10 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
             )}
           </Button>
           
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
           <Button 
-            onClick={handleExportPDF}
-            variant="outline"
+                        variant="outline"
             size="sm"
             className="bg-wedding-olive/10 hover:bg-wedding-olive/20 text-wedding-olive text-xs sm:text-sm"
             disabled={isExporting}
@@ -1012,6 +1019,12 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
               </span>
             )}
           </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="rounded-none">
+              <DropdownMenuItem onClick={() => handleExportPDF('actual')}>{isEnglishBudget ? 'Actual budget (committed costs)' : 'Budget réel (dépenses engagées)'}</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleExportPDF('estimated')}>{isEnglishBudget ? 'Estimated budget' : 'Budget prévisionnel (estimations)'}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <Button 
             onClick={handleExportCSV}
@@ -1208,6 +1221,13 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
                 <td className="px-4 py-3"></td>
                 <td className="px-4 py-3"></td>
               </tr>
+              {totalSecurityDeposit > 0 && (
+                <tr className="border-t text-sm">
+                  <td className="px-4 py-3 font-medium" colSpan={5}>{isEnglishBudget ? 'Security deposits committed (not cashed, outside budget)' : 'Total des cautions engagées (non débitées, hors budget)'}</td>
+                  <td className="px-4 py-3 text-right font-semibold">{totalSecurityDeposit.toFixed(2)}</td>
+                  <td className="px-4 py-3" colSpan={3}></td>
+                </tr>
+              )}
               {/* Wedding planner (fixe ou commission) */}
               <tr className="border-t bg-wedding-cream/20">
                 <td className="px-4 py-3 font-medium">Wedding planner</td>

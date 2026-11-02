@@ -7,8 +7,8 @@ import { Switch } from '@/components/ui/switch';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Plus, Trash2, Mail } from 'lucide-react';
 
-export interface Installment { amount: number; due_date: string; paid: boolean; reminder: boolean; reminder_sent?: boolean }
-export interface PaymentSchedule { installments?: Installment[]; cash_day?: number }
+export interface Installment { amount: number; due_date: string; paid: boolean; reminder: boolean; reminder_sent?: boolean; notify_couple?: boolean }
+export interface PaymentSchedule { installments?: Installment[]; cash_day?: number; security_deposit?: number }
 
 export const MAX_INSTALLMENTS = 3;
 
@@ -31,11 +31,13 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
   const tr = (fr: string, en: string) => (isEnglish ? en : fr);
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [cashDay, setCashDay] = useState(0);
+  const [securityDeposit, setSecurityDeposit] = useState(0);
 
   useEffect(() => {
     if (!open) return;
     setInstallments(schedule.installments?.length ? schedule.installments.map((i) => ({ ...i })) : [{ amount: 0, due_date: '', paid: false, reminder: false }]);
     setCashDay(Number(schedule.cash_day) || 0);
+    setSecurityDeposit(Number(schedule.security_deposit) || 0);
   }, [open, schedule]);
 
   const paid = installments.filter((i) => i.paid).reduce((s, i) => s + (Number(i.amount) || 0), 0);
@@ -79,6 +81,12 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
                   {tr('Me relancer par mail', 'Email reminder')}
                   <Switch checked={inst.reminder} disabled={disabled || !inst.due_date} onCheckedChange={(v) => update(index, { reminder: v })} />
                 </label>
+                {inst.reminder && (
+                  <label className="flex items-center gap-2 text-sm">
+                    <Checkbox checked={inst.notify_couple !== false} disabled={disabled} onCheckedChange={(v) => update(index, { notify_couple: !!v })} />
+                    {tr('Inclure les mariés / invités du mariage', 'Include the couple / invited collaborators')}
+                  </label>
+                )}
                 <Button variant="ghost" size="icon" aria-label={tr('Supprimer l’acompte', 'Remove deposit')} disabled={disabled}
                   onClick={() => setInstallments((prev) => prev.filter((_, i) => i !== index))}>
                   <Trash2 className="h-4 w-4" />
@@ -91,7 +99,7 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
               <Plus className="h-4 w-4 mr-2" /> {tr('Ajouter un acompte', 'Add a deposit')}
             </Button>
           )}
-          <p className="text-xs text-muted-foreground">{tr('Le rappel est envoyé 3 jours avant l’échéance au wedding planner et aux mariés si le mariage est partagé.', 'The reminder is emailed 3 days before the due date to the planner and the couple if the wedding is shared.')}</p>
+          <p className="text-xs text-muted-foreground">{tr('Le rappel est envoyé le jour de l’échéance à 9 h, à vous et, si coché, aux personnes invitées sur le mariage.', 'The reminder is emailed on the due date at 9 am, to you and, if ticked, to people invited on the wedding.')}</p>
         </div>
 
         <div className="border-t border-border pt-3 space-y-2 text-sm">
@@ -107,10 +115,17 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
           </div>
         </div>
 
+        <div className="border-t border-border pt-3">
+          <Label htmlFor="security-deposit" className="text-xs">{tr('Caution / dépôt de garantie (€) — chèque non débité', 'Security deposit (€) — cheque not cashed')}</Label>
+          <Input id="security-deposit" type="number" min={0} step="0.01" value={securityDeposit || ''} disabled={disabled}
+            onChange={(e) => setSecurityDeposit(Number(e.target.value) || 0)} className="h-10 text-base" />
+          <p className="mt-1 text-xs text-muted-foreground">{tr('Non comptée dans le budget.', 'Not counted in the budget.')}</p>
+        </div>
+
         <DialogFooter>
           <Button variant="outline" className="rounded-none" onClick={() => onOpenChange(false)}>{tr('Annuler', 'Cancel')}</Button>
           <Button className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90" disabled={disabled}
-            onClick={() => { onSave({ installments: installments.filter((i) => i.amount || i.due_date), cash_day: cash }); onOpenChange(false); }}>
+            onClick={() => { onSave({ installments: installments.filter((i) => i.amount || i.due_date), cash_day: cash, security_deposit: securityDeposit }); onOpenChange(false); }}>
             {tr('Enregistrer', 'Save')}
           </Button>
         </DialogFooter>
