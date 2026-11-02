@@ -7,6 +7,9 @@ Deno.serve(async (req) => {
   try {
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const resendKey = Deno.env.get('RESEND');
+    // Cron lancé à 7 h et 8 h UTC : on n'envoie qu'à 9 h heure de Paris (été comme hiver)
+    const parisHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(new Date()));
+    if (parisHour !== 9) return new Response(JSON.stringify({ skipped: true, parisHour }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     const todayParis = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date());
 
     const { data: rows, error } = await supabase
