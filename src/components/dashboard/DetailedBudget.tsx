@@ -1223,9 +1223,9 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
               </tr>
               {totalSecurityDeposit > 0 && (
                 <tr className="border-t text-sm">
-                  <td className="px-4 py-3 font-medium" colSpan={6}>{isEnglishBudget ? 'Security deposits committed (not cashed, outside budget)' : 'Total des cautions engagées (non débitées, hors budget)'}</td>
+                  <td className="px-4 py-3 font-medium" colSpan={5}>{isEnglishBudget ? 'Security deposits committed (not cashed, outside budget)' : 'Total des cautions engagées (non débitées, hors budget)'}</td>
                   <td className="px-4 py-3 text-right font-semibold">{totalSecurityDeposit.toFixed(2)}</td>
-                  <td className="px-4 py-3" colSpan={2}></td>
+                  <td className="px-4 py-3" colSpan={3}></td>
                 </tr>
               )}
               {/* Wedding planner (fixe ou commission) */}
