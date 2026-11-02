@@ -472,6 +472,9 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
   });
 
   // Export budget to PDF (Premium only)
+  // Cautions (chèques non débités) : affichées à part, jamais comptées dans le budget
+  const totalSecurityDeposit = categories.reduce((sum, category) => sum + category.items.reduce((itemSum, item) => itemSum + (Number(item.payment_schedule?.security_deposit) || 0), 0), 0);
+
   const handleExportPDF = async (pdfMode: 'actual' | 'estimated' = 'actual') => {
     if (!isPremium) {
       executeAction(() => {});
