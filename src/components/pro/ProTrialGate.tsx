@@ -49,8 +49,8 @@ const ProTrialGate = ({ children }: { children: React.ReactNode }) => {
           <Lock className="h-5 w-5 mt-0.5 shrink-0" aria-hidden="true" />
           <p className="text-sm leading-relaxed">
             {isEnglish
-              ? 'Your 2-month trial has ended. Your data is safely kept. Choose a Pro plan (149 € or 259 €/year) to unlock your weddings.'
-              : "Votre période d'essai d'1 mois a pris fin. Vos données sont conservées en toute sécurité. Choisissez votre formule Pro (149 € ou 259 €/an) pour réactiver vos mariages."}
+              ? 'Your 1-month trial has ended. Your data is safely kept. Choose a Pro plan (from €16/month or €149/year) to unlock your weddings.'
+              : "Votre période d'essai d'1 mois a pris fin. Vos données sont conservées en toute sécurité. Choisissez votre formule Pro (dès 16 €/mois ou 149 €/an) pour réactiver vos mariages."}
           </p>
         </div>
         <Button asChild className="rounded-none shrink-0"><a href={pricingUrl}>{isEnglish ? 'Unlock my account' : 'Débloquer mon compte'}</a></Button>
