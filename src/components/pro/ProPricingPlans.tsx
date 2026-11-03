@@ -1,4 +1,7 @@
 import { Fragment, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 import { Link } from "react-router-dom";
 import ContactProModal from "@/components/partenariat/ContactProModal";
 import { ArrowRight, Check, Minus, X } from "lucide-react";
@@ -13,15 +16,18 @@ const TEXT = {
     title: "Les formules Mariable Pro",
     intro: "Un outil de gestion d'événement pensé pour les wedding planners : la coordination du jour J, ou toute l'organisation en amont avec vos couples.",
     annual: "Paiement annuel",
-    threeTimes: "Paiement en 3 fois",
+    threeTimes: "Abonnement mensuel",
+    perMonth: "/mois",
+    noCommitment: "Sans engagement, résiliable à tout moment",
+    annualSaving: (value: string, months: string) => `soit ${value} €/mois · ${months} mois offerts`,
     perYear: "/an",
     total: "au total",
     monthly: (value: string) => `soit ${value} €/mois sur 12 mois`,
     instalments: (value: string) => `3 × ${value} €`,
     onQuote: "Sur devis",
     subscribe: "Souscrire",
-    renewal: "Abonnement annuel, renouvelé à date anniversaire de votre souscription. Jusqu'à 30 mariages par an inclus ; au-delà, contactez-nous pour une offre agence sur mesure. Offert avec chaque formule : votre référencement dans la sélection des prestataires Mariable.",
-    trial: "Offre gratuite : 1 mariage pendant 1 mois pour essayer, sans engagement.",
+    renewal: "Abonnement annuel renouvelé à date anniversaire, ou mensuel sans engagement. Jusqu'à 30 mariages par an inclus ; au-delà, contactez-nous pour une offre agence sur mesure. Offert avec chaque formule : votre référencement dans la sélection des prestataires Mariable.",
+    trial: "1 mois d'essai gratuit avec accès complet, sans carte bancaire.",
     trialCta: "Démarrer l'essai gratuit",
     scope: "Mariable Pro est un outil de gestion d'événement : déroulé du jour J, coordination des prestataires, relation avec les mariés, rétroplanning et logistique.",
     plans: {
@@ -36,15 +42,18 @@ const TEXT = {
     title: "Mariable Pro plans",
     intro: "An event management tool built for wedding planners: wedding-day coordination, or the full upstream planning with your couples.",
     annual: "Yearly payment",
-    threeTimes: "Pay in 3 instalments",
+    threeTimes: "Monthly subscription",
+    perMonth: "/month",
+    noCommitment: "No commitment, cancel anytime",
+    annualSaving: (value: string, months: string) => `i.e. €${value}/month · ${months} months free`,
     perYear: "/year",
     total: "in total",
     monthly: (value: string) => `i.e. €${value}/month over 12 months`,
     instalments: (value: string) => `3 × €${value}`,
     onQuote: "On quote",
     subscribe: "Subscribe",
-    renewal: "Yearly subscription, renewed on the anniversary of your sign-up date. Up to 30 weddings per year included; beyond that, contact us for a custom agency plan. Included with every plan: your listing in the Mariable vendor selection.",
-    trial: "Free offer: 1 wedding for 1 month to try it, no commitment.",
+    renewal: "Yearly subscription renewed on its anniversary, or monthly with no commitment. Up to 30 weddings per year included; beyond that, contact us for a custom agency plan. Included with every plan: your listing in the Mariable vendor selection.",
+    trial: "1-month free trial with full access, no credit card.",
     trialCta: "Start the free trial",
     scope: "",
     plans: {
@@ -57,9 +66,9 @@ const TEXT = {
   },
 };
 
-const PRICES: Record<Exclude<PlanId, "agence">, { annual: number; split: number }> = {
-  "jour-j": { annual: 149, split: 200 },
-  organisation: { annual: 259, split: 310 },
+const PRICES: Record<Exclude<PlanId, "agence">, { annual: number; monthly: number }> = {
+  "jour-j": { annual: 149, monthly: 16 },
+  organisation: { annual: 259, monthly: 27 },
 };
 
 const formatEuro = (value: number) => (Math.round(value * 100) / 100).toFixed(2).replace(".", ",").replace(",00", "");
@@ -111,8 +120,31 @@ const MarkIcon = ({ mark }: { mark: Mark }) => {
 };
 
 const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
-  const [isSplitPayment, setIsSplitPayment] = useState(false);
+  const [isSplitPayment, setIsSplitPayment] = useState(false); // true = abonnement mensuel
   const [subscribeSubject, setSubscribeSubject] = useState<string | null>(null);
+  const [loadingPlanId, setLoadingPlanId] = useState<PlanId | null>(null);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleSubscribe = async (planId: Exclude<PlanId, "agence">) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      navigate("/register-gratuit?type=pro");
+      return;
+    }
+    try {
+      setLoadingPlanId(planId);
+      const { data, error } = await supabase.functions.invoke("create-pro-checkout", {
+        body: { planId, interval: isSplitPayment ? "month" : "year" },
+      });
+      if (error || !data?.url) throw error ?? new Error("URL Stripe manquante");
+      window.location.href = data.url;
+    } catch (error) {
+      console.error("❌ ProPricingPlans: checkout impossible", error);
+      toast({ title: isEnglish ? "Payment unavailable" : "Paiement indisponible", description: isEnglish ? "Please try again in a moment." : "Réessayez dans un instant.", variant: "destructive" });
+      setLoadingPlanId(null);
+    }
+  };
   const text = isEnglish ? TEXT.en : TEXT.fr;
   const compareRows = getCompareRows(isEnglish);
   const planIds: PlanId[] = ["jour-j", "organisation", "agence"];
@@ -144,13 +176,13 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                 {price ? (
                   isSplitPayment ? (
                     <>
-                      <p className="font-serif text-4xl">{price.split} €<span className="text-base opacity-70">{text.perYear}</span></p>
-                      <p className="mt-1 text-sm opacity-75">{text.instalments(formatEuro(price.split / 3))}</p>
+                      <p className="font-serif text-4xl">{price.monthly} €<span className="text-base opacity-70">{text.perMonth}</span></p>
+                      <p className="mt-1 text-sm opacity-75">{text.noCommitment}</p>
                     </>
                   ) : (
                     <>
                       <p className="font-serif text-4xl">{price.annual} €<span className="text-base opacity-70">{text.perYear}</span></p>
-                      <p className="mt-1 text-sm opacity-75">{text.monthly(formatEuro(price.annual / 12))}</p>
+                      <p className="mt-1 text-sm opacity-75">{text.annualSaving(formatEuro(price.annual / 12), formatEuro(Math.round((12 - price.annual / price.monthly) * 10) / 10))}</p>
                     </>
                   )
                 ) : <p className="font-serif text-4xl">{text.onQuote}</p>}
@@ -163,7 +195,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                 ))}
               </ul>
               <Button asChild className={`min-h-12 rounded-none ${isHighlighted ? "bg-primary-foreground text-editorial-noir hover:bg-primary-foreground/90" : "bg-editorial-noir text-primary-foreground hover:bg-editorial-olive"}`}>
-                <button type="button" onClick={() => setSubscribeSubject(planId === "agence" ? "Demande de devis — Agences, écoles & sur-mesure" : `Souscription Mariable Pro — ${plan.name}${price ? ` (${isSplitPayment ? `${price.split} € en 3 fois` : `${price.annual} €/an`})` : ""}`)}>{planId === "agence" ? (isEnglish ? "Request a quote" : "Demander un devis") : text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></button>
+                <button type="button" disabled={loadingPlanId !== null} onClick={() => planId === "agence" ? setSubscribeSubject("Demande de devis — Agences, écoles & sur-mesure") : handleSubscribe(planId)}>{planId === "agence" ? (isEnglish ? "Request a quote" : "Demander un devis") : text.subscribe} <ArrowRight className="ml-2 h-4 w-4" /></button>
               </Button>
             </article>
           );

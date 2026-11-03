@@ -62,6 +62,17 @@ const MesMariages: React.FC = () => {
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [isProPremium, setIsProPremium] = useState(false);
 
+  // Retour de Stripe après souscription Pro
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') !== 'success') return;
+    toast({
+      title: isEnglish ? 'Subscription confirmed' : 'Abonnement confirmé',
+      description: isEnglish ? 'Your Mariable Pro plan is now active.' : 'Votre formule Mariable Pro est désormais active.',
+    });
+    window.history.replaceState(null, '', window.location.pathname + window.location.hash);
+  }, []);
+
   useEffect(() => {
     const openSettingsFromHash = () => {
       if (['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
