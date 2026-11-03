@@ -169,13 +169,14 @@
         "name": "Couple Découverte",
         "price": "0 €",
         "frequency": "pour les futurs mariés",
-        "description": "Pour organiser votre propre mariage en toute autonomie.",
+        "description": "Pour démarrer l'organisation de votre mariage en toute autonomie.",
         "features": [
-          "Organisation personnelle (1 mariage)",
-          "Outils essentiels : budget, rétroplanning",
-          "Accès au carnet de prestataires"
+          "Organisation d'un mariage en mode découverte",
+          "Outils essentiels : budget, rétroplanning, liste d'invités",
+          "Accès au carnet de prestataires",
+          "Fonctionnalités limitées (1 essai IA par module, stockage et exports limités)"
         ],
-        "cta": "Créer mon espace couple gratuit",
+        "cta": "Créer mon espace gratuit",
         "href": "/register-gratuit",
         "tag": "Couples"
       },
@@ -183,13 +184,14 @@
         "name": "Couple Premium",
         "price": "29 €",
         "frequency": "par mariage · paiement unique",
-        "description": "Pour les couples qui veulent tout débloquer, sans abonnement.",
+        "description": "Pour les couples qui veulent tout débloquer sans abonnement.",
         "features": [
-          "Tout ce qui est inclus dans le gratuit, plus :",
-          "Fonctionnalités IA, stockage et exports illimités",
-          "8 e-books / guides mariage inclus"
+          "Tout ce qui est inclus dans Découverte, plus :",
+          "Fonctionnalités IA, exports PDF et stockage illimités",
+          "Mini-site des mariés et formulaires RSVP illimités",
+          "8 e-books et guides pratiques inclus"
         ],
-        "cta": "Choisir Mariable Couple",
+        "cta": "Choisir Couple Premium",
         "href": "/paiement",
         "priceOld": "59 €",
         "tag": "Couples"
@@ -197,17 +199,18 @@
       {
         "name": "Mariable Pro",
         "price": "149 €",
-        "frequency": "par an",
-        "description": "Le logiciel de gestion des wedding planners et coordinatrices.",
+        "frequency": "par an ou dès 16 € / mois sans engagement",
+        "description": "Le logiciel de gestion pour wedding planners, coordinatrices et agences.",
         "features": [
-          "1 mois d'essai gratuit sur un projet client complet",
-          "Deux formules : Jour J (149 €) ou Organisation complète (259 €)",
-          "Espace collaboratif partagé avec vos couples"
+          "1 mois d'essai complet offert sans carte bancaire",
+          "Multi-mariages et gestion centralisée multiprojets",
+          "Mode collaboration et co-édition partagée avec vos couples",
+          "Outils spécialisés : CRM prestataires, formulaires clients, régie Jour J"
         ],
-        "cta": "Tester Pro gratuitement (1 mois)",
+        "cta": "Découvrir les offres Pro",
         "href": "/pro-solutions",
         "priceOld": "À partir de",
-        "badge": "1 mois offert sur 1 mariage",
+        "badge": "1 mois d'essai gratuit",
         "tag": "Professionnels"
       }
     ]

@@ -166,16 +166,17 @@
     "title": "Start free. Move forward at your own pace.",
     "plans": [
       {
-        "name": "Couple Starter",
+        "name": "Couple Discovery",
         "price": "€0",
         "frequency": "for couples",
-        "description": "To plan your own wedding on your own.",
+        "description": "To start planning your wedding on your own.",
         "features": [
-          "Personal planning (1 wedding)",
-          "Essential tools: budget, timeline",
-          "Access to the vendor directory"
+          "Plan one wedding in discovery mode",
+          "Essential tools: budget, timeline, guest list",
+          "Access to the vendor directory",
+          "Limited features (1 AI trial per module, limited storage and exports)"
         ],
-        "cta": "Create my free couple space",
+        "cta": "Create my free space",
         "href": "/register-gratuit",
         "tag": "Couples"
       },
@@ -185,11 +186,12 @@
         "frequency": "per wedding · one-time payment",
         "description": "For couples who want everything unlocked, no subscription.",
         "features": [
-          "Everything in Free, plus:",
-          "AI features, unlimited storage and exports",
-          "8 e-books / wedding guides included"
+          "Everything in Discovery, plus:",
+          "Unlimited AI features, PDF exports and storage",
+          "Couple mini-site and unlimited RSVP forms",
+          "8 e-books and practical guides included"
         ],
-        "cta": "Choose Mariable Couple",
+        "cta": "Choose Couple Premium",
         "href": "/paiement",
         "priceOld": "€59",
         "tag": "Couples"
@@ -197,17 +199,18 @@
       {
         "name": "Mariable Pro",
         "price": "€149",
-        "frequency": "per year",
-        "description": "The management software for wedding planners and coordinators.",
+        "frequency": "per year or from €16 / month, cancel anytime",
+        "description": "Management software for wedding planners, coordinators and agencies.",
         "features": [
-          "2-month free trial on a full client project",
-          "Two plans: Wedding day (€149) or Full planning (€259)",
-          "Shared collaborative space with your couples"
+          "1-month full free trial, no credit card",
+          "Multi-wedding, centralized multi-project management",
+          "Collaboration mode and co-editing with your couples",
+          "Specialized tools: vendor CRM, client forms, wedding-day control room"
         ],
-        "cta": "Try Pro free (1 month)",
+        "cta": "Discover Pro plans",
         "href": "/pro-solutions",
         "priceOld": "From",
-        "badge": "1 month free on 1 wedding",
+        "badge": "1-month free trial",
         "tag": "Professionals"
       }
     ]
