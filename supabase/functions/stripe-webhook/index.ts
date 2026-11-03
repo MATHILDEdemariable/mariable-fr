@@ -126,6 +126,8 @@ serve(async (req) => {
       // Router selon le type de checkout (ebook vs premium)
       if (session.metadata?.type === "ebook") {
         await handleEbookPurchase(session, supabaseClient);
+      } else if (session.metadata?.type === "pro_subscription") {
+        await handleProCheckoutCompleted(session, supabaseClient);
       } else {
         await handleCheckoutCompleted(event, supabaseClient);
       }
@@ -348,6 +350,18 @@ async function handleInvoicePaymentSucceeded(event: Stripe.Event, supabaseClient
   });
 
   if (invoice.subscription) {
+    const { data: currentProfile } = await supabaseClient
+      .from('profiles')
+      .select('subscription_type')
+      .eq('stripe_subscription_id', invoice.subscription)
+      .maybeSingle();
+    if (currentProfile?.subscription_type?.startsWith('pro_')) {
+      await supabaseClient.from('profiles')
+        .update({ subscription_status: 'active', subscription_expires_at: null, updated_at: new Date().toISOString() })
+        .eq('stripe_subscription_id', invoice.subscription);
+      logStep("Pro subscription renewed", { subscriptionId: invoice.subscription });
+      return;
+    }
     const { data: profile, error } = await supabaseClient
       .from('profiles')
       .update({
@@ -419,6 +433,11 @@ async function handleSubscriptionCreated(event: Stripe.Event, supabaseClient: an
     status: subscription.status
   });
 
+  if (subscription.metadata?.type === 'pro_subscription') {
+    logStep("Pro subscription created — handled by checkout", { subscriptionId: subscription.id });
+    return;
+  }
+
   const { data: profile, error } = await supabaseClient
     .from('profiles')
     .select('*')
@@ -457,7 +476,9 @@ async function handleSubscriptionUpdated(event: Stripe.Event, supabaseClient: an
     .from('profiles')
     .update({
       subscription_status: subscription.status,
-      subscription_type: subscription.status === 'active' ? 'premium' : 'free',
+      subscription_type: ['active', 'trialing', 'past_due'].includes(subscription.status)
+        ? (subscription.metadata?.type === 'pro_subscription' ? (subscription.metadata?.proPlan || 'pro_premium') : 'premium')
+        : 'free',
       subscription_expires_at: null, // Premium permanent
       updated_at: new Date().toISOString()
     })
@@ -484,6 +505,28 @@ async function handleSubscriptionDeleted(event: Stripe.Event, supabaseClient: an
 
   if (error) throw error;
   logStep("Profile downgraded to free", { subscriptionId: subscription.id });
+}
+
+// ============ PRO SUBSCRIPTIONS ============
+async function handleProCheckoutCompleted(session: Stripe.Checkout.Session, supabaseClient: any) {
+  const userId = session.metadata?.userId || session.client_reference_id;
+  const proPlan = session.metadata?.proPlan === 'pro_jour_j' ? 'pro_jour_j' : 'pro_premium';
+  logStep("Pro checkout completed", { sessionId: session.id, userId, proPlan });
+  if (!userId) throw new Error('Pro checkout without userId');
+
+  const { error } = await supabaseClient
+    .from('profiles')
+    .update({
+      subscription_type: proPlan,
+      subscription_status: 'active',
+      stripe_customer_id: session.customer,
+      stripe_subscription_id: session.subscription,
+      subscription_expires_at: null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', userId);
+  if (error) throw error;
+  logStep("Profile updated to pro plan", { userId, proPlan });
 }
 
 // ============ EBOOK PURCHASES ============
