@@ -15,6 +15,8 @@ import GuestPageCustomizer from '@/components/rsvp/GuestPageCustomizer';
 import { useNavigate } from 'react-router-dom';
 import slugify from '@/utils/slugify';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { useUserProfile } from '@/hooks/useUserProfile';
+import { useWedding } from '@/contexts/WeddingContext';
 
 interface SubEvent {
   id?: string;
@@ -41,6 +43,8 @@ interface RSVPEvent {
 
 const RSVPManagement: React.FC = () => {
   const { weddingId } = useWeddingScope();
+  const { isPremium } = useUserProfile();
+  const { accountType } = useWedding();
   const { t } = useTranslation('weddingDay');
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -158,6 +162,16 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
         toast({
           title: t('rsvp.errors.title'),
           description: t('rsvp.errors.nameRequired'),
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      // Compte couple gratuit : 1 seul formulaire RSVP
+      if (!editingEventId && !isPremium && accountType !== 'b2b' && events.length >= 1) {
+        toast({
+          title: 'Fonctionnalité Premium',
+          description: 'Le compte gratuit inclut 1 formulaire RSVP. Passez Premium (29 €) pour en créer plusieurs.',
           variant: 'destructive',
         });
         return;
