@@ -12,3 +12,4 @@
 - Ceremony planning (religious/civil) is stored per wedding in `wedding_ceremony_plans.data`; owner and planner collaborators edit, couple collaborators read only — matches the shared-module rights matrix.
 - Photo-list "done" ticks are a separate `coordination_documents` row (category `photo_list_status`) so the Conducteur never overwrites the list editor.
 - Pro client forms (`pro_client_forms` + `pro_client_form_responses`) are reached anonymously only through the `get_public_client_form` / `submit_client_form_response` RPCs by share token; each response stores a `questions_snapshot` so later question edits never break old one-pagers.
+- Pro plans: profiles.subscription_type 'pro_premium' = Organisation complète, 'pro_jour_j' = Coordination Jour J (Jour J-only weddings); set by stripe-webhook from create-pro-checkout metadata (Stripe product IDs live in that function) — the 30-day trial stays card-free via ProTrialGate.
