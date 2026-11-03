@@ -32,7 +32,8 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const { accountType, currentWedding, isWeddingCollaborator } = useWedding();
   // Pro ou couple invité par son pro : la formule du mariage (choisie par le pro) impose la vue, sans commutateur.
   const isProWeddingView = (accountType === 'b2b' || isWeddingCollaborator) && !!currentWedding;
-  const isJourJMode = isProWeddingView ? currentWedding?.prestation_type === 'jourJ' : dashboardMode === 'jourJ';
+  // Compte particulier : toujours la vue organisation complète (pas de commutateur)
+  const isJourJMode = isProWeddingView ? currentWedding?.prestation_type === 'jourJ' : (accountType === 'b2b' && dashboardMode === 'jourJ');
   const handleChangeDashboardMode = (mode: 'organisation' | 'jourJ') => {
     setDashboardMode(mode);
     localStorage.setItem('mariable_dashboard_mode', mode);
@@ -63,7 +64,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
   const bonusItems = [
     { label: t('sidebar.bonusChatGPT'), icon: <MessageSquare className="h-4 w-4" />, path: 'https://chatgpt.com/g/g-684071f00100819199b7b11839db48d4-assistant-mariage-by-mariable', external: true },
-    { label: t('sidebar.bonusAssistant'), icon: <MessageCircleQuestion className="h-4 w-4" />, path: '/dashboard/assistant', external: false },
   ];
 
   const handleLogout = async () => {
@@ -86,7 +86,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
   const isJourMActive = () => jourMItems.some(item => isActive(item.path));
   const isBonusActive = () => bonusItems.some(item => !item.external && isActive(item.path));
   const isBudgetCalcActive = () =>
-    location.pathname.startsWith('/dashboard/budget') && (search.includes('tab=calculator') || !search.includes('tab='));
+    location.pathname.startsWith('/dashboard/budget') && search.includes('tab=calculator');
   const isBudgetMgmtActive = () =>
     location.pathname.startsWith('/dashboard/budget') && search.includes('tab=detailed');
 
@@ -112,24 +112,10 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         <span className="font-bold text-lg sm:text-xl">{t('header.myWorkspace')}</span>
       </div>
 
-      {isProWeddingView ? (
+      {isProWeddingView && (
         <div className="mx-2 sm:mx-3 px-3 py-2 border border-wedding-olive/30 text-xs font-semibold text-wedding-olive">
           {isJourJMode ? (isEnglish ? 'Wedding day coordination' : 'Coordination Jour J') : (isEnglish ? 'Full planning' : 'Organisation complète')}
         </div>
-      ) : (
-      <div className="mx-2 sm:mx-3 grid grid-cols-2 border border-wedding-olive/30" role="group" aria-label={isEnglish ? 'Dashboard mode' : 'Mode du tableau de bord'}>
-        {(['organisation', 'jourJ'] as const).map((mode) => (
-          <button
-            key={mode}
-            type="button"
-            aria-pressed={dashboardMode === mode}
-            onClick={() => handleChangeDashboardMode(mode)}
-            className={cn('min-h-[44px] px-2 text-xs font-semibold transition-colors', dashboardMode === mode ? 'bg-wedding-olive text-white' : 'text-gray-600 hover:bg-wedding-olive/10')}
-          >
-            {mode === 'organisation' ? (isEnglish ? 'Full planning' : 'Organisation complète') : (isEnglish ? 'Wedding day' : 'Coordination Jour J')}
-          </button>
-        ))}
-      </div>
       )}
 
       <nav className="py-2 sm:py-3 px-2 sm:px-3 space-y-0.5">
@@ -209,6 +195,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
         </Link>
 
+        <Link to={isReaderMode ? '#' : '/dashboard/rsvp?vue=mini-site'} onClick={preventReader} className={linkClass(location.pathname.startsWith('/dashboard/rsvp') && search.includes('vue=mini-site'))}>
+          <Globe className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Couple’s mini-site' : 'Mini-site des mariés'}</span>
+        </Link>
+
         <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={preventReader} className={linkClass(isActive('/dashboard/seating-plan'))}>
           <Table className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.seatingPlan')}</span>
@@ -269,24 +260,6 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </>)}
 
 
-        {/* ADMIN */}
-        {!isJourJMode && !isProWeddingView && (<>
-        <SectionLabel label={t('sidebar.sections.admin')} />
-
-        <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
-          <Building2 className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
-        </Link>
-
-
-        <button
-          onClick={() => !isReaderMode && setShowSiteInternetModal(true)}
-          className={cn(linkClass(false), 'w-full text-left', coupleLockedClass)} disabled={isWeddingCollaborator}
-        >
-          <Globe className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.website')}</span>
-        </button>
-        </>)}
 
         {!isProWeddingView && (<>
         {/* BONUS */}

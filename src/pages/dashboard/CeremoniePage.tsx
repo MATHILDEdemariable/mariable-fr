@@ -161,11 +161,11 @@ const CeremoniePage: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="laique" className="flex items-center gap-2">
               <Sparkles className="h-4 w-4" />
-              {t('tabs.laique')}
+              {t('tabs.laique')} (Info)
             </TabsTrigger>
             <TabsTrigger value="catholique" className="flex items-center gap-2">
               <Church className="h-4 w-4" />
-              {t('tabs.catholique')}
+              {t('tabs.catholique')} (Info)
             </TabsTrigger>
           </TabsList>
 

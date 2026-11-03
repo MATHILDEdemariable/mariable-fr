@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import DetailedBudget from '@/components/dashboard/DetailedBudget';
+import BudgetCalculator from '@/components/dashboard/BudgetCalculator';
 import { BarChart, Play, Monitor, Package } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
@@ -19,7 +20,7 @@ const BudgetPage: React.FC = () => {
   const { t } = useTranslation('budget');
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const initialTab = tabParam === 'catalog' ? 'catalog' : 'detailed';
+  const initialTab = tabParam === 'catalog' || tabParam === 'calculator' ? tabParam : 'detailed';
   const [activeTab, setActiveTab] = useState<string>(initialTab);
   const [showTutorial, setShowTutorial] = useState(false);
   const [pendingCatalogSelections, setPendingCatalogSelections] = useState<CatalogImportSelection[]>([]);
@@ -28,7 +29,7 @@ const BudgetPage: React.FC = () => {
 
   useEffect(() => {
     const tab = searchParams.get('tab');
-    if (tab === 'detailed' || tab === 'catalog') setActiveTab(tab);
+    if (tab === 'detailed' || tab === 'catalog' || tab === 'calculator') setActiveTab(tab);
   }, [searchParams]);
 
   const handleTabChange = (value: string) => {
@@ -103,6 +104,9 @@ else query = query.eq('user_id', userData.user.id);
           </Button>
         </div>
 
+        {activeTab === 'calculator' ? (
+          <BudgetCalculator />
+        ) : (
         <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
           <TabsList className="mb-4 sm:mb-6 grid w-full grid-cols-2 bg-gray-100 h-auto p-1 rounded-lg">
             <TabsTrigger 
@@ -141,6 +145,7 @@ else query = query.eq('user_id', userData.user.id);
             />
           </TabsContent>
         </Tabs>
+        )}
       </div>
 
       <TutorialVideoModal
