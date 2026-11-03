@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useWedding } from '@/contexts/WeddingContext';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface NouveauMariageDialogProps {
   open: boolean;
@@ -26,6 +27,9 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
   const [guestCount, setGuestCount] = useState('');
   const [prestationType, setPrestationType] = useState<'organisation' | 'jourJ'>('jourJ');
   const [saving, setSaving] = useState(false);
+  // Formule Coordination Jour J : seuls les mariages Jour J peuvent être créés
+  const { isProJourJ } = useUserProfile();
+  const effectivePrestationType = isProJourJ ? 'jourJ' : prestationType;
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -41,7 +45,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
         wedding_date: weddingDate || null,
         wedding_location: location.trim() || null,
         guest_count: guestCount ? Number(guestCount) : null,
-        prestation_type: prestationType,
+        prestation_type: effectivePrestationType,
       });
       onOpenChange(false);
       setTitle('');
@@ -75,19 +79,24 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
               {([
                 { value: 'jourJ' as const, label: tr('Coordination Jour J', 'Wedding-day coordination'), hint: tr('Planning, équipe, plan de table', 'Schedule, team, seating plan') },
                 { value: 'organisation' as const, label: tr('Organisation complète', 'Full planning'), hint: tr('Budget, rétroplanning, RSVP + Jour J', 'Budget, timeline, RSVP + wedding day') },
-              ]).map((option) => (
+              ]).map((option) => {
+                const isLocked = isProJourJ && option.value === 'organisation';
+                return (
                 <button
                   key={option.value}
                   type="button"
                   role="radio"
-                  aria-checked={prestationType === option.value}
+                  aria-checked={effectivePrestationType === option.value}
+                  aria-disabled={isLocked}
+                  disabled={isLocked}
                   onClick={() => setPrestationType(option.value)}
-                  className={`min-h-[64px] border p-3 text-left text-sm transition-colors ${prestationType === option.value ? 'border-wedding-olive bg-wedding-olive text-background' : 'border-border bg-background hover:border-wedding-olive'}`}
+                  className={`min-h-[64px] border p-3 text-left text-sm transition-colors disabled:cursor-not-allowed disabled:opacity-50 ${effectivePrestationType === option.value ? 'border-wedding-olive bg-wedding-olive text-background' : 'border-border bg-background hover:border-wedding-olive'}`}
                 >
                   <span className="block font-semibold">{option.label}</span>
-                  <span className="block text-xs opacity-80">{option.hint}</span>
+                  <span className="block text-xs opacity-80">{isLocked ? tr('Inclus dans la formule Organisation complète', 'Included in the Full planning plan') : option.hint}</span>
                 </button>
-              ))}
+                );
+              })}
             </div>
           </fieldset>
 
