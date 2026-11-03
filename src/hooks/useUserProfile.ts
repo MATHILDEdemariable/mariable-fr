@@ -116,8 +116,11 @@ export const useUserProfile = () => {
     return new Date(profile.subscription_expires_at) > new Date();
   })();
 
-  // Premium professionnel (149 €/an) : mêmes accès illimités que le premium particulier
-  const isProPremium = profile?.subscription_type === 'pro_premium' && isSubscriptionActive;
+  // Abonnés Pro : 'pro_premium' = Organisation complète, 'pro_jour_j' = Coordination Jour J
+  const isProOrganisation = profile?.subscription_type === 'pro_premium' && isSubscriptionActive;
+  const isProJourJ = profile?.subscription_type === 'pro_jour_j' && isSubscriptionActive;
+  // isProPremium = pro abonné (l'une ou l'autre formule) : lève le verrou d'essai
+  const isProPremium = isProOrganisation || isProJourJ;
   const isPremium =
     (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium;
   const isProAccount = profile?.account_type === 'b2b';
@@ -129,6 +132,8 @@ export const useUserProfile = () => {
     refetch,
     isPremium,
     isProPremium,
+    isProOrganisation,
+    isProJourJ,
     isProAccount
   };
 };
