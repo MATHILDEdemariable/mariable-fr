@@ -5,7 +5,7 @@ import {
   LayoutDashboard, Calendar, CheckSquare, Calculator, Store, Heart, Settings, LogOut,
   Wine, MessageCircleQuestion, MessageSquare, Users, Lightbulb, ChevronDown, Coins,
   ListChecks, UserCheck, Home, QrCode, FileText, Table, AlertCircle, Gift,
-  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact, Camera
+  ShoppingCart, Building2, Smartphone, Globe, BarChart3, Images, Sparkles, Contact, Camera, Music, UtensilsCrossed
 } from 'lucide-react';
 import { CallScheduleModal } from './CallScheduleModal';
 import { supabase } from '@/integrations/supabase/client';
@@ -163,6 +163,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
+        <Link to={isReaderMode ? '#' : '/dashboard/traiteur'} onClick={preventReader} className={linkClass(isActive('/dashboard/traiteur'))}>
+          <UtensilsCrossed className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Catering & equipment' : 'Traiteur & Matériel'}</span>
+        </Link>
+
         {/* Check-list fusionnée dans « Planning & tâches » */}
         </>)}
 
@@ -220,6 +225,11 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
         </Link>
 
+
+        <Link to={isReaderMode ? '#' : '/dashboard/musique'} onClick={preventReader} className={linkClass(isActive('/dashboard/musique'))}>
+          <Music className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'DJ & Music' : 'DJ & Musique'}</span>
+        </Link>
 
         <Link to={isReaderMode ? '#' : '/dashboard/drinks'} onClick={preventReader} className={linkClass(isActive('/dashboard/drinks'))}>
           <Wine className="h-4 w-4" />

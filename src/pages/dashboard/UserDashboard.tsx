@@ -42,6 +42,8 @@ import CeremoniePage from './CeremoniePage';
 import InstallAppPage from './InstallAppPage';
 import AlbumPage from './AlbumPage';
 import DecorationPage from './DecorationPage';
+import MusiquePage from './MusiquePage';
+import TraiteurPage from './TraiteurPage';
 import PhotoListPage from './PhotoListPage';
 import TrombinoscopePage from './TrombinoscopePage';
 
@@ -111,6 +113,8 @@ const UserDashboard: React.FC = () => {
           <Route path="ceremonie" element={<CeremoniePage />} />
           <Route path="installer-app" element={<InstallAppPage />} />
           <Route path="decoration" element={<DecorationPage />} />
+          <Route path="musique" element={<MusiquePage />} />
+          <Route path="traiteur" element={<TraiteurPage />} />
           <Route path="liste-photos" element={<PhotoListPage />} />
           <Route path="trombinoscope" element={<TrombinoscopePage />} />
           <Route path="*" element={<div>Page non trouvée</div>} />
