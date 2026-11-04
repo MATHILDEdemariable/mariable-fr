@@ -4283,6 +4283,36 @@ export type Database = {
           },
         ]
       }
+      wedding_module_plans: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          module: string
+          updated_at: string
+          updated_by: string | null
+          wedding_id: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          module: string
+          updated_at?: string
+          updated_by?: string | null
+          wedding_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          module?: string
+          updated_at?: string
+          updated_by?: string | null
+          wedding_id?: string
+        }
+        Relationships: []
+      }
       wedding_projects: {
         Row: {
           budget_breakdown: Json
