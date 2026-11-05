@@ -1350,6 +1350,39 @@ export type Database = {
           },
         ]
       }
+      immersion_qr_codes: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          last_scanned_at: string | null
+          scan_count: number
+          slug: string
+          target_url: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          last_scanned_at?: string | null
+          scan_count?: number
+          slug: string
+          target_url: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          last_scanned_at?: string | null
+          scan_count?: number
+          slug?: string
+          target_url?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       instagram_highlights: {
         Row: {
           active: boolean
@@ -4793,6 +4826,16 @@ export type Database = {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
       }
+      get_immersion_qr_stats: {
+        Args: { pin_value: string }
+        Returns: {
+          label: string
+          last_scanned_at: string
+          scan_count: number
+          slug: string
+          target_url: string
+        }[]
+      }
       get_my_pending_wedding_invitations: {
         Args: never
         Returns: {
@@ -4872,6 +4915,10 @@ export type Database = {
         Args: { _user_id: string; _wedding_id: string }
         Returns: boolean
       }
+      record_immersion_qr_scan: {
+        Args: { slug_value: string }
+        Returns: string
+      }
       respond_wedding_invitation: {
         Args: { accept_invitation: boolean; target_invitation_id: string }
         Returns: boolean
@@ -4888,6 +4935,10 @@ export type Database = {
       sync_key_people_to_jour_j: {
         Args: { target_wedding_id: string }
         Returns: number
+      }
+      update_immersion_qr_target: {
+        Args: { pin_value: string; slug_value: string; target_value: string }
+        Returns: boolean
       }
       validate_apres_jour_j_share_token: {
         Args: { token_value: string }
