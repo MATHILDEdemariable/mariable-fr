@@ -3,12 +3,14 @@
 import fs from "fs";
 import path from "path";
 import type { Plugin } from "vite";
+import { BLOG_PUBLICATION_NOV_2026 } from '../src/data/blogPublicationNov2026';
 
 const SITE_URL = "https://mariable.fr";
 
 type PageHead = { path: string; title: string; description: string; h1: string; links?: [string, string][] };
 
 const PAGES: PageHead[] = [
+  ...BLOG_PUBLICATION_NOV_2026.map((article) => ({ path: `/conseilsmariage/${article.slug}`, title: article.title, description: article.description, h1: article.h1 })),
   { path: "/", title: "Mariable — L'application du jour J pour couples et wedding planners", description: "Mariable centralise et coordonne le déroulé du mariage : horaires, rôles, prestataires et documents, partagés par un simple lien. Budget, plan de table, RSVP.", h1: "Célébrer l'amour. Sublimer le Jour J.", links: [["/pro-solutions", "Logiciel wedding planner"], ["/pro-solutions", "Pour les pros"], ["/budget-mariage", "Budget mariage"], ["/blog", "Blog"]] },
   { path: "/pro-solutions", title: "Mariable Pro – App wedding planner & agence IA événementiel", description: "L'app des wedding planners boostée à l'IA : déroulé jour J partagé, dès 149 €/an, essai gratuit. AI Studio : formation, conseil et apps IA sur mesure.", h1: "L'application des wedding planners qui fait tenir le jour J dans un seul document", links: [["/pro/feuille-de-route-jour-j", "Feuille de route jour J"], ["/register-gratuit?type=pro", "Essayer gratuitement"]] },
   { path: "/pro/feuille-de-route-jour-j", title: "Feuille de route mariage prestataires à partager | Mariable Pro", description: "Partagez le conducteur du mariage à tous les prestataires avec un seul lien, sans compte. Planning filtrable et toujours à jour avec Mariable Pro.", h1: "Un seul lien pour partager votre feuille de route mariage", links: [["/pro-solutions", "Logiciel wedding planner"]] },
@@ -74,7 +76,14 @@ export const prerenderHeadsPlugin = (): Plugin => {
       try {
         // dist/index.html sert aussi de repli pour toutes les autres routes :
         // pas de contenu texte pour "/" afin d'éviter un flash de l'accueil ailleurs.
-        const withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        let withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        if (BLOG_PUBLICATION_NOV_2026.some((article) => page.path === `/conseilsmariage/${article.slug}`)) {
+          // Helmet owns these tags after mounting; mark only these new article fallbacks
+          // so their metadata is not duplicated with the template's tags.
+          withHead = withHead
+            .replace(/<(meta|title)(?![^>]*data-rh=)([^>]*)>/g, '<$1 data-rh="true"$2>')
+            .replace(/(property="og:type" content=")website"/, '$1article"');
+        }
         const html = page.path === "/" ? withHead : withHead.replace('<div id="root"></div>', buildBody(page));
         const outDir = page.path === "/" ? distDir : path.join(distDir, page.path);
         fs.mkdirSync(outDir, { recursive: true });

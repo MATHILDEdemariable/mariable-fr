@@ -1,5 +1,11 @@
 # Roadmap
 
+## Publication blog — 5 novembre 2026
+- [x] Publier les quatre articles fournis et leurs couvertures sans modifier les autres contenus
+- [x] Vérifier les liens, un seul CTA, textes alternatifs et métadonnées
+- [x] Ajouter les quatre URLs au sitemap et vérifier ordinateur/mobile sur mariable.fr
+- [x] Confirmer la possibilité d’une vraie redirection 301 : non disponible dans l’hébergement actuel ; ancien article conservé
+
 - [x] Recentrer la home sur l’application Jour J
 - [x] Ajouter les parcours Couple et Pro et les offres associées
 - [x] Réordonner Guides, Sélection, témoignages, conseils et FAQ
