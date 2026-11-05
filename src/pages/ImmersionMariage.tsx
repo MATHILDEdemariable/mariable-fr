@@ -161,6 +161,10 @@ const ImmersionMariage = () => {
               </span>
               <ChevronRight className="h-5 w-5 text-muted-foreground" aria-hidden="true" />
             </button>
+            <p className="mt-4 text-sm text-background/90">
+              Une question ? Restons en contact :{' '}
+              <a href="mailto:contact@immersion-mariage.fr" className="underline font-medium text-background">contact@immersion-mariage.fr</a>
+            </p>
           </div>
         </section>
 
