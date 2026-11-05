@@ -56,6 +56,16 @@ const Register = () => {
         : `/${redirectParam}`)
     : null;
 
+  // Souscription Pro : formule choisie sur la grille tarifaire (ex. "organisation-month")
+  const proCheckoutChoice = redirectPath ? new URLSearchParams(redirectPath.split('?')[1] || '').get('checkout') : null;
+  const PRO_CHECKOUT_LABELS: Record<string, { fr: string; en: string }> = {
+    'jour-j-year': { fr: 'Coordination Jour J · 149 €/an', en: 'Wedding-day coordination · €149/year' },
+    'jour-j-month': { fr: 'Coordination Jour J · 16 €/mois', en: 'Wedding-day coordination · €16/month' },
+    'organisation-year': { fr: 'Organisation complète · 259 €/an', en: 'Full planning · €259/year' },
+    'organisation-month': { fr: 'Organisation complète · 27 €/mois', en: 'Full planning · €27/month' },
+  };
+  const proCheckoutLabel = proCheckoutChoice ? PRO_CHECKOUT_LABELS[proCheckoutChoice] : null;
+
   useEffect(() => {
     if (user) {
       navigate(redirectPath || '/dashboard');
@@ -189,6 +199,20 @@ const Register = () => {
               <strong>{t('register.emailAlert')}</strong>
             </AlertDescription>
           </Alert>
+        )}
+
+        {proCheckoutLabel && (
+          <div className="mb-6 border border-wedding-olive bg-wedding-olive/10 p-4 text-sm" role="status">
+            <p className="font-semibold">
+              {preferredLanguage === 'en' ? 'Selected plan: ' : 'Formule sélectionnée : '}
+              {preferredLanguage === 'en' ? proCheckoutLabel.en : proCheckoutLabel.fr}
+            </p>
+            <p className="mt-1">
+              {preferredLanguage === 'en'
+                ? 'Step 1/2: create your login. Step 2/2: secure payment with Stripe.'
+                : 'Étape 1/2 : créez vos identifiants. Étape 2/2 : paiement sécurisé par Stripe.'}
+            </p>
+          </div>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -415,7 +439,9 @@ const Register = () => {
                 disabled={isLoading}
               >
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {t('register.submit')}
+                {proCheckoutLabel
+                  ? (preferredLanguage === 'en' ? 'Continue to secure payment →' : 'Continuer vers le paiement sécurisé →')
+                  : t('register.submit')}
               </Button>
               {!isPro && !redirectPath && (
                 <Button
