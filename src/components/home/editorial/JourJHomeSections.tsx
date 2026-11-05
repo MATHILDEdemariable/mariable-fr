@@ -256,8 +256,18 @@ export const PreparationTools: React.FC = () => {
             );
           })}
         </div>
+      </div>
+    </section>
+  );
+};
 
-        <div className="mt-16 grid overflow-hidden bg-editorial-olive text-primary-foreground md:grid-cols-[0.7fr_1.3fr]">
+export const EditorialManifesto: React.FC = () => {
+  const { t } = useTranslation('refonteJuillet');
+
+  return (
+    <section className="bg-editorial-beige pb-16 md:pb-24">
+      <div className="container mx-auto px-4 md:px-8">
+        <div className="grid overflow-hidden bg-editorial-olive text-primary-foreground md:grid-cols-[0.7fr_1.3fr]">
           <img src={CELEBRATION_IMAGE} alt={t('preparation.editorialAlt')} width={1080} height={1350} loading="lazy" className="h-full min-h-64 w-full object-cover" />
           <div className="flex flex-col justify-center p-8 md:p-12">
             <FileText className="h-6 w-6" strokeWidth={1.3} />

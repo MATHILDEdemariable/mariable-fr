@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { CheckCircle, CreditCard, Shield, Clock, ArrowLeft } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
+import demoVideo from '@/assets/video/mariable-couple-demo.mp4.asset.json';
 
 const Paiement = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -214,15 +215,25 @@ const Paiement = () => {
                     </div>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <h3 className="font-semibold text-lg mb-4">Inclus dans votre application :</h3>
+                    <div className="mx-auto w-full max-w-[280px] overflow-hidden border border-wedding-olive/20 bg-editorial-noir shadow-md">
+                      <video
+                        src={demoVideo.url}
+                        className="block aspect-[9/16] w-full object-cover"
+                        controls
+                        playsInline
+                        preload="metadata"
+                        aria-label="Vidéo de présentation de Mariable Premium"
+                      />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-4">Inclus dans Premium :</h3>
                     <div className="space-y-3">
                       {[
-                        "Application personnalisée pour votre mariage sans téléchargement (disponible ordinateur, tablette, smartphone)",
-                        "8 guides inclus",
-                        "Toutes les fonctionnalités sans limite et avec IA illimitée",
-                        "Planning du jour J intelligent, personnalisable, partageable facilement avec vos proches et prestataires en temps réel",
-                        "Plan de table en ligne",
-                        "Album photo partageable",
+                        "Toutes les fonctionnalités sans limite",
+                        "IA illimitée (checklist, déroulé, discours…)",
+                        "Exports PDF et tableur illimités",
+                        "Application Jour J partageable avec proches et prestataires",
+                        "8 guides mariage & checklists inclus",
+                        "Stockage étendu et support prioritaire",
                       ].map((feature) => (
                         <div key={feature} className="flex items-start gap-3">
                           <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />

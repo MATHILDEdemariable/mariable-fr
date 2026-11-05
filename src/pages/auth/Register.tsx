@@ -417,6 +417,17 @@ const Register = () => {
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 {t('register.submit')}
               </Button>
+              {!isPro && !redirectPath && (
+                <Button
+                  asChild
+                  variant="outline"
+                  className="w-full h-auto min-h-11 whitespace-normal border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-primary-foreground"
+                >
+                  <Link to="/paiement">
+                    {preferredLanguage === 'en' ? 'Unlock Premium now — €29 lifetime' : 'Débloquer directement le Premium — 29 € à vie'}
+                  </Link>
+                </Button>
+              )}
             </form>
           </CardContent>
           <CardFooter className="flex flex-col gap-3">
@@ -426,14 +437,6 @@ const Register = () => {
                 {t('register.signIn')}
               </Link>
             </div>
-            {!isPro && (
-              <div className="text-center text-xs text-muted-foreground border-t pt-3 w-full">
-                Envie d'aller plus loin ?{" "}
-                <Link to="/paiement" className="text-wedding-olive hover:underline">
-                  Découvrir Premium — 29€ à vie
-                </Link>
-              </div>
-            )}
           </CardFooter>
           </Card>
         </div>
