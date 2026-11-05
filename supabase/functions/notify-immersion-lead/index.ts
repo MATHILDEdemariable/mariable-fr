@@ -41,17 +41,17 @@ Deno.serve(async (req) => {
       <p><strong>Lieu :</strong> ${escapeHtml(lead.weddingLocation || "—")}</p>
       <p><strong>Devis personnalisé :</strong> ${lead.wantsQuote ? "Oui" : "Non"}</p>
       <p style="white-space:pre-wrap"><strong>Message :</strong><br/>${escapeHtml(lead.message || "—")}</p>`;
-    const wrap = (inner: string) => `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333">${inner}<p style="color:#888;font-size:12px;margin-top:24px">Immersion Mariage · Propulsé par Mariable</p></div>`;
+    const wrap = (inner: string) => `<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333">${inner}<p style="color:#888;font-size:12px;margin-top:24px;border-top:1px solid #eee;padding-top:12px"><strong>Mariable</strong> : l'appli de wedding planning boostée à l'IA, partenaire d'Immersion Mariage<br/>Plus d'informations sur <a href="https://mariable.fr" style="color:#63745A">mariable.fr</a> et <a href="https://immersion-mariage.fr" style="color:#63745A">immersion-mariage.fr</a></p></div>`;
 
     // Mail prestataire (si email connu) avec Mathilde en copie, sinon Mathilde seule
     const hasVendorEmail = isValidEmail(lead.vendorEmail);
     await resend.emails.send({
       from: "Mariable <noreply@mariable.fr>",
-      to: hasVendorEmail ? [lead.vendorEmail] : [ADMIN_EMAIL],
-      cc: hasVendorEmail ? [ADMIN_EMAIL] : undefined,
+      to: hasVendorEmail ? [lead.vendorEmail] : [ADMIN_EMAIL, "contact@immersion-mariage.fr"],
+      cc: hasVendorEmail ? [ADMIN_EMAIL, "contact@immersion-mariage.fr"] : undefined,
       reply_to: lead.email,
       subject: `[Immersion Mariage] Nouvelle demande pour ${lead.vendorName}`,
-      html: wrap(`<h2 style="color:#63745A">Nouvelle demande de contact</h2>${hasVendorEmail ? "" : `<p style="color:#a33"><em>Email du prestataire non renseigné : à transférer manuellement.</em></p>`}${details}`),
+      html: wrap(`<h2 style="color:#63745A">Nouvelle demande de contact</h2>${hasVendorEmail ? "" : `<p style="color:#a33"><em>Email du prestataire non renseigné : à transférer manuellement.</em></p>`}${details}<p style="margin-top:20px;padding:12px;background:#f4f6f2">Pour répondre à cette demande, contactez directement le couple avec les coordonnées ci-dessus, ou répondez simplement à cet email (« Répondre à tous »).</p>`),
     });
 
     // Accusé de réception au couple
