@@ -1350,6 +1350,90 @@ export type Database = {
           },
         ]
       }
+      immersion_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          rating_ambiance: number
+          rating_overall: number
+          rating_recommend: number
+          rating_vendors: number
+          rating_welcome: number
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          rating_ambiance: number
+          rating_overall: number
+          rating_recommend: number
+          rating_vendors: number
+          rating_welcome: number
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          email?: string | null
+          first_name?: string | null
+          id?: string
+          rating_ambiance?: number
+          rating_overall?: number
+          rating_recommend?: number
+          rating_vendors?: number
+          rating_welcome?: number
+        }
+        Relationships: []
+      }
+      immersion_leads: {
+        Row: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          phone: string | null
+          vendor_name: string
+          vendor_slug: string
+          wants_quote: boolean
+          wedding_date: string | null
+          wedding_location: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          message?: string | null
+          phone?: string | null
+          vendor_name: string
+          vendor_slug: string
+          wants_quote?: boolean
+          wedding_date?: string | null
+          wedding_location?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          message?: string | null
+          phone?: string | null
+          vendor_name?: string
+          vendor_slug?: string
+          wants_quote?: boolean
+          wedding_date?: string | null
+          wedding_location?: string | null
+        }
+        Relationships: []
+      }
       immersion_qr_codes: {
         Row: {
           created_at: string
@@ -4826,6 +4910,50 @@ export type Database = {
         Args: { coordination_id?: string; title_input: string }
         Returns: string
       }
+      get_immersion_feedback: {
+        Args: { pin_value: string }
+        Returns: {
+          comment: string | null
+          created_at: string
+          email: string | null
+          first_name: string | null
+          id: string
+          rating_ambiance: number
+          rating_overall: number
+          rating_recommend: number
+          rating_vendors: number
+          rating_welcome: number
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "immersion_feedback"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      get_immersion_leads: {
+        Args: { pin_value: string }
+        Returns: {
+          created_at: string
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          message: string | null
+          phone: string | null
+          vendor_name: string
+          vendor_slug: string
+          wants_quote: boolean
+          wedding_date: string | null
+          wedding_location: string | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "immersion_leads"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_immersion_qr_stats: {
         Args: { pin_value: string }
         Returns: {
@@ -4929,6 +5057,34 @@ export type Database = {
           respondent_email_value: string
           respondent_name_value: string
           token_value: string
+        }
+        Returns: boolean
+      }
+      submit_immersion_feedback: {
+        Args: {
+          comment_value: string
+          email_value: string
+          first_name_value: string
+          r1: number
+          r2: number
+          r3: number
+          r4: number
+          r5: number
+        }
+        Returns: boolean
+      }
+      submit_immersion_lead: {
+        Args: {
+          email_value: string
+          first_name_value: string
+          last_name_value: string
+          message_value: string
+          phone_value: string
+          vendor_name_value: string
+          vendor_slug_value: string
+          wants_quote_value: boolean
+          wedding_date_value: string
+          wedding_location_value: string
         }
         Returns: boolean
       }
