@@ -10,6 +10,7 @@ import Footer from '@/components/Footer';
 import SEO from '@/components/SEO';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { BLOG_PUBLICATION_NOV_2026 } from '@/data/blogPublicationNov2026';
 
 /**
  * Construit un schema FAQPage à partir du HTML de l'article.
@@ -140,6 +141,7 @@ const BlogArticlePage = () => {
   }
   
   const h1Title = post.h1_title || post.title;
+  const suppliedArticle = BLOG_PUBLICATION_NOV_2026.find((article) => article.slug === post.slug);
   const metaTitle = post.meta_title || post.title;
   const metaDescription = post.meta_description || post.subtitle;
 
@@ -268,7 +270,7 @@ const BlogArticlePage = () => {
                 <div className="mb-8">
                     <img 
                         src={post.background_image_url} 
-                        alt={h1Title}
+                        alt={suppliedArticle?.imageAlt || h1Title}
                         className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
                     />
                 </div>
@@ -284,36 +286,36 @@ const BlogArticlePage = () => {
                     <style dangerouslySetInnerHTML={{ __html: post.custom_styles }} />
                 )}
                 <div 
-                    className={post.custom_styles ? "" : "prose prose-lg max-w-none"}
+                    className={post.custom_styles ? "" : `prose prose-lg max-w-none${suppliedArticle ? ' [&_.table-scroll]:overflow-x-auto [&_.table-scroll]:max-w-full [&_table]:min-w-[560px] [&_blockquote]:border-primary [&_blockquote]:bg-muted [&_blockquote]:p-4' : ''}`}
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
             </div>
 
             {/* CTA contextuel : convertit le trafic éditorial vers l'outil correspondant */}
             <aside className="mt-10 bg-editorial-beige border border-wedding-olive/20 p-8 text-center">
-                <p className="text-sm uppercase tracking-widest text-wedding-olive mb-3">
+                {!suppliedArticle && <p className="text-sm uppercase tracking-widest text-wedding-olive mb-3">
                     Passez à l'action
-                </p>
-                <h2 className="text-2xl font-serif text-editorial-noir mb-3">
+                </p>}
+                {suppliedArticle ? <h3 className="text-2xl font-serif text-editorial-noir mb-3">{suppliedArticle.ctaTitle}</h3> : <h2 className="text-2xl font-serif text-editorial-noir mb-3">
                     {contextualCta.title}
-                </h2>
-                <p className="text-editorial-noir/70 max-w-xl mx-auto mb-6">
+                </h2>}
+                {suppliedArticle ? <p className="text-editorial-noir/70 max-w-xl mx-auto mb-6" dangerouslySetInnerHTML={{ __html: suppliedArticle.ctaDescription }} /> : <p className="text-editorial-noir/70 max-w-xl mx-auto mb-6">
                     {contextualCta.description}
-                </p>
+                </p>}
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                    <Link to={contextualCta.href}>
+                    <Link to={suppliedArticle ? '/register-gratuit' : contextualCta.href}>
                         <Button className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white uppercase tracking-wide">
-                            {contextualCta.label}
+                            {suppliedArticle ? 'Créer mon compte gratuit' : contextualCta.label}
                         </Button>
                     </Link>
-                     <Link to={isPro ? "/register-gratuit?type=pro" : "/register-gratuit"}>
+                     {!suppliedArticle && <Link to={isPro ? "/register-gratuit?type=pro" : "/register-gratuit"}>
                         <Button
                             variant="outline"
                             className="rounded-none border-editorial-noir text-editorial-noir uppercase tracking-wide"
                         >
                              {isPro ? 'Créer mon compte Pro' : 'Créer un compte gratuit'}
                         </Button>
-                    </Link>
+                    </Link>}
                 </div>
             </aside>
 
