@@ -131,7 +131,7 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
       // Étape 1 : création du compte, puis retour ici pour lancer Stripe automatiquement
-      const returnPath = `/pro-solutions?checkout=${planId}-${interval}#tarifs`;
+      const returnPath = `/pro-solutions?checkout=${planId}-${interval}`;
       navigate(`/register-gratuit?type=pro&redirect=${encodeURIComponent(returnPath)}`);
       return;
     }
