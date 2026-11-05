@@ -11,7 +11,7 @@ import TestimonialsEditorial from '@/components/home/editorial/TestimonialsEdito
 import FinalEditorialCTA from '@/components/home/editorial/FinalEditorialCTA';
 import Footer from '@/components/Footer';
 import { SelectionLockProvider } from '@/components/home/editorial/SelectionLockModal';
-import { AudiencePaths, JourJProductFocus, PreparationTools } from '@/components/home/editorial/JourJHomeSections';
+import { AudiencePaths, EditorialManifesto, JourJProductFocus, PreparationTools } from '@/components/home/editorial/JourJHomeSections';
 import HomeJourJFAQ, { HomeFaqItem } from '@/components/home/editorial/HomeJourJFAQ';
 
 const RefonteJuillet: React.FC = () => {
@@ -48,14 +48,15 @@ const RefonteJuillet: React.FC = () => {
           {/* 1. Hero */}
           <HeroEditorial />
 
-          <JourJProductFocus />
-          <AudiencePaths />
           <PreparationTools />
-          <PricingEditorial />
+          <AudiencePaths />
+          <JourJProductFocus />
+          <EditorialManifesto />
           <EditorialEShop />
           <EditorialCarousels />
           <TestimonialsEditorial />
           <BlogCarouselEditorial />
+          <PricingEditorial />
           <HomeJourJFAQ />
           <FinalEditorialCTA />
         </main>
