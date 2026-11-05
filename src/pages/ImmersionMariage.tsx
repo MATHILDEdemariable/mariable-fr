@@ -250,7 +250,7 @@ const ImmersionMariage = () => {
           <div className="max-w-3xl mx-auto">
             <p className="text-[11px] uppercase tracking-[0.25em] opacity-80 mb-3">ET MAINTENANT ? -10€ OFFERTS SUR MARIABLE.FR</p>
             <h2 className="font-serif text-2xl md:text-4xl mb-3">Une seule plateforme, des préparatifs au jour J</h2>
-            <p className="opacity-90 text-sm md:text-base mb-8">Si vous organisez vous-mêmes, utilisez mariable.fr et consultez nos guides & astuces.</p>
+            <p className="opacity-90 text-sm md:text-base mb-8">Si vous organisez vous-mêmes ou avec un wedding planner professionnel, utilisez mariable.fr.</p>
             <div className="grid gap-3 sm:grid-cols-2 mb-8">
               {MARIABLE_FEATURES.map((feature) => (
                 <div key={feature.title} className="border border-primary-foreground/25 p-4">
