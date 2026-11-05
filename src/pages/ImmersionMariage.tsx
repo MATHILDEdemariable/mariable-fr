@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Link } from 'react-router-dom';
 import { MapPin, Star, MessageSquareHeart, Users, Sparkles, ChevronRight } from 'lucide-react';
@@ -8,11 +8,12 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { toast } from '@/components/ui/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { IMMERSION_CATEGORIES, IMMERSION_VENDORS, ImmersionCategory, ImmersionVendor } from '@/data/immersionMariageVendors';
 import immersionLogoWhite from '@/assets/immersion/immersion_logo_white.png.asset.json';
-import chateauPhoto from '@/assets/immersion/chateau_pourtales.png.asset.json';
+import chateauPhoto from '@/assets/immersion/chateau_pourtales_facade.png.asset.json';
 
 const FEEDBACK_QUESTIONS = [
   { key: 'overall', label: "Votre expérience globale de l'événement" },
@@ -24,7 +25,18 @@ const FEEDBACK_QUESTIONS = [
 
 type RatingKey = typeof FEEDBACK_QUESTIONS[number]['key'];
 const EMPTY_RATINGS: Record<RatingKey, number> = { overall: 0, vendors: 0, ambiance: 0, welcome: 0, recommend: 0 };
-const EMPTY_LEAD = { firstName: '', lastName: '', email: '', phone: '', weddingDate: '', weddingLocation: '', message: '' };
+const DEFAULT_LEAD_MESSAGE = 'Ravis de vous avoir découvert à Immersion Mariage, nous sommes intéressés par vos services et aimerions avoir un devis personnalisé.';
+const EMPTY_LEAD = { firstName: '', lastName: '', email: '', phone: '', weddingDate: '', weddingLocation: '', message: DEFAULT_LEAD_MESSAGE };
+
+const MARIABLE_FEATURES = [
+  { title: 'Rétroplanning & checklist', text: 'Les étapes et tâches à suivre au fil des mois.' },
+  { title: 'Budget', text: 'Les coûts estimés et réels, poste par poste.' },
+  { title: 'Invités, RSVP et mini-site', text: 'Les réponses de vos invités centralisées sur un mini-site avec formulaire de réponse en ligne.' },
+  { title: 'Plan de table', text: 'Une organisation visuelle reliée à votre liste d\'invités.' },
+  { title: 'Prestataires', text: 'Vos contacts et informations utiles réunis.' },
+  { title: 'Outils pratiques', text: 'Calculatrice de boissons, stockage des documents, album photo partagé.' },
+];
+const JOUR_J_POINTS = ['Déroulé heure par heure', 'Tâches, rôles et responsabilités', 'Contacts clés', 'Prestataires', 'Briefs', 'Documents utiles', 'Informations logistiques', 'Changements de dernière minute'];
 
 const StarRating = ({ value, onChange, label }: { value: number; onChange: (rating: number) => void; label: string }) => (
   <div className="flex gap-1" role="radiogroup" aria-label={label}>
@@ -55,6 +67,13 @@ const ImmersionMariage = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const filteredVendors = activeCategory === 'Tous' ? IMMERSION_VENDORS : IMMERSION_VENDORS.filter((vendor) => vendor.category === activeCategory);
+  // Pop-up avis ouverte automatiquement à l'arrivée (une fois par session)
+  useEffect(() => {
+    if (sessionStorage.getItem('immersionFeedbackShown')) return;
+    const timer = setTimeout(() => { setIsFeedbackOpen(true); sessionStorage.setItem('immersionFeedbackShown', '1'); }, 1200);
+    return () => clearTimeout(timer);
+  }, []);
+
   const isFeedbackComplete = Object.values(ratings).every((rating) => rating > 0);
 
   const handleFeedbackSubmit = async (event: React.FormEvent) => {
@@ -94,7 +113,11 @@ const ImmersionMariage = () => {
       toast({ variant: 'destructive', description: 'Vérifiez vos informations (email notamment) et réessayez.' });
       return;
     }
-    toast({ description: `Votre demande a été transmise à ${selectedVendor.name}.` });
+    const { error: emailError } = await supabase.functions.invoke('notify-immersion-lead', {
+      body: { vendorName: selectedVendor.name, vendorEmail: selectedVendor.email ?? '', ...leadForm, wantsQuote },
+    });
+    if (emailError) console.error('❌ notify-immersion-lead failed:', emailError);
+    toast({ description: `Votre demande a été transmise à ${selectedVendor.name}. Un email de confirmation vous a été envoyé.` });
     setLeadForm(EMPTY_LEAD);
     setWantsQuote(true);
     setSelectedVendor(null);
@@ -115,7 +138,7 @@ const ImmersionMariage = () => {
         {/* Hero photo avec logos en haut à gauche */}
         <section className="relative min-h-[88svh] flex flex-col overflow-hidden">
           <img src={chateauPhoto.url} alt="Château de Pourtalès, lieu de l'événement Immersion Mariage" className="absolute inset-0 w-full h-full object-cover object-bottom" />
-          <div className="absolute inset-0 bg-gradient-to-b from-foreground/30 via-transparent to-foreground/85" aria-hidden="true" />
+          <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/40 to-foreground/70" aria-hidden="true" />
 
           <header className="relative z-10 flex items-center gap-3 px-5 pt-5">
             <img src={immersionLogoWhite.url} alt="Immersion Mariage" className="h-11 w-auto drop-shadow" />
@@ -123,14 +146,13 @@ const ImmersionMariage = () => {
             <span className="font-serif text-xl text-background drop-shadow">mariable</span>
           </header>
 
-          <div className="relative z-10 mt-auto px-5 pb-8 text-background max-w-xl">
-            <p className="text-[11px] uppercase tracking-[0.25em] text-background/80 mb-3">Immersion Mariage × Mariable</p>
-            <h1 className="font-serif text-3xl md:text-5xl leading-tight mb-3">Merci d'avoir vécu l'expérience</h1>
-            <p className="text-background/85 text-sm md:text-base mb-6">Retrouvez les prestataires rencontrés, contactez-les en un clic et préparez votre mariage autrement.</p>
-
+          <div className="relative z-10 my-auto px-5 py-10 text-background text-center max-w-2xl mx-auto w-full">
+            <p className="text-[11px] uppercase tracking-[0.25em] text-background/85 mb-3">Immersion Mariage × Mariable</p>
+            <h1 className="font-serif text-3xl md:text-5xl leading-tight mb-3 drop-shadow">Merci d'avoir vécu l'expérience Immersion Mariage</h1>
+            <p className="text-background/90 text-sm md:text-base mb-6">Retrouvez les prestataires rencontrés, contactez-les en un clic et préparez votre mariage autrement.</p>
             <button
               onClick={() => setIsFeedbackOpen(true)}
-              className="w-full text-left bg-background text-foreground p-4 flex items-center gap-3 shadow-lg min-h-[64px]"
+              className="w-full max-w-md mx-auto text-left bg-background text-foreground p-4 flex items-center gap-3 shadow-lg min-h-[64px]"
             >
               <Star className="h-6 w-6 fill-primary text-primary shrink-0" aria-hidden="true" />
               <span className="flex-1">
@@ -143,16 +165,16 @@ const ImmersionMariage = () => {
         </section>
 
         {/* Navigation rapide collante */}
-        <nav className="sticky top-0 z-30 bg-background/95 backdrop-blur border-b border-border" aria-label="Sections de la page">
+        <nav className="sticky top-0 z-30 bg-primary text-primary-foreground shadow-md" aria-label="Sections de la page">
           <div className="grid grid-cols-3 text-xs">
-            <button onClick={() => setIsFeedbackOpen(true)} className="min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-foreground">
-              <MessageSquareHeart className="h-4 w-4 text-primary" aria-hidden="true" />Mon avis
+            <button onClick={() => setIsFeedbackOpen(true)} className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground">
+              <MessageSquareHeart className="h-4 w-4" aria-hidden="true" />Mon avis
             </button>
-            <a href="#prestataires" className="min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-foreground border-x border-border">
-              <Users className="h-4 w-4 text-primary" aria-hidden="true" />Prestataires
+            <a href="#prestataires" className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground border-x border-primary-foreground/30">
+              <Users className="h-4 w-4" aria-hidden="true" />Prestataires
             </a>
-            <a href="#mariable" className="min-h-[48px] flex flex-col items-center justify-center gap-0.5 text-foreground">
-              <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />Offre 19 €
+            <a href="#mariable" className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground">
+              <Sparkles className="h-4 w-4" aria-hidden="true" />Offre 19 €
             </a>
           </div>
         </nav>
@@ -161,12 +183,12 @@ const ImmersionMariage = () => {
         <section id="prestataires" className="scroll-mt-14 px-4 pt-8 max-w-6xl mx-auto">
           <h2 className="font-serif text-2xl md:text-3xl text-foreground mb-1">Les prestataires</h2>
           <p className="text-sm text-muted-foreground mb-4">Ils ont donné vie à l'événement. Contactez-les directement.</p>
-          <div className="flex gap-2 overflow-x-auto pb-4 -mx-4 px-4 snap-x">
+          <div className="flex flex-wrap gap-2 pb-4">
             {(['Tous', ...IMMERSION_CATEGORIES] as const).map((category) => (
               <button
                 key={category}
                 onClick={() => setActiveCategory(category)}
-                className={`snap-start shrink-0 min-h-[40px] px-4 text-sm border transition-colors ${activeCategory === category ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-foreground bg-card'}`}
+                className={`min-h-[40px] px-3 text-sm border transition-colors ${activeCategory === category ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-foreground bg-card'}`}
               >
                 {category}
               </button>
@@ -199,18 +221,33 @@ const ImmersionMariage = () => {
 
         {/* CTA Mariable */}
         <section id="mariable" className="scroll-mt-14 bg-primary text-primary-foreground px-5 py-12">
-          <div className="max-w-xl mx-auto">
+          <div className="max-w-3xl mx-auto">
             <p className="text-[11px] uppercase tracking-[0.25em] opacity-80 mb-3">Et maintenant ?</p>
-            <h2 className="font-serif text-2xl md:text-3xl mb-3">Découvrez Mariable, le wedding planner digital boosté à l'IA</h2>
-            <p className="opacity-90 text-sm mb-6">Créez votre compte gratuit, ou utilisez le code promo reçu pendant l'événement pour passer Premium à <strong>19 €</strong> au lieu de 29 € :</p>
-            <ul className="space-y-2 text-sm mb-8">
-              {['8 guides PDF à télécharger', 'Fonctionnalités illimitées (IA comprise)', 'Checklist personnalisée', "Appli de coordination du jour J"].map((benefit) => (
-                <li key={benefit} className="flex gap-2"><Sparkles className="h-4 w-4 shrink-0 mt-0.5" aria-hidden="true" />{benefit}</li>
+            <h2 className="font-serif text-2xl md:text-4xl mb-3">Une seule plateforme, des préparatifs au jour J</h2>
+            <p className="opacity-90 text-sm md:text-base mb-8">Mariable, le wedding planner digital boosté à l'IA, vous accompagne pendant toute la préparation avec les outils essentiels, jusqu'à la coordination finale.</p>
+            <div className="grid gap-3 sm:grid-cols-2 mb-8">
+              {MARIABLE_FEATURES.map((feature) => (
+                <div key={feature.title} className="border border-primary-foreground/25 p-4">
+                  <h3 className="font-serif text-lg mb-1">{feature.title}</h3>
+                  <p className="text-sm opacity-85">{feature.text}</p>
+                </div>
               ))}
-            </ul>
-            <div className="flex flex-col gap-3">
-              <Button asChild variant="secondary" className="rounded-none min-h-[48px]"><Link to="/register-gratuit">Créer mon compte gratuit</Link></Button>
-              <Button asChild variant="outline" className="rounded-none min-h-[48px] bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"><Link to="/paiement">J'ai un code promo · Premium 19 €</Link></Button>
+            </div>
+            <div className="bg-background text-foreground p-5 mb-8">
+              <p className="text-[11px] uppercase tracking-[0.2em] text-primary mb-2">Mais surtout</p>
+              <h3 className="font-serif text-xl md:text-2xl mb-2">L'application du jour J boostée par l'IA</h3>
+              <p className="text-sm text-muted-foreground mb-4">Mariable centralise et coordonne le déroulé de votre mariage : horaires, rôles, contacts, prestataires, briefs et documents. Vous préparez votre planning, puis partagez les bonnes informations aux personnes concernées grâce à un simple lien.</p>
+              <ul className="grid grid-cols-2 gap-x-3 gap-y-1.5 text-sm mb-4">
+                {JOUR_J_POINTS.map((point) => (
+                  <li key={point} className="flex gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" aria-hidden="true" />{point}</li>
+                ))}
+              </ul>
+              <p className="text-sm text-muted-foreground">Chaque personne accède aux informations utiles pour elle, depuis son téléphone, sans multiplier les fichiers et les versions.</p>
+            </div>
+            <p className="opacity-90 text-sm mb-4">Créez votre compte gratuit, ou utilisez le code promo reçu pendant l'événement pour passer Premium à <strong>19 €</strong> au lieu de 29 € : fonctionnalités illimitées (IA comprise), checklist, appli jour J et <strong>8 guides PDF</strong> à télécharger.</p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button asChild variant="secondary" className="rounded-none min-h-[48px] flex-1"><Link to="/register-gratuit">Créer mon compte gratuit</Link></Button>
+              <Button asChild variant="outline" className="rounded-none min-h-[48px] flex-1 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"><Link to="/paiement">J'ai un code promo · Premium 19 €</Link></Button>
             </div>
           </div>
         </section>
@@ -221,12 +258,12 @@ const ImmersionMariage = () => {
       </main>
 
       {/* Tiroir avis */}
-      <Sheet open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen}>
-        <SheetContent side="bottom" className="rounded-none max-h-[92svh] overflow-y-auto">
-          <SheetHeader className="text-left">
-            <SheetTitle className="font-serif text-2xl">Votre avis compte</SheetTitle>
-            <SheetDescription>Aidez-nous à rendre la prochaine édition encore plus belle.</SheetDescription>
-          </SheetHeader>
+      <Dialog open={isFeedbackOpen} onOpenChange={setIsFeedbackOpen}>
+        <DialogContent className="rounded-none max-h-[90svh] overflow-y-auto w-[calc(100%-1.5rem)] max-w-lg">
+          <DialogHeader className="text-left">
+            <DialogTitle className="font-serif text-2xl">Votre avis compte</DialogTitle>
+            <DialogDescription>Aidez-nous à rendre la prochaine édition encore plus belle.</DialogDescription>
+          </DialogHeader>
           <form onSubmit={handleFeedbackSubmit} className="space-y-5 mt-5 max-w-lg mx-auto">
             {FEEDBACK_QUESTIONS.map((question) => (
               <div key={question.key}>
@@ -242,8 +279,8 @@ const ImmersionMariage = () => {
               {isFeedbackComplete ? 'Envoyer mon avis' : 'Notez les 5 questions'}
             </Button>
           </form>
-        </SheetContent>
-      </Sheet>
+        </DialogContent>
+      </Dialog>
 
       {/* Tiroir contact express */}
       <Sheet open={!!selectedVendor} onOpenChange={(open) => !open && setSelectedVendor(null)}>

@@ -83,6 +83,8 @@ const bonusItems: NavItem[] = [];
 // Routes où on masque la nav (marketing, admin, embeds, auth)
 const HIDDEN_PATTERNS = [
   /^\/mariable/,
+  /^\/immersion-mariage/,
+  /^\/qr\//,
   /^\/partenariat/,
   /^\/professionnels$/,
   /^\/landing/,
