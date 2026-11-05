@@ -88,6 +88,8 @@ const Agence = lazy(() => import("./pages/Agence"));
 const CGV = lazy(() => import("./pages/CGV"));
 const SalonJeuConcours = lazy(() => import("./pages/SalonJeuConcours"));
 const ImmersionMariage = lazy(() => import("./pages/ImmersionMariage"));
+const ImmersionMariageAdmin = lazy(() => import("./pages/ImmersionMariageAdmin"));
+const QrRedirect = lazy(() => import("./pages/QrRedirect"));
 const Approche = lazy(() => import("./pages/about/Approche"));
 const Temoignages = lazy(() => import("./pages/about/Temoignages"));
 const Comparatif = lazy(() => import("./pages/Comparatif"));
@@ -398,6 +400,8 @@ function App() {
                    
                    {/* Salon du Mariage 2025 routes */}
                    <Route path="/immersion-mariage" element={<ImmersionMariage />} />
+                   <Route path="/immersion-mariage/admin" element={<ImmersionMariageAdmin />} />
+                   <Route path="/qr/:slug" element={<QrRedirect />} />
                    <Route path="/salon-du-mariage-2025/jeu-concours" element={<SalonJeuConcours />} />
                    
                    {/* Content Creator Mariage route */}
