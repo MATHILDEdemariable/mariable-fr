@@ -222,9 +222,9 @@ const ImmersionMariage = () => {
         {/* CTA Mariable */}
         <section id="mariable" className="scroll-mt-14 bg-primary text-primary-foreground px-5 py-12">
           <div className="max-w-3xl mx-auto">
-            <p className="text-[11px] uppercase tracking-[0.25em] opacity-80 mb-3">Et maintenant ?</p>
+            <p className="text-[11px] uppercase tracking-[0.25em] opacity-80 mb-3">ET MAINTENANT ? DECOUVREZ MARIABLE.</p>
             <h2 className="font-serif text-2xl md:text-4xl mb-3">Une seule plateforme, des préparatifs au jour J</h2>
-            <p className="opacity-90 text-sm md:text-base mb-8">Mariable, le wedding planner digital boosté à l'IA, vous accompagne pendant toute la préparation avec les outils essentiels, jusqu'à la coordination finale.</p>
+            <p className="opacity-90 text-sm md:text-base mb-8">Mariable.fr, le wedding planner digital boosté à l'IA, vous accompagne pendant toute la préparation avec les outils essentiels, jusqu'à la coordination finale.</p>
             <div className="grid gap-3 sm:grid-cols-2 mb-8">
               {MARIABLE_FEATURES.map((feature) => (
                 <div key={feature.title} className="border border-primary-foreground/25 p-4">
@@ -242,7 +242,7 @@ const ImmersionMariage = () => {
                   <li key={point} className="flex gap-1.5"><Sparkles className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" aria-hidden="true" />{point}</li>
                 ))}
               </ul>
-              <p className="text-sm text-muted-foreground">Chaque personne accède aux informations utiles pour elle, depuis son téléphone, sans multiplier les fichiers et les versions.</p>
+              <p className="text-sm text-muted-foreground">Chaque personne accède aux informations utiles pour elle, depuis son téléphone, sans téléchargement ou création de compte.</p>
             </div>
             <p className="opacity-90 text-sm mb-4">Créez votre compte gratuit, ou utilisez le code promo reçu pendant l'événement pour passer Premium à <strong>19 €</strong> au lieu de 29 € : fonctionnalités illimitées (IA comprise), checklist, appli jour J et <strong>8 guides PDF</strong> à télécharger.</p>
             <div className="flex flex-col sm:flex-row gap-3">
