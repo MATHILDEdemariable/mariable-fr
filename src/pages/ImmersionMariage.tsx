@@ -165,16 +165,29 @@ const ImmersionMariage = () => {
         </section>
 
         {/* Navigation rapide collante */}
-        <nav className="sticky top-0 z-30 bg-primary text-primary-foreground shadow-md" aria-label="Sections de la page">
+        {/* Desktop : barre haute sauge avec boutons */}
+        <nav className="hidden md:block sticky top-0 z-30 bg-editorial-olive text-primary-foreground shadow-md" aria-label="Sections de la page">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4 px-5 py-3">
+            <span className="font-serif text-lg">Immersion × mariable</span>
+            <div className="flex items-center gap-2">
+              <a href="#prestataires" className="min-h-[44px] px-4 inline-flex items-center gap-2 text-sm font-medium border border-primary-foreground/60 hover:bg-primary-foreground hover:text-editorial-olive transition-colors"><Users className="h-4 w-4" aria-hidden="true" />Prestataires</a>
+              <button onClick={() => setIsFeedbackOpen(true)} className="min-h-[44px] px-4 inline-flex items-center gap-2 text-sm font-medium border border-primary-foreground/60 hover:bg-primary-foreground hover:text-editorial-olive transition-colors"><MessageSquareHeart className="h-4 w-4" aria-hidden="true" />Mon avis</button>
+              <a href="#mariable" className="min-h-[44px] px-4 inline-flex items-center gap-2 text-sm font-medium bg-background text-editorial-olive hover:bg-editorial-beige transition-colors"><Sparkles className="h-4 w-4" aria-hidden="true" />Offre -10 €</a>
+            </div>
+          </div>
+        </nav>
+
+        {/* Mobile : menu collant en bas */}
+        <nav className="md:hidden fixed bottom-0 inset-x-0 z-40 bg-editorial-olive text-primary-foreground shadow-[0_-2px_10px_rgba(0,0,0,0.15)] pb-[env(safe-area-inset-bottom)]" aria-label="Sections de la page">
           <div className="grid grid-cols-3 text-xs">
-            <button onClick={() => setIsFeedbackOpen(true)} className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground">
-              <MessageSquareHeart className="h-4 w-4" aria-hidden="true" />Mon avis
+            <button onClick={() => setIsFeedbackOpen(true)} className="min-h-[56px] flex flex-col items-center justify-center gap-0.5 font-medium">
+              <MessageSquareHeart className="h-5 w-5" aria-hidden="true" />Mon avis
             </button>
-            <a href="#prestataires" className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground border-x border-primary-foreground/30">
-              <Users className="h-4 w-4" aria-hidden="true" />Prestataires
+            <a href="#prestataires" className="min-h-[56px] flex flex-col items-center justify-center gap-0.5 font-medium border-x border-primary-foreground/30">
+              <Users className="h-5 w-5" aria-hidden="true" />Prestataires
             </a>
-            <a href="#mariable" className="min-h-[52px] flex flex-col items-center justify-center gap-0.5 font-medium text-primary-foreground">
-              <Sparkles className="h-4 w-4" aria-hidden="true" />Offre 19 €
+            <a href="#mariable" className="min-h-[56px] flex flex-col items-center justify-center gap-0.5 font-medium">
+              <Sparkles className="h-5 w-5" aria-hidden="true" />Offre -10 €
             </a>
           </div>
         </nav>
@@ -220,7 +233,7 @@ const ImmersionMariage = () => {
         </section>
 
         {/* CTA Mariable */}
-        <section id="mariable" className="scroll-mt-14 bg-primary text-primary-foreground px-5 py-12">
+        <section id="mariable" className="scroll-mt-20 bg-editorial-olive text-primary-foreground px-5 py-12">
           <div className="max-w-3xl mx-auto">
             <p className="text-[11px] uppercase tracking-[0.25em] opacity-80 mb-3">ET MAINTENANT ? DECOUVREZ MARIABLE.</p>
             <h2 className="font-serif text-2xl md:text-4xl mb-3">Une seule plateforme, des préparatifs au jour J</h2>
@@ -244,15 +257,24 @@ const ImmersionMariage = () => {
               </ul>
               <p className="text-sm text-muted-foreground">Chaque personne accède aux informations utiles pour elle, depuis son téléphone, sans téléchargement ou création de compte.</p>
             </div>
-            <p className="opacity-90 text-sm mb-4">Créez votre compte gratuit, ou utilisez le code promo reçu pendant l'événement pour passer Premium à <strong>19 €</strong> au lieu de 29 € : fonctionnalités illimitées (IA comprise), checklist, appli jour J et <strong>8 guides PDF</strong> à télécharger.</p>
+            <h3 className="font-serif text-xl md:text-2xl mb-2">Créez votre compte</h3>
+            <p className="opacity-90 text-sm mb-4">Découvrez Mariable gratuitement, ou profitez de <strong>-10 €</strong> sur le Premium : fonctionnalités illimitées (IA comprise), checklist, appli jour J et <strong>8 guides PDF</strong> à télécharger.</p>
+            <div className="border border-dashed border-primary-foreground/70 p-4 mb-5 flex flex-col sm:flex-row sm:items-center gap-3">
+              <div className="flex-1">
+                <p className="text-[11px] uppercase tracking-[0.2em] opacity-80">Votre code promo</p>
+                <p className="font-serif text-2xl tracking-widest">MARIABLE10</p>
+                <p className="text-xs opacity-85">À saisir dans le champ « code promo » au moment du paiement en ligne.</p>
+              </div>
+              <Button type="button" variant="secondary" className="rounded-none min-h-[44px]" onClick={() => { navigator.clipboard?.writeText('MARIABLE10'); toast({ description: 'Code MARIABLE10 copié' }); }}>Copier le code</Button>
+            </div>
             <div className="flex flex-col sm:flex-row gap-3">
-              <Button asChild variant="secondary" className="rounded-none min-h-[48px] flex-1"><Link to="/register-gratuit">Créer mon compte gratuit</Link></Button>
-              <Button asChild variant="outline" className="rounded-none min-h-[48px] flex-1 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-primary"><Link to="/paiement">J'ai un code promo · Premium 19 €</Link></Button>
+              <Button asChild variant="outline" className="rounded-none min-h-[48px] flex-1 bg-transparent border-primary-foreground text-primary-foreground hover:bg-primary-foreground hover:text-editorial-olive"><Link to="/register-gratuit">Je découvre gratuitement</Link></Button>
+              <Button asChild className="rounded-none min-h-[48px] flex-1 bg-background text-editorial-olive hover:bg-editorial-beige"><Link to="/paiement">Je profite du code promo</Link></Button>
             </div>
           </div>
         </section>
 
-        <footer className="px-5 py-6 text-center text-xs text-muted-foreground">
+        <footer className="px-5 pt-6 pb-24 md:pb-6 text-center text-xs text-muted-foreground">
           Immersion Mariage · Propulsé par <Link to="/" className="underline">Mariable</Link>
         </footer>
       </main>
