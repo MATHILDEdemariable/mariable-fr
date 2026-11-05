@@ -227,9 +227,18 @@ const ImmersionMariage = () => {
                   <h3 className="font-serif text-lg text-foreground leading-tight">{vendor.name}</h3>
                   <p className="text-xs text-muted-foreground">{vendor.speciality}</p>
                   <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1"><MapPin className="w-3 h-3" aria-hidden="true" />{vendor.location}</p>
-                  <Button size="sm" className="mt-3 rounded-none min-h-[40px] w-full" onClick={() => setSelectedVendor(vendor)}>
-                    Mise en contact
-                  </Button>
+                  {vendor.slug === 'mariable' ? (
+                    <>
+                      <Button size="sm" className="mt-3 rounded-none min-h-[40px] w-full" onClick={() => document.getElementById('mariable')?.scrollIntoView({ behavior: 'smooth' })}>
+                        Découvrir l'offre -10 €
+                      </Button>
+                      <a href="https://mariable.fr" target="_blank" rel="noopener noreferrer" className="mt-2 text-xs text-center underline text-primary">En savoir plus sur mariable.fr</a>
+                    </>
+                  ) : (
+                    <Button size="sm" className="mt-3 rounded-none min-h-[40px] w-full" onClick={() => setSelectedVendor(vendor)}>
+                      Mise en contact
+                    </Button>
+                  )}
                 </div>
               </article>
             ))}
