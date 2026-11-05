@@ -254,6 +254,7 @@ const BlogArticlePage = () => {
           <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
         )}
       </SEO>
+      {suppliedArticle && <Helmet><title>{metaTitle}</title></Helmet>}
       <PremiumHeader />
       <main className="flex-grow bg-gray-50/50 page-content">
         <article className="max-w-4xl mx-auto px-4 py-8 sm:py-12">

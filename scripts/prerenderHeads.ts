@@ -76,7 +76,14 @@ export const prerenderHeadsPlugin = (): Plugin => {
       try {
         // dist/index.html sert aussi de repli pour toutes les autres routes :
         // pas de contenu texte pour "/" afin d'éviter un flash de l'accueil ailleurs.
-        const withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        let withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        if (BLOG_PUBLICATION_NOV_2026.some((article) => page.path === `/conseilsmariage/${article.slug}`)) {
+          // Helmet owns these tags after mounting; mark only these new article fallbacks
+          // so their metadata is not duplicated with the template's tags.
+          withHead = withHead
+            .replace(/<(meta|title)(?![^>]*data-rh=)([^>]*)>/g, '<$1 data-rh="true"$2>')
+            .replace(/(property="og:type" content=")website"/, '$1article"');
+        }
         const html = page.path === "/" ? withHead : withHead.replace('<div id="root"></div>', buildBody(page));
         const outDir = page.path === "/" ? distDir : path.join(distDir, page.path);
         fs.mkdirSync(outDir, { recursive: true });
