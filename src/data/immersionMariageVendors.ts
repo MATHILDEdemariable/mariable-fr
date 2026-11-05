@@ -9,6 +9,8 @@ export interface ImmersionVendor {
   location: string;
   image: string;
   experience: string;
+  /** Email du prestataire (à compléter) : reçoit les demandes, Mathilde en copie. */
+  email?: string;
 }
 
 const IMG = 'https://immersion-mariage.fr/wp-content/uploads/2026/05/';
