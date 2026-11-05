@@ -1,5 +1,5 @@
-// Données mockup (sans base) du carnet d'adresses Immersion Mariage 2026.
-export type ImmersionCategory = 'Lieux' | 'Photo & Vidéo' | 'Traiteur & Bar' | 'Musique & Danse' | 'Organisation' | 'Déco & Création';
+// Prestataires présents à Immersion Mariage — Château de Pourtalès, novembre 2026.
+export type ImmersionCategory = 'Lieux' | 'Photo & Vidéo' | 'Mode & Beauté' | 'Traiteur & Bar' | 'Musique & Danse' | 'Organisation' | 'Déco & Création';
 
 export interface ImmersionVendor {
   slug: string;
@@ -9,41 +9,34 @@ export interface ImmersionVendor {
   location: string;
   image: string;
   experience: string;
-  /** Email du prestataire (à compléter) : reçoit les demandes, Mathilde en copie. */
+  /** Email du prestataire : reçoit les demandes, Mathilde en copie. */
   email?: string;
+  phone?: string;
+  instagram?: string;
 }
 
-const IMG = 'https://immersion-mariage.fr/wp-content/uploads/2026/05/';
-
-export const IMMERSION_CATEGORIES: ImmersionCategory[] = ['Lieux', 'Photo & Vidéo', 'Traiteur & Bar', 'Musique & Danse', 'Organisation', 'Déco & Création'];
+export const IMMERSION_CATEGORIES: ImmersionCategory[] = ['Photo & Vidéo', 'Mode & Beauté', 'Musique & Danse', 'Organisation', 'Déco & Création', 'Traiteur & Bar', 'Lieux'];
 
 export const IMMERSION_VENDORS: ImmersionVendor[] = [
-  { slug: 'ceremonie-story', name: 'Cérémonie Story', speciality: 'Wedding planner & cérémonie laïque', category: 'Organisation', location: 'Strasbourg', image: `${IMG}ImmersionMariageParis-104-300x200.jpg`, experience: 'Vous a fait vivre une cérémonie laïque sur mesure.' },
-  { slug: 'dylan-kenway-music', name: 'Dylan Kenway Music', speciality: 'DJ mariage', category: 'Musique & Danse', location: 'Alsace', image: `${IMG}20250405Immersionjour1NORTHSEBASTIEN0033-300x200.jpg`, experience: "A fait danser la soirée de l'événement." },
-  { slug: 'traiteur-m', name: 'Traiteur M', speciality: 'Traiteur', category: 'Traiteur & Bar', location: 'Alsace', image: `${IMG}traiteur-m-1-238x300.png`, experience: 'Vous a fait déguster son cocktail et ses bouchées.' },
-  { slug: 'ms-photographies', name: 'MS Photographies', speciality: 'Photographe', category: 'Photo & Vidéo', location: 'Alsace', image: `${IMG}MS-Photographies-Mariage-300x237.jpg`, experience: 'A capturé les moments forts de la journée.' },
-  { slug: 'maureen-carre', name: 'Maureen Carré', speciality: 'Photographe', category: 'Photo & Vidéo', location: 'Alsace', image: `${IMG}Maureen-Carre-Photo-1-300x237.jpg`, experience: 'Portraits naturels réalisés sur place.' },
-  { slug: 'maison-prisma', name: 'Maison Prisma', speciality: 'Décoration & scénographie', category: 'Déco & Création', location: 'Alsace', image: `${IMG}Maison-Prisma-300x237.jpg`, experience: 'A imaginé la scénographie des espaces.' },
-  { slug: 'ldc-dance', name: 'LDC Dance', speciality: 'Ouverture de bal', category: 'Musique & Danse', location: 'Alsace', image: `${IMG}LDC-Dance-300x237.jpg`, experience: "Vous a initiés à l'ouverture de bal." },
-  { slug: 'la-faiseuse-de-reves', name: 'La Faiseuse de Rêves', speciality: 'Décoration', category: 'Déco & Création', location: 'Alsace', image: `${IMG}La-faiseuse-de-reve-300x237.jpg`, experience: 'A habillé les tables de l’événement.' },
-  { slug: 'l-ady-oui-events', name: 'L.ADY Oui Events', speciality: 'Wedding planner', category: 'Organisation', location: 'Alsace', image: '', experience: 'A coordonné une partie du déroulé.' },
-  { slug: 'jessica-drouin', name: 'Jessica Drouin', speciality: 'Officiante de cérémonie', category: 'Organisation', location: 'Alsace', image: '', experience: 'A partagé ses conseils de cérémonie.' },
-  { slug: 'helin-event', name: 'Helin Event', speciality: 'Décoration événementielle', category: 'Déco & Création', location: 'Alsace', image: '', experience: 'Décor et mises en scène de l’événement.' },
-  { slug: 'guyssou', name: 'Guyssou', speciality: 'Animation', category: 'Musique & Danse', location: 'Alsace', image: '', experience: "A animé les temps forts de l'événement." },
-  { slug: 'gk-sugarart', name: 'Gabriela K Sugar Art', speciality: 'Wedding cake', category: 'Traiteur & Bar', location: 'Alsace', image: '', experience: 'Vous a fait goûter ses créations sucrées.' },
-  { slug: 'en-avant-la-musique', name: 'En Avant la Musique', speciality: 'Musiciens live', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Musique live pendant la cérémonie.' },
-  { slug: 'delphine-petit-postma', name: 'Delphine Petit-Postma', speciality: 'Wedding planner', category: 'Organisation', location: 'Alsace', image: '', experience: 'A répondu à vos questions d’organisation.' },
-  { slug: 'deborah-elodie-villemus', name: 'Déborah & Élodie Villemus', speciality: 'Coordination', category: 'Organisation', location: 'Alsace', image: '', experience: 'Coordination et accueil des visiteurs.' },
-  { slug: 'baroof', name: "Bar'OOF", speciality: 'Bar à cocktails', category: 'Traiteur & Bar', location: 'Alsace', image: '', experience: 'Vous a servi ses cocktails signature.' },
-  { slug: 'atelier-des-sens', name: 'Atelier des Sens', speciality: 'Fleuriste', category: 'Déco & Création', location: 'Alsace', image: '', experience: 'Compositions florales de l’événement.' },
-  { slug: 'mariable', name: 'Mariable', speciality: 'App de coordination du jour J', category: 'Organisation', location: 'France', image: '', experience: 'Vous a présenté le déroulé partagé du jour J.' },
-  { slug: 'les-pas-de-danse', name: 'Les Pas de Danse', speciality: 'Professeur de danse', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Cours d’ouverture de bal en direct.' },
-  { slug: 'kywwie-films', name: 'Kywwie Films', speciality: 'Vidéaste', category: 'Photo & Vidéo', location: 'Alsace', image: '', experience: 'A filmé l’événement.' },
-  { slug: 'aujourdhui-cest', name: "Aujourd'hui c'est…", speciality: 'Papeterie', category: 'Déco & Création', location: 'Alsace', image: '', experience: 'Faire-part et papeterie exposés.' },
-  { slug: 'cindy-witter', name: 'Cindy Witter Photography', speciality: 'Photographe', category: 'Photo & Vidéo', location: 'Alsace', image: '', experience: 'Séances photo sur place.' },
-  { slug: 'louise-nomad-bar', name: 'Louise Nomad Bar', speciality: 'Bar mobile', category: 'Traiteur & Bar', location: 'Alsace', image: '', experience: 'Bar itinérant pendant le cocktail.' },
-  { slug: 'chateau-de-pourtales', name: 'Château de Pourtalès', speciality: 'Lieu de réception', category: 'Lieux', location: 'Strasbourg', image: '', experience: 'Lieu d’exception à visiter.' },
-  { slug: 'villa-hetres-pourpres', name: 'La Villa des Hêtres Pourpres', speciality: 'Lieu de réception', category: 'Lieux', location: 'Vosges', image: '', experience: 'Un lieu au cœur des Vosges.' },
-  { slug: 'villa-quai-sturm', name: 'Villa Quai Sturm', speciality: 'Salle de mariage', category: 'Lieux', location: 'Strasbourg', image: '', experience: 'Salle de réception à Strasbourg.' },
-  { slug: 'clauday-evenements', name: 'Clauday Évènements', speciality: 'Photobooth & décoration', category: 'Déco & Création', location: 'Alsace', image: '', experience: 'Photobooth installé pendant l’événement.' },
+  { slug: 'kywwie-films', name: 'Kywwie Films', speciality: 'Vidéaste', category: 'Photo & Vidéo', location: 'Alsace', image: '', experience: "A filmé les coulisses de l'événement.", email: 'kywwie.graphisme@gmail.com', phone: '06 59 86 12 28', instagram: 'kywwie_films' },
+  { slug: 'cindy-witter', name: 'Cindy Witter Photography', speciality: 'Photographe', category: 'Photo & Vidéo', location: 'Alsace', image: '', experience: 'A capturé les moments forts en coulisses.', email: 'cindywitterphotography@gmail.com', phone: '06 78 71 77 00', instagram: 'cindy_photographe_alsace' },
+  { slug: 'megane-perrin', name: 'Mégane Perrin', speciality: 'Photographe', category: 'Photo & Vidéo', location: 'Alsace', image: 'https://meganeperrin.fr/wp-content/uploads/2026/10/photographe-mariage-elopement-montagne-1024x683.webp', experience: 'Portraits naturels réalisés sur place.', email: 'contact@meganeperrin.fr', phone: '06 24 91 29 11', instagram: 'megane.perrin' },
+  { slug: 'photo-touch', name: 'Photo Touch', speciality: 'Photobooth miroir', category: 'Photo & Vidéo', location: 'Alsace', image: '', experience: 'Photobooth miroir installé pendant la journée.', email: 'phototouch.am@gmail.com', phone: '07 66 06 14 36', instagram: 'photo_touch_miroir' },
+  { slug: 'ceremonie-story', name: 'Cérémonie Story', speciality: 'Wedding planner, designer & officiant', category: 'Organisation', location: 'Strasbourg', image: 'https://www.ceremonie-story.fr/wp-content/uploads/elementor/thumbs/WEDDING-PLANNER-STRASBOURG-rq0g6k6iwt1vzdjjnjvtkpu6ma9aygvtx2gc528sxo.jpg', experience: 'Vous a fait vivre une cérémonie laïque sur mesure.', email: 'info@ceremonie-story.fr', phone: '06 08 43 24 74', instagram: 'ceremonie_story' },
+  { slug: 'la-faiseuse-de-reves', name: 'La Faiseuse de Rêves', speciality: 'Voyage de noces sur mesure', category: 'Organisation', location: 'Paris', image: 'https://www.lafaiseusedereves.fr/wp-content/uploads/2025/08/La-faiseuse-de-reve-voyage-haut-de-gamme-sur-mesure.jpg', experience: 'Vous a fait rêver à votre voyage de noces.', email: 'natacha@lafaiseusedereves.fr', phone: '06 61 67 33 64', instagram: 'lafaiseusedereves' },
+  { slug: 'voeux-et-vinyle', name: 'Vœux et Vinyle', speciality: 'DJ, déco & officiant', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Musique et cérémonie en mode vinyle.', email: 'voeuxvinyle@gmail.com', phone: '06 56 81 49 39', instagram: 'voeux-vinyle' },
+  { slug: 'prax-events', name: 'Prax Events', speciality: 'DJ & magicien', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Ambiance musicale et tours de magie.', email: 'contact@prax-events.fr', phone: '07 83 01 87 02', instagram: 'prax_events' },
+  { slug: 'aurore-casano', name: 'Aurore Casano', speciality: 'Chanteuse live', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Chant live pendant la cérémonie.', email: 'casano.aurore@gmail.com', phone: '07 88 75 92 00', instagram: 'casanoaurore' },
+  { slug: 'ecole-danse-herve-mathis', name: 'École de danse Hervé Mathis', speciality: 'Ouverture de bal', category: 'Musique & Danse', location: 'Alsace', image: '', experience: "Vous a initiés à l'ouverture de bal.", email: 'hervemathis67@gmail.com', phone: '06 62 81 05 64' },
+  { slug: 'booth-et-boom', name: 'Booth et Boom', speciality: 'Artificier', category: 'Musique & Danse', location: 'Alsace', image: '', experience: 'Effets pyrotechniques et étincelles.', email: 'booth_boom@yahoo.com', phone: '06 58 85 13 62', instagram: 'booth_boom' },
+  { slug: 'justine-franquet', name: 'Justine Franquet', speciality: 'Maquilleuse', category: 'Mode & Beauté', location: 'Alsace', image: '', experience: 'Mises en beauté des modèles.', phone: '07 71 76 50 51', instagram: 'justinefr_makeup' },
+  { slug: 'warda-beauty', name: 'Warda Beauty', speciality: 'Maquilleuse & coiffeuse', category: 'Mode & Beauté', location: 'Alsace', image: '', experience: 'Coiffures et maquillages de mariée.', email: 'wardabeauty67@gmail.com', phone: '07 69 89 53 04', instagram: 'wardabeauty67' },
+  { slug: 'aux-fils-de-l-histoire', name: "Aux Fils de l'Histoire", speciality: 'Robes de mariée', category: 'Mode & Beauté', location: 'Alsace', image: '', experience: 'Robes présentées lors du défilé.', email: 'auxfilsdelhistoire@gmail.com', phone: '06 84 81 17 07', instagram: 'auxfilsdelhistoire.robemariee' },
+  { slug: 'au-royaume-des-robes', name: 'Au Royaume des Robes', speciality: 'Robes de mariée', category: 'Mode & Beauté', location: 'Alsace', image: '', experience: 'Robes présentées lors du défilé.', phone: '06 62 80 08 15', instagram: 'auroyaume.desrobes' },
+  { slug: 'emie-saint-germain', name: 'Emie Saint-Germain', speciality: 'Robes & costumes', category: 'Mode & Beauté', location: 'Alsace', image: 'https://cdn.prod.website-files.com/5fae3c7cfb5bf2b24de8ea7e/63fcea699241c62804b5ab37_Robe%20de%20mari%C3%A9e%20Lysie%20(-1.jpg', experience: 'Tenues de mariés présentées sur place.', email: 'info@emie-saint-germain.fr', phone: '09 87 57 23 02', instagram: 'emie_saint_germain' },
+  { slug: 'ici-et-tailleur', name: 'Ici et Tailleur', speciality: 'Costumes sur mesure', category: 'Mode & Beauté', location: 'Alsace', image: '', experience: 'Costumes du marié présentés sur place.', email: 'iciettailleur@gmail.com', phone: '06 95 95 59 34', instagram: 'iciettailleur.costumes' },
+  { slug: 'une-histoire-une-fleur', name: 'Une Histoire… Une Fleur', speciality: 'Fleuriste', category: 'Déco & Création', location: 'Schiltigheim', image: 'https://fleuriste-schiltigheim.fr/wp/wp-content/uploads/2018/02/mariage-test-500-250.jpg', experience: "Compositions florales de l'événement.", email: 'contact@unehistoireunefleur.fr', phone: '06 23 26 27 70', instagram: 'unehistoireunefleur' },
+  { slug: 'clauday-evenements', name: 'Clauday Évènements', speciality: 'Location de matériel', category: 'Déco & Création', location: 'Alsace', image: '', experience: "Mobilier et matériel de l'événement.", email: 'contact@clauday-evenements.fr', phone: '03 89 57 11 23', instagram: 'clauday_evenement' },
+  { slug: 'louise-nomad-bar', name: 'Louise Nomad Bar', speciality: 'Bar à cocktails itinérant', category: 'Traiteur & Bar', location: 'Alsace', image: '', experience: 'Vous a servi ses cocktails.', email: 'contact@louisenomadbar.alsace', phone: '07 52 07 90 02', instagram: 'louisenomadbar' },
+  { slug: 'chateau-de-pourtales', name: 'Château de Pourtalès', speciality: 'Lieu de réception', category: 'Lieux', location: 'Strasbourg', image: '', experience: "Le lieu d'exception qui vous a accueillis." },
 ];
