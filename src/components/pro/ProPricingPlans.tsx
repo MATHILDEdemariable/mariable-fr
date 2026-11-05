@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -126,16 +126,19 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSubscribe = async (planId: Exclude<PlanId, "agence">) => {
+  const handleSubscribe = async (planId: Exclude<PlanId, "agence">, forcedInterval?: "month" | "year") => {
+    const interval = forcedInterval ?? (isSplitPayment ? "month" : "year");
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) {
-      navigate("/register-gratuit?type=pro");
+      // Étape 1 : création du compte, puis retour ici pour lancer Stripe automatiquement
+      const returnPath = `/pro-solutions?checkout=${planId}-${interval}`;
+      navigate(`/register-gratuit?type=pro&redirect=${encodeURIComponent(returnPath)}`);
       return;
     }
     try {
       setLoadingPlanId(planId);
       const { data, error } = await supabase.functions.invoke("create-pro-checkout", {
-        body: { planId, interval: isSplitPayment ? "month" : "year" },
+        body: { planId, interval },
       });
       if (error || !data?.url) throw error ?? new Error("URL Stripe manquante");
       window.location.href = data.url;
@@ -145,6 +148,19 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
       setLoadingPlanId(null);
     }
   };
+  // Étape 2 : de retour après inscription (?checkout=organisation-month), on ouvre Stripe directement
+  useEffect(() => {
+    const checkoutChoice = new URLSearchParams(window.location.search).get("checkout");
+    const match = checkoutChoice?.match(/^(jour-j|organisation)-(month|year)$/);
+    if (!match) return;
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) return;
+      window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+      handleSubscribe(match[1] as Exclude<PlanId, "agence">, match[2] as "month" | "year");
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const text = isEnglish ? TEXT.en : TEXT.fr;
   const compareRows = getCompareRows(isEnglish);
   const planIds: PlanId[] = ["jour-j", "organisation", "agence"];
