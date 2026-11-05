@@ -1,0 +1,1 @@
+DELETE FROM public.immersion_feedback WHERE comment = 'Test avis Lovable';
