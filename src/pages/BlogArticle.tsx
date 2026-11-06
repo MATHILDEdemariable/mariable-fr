@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { Helmet } from 'react-helmet-async';
 import { supabase } from '@/integrations/supabase/client';
@@ -79,13 +80,14 @@ const fetchBlogPostBySlug = async (slug: string): Promise<BlogPost | null> => {
   return data;
 };
 
-const fetchRelatedPosts = async (currentSlug: string, audience: string): Promise<BlogPost[]> => {
+const fetchRelatedPosts = async (currentSlug: string, audience: string, language: string): Promise<BlogPost[]> => {
   const { data, error } = await supabase
     .from('blog_posts')
     .select('*')
     .eq('status', 'published')
     .eq('audience', audience)
     .neq('slug', currentSlug)
+    .eq('language', language)
     .order('published_at', { ascending: false })
     .limit(3);
 
@@ -97,8 +99,20 @@ const fetchRelatedPosts = async (currentSlug: string, audience: string): Promise
   return data || [];
 };
 
+// Article jumeau (FR <-> EN) lié par translation_of
+const fetchCounterpart = async (post: any): Promise<{ slug: string; language: string } | null> => {
+  const query = post.translation_of
+    ? supabase.from('blog_posts').select('slug, language').eq('id', post.translation_of)
+    : supabase.from('blog_posts').select('slug, language').eq('translation_of', post.id);
+  const { data, error } = await query.eq('status', 'published').limit(1);
+  if (error) { console.error('Error fetching counterpart:', error); return null; }
+  return data?.[0] ?? null;
+};
+
 const BlogArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
+  const navigate = useNavigate();
+  const { i18n } = useTranslation();
 
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['blog_post', slug],
@@ -108,11 +122,31 @@ const BlogArticlePage = () => {
 
   const postAudience = ((post as any)?.audience === 'pro' ? 'pro' : 'couple');
   const isPro = postAudience === 'pro';
-  const basePath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
+  const rootPath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
+  const postIsEnglish = (post as any)?.language === 'en';
+  // Seules les traductions générées vivent sous /en (les anciens articles EN gardent leur URL)
+  const basePath = (post as any)?.translation_of ? `/en${rootPath}` : rootPath;
+
+  const { data: counterpart } = useQuery({
+    queryKey: ['blog_counterpart', (post as any)?.id],
+    queryFn: () => fetchCounterpart(post),
+    enabled: !!post,
+  });
+  const counterpartPath = counterpart
+    ? `${counterpart.language === 'en' ? '/en' : ''}${rootPath}/${counterpart.slug}`
+    : null;
+
+  // Le toggle FR/EN bascule vers l'article jumeau
+  const uiLang = i18n.language?.startsWith('en') ? 'en' : 'fr';
+  React.useEffect(() => {
+    if (post && counterpartPath && counterpart?.language === uiLang && ((post as any).language || 'fr') !== uiLang) {
+      navigate(counterpartPath);
+    }
+  }, [uiLang, post, counterpart, counterpartPath, navigate]);
 
   const { data: relatedPosts = [] } = useQuery({
-    queryKey: ['related_posts', slug, postAudience],
-    queryFn: () => fetchRelatedPosts(slug!, postAudience),
+    queryKey: ['related_posts', slug, postAudience, postIsEnglish],
+    queryFn: () => fetchRelatedPosts(slug!, postAudience, postIsEnglish ? 'en' : 'fr'),
     enabled: !!slug && !!post,
   });
 
@@ -250,6 +284,15 @@ const BlogArticlePage = () => {
       >
         <script type="application/ld+json">{JSON.stringify(articleSchema)}</script>
         <script type="application/ld+json">{JSON.stringify(breadcrumbSchema)}</script>
+        {counterpartPath && (
+          <link rel="alternate" hrefLang={isEnglish ? 'en' : 'fr'} href={canonicalUrl} />
+        )}
+        {counterpartPath && (
+          <link rel="alternate" hrefLang={isEnglish ? 'fr' : 'en'} href={`https://mariable.fr${counterpartPath}`} />
+        )}
+        {counterpartPath && (
+          <link rel="alternate" hrefLang="x-default" href={isEnglish ? `https://mariable.fr${counterpartPath}` : canonicalUrl} />
+        )}
         {faqSchema && (
           <script type="application/ld+json">{JSON.stringify(faqSchema)}</script>
         )}
@@ -329,7 +372,7 @@ const BlogArticlePage = () => {
                         {relatedPosts.map((relatedPost) => (
                             <Link 
                                 key={relatedPost.id}
-                                to={`${basePath}/${relatedPost.slug}`}
+                                to={`${(relatedPost as any).translation_of ? `/en${rootPath}` : rootPath}/${relatedPost.slug}`}
                                 className="group"
                             >
                                 <div className="overflow-hidden rounded-lg border border-gray-200 transition-all hover:shadow-md">

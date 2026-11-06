@@ -1,0 +1,2 @@
+ALTER TABLE public.blog_posts ADD COLUMN IF NOT EXISTS translation_of uuid REFERENCES public.blog_posts(id) ON DELETE SET NULL;
+CREATE UNIQUE INDEX IF NOT EXISTS blog_posts_translation_of_lang_idx ON public.blog_posts(translation_of, language) WHERE translation_of IS NOT NULL;

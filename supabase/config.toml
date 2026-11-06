@@ -59,3 +59,6 @@ project_id = "bgidfcqktsttzlwlumtz"
     verify_jwt = false
   [functions.wedding-vendor-matcher]
     verify_jwt = false
+
+[functions.translate-blog-post]
+verify_jwt = false

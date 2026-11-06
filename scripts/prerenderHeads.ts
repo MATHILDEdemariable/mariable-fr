@@ -39,7 +39,7 @@ const extractFaq = (html: string) => {
 const formatPrice = (value: unknown) => (value === null || value === undefined || value === "" ? null : `${value} €`);
 
 const buildArticlePage = (post: any, nov: { slug: string; title: string; description: string; h1: string } | undefined): PageHead => {
-  const base = post.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage";
+  const base = `${post.translation_of ? "/en" : ""}${post.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage"}`;
   const pagePath = `${base}/${post.slug}`;
   const h1 = nov?.h1 ?? post.h1_title ?? post.title;
   let content: string = (post.content ?? "").replace(/<script[\s\S]*?<\/script>/gi, "");
@@ -169,6 +169,20 @@ export const prerenderHeadsPlugin = (): Plugin => {
     });
     posts.filter((post) => post.slug).forEach((post) => allPages.push(buildArticlePage(post, BLOG_PUBLICATION_NOV_2026.find((a) => a.slug === post.slug))));
     vendors.filter((v) => v.slug && v.nom).forEach((v) => allPages.push(buildVendorPage(v)));
+    // Traductions EN (/en/...) : ajoutées au sitemap publié si absentes
+    const enSitemapPath = path.join(distDir, "sitemap.xml");
+    if (fs.existsSync(enSitemapPath)) {
+      let sitemapXml = fs.readFileSync(enSitemapPath, "utf-8");
+      const extra = posts
+        .filter((post) => post.slug && post.translation_of)
+        .map((post) => `/en${post.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage"}/${post.slug}`)
+        .filter((p) => !sitemapXml.includes(`<loc>https://mariable.fr${p}</loc>`))
+        .map((p) => `  <url>\n    <loc>https://mariable.fr${p}</loc>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`);
+      if (extra.length) {
+        sitemapXml = sitemapXml.replace("</urlset>", `${extra.join("\n")}\n</urlset>`);
+        fs.writeFileSync(enSitemapPath, sitemapXml);
+      }
+    }
     // Pages statiques du sitemap sans entrée dédiée : au minimum title et canonical propres.
     const sitemapPath = path.join(distDir, "sitemap.xml");
     if (fs.existsSync(sitemapPath)) {
