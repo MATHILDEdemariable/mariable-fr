@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
     const { data: sources, error } = await supabase.from('blog_posts').select('*').eq('language', 'fr').order('created_at');
     if (error) throw error;
     const remaining = (sources ?? []).filter((post) => !doneIds.has(post.id));
-    const source = remaining[0];
+    const source = remaining[Math.floor(Math.random() * remaining.length)];
     if (!source) return reply({ done: true, remaining: 0 });
 
     console.log('🚀 translating', source.slug);
