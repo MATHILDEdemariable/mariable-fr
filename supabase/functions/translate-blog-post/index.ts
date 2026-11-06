@@ -9,7 +9,7 @@ const callModel = async (system: string, user: string, json = false) => {
     method: 'POST',
     headers: { Authorization: `Bearer ${Deno.env.get('LOVABLE_API_KEY')}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      model: 'google/gemini-2.5-flash',
+      model: 'google/gemini-3.8-flash',
       messages: [{ role: 'system', content: system }, { role: 'user', content: user }],
       ...(json ? { response_format: { type: 'json_object' } } : {}),
     }),
