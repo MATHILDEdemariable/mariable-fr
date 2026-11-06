@@ -138,10 +138,7 @@ const BlogArticlePage = () => {
 
   // Le toggle FR/EN bascule vers l'article jumeau
   const uiLang = i18n.language?.startsWith('en') ? 'en' : 'fr';
-  const lastUiLang = React.useRef(uiLang);
   React.useEffect(() => {
-    if (lastUiLang.current === uiLang) return;
-    lastUiLang.current = uiLang;
     if (post && counterpartPath && counterpart?.language === uiLang && ((post as any).language || 'fr') !== uiLang) {
       navigate(counterpartPath);
     }
