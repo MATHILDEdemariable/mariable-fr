@@ -287,7 +287,7 @@ const BlogArticlePage = () => {
                     <style dangerouslySetInnerHTML={{ __html: post.custom_styles }} />
                 )}
                 <div 
-                    className={post.custom_styles ? "" : `prose prose-lg max-w-none${suppliedArticle ? ' [&_.table-scroll]:overflow-x-auto [&_.table-scroll]:max-w-full [&_table]:min-w-[560px] [&_blockquote]:border-primary [&_blockquote]:bg-muted [&_blockquote]:p-4' : ''}`}
+                    className={`prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-foreground prose-h2:mt-12 prose-h2:mb-5 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-p:my-4 prose-li:my-1 prose-hr:my-10 prose-th:bg-muted prose-th:p-3 prose-td:p-3 prose-td:align-top [&_table]:border [&_table]:border-border [&_td]:border-t [&_td]:border-border [&_.table-scroll]:overflow-x-auto [&_.table-scroll]:max-w-full [&_table]:min-w-[560px] [&_blockquote]:border-primary [&_blockquote]:bg-muted [&_blockquote]:p-4 [&_blockquote]:not-italic`}
                     dangerouslySetInnerHTML={{ __html: post.content }}
                 />
             </div>
