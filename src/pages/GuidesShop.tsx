@@ -354,7 +354,7 @@ export default function GuidesShop() {
                   Tout débloquer pour <span className="italic">29€</span>
                 </h2>
                 <p className="text-white/85 text-sm md:text-base mb-8 max-w-xl mx-auto leading-relaxed">
-                  Avec Mariable Premium, vous accédez à <strong>toute la bibliothèque</strong> + tous les outils sans limite + exports PDF illimités. Un seul paiement, à vie.
+                  Avec Mariable Premium, vous accédez à <strong>toute la bibliothèque</strong> + tous les outils sans limite + exports PDF illimités. Un seul paiement par mariage, sans abonnement.
                 </p>
                 <Link
                   to="/paiement"
