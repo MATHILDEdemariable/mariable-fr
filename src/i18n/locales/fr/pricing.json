@@ -1,11 +1,11 @@
 {
   "seo": {
     "title": "Tarifs Mariable – Gratuit ou Premium 29 €",
-    "description": "Mariable est gratuit. Le compte Premium coûte 29 € (achat unique, accès à vie). Checklist IA, budget, coordination jour-J, plan de table et exports illimités."
+    "description": "Mariable est gratuit. Mariable Couple coûte 29 € au lieu de 59 €, paiement unique par mariage, sans abonnement. Checklist IA, budget, coordination jour-J, plan de table et exports illimités."
   },
   "hero": {
     "title": "Nos tarifs",
-    "subtitle": "Toutes les fonctionnalités sont gratuites. Le Premium lève les dernières limites — 29 €, une seule fois, accès à vie."
+    "subtitle": "Toutes les fonctionnalités sont gratuites. Le Premium lève les dernières limites — 29 € au lieu de 59 €, paiement unique par mariage, sans abonnement."
   },
   "plans": {
     "free": {
@@ -24,7 +24,7 @@
       "badge": "Valeur totale : 59€",
       "name": "Premium",
       "price": "29 €",
-      "tagline": "Achat unique · Accès à vie",
+      "tagline": "Paiement unique par mariage · Sans abonnement",
       "all": "Tout le Gratuit, sans aucune limitation",
       "feature1": "Exports PDF/tableur illimités",
       "feature2": "Accès complet au guide en ligne Mariable. Une fois, pour toujours.",
@@ -54,7 +54,7 @@
     "items": [
       { "question": "Mariable est-il vraiment gratuit ?", "answer": "Oui, toutes les fonctionnalités sont accessibles gratuitement : checklist, budget, RSVP, plan de table, coordination jour-J, guide prestataires. Seuls les exports PDF, les guides, l'IA illimitée et le budget illimité nécessitent le Premium." },
       { "question": "Que contient le compte Premium à 29 € ?", "answer": "Le Premium est un achat unique à 29 € qui lève toutes les limitations : exports PDF/tableur illimités, IA illimitée, gestion budget sans limite de lignes, guides mariage PDF, stockage documents illimité et support prioritaire." },
-      { "question": "Est-ce un abonnement ou un paiement unique ?", "answer": "C'est un paiement unique de 29 €. Pas d'abonnement, pas de renouvellement automatique. Vous payez une seule fois et gardez l'accès à vie." },
+      { "question": "Est-ce un abonnement ou un paiement unique ?", "answer": "C'est un paiement unique de 29 €. Pas d'abonnement, pas de renouvellement automatique. Vous payez une seule fois pour votre mariage." },
       { "question": "Puis-je utiliser l'app avec ma famille ?", "answer": "Oui, l'application est faite pour être collaborative. Chacun peut accéder au planning et aux informations importantes grâce au partage en temps réel." },
       { "question": "Puis-je passer au Premium plus tard ?", "answer": "Oui, vous pouvez passer au Premium à tout moment. Votre compte gratuit est conservé et toutes vos données sont préservées lors de l'upgrade." }
     ]

@@ -11,7 +11,7 @@
     "items": [
       "Appli sans téléchargement",
       "Mobile, tablette, ordinateur",
-      "Accès à vie",
+      "Paiement unique par mariage",
       "Mis à jour en continu"
     ]
   },
@@ -127,7 +127,7 @@
       "label": "Mariable Premium",
       "price": "29€",
       "oldPrice": "59€",
-      "priceUnit": "· à vie",
+      "priceUnit": "· par mariage",
       "desc": "Un seul paiement. Aucun abonnement. Mises à jour incluses.",
       "features": [
         "Tous les services — sans limite",
@@ -164,7 +164,7 @@
       "Guides, conseils et modèles pré-paramétrés boostés à l'IA",
       "Pensé comme un wedding planner professionnel — pas un assistant générique",
       "Tout centralisé, partout, tout le temps",
-      "29€, une fois, à vie — tu gardes le contrôle"
+      "29 € au lieu de 59 €, une fois par mariage, sans abonnement"
     ],
     "footnote": "Mariable est paramétré comme un wedding planner — chaque outil, chaque modèle, chaque étape a été pensé pour coordonner ton mariage. Un service de travail, pas un assistant."
   },
@@ -183,7 +183,7 @@
     "title": "On répond à tout.",
     "items": [
       { "q": "Comment ça marche, concrètement&nbsp;?", "a": "Tu paies 29€ une fois. Tu accèdes immédiatement à ton espace Mariable depuis n'importe quel navigateur. Tout est là, prêt à l'emploi." },
-      { "q": "C'est vraiment à vie&nbsp;?", "a": "Oui. Un paiement, accès illimité jusqu'à ton mariage (et même après pour les souvenirs). Mises à jour incluses." },
+      { "q": "C'est un abonnement&nbsp;?", "a": "Non. Un paiement unique par mariage, accès illimité jusqu'à ton mariage (et même après pour les souvenirs). Mises à jour incluses." },
       { "q": "Et si je ne suis pas satisfait·e&nbsp;?", "a": "Remboursement sans condition pendant 14 jours. On veut que tu sois serein·e, pas coincé·e." },
       { "q": "Mon/ma partenaire peut aussi y accéder&nbsp;?", "a": "Bien sûr. Vous partagez le même espace, vous éditez à deux, en temps réel." },
       { "q": "Je peux partager avec mes témoins ou ma famille&nbsp;?", "a": "Oui. Le planning Jour J et certaines vues sont partageables via un simple lien." },
@@ -195,7 +195,7 @@
     "titleLine2": "quelque chose ?",
     "subtitle": "Crée ton compte Mariable dès maintenant.",
     "cta": "Accéder à mon compte Mariable",
-    "footnote": "Remboursé si pas satisfait·e · Aucune installation · Accès à vie",
+    "footnote": "Remboursé si pas satisfait·e · Aucune installation · Sans abonnement",
     "instagram": "Suis Mariable sur Instagram →"
   }
 }
