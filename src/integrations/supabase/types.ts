@@ -275,6 +275,7 @@ export type Database = {
           subtitle: string | null
           tags: Json | null
           title: string
+          translation_of: string | null
           updated_at: string | null
         }
         Insert: {
@@ -298,6 +299,7 @@ export type Database = {
           subtitle?: string | null
           tags?: Json | null
           title: string
+          translation_of?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -321,9 +323,18 @@ export type Database = {
           subtitle?: string | null
           tags?: Json | null
           title?: string
+          translation_of?: string | null
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_translation_of_fkey"
+            columns: ["translation_of"]
+            isOneToOne: false
+            referencedRelation: "blog_posts"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       budgets_dashboard: {
         Row: {
