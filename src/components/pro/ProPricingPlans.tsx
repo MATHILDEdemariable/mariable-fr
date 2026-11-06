@@ -119,7 +119,7 @@ const MarkIcon = ({ mark }: { mark: Mark }) => {
   return <X className="h-5 w-5 text-editorial-noir/30" aria-label="Non" />;
 };
 
-const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
+const ProPricingPlans = ({ isEnglish, organisationAnnualDiscount = 0 }: { isEnglish: boolean; organisationAnnualDiscount?: number }) => {
   const [isSplitPayment, setIsSplitPayment] = useState(false); // true = abonnement mensuel
   const [subscribeSubject, setSubscribeSubject] = useState<string | null>(null);
   const [loadingPlanId, setLoadingPlanId] = useState<PlanId | null>(null);
@@ -197,8 +197,16 @@ const ProPricingPlans = ({ isEnglish }: { isEnglish: boolean }) => {
                     </>
                   ) : (
                     <>
+                      {planId === "organisation" && organisationAnnualDiscount > 0 ? (
+                        <>
+                          <p className="text-sm line-through opacity-70">{price.annual} €{text.perYear}</p>
+                          <p className="font-serif text-4xl">{formatEuro(price.annual * (1 - organisationAnnualDiscount))} €<span className="text-base opacity-70">{text.perYear}</span></p>
+                          <p className="mt-1 text-sm font-semibold">-{Math.round(organisationAnnualDiscount * 100)} % offre Wedding Academy</p>
+                        </>
+                      ) : (<>
                       <p className="font-serif text-4xl">{price.annual} €<span className="text-base opacity-70">{text.perYear}</span></p>
                       <p className="mt-1 text-sm opacity-75">{text.annualSaving(formatEuro(price.annual / 12), formatEuro(Math.round((12 - price.annual / price.monthly) * 10) / 10))}</p>
+                      </>)}
                     </>
                   )
                 ) : <p className="font-serif text-4xl">{text.onQuote}</p>}
