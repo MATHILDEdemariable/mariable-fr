@@ -81,6 +81,7 @@ const MonJourMConducteur = lazy(() => import("./pages/MonJourMConducteur"));
 const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage"));
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
+const WeddingAcademy = lazy(() => import("./pages/WeddingAcademy"));
 const DemoPro = lazy(() => import("./pages/DemoPro"));
 const ProPlaybookIA = lazy(() => import("./pages/pro/ProPlaybookIA"));
 const ProAlternativeMariagesNet = lazy(() => import("./pages/pro/ProAlternativeMariagesNet"));
@@ -319,6 +320,7 @@ function App() {
                   <Route path="/professionnels" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/partenariat" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/demo-pro" element={<DemoPro />} />
+                  <Route path="/weddingacademy" element={<WeddingAcademy />} />
                   <Route path="/demo" element={<DemoVideos />} />
                   <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
                   <Route path="/pro/alternative-mariages-net" element={<ProAlternativeMariagesNet />} />

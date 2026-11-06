@@ -1844,31 +1844,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://mariable.fr/conseilsmariage/best-wedding-venues-france-foreigners</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mariable.fr/conseilsmariage/best-wedding-content-creator-france</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mariable.fr/conseilsmariage/getting-married-in-france-as-a-foreigner</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mariable.fr/conseilsmariage/do-i-need-a-wedding-planner-in-france</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://mariable.fr/conseilsmariage/where-to-get-married-in-france-region-guide</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://mariable.fr/conseilsmariage/mariage-canicule-guide-complet-survivre-profiter-30-degres</loc>
     <lastmod>2026-06-24</lastmod>
     <changefreq>monthly</changefreq>
@@ -1900,6 +1875,16 @@
   <url>
     <loc>https://mariable.fr/conseilsmariage/renouvellement-voeux-vs-anniversaire-de-mariage</loc>
     <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-wedding-venues-france-foreigners</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-wedding-content-creator-france</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -1940,6 +1925,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mariable.fr/conseilsmariage/getting-married-in-france-as-a-foreigner</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mariable.fr/conseilsmariage/checklist-ultime-de-la-demoiselle-d-honneur-pour-un-mariage-memorable</loc>
     <lastmod>2026-06-14</lastmod>
     <changefreq>monthly</changefreq>
@@ -1959,6 +1949,11 @@
   <url>
     <loc>https://mariable.fr/conseilsmariage/comment-feter-anniversaire-de-mariage</loc>
     <lastmod>2026-09-08</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/do-i-need-a-wedding-planner-in-france</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2144,6 +2139,11 @@
     <priority>0.7</priority>
   </url>
   <url>
+    <loc>https://mariable.fr/conseilsmariage/where-to-get-married-in-france-region-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
     <loc>https://mariable.fr/conseilsmariage/mariage-petit-comite-qualite-quantite</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
@@ -2195,6 +2195,21 @@
   <url>
     <loc>https://mariable.fr/conseilsmariage/anniversaire-mariage-nouveau-mariage</loc>
     <lastmod>2026-10-09</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-anniversary-ideas-for-two</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/wedding-social-media-agency</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-celebrate-wedding-anniversary</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
@@ -2261,6 +2276,336 @@
   <url>
     <loc>https://mariable.fr/conseilsmariage/discours-mariage-chatgpt</loc>
     <lastmod>2026-11-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-day-coordination-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-planner-cost-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/questions-to-ask-wedding-suppliers</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-content-creator-france</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/wedding-venues-centralise-timelines</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-propose-guide-for-men</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-planning-with-ai-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/chatgpt-wedding-speech-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/paris-wedding-fair-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-cost-france-budget-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/chateau-wedding-near-paris-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-seating-plan-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-anniversary-celebration-ideas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/day-of-wedding-coordinator-cost</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-photographer-cost-1800-euros</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/chateau-wedding-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-wedding-gift-ideas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/summer-proposal-engagement-ring-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/outdoor-wedding-planning-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/heatwave-wedding-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-start-planning-a-wedding</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/starting-out-as-a-wedding-planner</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/wedding-social-media-manager-cost</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/in-laws-wedding-planning-survival-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-create-wedding-website-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/celebrant-wedding-ceremony-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/vow-renewal-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/2026-wedding-budget-real-costs</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/chatgpt-wedding-planning-guide-prompts</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/20000-euro-wedding-budget-breakdown</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/affordable-wedding-vendors-hiring-beginners</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/plan-wedding-without-planner</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/marriage-vs-pacs</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-plan-a-wedding-where-to-start</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/surprise-wedding-anniversary-party</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/questions-to-ask-wedding-suppliers-en</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-witnesses-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/civil-wedding-only-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-wedding-venues-paris</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/mariable-assocem-wedding-coordination-partnership</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-value-wedding-budget-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-costs-2027-real-numbers</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/wedding-day-coordination-guide-en</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/online-wedding-seating-plan-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/small-budget-wedding-ideas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-seating-plan-guide-ideas</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/christmas-wedding-proposal-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/ultimate-bridesmaid-checklist</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/role-of-a-wedding-planner</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/civil-wedding-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/shared-wedding-photo-album-apps</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/instagram-post-ideas-wedding-vendors</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/winter-wedding-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/wedding-planning-checklist-timeline</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/vow-renewal-vs-wedding-anniversary</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/excel-alternative-wedding-day-timeline-app</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/how-to-choose-wedding-celebrant</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/ai-wedding-planning-pros-cons</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/wedding-business-instagram-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/budget-wedding-money-saving-tips</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseils-professionnels/best-wedding-planner-software-2026</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/intimate-wedding-quality-over-quantity</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/diy-wedding-what-saves-money</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/post-wedding-admin-mistakes</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/best-wedding-caterers-guide</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/conseilsmariage/church-wedding-exit-ideas</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
