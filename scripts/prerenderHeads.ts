@@ -16,7 +16,7 @@ const fetchRows = async (table: string, query: string): Promise<any[]> => {
   try {
     const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?${query}`, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` } });
     if (!res.ok) { console.warn(`⚠️ prerender: ${table} fetch failed (${res.status})`); return []; }
-    return await res.json();
+    return (await res.json()) as any[];
   } catch (error) { console.error("❌ prerender fetch failed:", table, error); return []; }
 };
 
