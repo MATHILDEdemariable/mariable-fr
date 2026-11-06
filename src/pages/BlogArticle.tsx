@@ -124,7 +124,8 @@ const BlogArticlePage = () => {
   const isPro = postAudience === 'pro';
   const rootPath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
   const postIsEnglish = (post as any)?.language === 'en';
-  const basePath = postIsEnglish ? `/en${rootPath}` : rootPath;
+  // Seules les traductions générées vivent sous /en (les anciens articles EN gardent leur URL)
+  const basePath = (post as any)?.translation_of ? `/en${rootPath}` : rootPath;
 
   const { data: counterpart } = useQuery({
     queryKey: ['blog_counterpart', (post as any)?.id],
@@ -374,7 +375,7 @@ const BlogArticlePage = () => {
                         {relatedPosts.map((relatedPost) => (
                             <Link 
                                 key={relatedPost.id}
-                                to={`${basePath}/${relatedPost.slug}`}
+                                to={`${(relatedPost as any).translation_of ? `/en${rootPath}` : rootPath}/${relatedPost.slug}`}
                                 className="group"
                             >
                                 <div className="overflow-hidden rounded-lg border border-gray-200 transition-all hover:shadow-md">

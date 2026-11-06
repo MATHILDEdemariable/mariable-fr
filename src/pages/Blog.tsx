@@ -42,7 +42,12 @@ interface BlogPageProps {
 const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation('blog');
-  const [langFilter, setLangFilter] = useState<LangFilter>('all');
+  const [langFilter, setLangFilter] = useState<LangFilter>(i18n.language?.startsWith('en') ? 'en' : 'fr');
+  // Le toggle FR/EN du site pilote la langue des articles affichés
+  React.useEffect(() => {
+    setLangFilter(i18n.language?.startsWith('en') ? 'en' : 'fr');
+  }, [i18n.language]);
+  const getPostPath = (post: BlogPost) => `${(post as any).translation_of ? '/en' : ''}${basePath}/${post.slug}`;
 
   const isPro = audience === 'pro';
   const basePath = isPro ? '/conseils-professionnels' : '/conseilsmariage';
@@ -79,7 +84,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
       "@type": "BlogPosting",
       "headline": post.title,
       "description": post.meta_description || post.title,
-      "url": `https://www.mariable.fr${basePath}/${post.slug}`,
+      "url": `https://www.mariable.fr${getPostPath(post)}`,
       "datePublished": post.published_at,
       "dateModified": post.updated_at,
       "author": { "@type": "Organization", "name": "Mariable" }
@@ -230,7 +235,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
                       <Card
                         key={post.id}
                         className="cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105 bg-white border-wedding-olive/10"
-                        onClick={() => navigate(`${basePath}/${post.slug}`)}
+                        onClick={() => navigate(getPostPath(post))}
                       >
                         {post.background_image_url && (
                           <div className="aspect-video overflow-hidden rounded-t-lg">
@@ -284,7 +289,7 @@ const BlogPage: React.FC<BlogPageProps> = ({ audience = 'couple' }) => {
                             className="w-full border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-white"
                             onClick={(e) => {
                               e.stopPropagation();
-                              navigate(`${basePath}/${post.slug}`);
+                              navigate(getPostPath(post));
                             }}
                           >
                             {t('card.readArticle')}
