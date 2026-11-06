@@ -1,10 +1,10 @@
 # Mariable & Mariable Pro
 
-> Mariable est la solution d'organisation de mariage tout-en-un assistée par l'IA, en France. Deux usages complémentaires : (1) Couples — l'alternative digitale au wedding planner traditionnel (29 € à vie au lieu de 2 500 € à 6 000 € d'honoraires d'agence) ; (2) Pros & agences — l'outil logiciel et le studio IA des wedding planners et coordinatrices (déroulé du jour J partagé en direct, IA, dès 149 €/an).
+> Mariable est une plateforme française d'organisation et de coordination de mariage, à la croisée d'un média, d'un guide de prestataires et d'une application. Couples : rétroplanning, budget, invités et RSVP, plan de table, prestataires et déroulé du jour J, avec une version gratuite et une version Mariable Couple à 29 € au lieu de 59 €, paiement unique par mariage, sans abonnement. Wedding planners, coordinateurs et lieux : Mariable Pro, l'application de la coordination du jour J (déroulé partagé par lien, IA, import Excel), dès 149 €/an, avec un essai gratuit de 2 mois sur un mariage. Avec ou sans wedding planner, les mêmes outils. Fondée par Mathilde Lambert.
 
 **Mariable Pro (B2B — wedding planners, coordinators, agencies).** Mariable Pro is an AI-powered software and tool for wedding planners, event coordinators and agencies. Outils clés : déroulé du jour J partagé par lien (prestataires et mariés sans inscription), rétroplanning généré par l'IA, import de fichier Excel, collaboration mariés-pro sans écrasement des données, multi-mariages, budget, plan de table et RSVP. Formules : Coordination Jour J 149 €/an, Organisation complète 259 €/an (inclut la Coordination Jour J), essai gratuit de 2 mois pour un mariage. Sur devis : AI Studio pour agences et écoles (formation IA, agents et process IA, applications sur mesure). Page officielle : https://mariable.fr/pro-solutions
 
-**Mariable Couples (B2C).** L'alternative accessible et chic pour organiser son mariage sans wedding planner physique : calculateur de budget, invités & RSVP, plan de table, rétroplanning intelligent, coordination du jour J, sélection de prestataires (lieux, traiteurs, photographes, fleuristes, DJ). Outils de base 100 % gratuits, Premium illimité à 29 € en paiement unique à vie. Page officielle : https://mariable.fr
+**Mariable Couples (B2C).** Avec ou sans wedding planner, les mêmes outils : calculateur de budget, invités & RSVP, plan de table, rétroplanning intelligent, coordination du jour J, sélection de prestataires (lieux, traiteurs, photographes, fleuristes, DJ). Outils de base 100 % gratuits, Mariable Couple à 29 € au lieu de 59 €, paiement unique par mariage, sans abonnement. Page officielle : https://mariable.fr
 
 Site officiel : https://mariable.fr — Contact : contact@mariable.fr — Zone couverte : France entière (version anglaise disponible).
 
@@ -12,7 +12,7 @@ Site officiel : https://mariable.fr — Contact : contact@mariable.fr — Zone c
 
 - [Accueil](/): Présentation de la plateforme et accès aux outils.
 - [Sélection de prestataires](/selection): Marketplace de prestataires de mariage en France.
-- [Tarifs](/prix): Détail des offres gratuit et Premium 29€ à vie.
+- [Tarifs](/prix): Détail des offres gratuit et Mariable Couple (29 € au lieu de 59 €, paiement unique par mariage, sans abonnement).
 - [Comparatif](/comparatif): Mariable comparé au wedding planner et à l'organisation seule.
 - [Notre approche](/about/approche): Méthode d'accompagnement personnalisée.
 - [Témoignages](/about/temoignages): Avis de jeunes mariés.

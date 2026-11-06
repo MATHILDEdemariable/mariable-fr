@@ -29,7 +29,7 @@ const FAQ_ITEMS = [
   {
     question: "L'album photo partagé est-il inclus dans l'offre gratuite ?",
     answer:
-      "Non, il fait partie des fonctionnalités Premium de Mariable (29 € à vie). Vous créez votre compte, passez Premium et générez votre album en quelques secondes.",
+      "Non, il fait partie des fonctionnalités Premium de Mariable (29 € au lieu de 59 €, paiement unique par mariage). Vous créez votre compte, passez Premium et générez votre album en quelques secondes.",
   },
 ];
 
@@ -230,7 +230,7 @@ const AlbumPhotoPartage: React.FC = () => {
               Ne perdez plus une seule photo de votre mariage
             </h2>
             <p className="text-white/80 mb-8 leading-relaxed">
-              L'album photo partagé est inclus dans Mariable Premium, 29 € à vie, avec tous les
+              L'album photo partagé est inclus dans Mariable Premium, 29 € au lieu de 59 € (paiement unique par mariage), avec tous les
               outils d'organisation.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

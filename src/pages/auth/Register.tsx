@@ -450,7 +450,7 @@ const Register = () => {
                   className="w-full h-auto min-h-11 whitespace-normal border-wedding-olive text-wedding-olive hover:bg-wedding-olive hover:text-primary-foreground"
                 >
                   <Link to="/paiement">
-                    {preferredLanguage === 'en' ? 'Unlock Premium now — €29 lifetime' : 'Débloquer directement le Premium — 29 € à vie'}
+                    {preferredLanguage === 'en' ? 'Unlock Premium now — €29 instead of €59' : 'Débloquer directement le Premium — 29 € au lieu de 59 €'}
                   </Link>
                 </Button>
               )}

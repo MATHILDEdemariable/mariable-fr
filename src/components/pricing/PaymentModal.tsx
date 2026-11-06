@@ -21,7 +21,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ isOpen, onClose }) => {
           </div>
           
           <DialogTitle className="text-center">
-            Compte Premium - 29 € à vie
+            Compte Premium - 29 € au lieu de 59 €, paiement unique par mariage
           </DialogTitle>
           
           <DialogDescription className="text-center">

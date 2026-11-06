@@ -1,5 +1,4 @@
 
-- Per-page head (title, description, canonical, og) is baked into dist/<route>/index.html by scripts/prerenderHeads.ts at build — AI/social crawlers do not run JS. Add new public pages to its PAGES list.
 - Pro-wide tools (address book, tutorial, help) live in the /pro space via ProSidebar + ProSupportHost; per-wedding tools stay inside each wedding's dashboard — the pro picks a wedding first.
 - Wedding collaboration: invited couples are linked via `wedding_collaborators` + `is_wedding_collaborator()`; editable modules get FOR ALL policies, others SELECT-only, so read-only is enforced by RLS — and shared-module queries filter on `wedding_id` (not `user_id`) when a wedding is selected.
 - Per-member Jour J links reuse the public planning URL with `?membre=<team id>`; no extra token — keeps the simple clickable-link sharing.
@@ -15,3 +14,4 @@
 - Pro plans: profiles.subscription_type 'pro_premium' = Organisation complète, 'pro_jour_j' = Coordination Jour J (Jour J-only weddings); set by stripe-webhook from create-pro-checkout metadata (Stripe product IDs live in that function) — the 30-day trial stays card-free via ProTrialGate.
 - Music (DJ) and Catering modules store their content as one jsonb row per wedding in `wedding_module_plans` (module 'music'|'catering'), editable by owner and all collaborators; the DJ sheet reaches Jour J as a PDF in `coordination_documents` (category organisation-music) — one generic table keeps new shared modules cheap.
 - Supplied November blog articles use slug-scoped presentation overrides shared with prerendered heads; this preserves their final CTA and image alt without changing other articles or the database schema.
+- SEO prerender: scripts/prerenderHeads.ts fetches published blog_posts and visible prestataires_rows from Supabase at build and writes full HTML + JSON-LD for every sitemap URL — AI crawlers don't run JS; new content is covered on next publish.

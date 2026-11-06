@@ -77,7 +77,7 @@ const FAQ = [
   },
   {
     q: 'Puis-je acheter un seul guide ou dois-je prendre Premium ?',
-    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité à 4,90 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € à vie devient plus rentable dès 6 guides achetés.",
+    a: "Les deux sont possibles. Chaque e-book est vendu à l'unité à 4,90 €. Si vous voulez toute la bibliothèque + les outils Mariable sans limite, l'offre Premium à 29 € (paiement unique par mariage) devient plus rentable dès 6 guides achetés.",
   },
   {
     q: 'Combien de temps avant le mariage envoyer les faire-part ?',
@@ -153,11 +153,11 @@ export default function GuidesShop() {
         <title>E-books & guides mariage à télécharger dès 4,90€ | Mariable</title>
         <meta
           name="description"
-          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4,90€ ou toute la bibliothèque avec Premium 29€ à vie."
+          content="Marketplace d'e-books mariage : checklists, rétroplanning, guide prestataires, jour J. PDF haute qualité dès 4,90€ ou toute la bibliothèque avec Premium 29 € par mariage."
         />
         <link rel="canonical" href="https://www.mariable.fr/guides" />
         <meta property="og:title" content="E-books & guides mariage à télécharger | Mariable" />
-        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4,90€ ou tout inclus avec Premium 29€ à vie." />
+        <meta property="og:description" content="Checklists, rétroplanning, guide prestataires et jour J en PDF. Dès 4,90€ ou tout inclus avec Premium 29 € par mariage." />
         <meta property="og:url" content="https://www.mariable.fr/guides" />
         <meta property="og:type" content="website" />
         <script type="application/ld+json">{JSON.stringify({
@@ -354,7 +354,7 @@ export default function GuidesShop() {
                   Tout débloquer pour <span className="italic">29€</span>
                 </h2>
                 <p className="text-white/85 text-sm md:text-base mb-8 max-w-xl mx-auto leading-relaxed">
-                  Avec Mariable Premium, vous accédez à <strong>toute la bibliothèque</strong> + tous les outils sans limite + exports PDF illimités. Un seul paiement, à vie.
+                  Avec Mariable Premium, vous accédez à <strong>toute la bibliothèque</strong> + tous les outils sans limite + exports PDF illimités. Un seul paiement par mariage, sans abonnement.
                 </p>
                 <Link
                   to="/paiement"

@@ -170,8 +170,8 @@ const Paiement = () => {
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Helmet>
-        <title>Mariable Premium — 29€ à vie | Mariable</title>
-        <meta name="description" content="Débloquez tous les outils Mariable, exports PDF illimités, génération IA illimitée et toute la bibliothèque de guides pour 29€ à vie." />
+        <title>Mariable Premium — 29 € au lieu de 59 € | Mariable</title>
+        <meta name="description" content="Débloquez tous les outils Mariable, exports PDF illimités, génération IA illimitée et toute la bibliothèque de guides pour 29 € au lieu de 59 €, paiement unique par mariage, sans abonnement." />
       </Helmet>
       
       <PremiumHeader />
