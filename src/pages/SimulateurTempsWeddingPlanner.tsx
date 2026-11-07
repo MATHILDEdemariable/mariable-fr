@@ -70,7 +70,7 @@ const SimulateurTempsWeddingPlanner = () => {
   }, [serviceType, weddingsPerYear, hourlyRate]);
 
   const schemas = [
-    { type: "FAQ" as const, data: FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a })) },
+    { type: "FAQ" as const, data: { questions: FAQ_ITEMS.map((item) => ({ question: item.q, answer: item.a })) } },
   ];
 
   return (
