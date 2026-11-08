@@ -20,6 +20,7 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import RetroplanningShareButton from './RetroplanningShareButton';
+import CoupleShareButton from './CoupleShareButton';
 import ImportTaskCatalogDialog, { type CatalogStepDraft } from './ImportTaskCatalogDialog';
 import RetroplanningFrise, { RetroplanningSummary } from './RetroplanningFrise';
 import { exportRetroplanningPdf } from '@/services/retroplanningPdfExport';
@@ -330,6 +331,7 @@ const RetroplanningManuel = () => {
           <div className="flex flex-wrap gap-2 print:hidden">
             <Button variant="outline" onClick={() => { setExportView(view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
             <RetroplanningShareButton retroplanningId={retroplanningId} />
+            {accountType === 'b2b' && <CoupleShareButton steps={steps} weddingDate={weddingDate} isEnglish={isEnglish} />}
           </div>
         </div>
 

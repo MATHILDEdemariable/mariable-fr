@@ -3,6 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WeddingRetroplanningEmbed from './WeddingRetroplanningEmbed';
 import RetroplanningManuel from '@/components/retroplanning/RetroplanningManuel';
+import CoupleRetroplanningView from '@/components/retroplanning/CoupleRetroplanningView';
+import { useWedding } from '@/contexts/WeddingContext';
 import RetroplanningShareButton from '@/components/retroplanning/RetroplanningShareButton';
 
 const RetroplanningPage = () => {
@@ -11,6 +13,8 @@ const RetroplanningPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const activeTab = searchParams.get('mode') === 'ai' || searchParams.get('id') ? 'ai' : 'manual';
   const aiRetroplanningId = searchParams.get('id');
+  const { isWeddingCollaborator } = useWedding();
+  if (isWeddingCollaborator) return <CoupleRetroplanningView isEnglish={isEnglish} />;
 
   return (
     <Tabs
