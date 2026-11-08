@@ -27,11 +27,14 @@ interface Props {
   onSave: (schedule: PaymentSchedule) => void;
 }
 
+import DepositReminderDialog from './DepositReminderDialog';
+
 const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, total, schedule, isEnglish, disabled, onSave }) => {
   const tr = (fr: string, en: string) => (isEnglish ? en : fr);
   const [installments, setInstallments] = useState<Installment[]>([]);
   const [cashDay, setCashDay] = useState(0);
   const [securityDeposit, setSecurityDeposit] = useState(0);
+  const [reminderIndex, setReminderIndex] = useState<number | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -76,6 +79,11 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
                   <Checkbox checked={inst.paid} disabled={disabled} onCheckedChange={(v) => update(index, { paid: !!v })} />
                   {tr('Payé', 'Paid')}
                 </label>
+                {!inst.paid && inst.amount > 0 && (
+                  <Button type="button" variant="outline" size="sm" className="rounded-none min-h-9" onClick={() => setReminderIndex(index)}>
+                    ✉️ {tr('Relancer', 'Remind')}
+                  </Button>
+                )}
                 <label className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-wedding-olive" />
                   {tr('Me relancer par mail', 'Email reminder')}
