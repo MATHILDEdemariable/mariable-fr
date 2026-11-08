@@ -51,6 +51,7 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
     setInstallments((prev) => prev.map((inst, i) => (i === index ? { ...inst, ...patch, reminder_sent: patch.due_date !== undefined || patch.reminder !== undefined ? false : inst.reminder_sent } : inst)));
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg rounded-none max-h-[90vh] overflow-y-auto">
         <DialogHeader>
@@ -139,6 +140,11 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
         </DialogFooter>
       </DialogContent>
     </Dialog>
+    {reminderIndex !== null && installments[reminderIndex] && (
+      <DepositReminderDialog open onOpenChange={(o) => !o && setReminderIndex(null)} isEnglish={isEnglish} index={reminderIndex}
+        itemName={itemName} amount={Number(installments[reminderIndex].amount) || 0} dueDate={installments[reminderIndex].due_date} />
+    )}
+    </>
   );
 };
 
