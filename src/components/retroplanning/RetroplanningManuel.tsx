@@ -65,7 +65,7 @@ const RetroplanningManuel = () => {
   const dateLocale = isEnglish ? enUS : fr;
   const { toast } = useToast();
   const { weddingId, scopeQuery, withWedding } = useWeddingScope();
-  const { currentWedding } = useWedding();
+  const { currentWedding, accountType } = useWedding();
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
