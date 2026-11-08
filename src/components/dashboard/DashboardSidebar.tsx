@@ -128,7 +128,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
         </Link>
 
         {!isJourJMode && (<>
-        <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={preventReader} className={cn(linkClass(isActive('/dashboard/mon-mariage/retroplanning')), coupleLockedClass)} aria-disabled={isWeddingCollaborator}>
+        <Link to={isReaderMode ? '#' : '/dashboard/mon-mariage/retroplanning'} onClick={preventReader} className={linkClass(isActive('/dashboard/mon-mariage/retroplanning'))}>
           <Calendar className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.retroplanning')}</span>
         </Link>
