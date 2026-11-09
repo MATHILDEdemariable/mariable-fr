@@ -329,7 +329,7 @@ const RetroplanningManuel = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h2 className="text-2xl font-serif">{isEnglish ? 'Overall wedding planning' : 'Planning global du mariage'}{stakeholderFilter !== 'all' && <span className="hidden print:inline"> — {stakeholderLabel(stakeholderFilter)}</span>}</h2>
           <div className="flex flex-wrap gap-2 print:hidden">
-            <Button variant="outline" onClick={() => { setExportView(view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
+            <Button variant="outline" onClick={() => { setExportView(view === 'overview' ? 'list' : view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
             <RetroplanningShareButton retroplanningId={retroplanningId} />
             {accountType === 'b2b' && <CoupleShareButton steps={steps} weddingDate={weddingDate} isEnglish={isEnglish} />}
           </div>
