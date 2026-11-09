@@ -69,7 +69,7 @@ const RetroplanningManuel = () => {
   const [steps, setSteps] = useState<ManualStep[]>([]);
   const [retroplanningId, setRetroplanningId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'frise' | 'list' | 'kanban' | 'calendar'>('list');
+  const [view, setView] = useState<'frise' | 'list' | 'kanban' | 'calendar' | 'overview'>('list');
   const [editingStep, setEditingStep] = useState<ManualStep | null>(null);
   const [weddingDate, setWeddingDate] = useState('');
   const [inputMode, setInputMode] = useState<'quick' | 'notes'>('quick');
@@ -329,7 +329,7 @@ const RetroplanningManuel = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <h2 className="text-2xl font-serif">{isEnglish ? 'Overall wedding planning' : 'Planning global du mariage'}{stakeholderFilter !== 'all' && <span className="hidden print:inline"> — {stakeholderLabel(stakeholderFilter)}</span>}</h2>
           <div className="flex flex-wrap gap-2 print:hidden">
-            <Button variant="outline" onClick={() => { setExportView(view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
+            <Button variant="outline" onClick={() => { setExportView(view === 'overview' ? 'list' : view); setExportRole(stakeholderFilter); setIsExportOpen(true); }}><Printer className="h-4 w-4 mr-2" />{isEnglish ? 'Export PDF' : 'Exporter en PDF'}</Button>
             <RetroplanningShareButton retroplanningId={retroplanningId} />
             {accountType === 'b2b' && <CoupleShareButton steps={steps} weddingDate={weddingDate} isEnglish={isEnglish} />}
           </div>
@@ -387,19 +387,9 @@ const RetroplanningManuel = () => {
 
         <ImportTaskCatalogDialog open={isCatalogOpen} onOpenChange={setIsCatalogOpen} weddingDate={weddingDate} isEnglish={isEnglish} onImport={handleImportFromCatalog} />
 
-        {steps.length > 0 && <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />}
-
-        <div className="grid grid-cols-3 gap-3 print:hidden">
-          {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
-            <div key={status} className="border border-border p-3 sm:p-4">
-              <p className="text-sm text-muted-foreground">{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']}</p>
-              <p className="text-2xl font-semibold">{counts[status]}</p>
-            </div>
-          ))}
-        </div>
-
         <div className="flex flex-col sm:flex-row justify-between gap-3 print:hidden">
           <div className="flex gap-1 bg-muted p-1 w-fit">
+            <Button variant={view === 'overview' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('overview')}><Sparkles className="h-4 w-4 mr-1" />{isEnglish ? 'Overview' : "Vue d'ensemble"}</Button>
             <Button variant={view === 'list' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('list')}><ListIcon className="h-4 w-4 mr-1" />{isEnglish ? 'List' : 'Liste'}</Button>
             <Button variant={view === 'kanban' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('kanban')}><LayoutGrid className="h-4 w-4 mr-1" />Kanban</Button>
             <Button variant={view === 'calendar' ? 'outline' : 'ghost'} size="sm" onClick={() => setView('calendar')}><CalendarDays className="h-4 w-4 mr-1" />{isEnglish ? 'Calendar' : 'Calendrier'}</Button>
@@ -416,6 +406,20 @@ const RetroplanningManuel = () => {
 
         {steps.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">{isEnglish ? 'No steps yet. Type a step above, or paste your notes and let AI build your timeline.' : 'Aucune étape pour le moment. Tapez une étape ci-dessus, ou collez vos notes et laissez l\'IA créer votre rétroplanning.'}</p>
+        ) : view === 'overview' ? (
+          <div className="space-y-4">
+        <RetroplanningSummary steps={steps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
+
+        <div className="grid grid-cols-3 gap-3 print:hidden">
+          {(Object.keys(MANUAL_STATUS_LABELS) as ManualStepStatus[]).map((status) => (
+            <div key={status} className="border border-border p-3 sm:p-4">
+              <p className="text-sm text-muted-foreground">{MANUAL_STATUS_LABELS[status][isEnglish ? 'en' : 'fr']}</p>
+              <p className="text-2xl font-semibold">{counts[status]}</p>
+            </div>
+          ))}
+        </div>
+
+          </div>
         ) : view === 'frise' ? (
           <RetroplanningFrise steps={visibleSteps} weddingDate={weddingDate || null} isEnglish={isEnglish} />
         ) : view === 'list' ? (

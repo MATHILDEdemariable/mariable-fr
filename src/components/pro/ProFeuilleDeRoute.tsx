@@ -19,6 +19,7 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
   const isEnglish = i18n.language?.startsWith('en');
   const [monthPriorities, setMonthPriorities] = useState<MonthPriority[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(false);
   const weddingIds = weddings.map((wedding) => wedding.id).join(',');
 
   useEffect(() => {
@@ -62,14 +63,14 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
           {isEnglish ? 'Unfinished tasks from each wedding’s Planning & tasks (overdue or due this month).' : 'Tâches non terminées du Planning & tâches de chaque mariage (en retard ou prévues ce mois-ci).'}
         </p>
       </div>
-      <div className="border border-primary/40 bg-primary/5 p-4">
+      <div className="border border-primary/40 bg-primary/5 p-3">
         {loading ? (
           <p className="text-sm text-muted-foreground">…</p>
         ) : monthPriorities.length === 0 ? (
           <p className="text-sm text-muted-foreground">{isEnglish ? 'Nothing here 🎉' : 'Rien à signaler 🎉'}</p>
         ) : (
           <ul className="divide-y divide-border">
-            {monthPriorities.slice(0, 12).map((priority) => (
+            {monthPriorities.slice(0, isExpanded ? 50 : 3).map((priority) => (
               <li key={priority.id} className="flex flex-col sm:flex-row sm:items-center gap-2 py-2">
                 <div className="flex-1 text-sm">
                   <span className="block font-medium">{priority.title}</span>
@@ -88,6 +89,12 @@ const ProFeuilleDeRoute: React.FC<ProFeuilleDeRouteProps> = ({ weddings, onOpenW
               </li>
             ))}
           </ul>
+        )}
+        {monthPriorities.length > 3 && (
+          <button type="button" onClick={() => setIsExpanded((value) => !value)} aria-expanded={isExpanded}
+            className="mt-2 min-h-[44px] w-full text-sm underline text-primary">
+            {isExpanded ? (isEnglish ? 'Collapse' : 'Réduire') : (isEnglish ? `See all priorities (${monthPriorities.length})` : `Voir toutes les priorités (${monthPriorities.length})`)}
+          </button>
         )}
       </div>
     </section>

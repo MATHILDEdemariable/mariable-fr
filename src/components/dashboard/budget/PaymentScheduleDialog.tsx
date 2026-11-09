@@ -87,7 +87,7 @@ const PaymentScheduleDialog: React.FC<Props> = ({ open, onOpenChange, itemName, 
                 )}
                 <label className="flex items-center gap-2 text-sm">
                   <Mail className="h-4 w-4 text-wedding-olive" />
-                  {tr('Me relancer par mail', 'Email reminder')}
+                  {tr('Rappel automatique par email', 'Automated email reminder')}
                   <Switch checked={inst.reminder} disabled={disabled || !inst.due_date} onCheckedChange={(v) => update(index, { reminder: v })} />
                 </label>
                 {inst.reminder && (
