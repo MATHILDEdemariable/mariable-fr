@@ -328,7 +328,8 @@ const MesMariages: React.FC = () => {
                 const daysUntil = getDaysUntil(wedding.wedding_date);
                 const isSoon = daysUntil !== null && daysUntil >= 0 && daysUntil <= 30;
                 return (
-                <Card key={wedding.id} className="rounded-none border-border border-t-4 border-t-wedding-olive bg-background transition-shadow hover:shadow-lg">
+                <Card key={wedding.id} className="rounded-none border-border border-t-4 border-t-wedding-olive bg-background transition-shadow hover:shadow-lg overflow-hidden">
+                  {wedding.cover_url && <img src={wedding.cover_url} alt={wedding.title} loading="lazy" className="h-36 w-full object-cover" />}
                   <CardContent className="p-5">
                     <span className="inline-block mb-2 mr-2 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider border border-wedding-olive/40 text-wedding-olive">
                       {wedding.prestation_type === 'jourJ' ? (isEnglish ? 'Wedding day' : 'Coordination Jour J') : (isEnglish ? 'Full planning' : 'Organisation complète')}

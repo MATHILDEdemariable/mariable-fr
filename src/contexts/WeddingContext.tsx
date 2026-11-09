@@ -14,6 +14,7 @@ export interface Wedding {
   archived_at?: string | null;
   /** Formule choisie par le pro : pilote la vue du mariage */
   prestation_type?: 'organisation' | 'jourJ';
+  cover_url?: string | null;
 }
 
 export type AccountType = 'b2c' | 'b2b';
@@ -32,6 +33,7 @@ interface WeddingContextType {
     wedding_location?: string | null;
     guest_count?: number | null;
     prestation_type?: 'organisation' | 'jourJ';
+    cover_url?: string | null;
   }) => Promise<Wedding>;
   updateWedding: (
     weddingId: string,
@@ -84,7 +86,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           .maybeSingle(),
         db
           .from('weddings')
-          .select('id, title, wedding_date, wedding_location, guest_count, is_default, owner_id, created_at, archived_at, prestation_type')
+          .select('id, title, wedding_date, wedding_location, guest_count, is_default, owner_id, created_at, archived_at, prestation_type, cover_url')
           .order('created_at', { ascending: true }),
       ]);
 
@@ -171,6 +173,7 @@ export const WeddingProvider: React.FC<{ children: React.ReactNode }> = ({ child
           wedding_location: input.wedding_location || null,
           guest_count: input.guest_count ?? null,
           prestation_type: input.prestation_type ?? 'organisation',
+          cover_url: input.cover_url ?? null,
         })
         .select()
         .single();

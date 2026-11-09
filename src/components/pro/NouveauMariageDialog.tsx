@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useWedding } from '@/contexts/WeddingContext';
 import { useUserProfile } from '@/hooks/useUserProfile';
+import { supabase } from '@/integrations/supabase/client';
+import { Camera } from 'lucide-react';
 
 interface NouveauMariageDialogProps {
   open: boolean;
@@ -27,6 +29,25 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
   const [guestCount, setGuestCount] = useState('');
   const [prestationType, setPrestationType] = useState<'organisation' | 'jourJ'>('jourJ');
   const [saving, setSaving] = useState(false);
+  const [coverFile, setCoverFile] = useState<File | null>(null);
+  const coverPreview = React.useMemo(() => (coverFile ? URL.createObjectURL(coverFile) : ''), [coverFile]);
+
+  const uploadCoverPhoto = async (): Promise<string | null> => {
+    if (!coverFile) return null;
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return null;
+      const extension = coverFile.name.split('.').pop() || 'jpg';
+      const filePath = `${user.id}/wedding-covers/${Date.now()}.${extension}`;
+      const { error } = await supabase.storage.from('wedding-documents').upload(filePath, coverFile);
+      if (error) throw error;
+      return supabase.storage.from('wedding-documents').getPublicUrl(filePath).data.publicUrl;
+    } catch (error) {
+      console.error('❌ uploadCoverPhoto failed:', error);
+      toast({ title: tr('Photo non enregistrée', 'Photo not saved'), description: tr('Le mariage est créé sans photo.', 'The wedding is created without a photo.') });
+      return null;
+    }
+  };
   // Formule Coordination Jour J : seuls les mariages Jour J peuvent être créés
   const { isProJourJ } = useUserProfile();
   const effectivePrestationType = isProJourJ ? 'jourJ' : prestationType;
@@ -40,7 +61,9 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
 
     try {
       setSaving(true);
+      const coverUrl = await uploadCoverPhoto();
       await createWedding({
+        cover_url: coverUrl,
         title: title.trim(),
         wedding_date: weddingDate || null,
         wedding_location: location.trim() || null,
@@ -52,6 +75,7 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
       setWeddingDate('');
       setLocation('');
       setGuestCount('');
+      setCoverFile(null);
       navigate('/dashboard');
     } catch (error) {
       console.error('❌ NouveauMariageDialog: création impossible', error);
@@ -99,6 +123,18 @@ const NouveauMariageDialog: React.FC<NouveauMariageDialogProps> = ({ open, onOpe
               })}
             </div>
           </fieldset>
+
+          <div className="space-y-1.5">
+            <Label htmlFor="wedding-cover">{tr('Photo (facultatif)', 'Photo (optional)')}</Label>
+            <label htmlFor="wedding-cover" className="flex items-center gap-3 min-h-[64px] border border-dashed border-border bg-background p-2 cursor-pointer hover:border-wedding-olive">
+              <span className="h-14 w-14 shrink-0 bg-muted flex items-center justify-center overflow-hidden">
+                {coverPreview ? <img src={coverPreview} alt="" className="h-full w-full object-cover" /> : <Camera className="h-5 w-5 text-wedding-olive" />}
+              </span>
+              <span className="text-sm text-muted-foreground">{coverFile ? tr('Changer la photo', 'Change photo') : tr('Ajouter une photo du couple ou du lieu', 'Add a photo of the couple or venue')}</span>
+            </label>
+            <input id="wedding-cover" type="file" accept="image/*" className="sr-only"
+              onChange={(e) => { const file = e.target.files?.[0]; if (file && file.size > 5_000_000) { toast({ title: tr('Photo trop lourde (5 Mo max)', 'Photo too large (5 MB max)'), variant: 'destructive' }); return; } setCoverFile(file ?? null); }} />
+          </div>
 
           <div className="space-y-1.5">
             <Label htmlFor="wedding-title">{tr('Couple / titre', 'Couple / title')}</Label>
