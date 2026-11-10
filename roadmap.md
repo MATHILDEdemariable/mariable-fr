@@ -1,5 +1,11 @@
 # Roadmap
 
+## Aide pro — novembre 2026
+- [ ] Ajouter WhatsApp Mathilde dans l’aide pro
+- [ ] Afficher un tutoriel dédié au carnet d’adresses
+- [ ] Permettre la suppression depuis la liste des formulaires
+- [ ] Vérifier les changements (accès connecté non disponible sur Supabase externe)
+
 ## Publication blog — 5 novembre 2026
 - [x] Publier les quatre articles fournis et leurs couvertures sans modifier les autres contenus
 - [x] Vérifier les liens, un seul CTA, textes alternatifs et métadonnées
