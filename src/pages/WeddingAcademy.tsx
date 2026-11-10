@@ -9,15 +9,11 @@ import { Button } from "@/components/ui/button";
 import ProPricingPlans from "@/components/pro/ProPricingPlans";
 import heroPlannerPhoto from "@/assets/editorial/wedding-planner-chateau.png.asset.json";
 
+import { PRO_VIDEO_TUTORIALS as TUTORIAL_VIDEOS } from "@/data/proVideoTutorials";
+
 const PAGE_PATH = "/weddingacademy";
 const ACADEMY_DISCOUNT = 0.15;
 
-// Remplacer les liens "" par les URL Loom quand elles sont prêtes
-const TUTORIAL_VIDEOS = [
-  { number: "01", title: "Présentation générale", text: "Un tour complet de Mariable Pro : espace pro, multi-mariages et collaboration avec les couples.", items: ["Tableau de bord", "Créer un mariage", "Inviter les mariés"], loomUrl: "https://www.loom.com/share/491237dd9b584d0c959d0bb4dfd0e475" },
-  { number: "02", title: "Outils d'organisation", text: "Tout ce qu'il faut pour piloter un mariage en amont.", items: ["Planning & rétroplanning", "Budget & acomptes", "Suivi des prestataires"], loomUrl: "https://www.loom.com/share/mariable-weddingacademy" },
-  { number: "03", title: "Coordination Jour J", text: "L'application du jour J : équipe, déroulé et documents centralisés.", items: ["Équipe & planning", "Plan de table", "Infos cérémonie", "DJ & décoration"], loomUrl: "https://www.loom.com/share/mariable-weddingacademy" },
-];
 
 const WeddingAcademy = () => {
   useEffect(() => { window.scrollTo(0, 0); }, []);
@@ -63,7 +59,7 @@ const WeddingAcademy = () => {
           <div className="mx-auto max-w-5xl">
             <p className="text-xs font-semibold uppercase tracking-widest text-editorial-olive">Tutoriels vidéo</p>
             <h2 id="tutos-title" className="mt-3 text-3xl md:text-4xl">Prenez l'outil en main pas à pas</h2>
-            <div className="mt-10 grid gap-6 md:grid-cols-3">
+            <div className="mt-10 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
               {TUTORIAL_VIDEOS.map((video) => (
                 <article key={video.number} className="flex flex-col border border-editorial-noir/15 bg-background p-6">
                   <p className="text-xs tracking-widest text-editorial-olive">{video.number}</p>
