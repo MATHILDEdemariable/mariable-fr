@@ -14,7 +14,7 @@ const ACADEMY_DISCOUNT = 0.15;
 
 // Remplacer les liens "" par les URL Loom quand elles sont prêtes
 const TUTORIAL_VIDEOS = [
-  { number: "01", title: "Présentation générale", text: "Un tour complet de Mariable Pro : espace pro, multi-mariages et collaboration avec les couples.", items: ["Tableau de bord", "Créer un mariage", "Inviter les mariés"], loomUrl: "https://www.loom.com/share/mariable-weddingacademy" },
+  { number: "01", title: "Présentation générale", text: "Un tour complet de Mariable Pro : espace pro, multi-mariages et collaboration avec les couples.", items: ["Tableau de bord", "Créer un mariage", "Inviter les mariés"], loomUrl: "https://www.loom.com/share/491237dd9b584d0c959d0bb4dfd0e475" },
   { number: "02", title: "Outils d'organisation", text: "Tout ce qu'il faut pour piloter un mariage en amont.", items: ["Planning & rétroplanning", "Budget & acomptes", "Suivi des prestataires"], loomUrl: "https://www.loom.com/share/mariable-weddingacademy" },
   { number: "03", title: "Coordination Jour J", text: "L'application du jour J : équipe, déroulé et documents centralisés.", items: ["Équipe & planning", "Plan de table", "Infos cérémonie", "DJ & décoration"], loomUrl: "https://www.loom.com/share/mariable-weddingacademy" },
 ];
