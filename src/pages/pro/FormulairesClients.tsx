@@ -63,6 +63,7 @@ const FormulairesClients: React.FC = () => {
   const [responses, setResponses] = useState<ClientFormResponse[]>([]);
   const [openResponseId, setOpenResponseId] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [deletingFormId, setDeletingFormId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState('questions');
   const [aiSourceText, setAiSourceText] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
@@ -199,11 +200,23 @@ const FormulairesClients: React.FC = () => {
   };
 
   const handleDeleteForm = async (formId: string) => {
+    if (deletingFormId) return;
     if (!window.confirm(tr('Supprimer ce formulaire et toutes ses réponses ?', 'Delete this form and all its responses?'))) return;
-    const { error } = await clientFormsTable().delete().eq('id', formId);
-    if (error) { console.error('❌ deleteClientForm failed:', error); return; }
-    setSelectedForm(null);
-    loadClientForms();
+    setDeletingFormId(formId);
+    try {
+      const { data, error } = await clientFormsTable().delete().eq('id', formId).select('id');
+      if (error) throw error;
+      if (!data?.length) throw new Error('Form deletion not confirmed');
+      setSelectedForm((current) => current?.id === formId ? null : current);
+      setClientForms((current) => current.filter((clientForm) => clientForm.id !== formId));
+      toast({ title: tr('Formulaire supprimé', 'Form deleted') });
+      await loadClientForms();
+    } catch (error) {
+      console.error('❌ deleteClientForm failed:', error);
+      toast({ title: tr('Suppression impossible', 'Could not delete the form'), description: tr('Le formulaire n’a pas été supprimé. Veuillez réessayer.', 'The form was not deleted. Please try again.'), variant: 'destructive' });
+    } finally {
+      setDeletingFormId(null);
+    }
   };
 
   const handleDeleteResponse = async (responseId: string) => {
@@ -310,6 +323,9 @@ const FormulairesClients: React.FC = () => {
                     <span className="text-sm text-wedding-olive font-medium">{responseCounts[clientForm.id] ?? 0} {tr('réponse(s)', 'response(s)')}</span>
                     <Button variant="outline" size="sm" className="rounded-none" onClick={() => handleOpenForm(clientForm, 'responses')}><Eye className="h-4 w-4 mr-1" />{tr('Voir les résultats', 'View results')}</Button>
                     <Button variant="outline" size="sm" className="rounded-none" onClick={() => handleCopyLink(clientForm.share_token)}><Copy className="h-4 w-4 mr-1" />{tr('Copier le lien', 'Copy link')}</Button>
+                    <Button variant="ghost" size="icon" className="rounded-none min-h-[44px] min-w-[44px] text-destructive" disabled={deletingFormId !== null} aria-label={`${tr('Supprimer le formulaire', 'Delete form')} : ${clientForm.title}`} title={tr('Supprimer le formulaire', 'Delete form')} onClick={() => handleDeleteForm(clientForm.id)}>
+                      {deletingFormId === clientForm.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -343,7 +359,7 @@ const FormulairesClients: React.FC = () => {
                   <option value="en">English</option>
                 </select>
               </label>
-              <Button variant="ghost" size="sm" className="rounded-none text-destructive ml-auto" onClick={() => handleDeleteForm(selectedForm.id)}><Trash2 className="h-4 w-4 mr-1" />{tr('Supprimer le formulaire', 'Delete form')}</Button>
+              <Button variant="ghost" size="sm" disabled={deletingFormId !== null} className="rounded-none text-destructive ml-auto" onClick={() => handleDeleteForm(selectedForm.id)}><Trash2 className="h-4 w-4 mr-1" />{tr('Supprimer le formulaire', 'Delete form')}</Button>
             </div>
           </div>
 

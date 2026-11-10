@@ -5,7 +5,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Mail, Instagram, Send, Loader2, CalendarDays } from 'lucide-react';
+import { Mail, Instagram, Send, Loader2, CalendarDays, MessageCircle } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { buildProSupportWhatsAppUrl } from '@/lib/proSupportContact';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -24,6 +26,7 @@ interface ProblemModalProps {
   isOpen: boolean;
   onClose: () => void;
   showCalendly?: boolean;
+  showWhatsApp?: boolean;
 }
 
 const PROBLEM_CATEGORIES = [
@@ -34,7 +37,9 @@ const PROBLEM_CATEGORIES = [
   { value: 'other', label: 'Autre' },
 ];
 
-export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose, showCalendly = false }) => {
+export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose, showCalendly = false, showWhatsApp = false }) => {
+  const { i18n } = useTranslation();
+  const isEnglish = i18n.language?.startsWith('en');
   const [email, setEmail] = useState('');
   const [subject, setSubject] = useState('');
   const [message, setMessage] = useState('');
@@ -214,6 +219,21 @@ export const ProblemModal: React.FC<ProblemModalProps> = ({ isOpen, onClose, sho
           </div>
           
           <div className="flex flex-col sm:flex-row gap-3">
+            {showWhatsApp && (
+              <Button asChild className="flex-1 min-h-[44px] rounded-none">
+                <a
+                  href={buildProSupportWhatsAppUrl(isEnglish
+                    ? 'Hello Mathilde, I have an urgent question about my Mariable pro space.'
+                    : "Bonjour Mathilde, j’ai une question urgente sur mon espace pro Mariable.")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  title={isEnglish ? 'Urgent help on WhatsApp' : 'Aide urgente sur WhatsApp'}
+                >
+                  <MessageCircle className="h-4 w-4 mr-2" aria-hidden="true" />
+                  WhatsApp
+                </a>
+              </Button>
+            )}
             <Button
               type="button"
               variant="outline"
