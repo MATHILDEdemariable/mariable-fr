@@ -2,7 +2,8 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { CalendarHeart, Library, Eye, Users, AlertTriangle } from 'lucide-react';
+import { CalendarHeart, Library, Eye, Users, AlertTriangle, Play } from 'lucide-react';
+import { PRO_VIDEO_TUTORIALS } from '@/data/proVideoTutorials';
 
 export const PRO_TUTORIAL_SEEN_KEY = 'mariable_pro_tutorial_seen';
 export const PRO_TUTORIAL_EVENT = 'mariable:open-pro-tutorial';
@@ -55,6 +56,21 @@ const ProTutorialModal: React.FC<ProTutorialModalProps> = ({ open, onOpenChange,
           </section>
         ) : (
         <>
+        <section className="space-y-3">
+          <h3 className="font-serif text-xl">Tutoriels vidéo</h3>
+          <div className="grid gap-3 md:grid-cols-2">
+            {PRO_VIDEO_TUTORIALS.map((video) => (
+              <a key={video.number} href={video.loomUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 bg-background border border-border p-4 min-h-[44px] hover:border-wedding-olive">
+                <span>
+                  <span className="block text-xs tracking-widest text-wedding-olive">{video.number}</span>
+                  <span className="block font-serif text-lg text-foreground">{video.title}</span>
+                </span>
+                <Play className="h-5 w-5 text-wedding-olive shrink-0" />
+              </a>
+            ))}
+          </div>
+        </section>
+
         <section className="space-y-3">
           <h3 className="font-serif text-xl">{t('tutorial.levelsTitle')}</h3>
           <div className="grid gap-3 md:grid-cols-2">
