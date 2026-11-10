@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import ProTutorialModal, { PRO_TUTORIAL_EVENT, PRO_HELP_EVENT, PRO_TUTORIAL_SEEN_KEY } from './ProTutorialModal';
 import { ProblemModal } from '@/components/support/ProblemModal';
 
@@ -7,6 +8,7 @@ export const openProHelp = () => window.dispatchEvent(new Event(PRO_HELP_EVENT))
 
 /** Monté une fois dans l'espace pro : tutoriel (auto à la 1re visite) + aide Mathilde/Calendly. */
 const ProSupportHost: React.FC = () => {
+  const { pathname } = useLocation();
   const [tutorialOpen, setTutorialOpen] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
 
@@ -24,8 +26,8 @@ const ProSupportHost: React.FC = () => {
 
   return (
     <>
-      <ProTutorialModal open={tutorialOpen} onOpenChange={setTutorialOpen} />
-      <ProblemModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} showCalendly />
+      <ProTutorialModal open={tutorialOpen} onOpenChange={setTutorialOpen} addressBook={pathname === '/pro/carnet-adresses'} />
+      <ProblemModal isOpen={helpOpen} onClose={() => setHelpOpen(false)} showCalendly showWhatsApp />
     </>
   );
 };

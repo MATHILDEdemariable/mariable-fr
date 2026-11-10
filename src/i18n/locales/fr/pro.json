@@ -115,6 +115,16 @@
     "start": "C'est parti",
     "reopen": "Vous pouvez rouvrir ce guide à tout moment avec le bouton « Tutoriel »."
   },
+  "addressBookTutorial": {
+    "title": "Bien utiliser votre carnet d’adresses",
+    "intro": "Retrouvez vos partenaires professionnels préférés au même endroit, puis ajoutez-les facilement aux mariages de vos clients.",
+    "stepsTitle": "Du carnet au mariage",
+    "step1": "Dans « Mes partenaires », renseignez la société, la catégorie et les coordonnées de votre partenaire, puis cliquez sur « Ajouter ». Vos notes vous permettent de garder vos informations utiles.",
+    "step2": "Vous avez déjà une liste ? Téléchargez le modèle puis importez votre fichier Excel ou CSV. La colonne Société ou Nom est nécessaire pour reconnaître les partenaires.",
+    "step3": "Dans « Catalogue Mariable », recherchez un prestataire et cliquez sur « Enregistrer » pour le retrouver dans votre carnet.",
+    "step4": "Ouvrez ensuite le mariage de votre client, allez dans le suivi des prestataires et cliquez sur « Depuis mon carnet » (ou « Mon carnet »). Sélectionnez le partenaire à ajouter au dossier de ce couple.",
+    "note": "Votre carnet est commun à tous vos mariages. Enregistrer un partenaire ici ne l’ajoute pas automatiquement à un mariage : vous choisissez ceux qui correspondent à chaque couple."
+  },
   "addressBook": {
     "title": "Carnet d'adresses",
     "subtitle": "Vos partenaires et le catalogue Mariable, communs à tous vos mariages.",

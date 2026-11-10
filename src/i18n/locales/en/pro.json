@@ -115,6 +115,16 @@
     "start": "Let's go",
     "reopen": "Reopen this guide anytime with the \"Tutorial\" button."
   },
+  "addressBookTutorial": {
+    "title": "Getting the most out of your address book",
+    "intro": "Keep your favourite professional partners in one place, then easily add them to your clients’ weddings.",
+    "stepsTitle": "From your address book to a wedding",
+    "step1": "In “My partners”, enter the company, category and contact details, then click “Add”. Use notes to keep useful information.",
+    "step2": "Already have a list? Download the template, then import your Excel or CSV file. A Company or Name column is required to identify partners.",
+    "step3": "In “Mariable catalog”, search for a vendor and click “Save” to keep them in your address book.",
+    "step4": "Open your client’s wedding, go to vendor tracking and click “From my address book” (or “Address book”). Select the partner to add to that couple’s wedding.",
+    "note": "Your address book is shared across all your weddings. Saving a partner here does not automatically add them to a wedding: you choose the right partners for each couple."
+  },
   "addressBook": {
     "title": "Address book",
     "subtitle": "Your partners and the Mariable catalog, shared across all your weddings.",

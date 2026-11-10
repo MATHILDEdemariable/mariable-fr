@@ -11,6 +11,7 @@ export const PRO_HELP_EVENT = 'mariable:open-pro-help';
 interface ProTutorialModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  addressBook?: boolean;
 }
 
 const GuideCard: React.FC<{ icon: React.ReactNode; title: string; text: string }> = ({ icon, title, text }) => (
@@ -24,7 +25,7 @@ const GuideCard: React.FC<{ icon: React.ReactNode; title: string; text: string }
 );
 
 /** Guide complet de l'espace pro : niveaux de travail, partage vs collaboration, routine conseillée. */
-const ProTutorialModal: React.FC<ProTutorialModalProps> = ({ open, onOpenChange }) => {
+const ProTutorialModal: React.FC<ProTutorialModalProps> = ({ open, onOpenChange, addressBook = false }) => {
   const { t } = useTranslation('pro');
 
   const handleClose = (value: boolean) => {
@@ -38,10 +39,22 @@ const ProTutorialModal: React.FC<ProTutorialModalProps> = ({ open, onOpenChange 
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto rounded-none bg-editorial-beige">
         <DialogHeader>
-          <DialogTitle className="font-serif text-2xl text-wedding-olive">{t('tutorial.title')}</DialogTitle>
-          <DialogDescription>{t('tutorial.intro')}</DialogDescription>
+          <DialogTitle className="font-serif text-2xl text-wedding-olive">{t(addressBook ? 'addressBookTutorial.title' : 'tutorial.title')}</DialogTitle>
+          <DialogDescription>{t(addressBook ? 'addressBookTutorial.intro' : 'tutorial.intro')}</DialogDescription>
         </DialogHeader>
 
+        {addressBook ? (
+          <section className="space-y-3">
+            <h3 className="font-serif text-xl">{t('addressBookTutorial.stepsTitle')}</h3>
+            <ol className="space-y-3 list-decimal pl-5 text-sm text-foreground">
+              {['step1', 'step2', 'step3', 'step4'].map((step) => (
+                <li key={step} className="pl-1 leading-relaxed">{t(`addressBookTutorial.${step}`)}</li>
+              ))}
+            </ol>
+            <p className="text-sm text-muted-foreground border-t border-border pt-3">{t('addressBookTutorial.note')}</p>
+          </section>
+        ) : (
+        <>
         <section className="space-y-3">
           <h3 className="font-serif text-xl">{t('tutorial.levelsTitle')}</h3>
           <div className="grid gap-3 md:grid-cols-2">
@@ -78,6 +91,8 @@ const ProTutorialModal: React.FC<ProTutorialModalProps> = ({ open, onOpenChange 
         </section>
 
         <p className="text-xs text-muted-foreground">{t('tutorial.reopen')}</p>
+        </>
+        )}
         <Button className="rounded-none min-h-[44px]" onClick={() => handleClose(false)}>{t('tutorial.start')}</Button>
       </DialogContent>
     </Dialog>
