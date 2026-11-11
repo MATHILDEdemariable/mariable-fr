@@ -135,6 +135,14 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded, existi
               onChange={(e) => setGuestName(e.target.value)}
               placeholder={tr('Prénom Nom', 'First Last')}
             />
+            {isAlreadySeated && (
+              <p role="alert" className="mt-1 text-xs text-destructive">{tr('⚠️ Déjà placé dans le plan de table.', '⚠️ Already in the seating plan.')}</p>
+            )}
+            {!isAlreadySeated && normalizedInput && (
+              <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">
+                {isInGuestList ? tr('✓ Trouvé dans la liste d’invités.', '✓ Found in the guest list.') : tr('Nouvel invité : il sera aussi ajouté à la liste d’invités.', 'New guest: will also be added to the guest list.')}
+              </p>
+            )}
           </div>
 
           <div>

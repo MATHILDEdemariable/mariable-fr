@@ -412,6 +412,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           planId={plan?.id || ''}
           tables={tables}
           onAdded={loadSeatingPlan}
+          existingGuestNames={guests.map((guest) => guest.guest_name)}
         />
 
         <ImportExcelDialog
