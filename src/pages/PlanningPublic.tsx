@@ -440,14 +440,10 @@ const PlanningPublic: React.FC = () => {
         <div className="container mx-auto px-4 md:px-6 py-4 md:py-6 max-w-6xl pb-20 md:pb-6">
           <Tabs defaultValue="planning" className="w-full">
             {/* Navigation desktop */}
-            <TabsList className="hidden md:grid w-full grid-cols-4 mb-6">
+            <TabsList className="hidden md:grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="planning" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Calendar className="h-4 w-4" />
                 Planning ({filteredTasks.length})
-              </TabsTrigger>
-              <TabsTrigger value="photos" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
-                <Camera className="h-4 w-4" />
-                {t('public.tabs.photos')}
               </TabsTrigger>
               <TabsTrigger value="equipe" className="flex items-center gap-2 data-[state=active]:bg-wedding-olive data-[state=active]:text-white">
                 <Users className="h-4 w-4" />
@@ -461,7 +457,7 @@ const PlanningPublic: React.FC = () => {
             
             {/* Navigation mobile fixe en bas */}
             <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50">
-              <TabsList className="grid w-full grid-cols-4 rounded-none h-16">
+              <TabsList className="grid w-full grid-cols-3 rounded-none h-16">
                 <TabsTrigger 
                   value="planning" 
                   className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
@@ -469,13 +465,6 @@ const PlanningPublic: React.FC = () => {
                   <Calendar className="h-4 w-4" />
                   <span>{t('public.tabs.planning')}</span>
                   <span className="text-[10px] opacity-70">({filteredTasks.length})</span>
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="photos" 
-                  className="flex flex-col items-center gap-1 text-xs h-full data-[state=active]:bg-wedding-olive data-[state=active]:text-white"
-                >
-                  <Camera className="h-4 w-4" />
-                  <span>{t('public.tabs.photos')}</span>
                 </TabsTrigger>
                 <TabsTrigger 
                   value="equipe" 
@@ -495,11 +484,6 @@ const PlanningPublic: React.FC = () => {
                 </TabsTrigger>
               </TabsList>
             </div>
-
-            {/* Onglet Photos */}
-            <TabsContent value="photos">
-              <PhotoListReadOnly coordinationId={coordination.id} />
-            </TabsContent>
 
             {/* Onglet Planning */}
             <TabsContent value="planning">

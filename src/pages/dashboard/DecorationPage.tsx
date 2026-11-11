@@ -46,7 +46,7 @@ const DecorationPage: React.FC = () => {
 
   const [items, setItems] = useState<DecorItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [view, setView] = useState<'kanban' | 'zones' | 'owners'>('kanban');
+  const [view, setView] = useState<'kanban' | 'zones' | 'owners'>('zones');
   const [editingId, setEditingId] = useState<string | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
@@ -261,13 +261,13 @@ const DecorationPage: React.FC = () => {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="grid grid-cols-3 border border-wedding-olive/30 w-full sm:w-auto" role="group" aria-label={tr('Affichage', 'View')}>
-            <button type="button" aria-pressed={view === 'kanban'} onClick={() => setView('kanban')}
-              className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'kanban' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
-              <LayoutGrid className="h-4 w-4" /> {tr('Avancement', 'Progress')}
-            </button>
             <button type="button" aria-pressed={view === 'zones'} onClick={() => setView('zones')}
               className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'zones' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
               <MapPin className="h-4 w-4" /> {tr('Par zone', 'By area')}
+            </button>
+            <button type="button" aria-pressed={view === 'kanban'} onClick={() => setView('kanban')}
+              className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'kanban' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
+              <LayoutGrid className="h-4 w-4" /> {tr('Avancement', 'Progress')}
             </button>
             <button type="button" aria-pressed={view === 'owners'} onClick={() => setView('owners')}
               className={`min-h-[44px] px-4 text-sm inline-flex items-center justify-center gap-2 ${view === 'owners' ? 'bg-wedding-olive text-white' : 'hover:bg-wedding-olive/10'}`}>
