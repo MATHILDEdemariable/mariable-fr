@@ -9,6 +9,7 @@ import { useWeddingScope } from '@/hooks/useWeddingScope';
 import GuestListManager from '@/components/rsvp/GuestListManager';
 import GuestPageCustomizer from '@/components/rsvp/GuestPageCustomizer';
 import RSVPManagement from './RSVPManagement';
+import GuestManagementTutorial from '@/components/rsvp/GuestManagementTutorial';
 
 type GuestView = 'liste' | 'rsvp' | 'mini-site';
 const GUEST_VIEWS: GuestView[] = ['liste', 'rsvp', 'mini-site'];
@@ -108,11 +109,14 @@ const RSVPTabs: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
       <div>
         <h1 className="text-2xl sm:text-3xl font-serif">{isEnglish ? 'Guest management' : 'Gestion Invités'}</h1>
         <p className="text-muted-foreground mt-2">
           {isEnglish ? 'Your list, the response form and the page shared with your guests.' : 'Votre liste, le formulaire réponse et la page partagée à vos invités.'}
         </p>
+      </div>
+        <GuestManagementTutorial isEnglish={!!isEnglish} />
       </div>
       <div role="tablist" aria-label={isEnglish ? 'Choose a view' : 'Choisir une vue'} className="grid grid-cols-1 sm:grid-cols-3 gap-1 p-1 bg-muted">
         {GUEST_VIEWS.map((view) => {

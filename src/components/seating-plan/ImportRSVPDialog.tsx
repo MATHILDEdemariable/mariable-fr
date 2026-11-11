@@ -14,6 +14,7 @@ import { toast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Users, CheckCircle } from 'lucide-react';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { normalizeGuestName } from '@/lib/seatingGuestNames';
 
 interface RSVPEvent {
   id: string;
@@ -45,9 +46,12 @@ interface ImportRSVPDialogProps {
   onOpenChange: (open: boolean) => void;
   planId: string;
   onImported: () => void;
+  existingGuestNames?: string[];
 }
 
-const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported }: ImportRSVPDialogProps) => {
+const ImportRSVPDialog = ({ open, onOpenChange, planId, onImported, existingGuestNames = [] }: ImportRSVPDialogProps) => {
+  const existingNameSet = new Set(existingGuestNames.map(normalizeGuestName));
+  const isAlreadyInPlan = (response: { guest_name: string }) => existingNameSet.has(normalizeGuestName(response.guest_name));
   const { weddingId } = useWeddingScope();
   const [events, setEvents] = useState<RSVPEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
@@ -109,7 +113,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
     }));
 
     setResponses(responsesWithGuests);
-    setSelectedGuests(new Set(responsesWithGuests.map(r => r.id)));
+    setSelectedGuests(new Set(responsesWithGuests.filter(r => !isAlreadyInPlan(r)).map(r => r.id)));
   };
 
   const handleEventChange = async (eventId: string) => {
@@ -118,6 +122,8 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
   };
 
   const toggleGuest = (guestId: string) => {
+    const target = responses.find(r => r.id === guestId);
+    if (target && isAlreadyInPlan(target)) return;
     const newSelected = new Set(selectedGuests);
     if (newSelected.has(guestId)) {
       newSelected.delete(guestId);
@@ -255,7 +261,7 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                         if (selectedGuests.size === responses.length) {
                           setSelectedGuests(new Set());
                         } else {
-                          setSelectedGuests(new Set(responses.map(r => r.id)));
+                          setSelectedGuests(new Set(responses.filter(r => !isAlreadyInPlan(r)).map(r => r.id)));
                         }
                       }}
                     >
@@ -270,15 +276,16 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
                         return (
                           <div
                             key={response.id}
-                            className="flex items-center space-x-3 p-3 border rounded-lg hover:bg-muted/50 cursor-pointer"
+                            className={`flex items-center space-x-3 p-3 border rounded-lg ${isAlreadyInPlan(response) ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50 cursor-pointer'}`}
                             onClick={() => toggleGuest(response.id)}
                           >
                             <Checkbox
+                              disabled={isAlreadyInPlan(response)}
                               checked={selectedGuests.has(response.id)}
                               onCheckedChange={() => toggleGuest(response.id)}
                             />
                             <div className="flex-1">
-                              <p className="font-medium">{response.guest_name}</p>
+                              <p className="font-medium">{response.guest_name}{isAlreadyInPlan(response) && <span className="ml-2 text-xs border border-border px-1.5 py-0.5 font-normal">{tr('Déjà dans le plan', 'Already in plan')}</span>}</p>
                               <p className="text-sm text-muted-foreground">
                                 {response.guests && response.guests.length > 0 
                                   ? response.guests.map(g => `${g.guest_first_name} ${g.guest_last_name}`).join(', ')

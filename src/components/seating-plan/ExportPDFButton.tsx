@@ -7,6 +7,14 @@ import jsPDF from 'jspdf';
 import { toast } from '@/hooks/use-toast';
 import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
+import { classifyDietaryRestriction, DIETARY_FAMILIES, type DietaryFamily } from '@/lib/dietaryFamilies';
+
+const DIETARY_PDF_COLORS: Record<DietaryFamily, [number, number, number]> = {
+  allergy: [239, 68, 68],
+  religious: [168, 85, 247],
+  vegetarian: [22, 163, 74],
+  specific: [249, 115, 22],
+};
 
 interface ExportPDFButtonProps {
   plan: SeatingPlan | null;
@@ -42,7 +50,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
   const maxX = Math.max(...points.map((p) => p.x));
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
-  const area = { left: 30, top: 42, width: 237, height: 130 };
+  const area = { left: 30, top: 42, width: 237, height: 105 };
   const scale = Math.min(
     maxX > minX ? area.width / (maxX - minX) : 1,
     maxY > minY ? area.height / (maxY - minY) : 1,
@@ -73,19 +81,43 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
     doc.text(`${tableGuests.length}/${table.capacity}`, cx, cy + 3, { align: 'center' });
 
     if (!showGuestNames) return;
-    doc.setFontSize(5.5);
-    doc.setTextColor(90, 90, 90);
-    tableGuests.slice(0, 12).forEach((guest, index) => {
-      doc.text(guest.guest_name.slice(0, 22), cx, cy + radius + 4 + index * 2.6, { align: 'center' });
+    // Vue visuelle complète : prénom + nom, pastille couleur et régime en clair
+    const maxLines = 14;
+    tableGuests.slice(0, maxLines).forEach((guest, index) => {
+      const lineY = cy + radius + 4 + index * 2.8;
+      const family = classifyDietaryRestriction(guest.dietary_restrictions);
+      const label = family ? `${guest.guest_name.slice(0, 22)} (${(guest.dietary_restrictions || '').slice(0, 18)})` : guest.guest_name.slice(0, 26);
+      doc.setFontSize(5.8);
+      doc.setTextColor(60, 60, 60);
+      doc.text(label, cx, lineY, { align: 'center' });
+      if (family) {
+        const [r, g, b] = DIETARY_PDF_COLORS[family];
+        doc.setFillColor(r, g, b);
+        doc.circle(cx - doc.getTextWidth(label) / 2 - 1.3, lineY - 0.7, 0.8, 'F');
+      }
     });
-    if (tableGuests.length > 12) {
-      doc.text(`+${tableGuests.length - 12}`, cx, cy + radius + 4 + 12 * 2.6, { align: 'center' });
+    if (tableGuests.length > maxLines) {
+      doc.text(`+${tableGuests.length - maxLines}`, cx, cy + radius + 4 + maxLines * 2.8, { align: 'center' });
     }
   });
 
+  // Légende des régimes
+  if (showGuestNames && guests.some((guest) => classifyDietaryRestriction(guest.dietary_restrictions))) {
+    let legendX = 20;
+    doc.setFontSize(7);
+    (Object.keys(DIETARY_FAMILIES) as DietaryFamily[]).forEach((family) => {
+      const [r, g, b] = DIETARY_PDF_COLORS[family];
+      doc.setFillColor(r, g, b);
+      doc.circle(legendX, 30, 1.2, 'F');
+      doc.setTextColor(60, 60, 60);
+      doc.text(DIETARY_FAMILIES[family].fr, legendX + 2.5, 31);
+      legendX += doc.getTextWidth(DIETARY_FAMILIES[family].fr) + 10;
+    });
+  }
+
   doc.setFontSize(8);
   doc.setTextColor(150, 150, 150);
-  doc.text('Généré par Mariable.fr — Plan global des tables', pageWidth / 2, 203, { align: 'center' });
+  doc.text('Généré par Mariable.fr — Plan de salle complet', pageWidth / 2, 203, { align: 'center' });
 };
 
 const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
@@ -189,8 +221,8 @@ const ExportPDFButton = ({ plan, tables, guests }: ExportPDFButtonProps) => {
           doc.text(`Généré par Mariable.fr - ${i}/${totalPages + 1}`, 105, 290, { align: 'center' });
         }
 
-        // === Section 3 : plan global sans noms ===
-        drawVisualOnePager(doc, plan, tables, guests, false);
+        // === Section 3 : vue visuelle complète (noms + régimes) ===
+        drawVisualOnePager(doc, plan, tables, guests, true);
 
         doc.save('plan-de-table.pdf');
         toast({ title: 'PDF exporté avec succès' });

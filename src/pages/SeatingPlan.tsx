@@ -23,6 +23,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
+import { normalizeGuestName } from '@/lib/seatingGuestNames';
 
 const SeatingPlan = () => {
   const { t, i18n } = useTranslation('seating');
@@ -104,7 +105,19 @@ else plansQuery = plansQuery.eq('user_id', user.id);
         .from('seating_assignments')
         .select('id, seating_plan_id, table_id, guest_name, rsvp_response_id, guest_type, dietary_restrictions, seat_number, notes, created_at')
         .eq('seating_plan_id', planId);
-      setGuests((guestsData || []) as SeatingAssignment[]);
+      // Régimes saisis dans la liste d'invités (/dashboard/rsvp) : affichés sur le plan quand le siège n'en a pas
+      let guestListQuery: any = supabase.from('wedding_guest_list').select('guest_first_name, guest_last_name, notes').not('notes', 'is', null);
+      guestListQuery = weddingId ? guestListQuery.eq('wedding_id', weddingId) : guestListQuery.eq('user_id', user.id);
+      const { data: guestListRows, error: guestListError } = await guestListQuery;
+      if (guestListError) console.error('❌ load guest list diets failed:', guestListError);
+      const dietByName = new Map<string, string>();
+      (guestListRows || []).forEach((row: any) => {
+        const note = (row.notes || '').trim();
+        if (note) dietByName.set(normalizeGuestName(`${row.guest_first_name || ''} ${row.guest_last_name || ''}`), note);
+      });
+      setGuests(((guestsData || []) as SeatingAssignment[]).map((guest) => (
+        guest.dietary_restrictions ? guest : { ...guest, dietary_restrictions: dietByName.get(normalizeGuestName(guest.guest_name)) ?? null }
+      )));
     } catch (error) {
       console.error('Erreur chargement plan de table:', error);
       toast({
@@ -115,6 +128,30 @@ else plansQuery = plansQuery.eq('user_id', user.id);
     } finally {
       setLoading(false);
     }
+  };
+
+  // Doublons déjà présents : on garde la copie placée à une table (sinon la première)
+  const duplicateGuestIds = (() => {
+    const keptByName = new Map<string, SeatingAssignment>();
+    const duplicates: string[] = [];
+    [...guests].sort((a, b) => Number(!!b.table_id) - Number(!!a.table_id)).forEach((guest) => {
+      const key = normalizeGuestName(guest.guest_name);
+      if (!key) return;
+      if (keptByName.has(key)) duplicates.push(guest.id);
+      else keptByName.set(key, guest);
+    });
+    return duplicates;
+  })();
+
+  const handleRemoveDuplicates = async () => {
+    const { error } = await supabase.from('seating_assignments').delete().in('id', duplicateGuestIds);
+    if (error) {
+      console.error('❌ handleRemoveDuplicates failed:', error);
+      toast({ title: i18n.language?.startsWith('en') ? 'Error' : 'Erreur', variant: 'destructive' });
+      return;
+    }
+    toast({ title: i18n.language?.startsWith('en') ? 'Duplicates removed' : 'Doublons supprimés' });
+    loadSeatingPlan(true);
   };
 
   const handleDragEnd = (result: DropResult) => {
@@ -282,6 +319,19 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           </div>
         </div>
 
+        {duplicateGuestIds.length > 0 && (
+          <div role="alert" className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-l-4 border-destructive bg-destructive/5 p-3 text-sm">
+            <span>
+              {i18n.language?.startsWith('en')
+                ? `${duplicateGuestIds.length} duplicate guest(s) detected in the plan.`
+                : `${duplicateGuestIds.length} invité(s) en double détecté(s) dans le plan.`}
+            </span>
+            <Button size="sm" variant="outline" className="rounded-none" onClick={handleRemoveDuplicates}>
+              {i18n.language?.startsWith('en') ? 'Remove duplicates' : 'Supprimer les doublons'}
+            </Button>
+          </div>
+        )}
+
         {/* View toggle tabs */}
         <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
           <TabsList className="bg-gray-100 border border-gray-300">
@@ -404,6 +454,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           onOpenChange={setShowImportDialog}
           planId={plan?.id || ''}
           onImported={loadSeatingPlan}
+          existingGuestNames={guests.map((guest) => guest.guest_name)}
         />
 
         <ManualGuestDialog
@@ -427,6 +478,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           onOpenChange={setShowImportGuestList}
           planId={plan?.id || ''}
           onImported={loadSeatingPlan}
+          existingGuestNames={guests.map((guest) => guest.guest_name)}
         />
 
         <TutorialVideoModal 

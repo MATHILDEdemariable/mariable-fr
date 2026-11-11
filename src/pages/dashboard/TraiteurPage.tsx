@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
 import { Plus, Trash2, Upload, FileText, Loader2, CheckCircle2, UtensilsCrossed, X } from 'lucide-react';
@@ -29,6 +29,22 @@ const TraiteurPage: React.FC = () => {
   const [newRowLabel, setNewRowLabel] = useState('');
   const [newDayName, setNewDayName] = useState('');
   const [activeDayId, setActiveDayId] = useState<string | null>(null);
+
+  const [trackedVendors, setTrackedVendors] = useState<{ id: string; vendor_name: string; category: string; phone: string | null }[]>([]);
+
+  // Prestataires du suivi (même mariage) : sélectionnables directement dans chaque moment
+  useEffect(() => {
+    if (!weddingId) return;
+    (async () => {
+      const { data, error } = await supabase
+        .from('vendors_tracking_preprod')
+        .select('id, vendor_name, category, phone')
+        .eq('wedding_id', weddingId)
+        .order('vendor_name');
+      if (error) { console.error('❌ load tracked vendors failed:', error); return; }
+      setTrackedVendors(data ?? []);
+    })();
+  }, [weddingId]);
 
   const days = getCateringDays(plan);
   const activeDay = days.find((day) => day.id === activeDayId) ?? days[0];
@@ -164,6 +180,21 @@ const TraiteurPage: React.FC = () => {
               </div>
             ))}
             <Button type="button" onClick={() => patchActiveDay({ vendors: [...activeDay.vendors, { id: newId('vendor'), name: '', role: activeDay.vendors.length ? 'other' : 'main_caterer', contact: '' }] })} className="rounded-none min-h-[44px] bg-wedding-olive hover:bg-wedding-olive/90 text-white"><Plus className="h-4 w-4 mr-1" />{tr('Ajouter un prestataire', 'Add a vendor')}</Button>
+            {trackedVendors.length > 0 && (
+              <select
+                value=""
+                onChange={(event) => {
+                  const tracked = trackedVendors.find((entry) => entry.id === event.target.value);
+                  if (!tracked) return;
+                  patchActiveDay({ vendors: [...activeDay.vendors, { id: newId('vendor'), name: tracked.vendor_name, role: activeDay.vendors.length ? 'other' : 'main_caterer', contact: tracked.phone ?? '' }] });
+                }}
+                className="ml-0 sm:ml-2 h-11 min-h-[44px] border border-input bg-background px-2 text-sm"
+                aria-label={tr('Choisir dans mon suivi prestataires', 'Pick from my vendor tracking')}
+              >
+                <option value="">{tr('+ Depuis mon suivi prestataires…', '+ From my vendor tracking…')}</option>
+                {trackedVendors.map((entry) => <option key={entry.id} value={entry.id}>{entry.vendor_name} · {entry.category}</option>)}
+              </select>
+            )}
           </TabsContent>
 
           <TabsContent value="menus" className="space-y-4 mt-4">
