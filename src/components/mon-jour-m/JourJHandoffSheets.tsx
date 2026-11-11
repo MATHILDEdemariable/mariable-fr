@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Table, Wine, Sparkles, Users, Heart, Building2, CheckCircle2, Clock, Loader2, FileDown } from 'lucide-react';
+import { Table, Wine, Sparkles, Users, Heart, Building2, UtensilsCrossed, CheckCircle2, Clock, Loader2, FileDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { supabase } from '@/integrations/supabase/client';
@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
 import type { JourJModule } from '@/hooks/useJourJHandoff';
 import { buildCeremonyPdf } from '@/components/ceremony/CeremonyPlanner';
+import { buildCateringSheetLines, DEFAULT_CATERING_PLAN } from '@/data/cateringPlan';
 
 const db = supabase as any;
 
@@ -20,11 +21,13 @@ type SheetData =
   | { module: 'seating'; tables: { name: string; guests: string[] }[]; alphabetical: { guest: string; table: string }[] }
   | { module: 'drinks'; rows: any[] }
   | { module: 'decor'; zones: { zone: string; items: any[] }[] }
-  | { module: 'trombinoscope'; people: any[] };
+  | { module: 'trombinoscope'; people: any[] }
+  | { module: 'catering'; lines: { text: string; bold?: boolean }[] };
 
 const MODULES: { key: JourJModule; icon: typeof Table; fr: string; en: string; sourceFr: string; sourceEn: string; path: string }[] = [
   { key: 'seating', icon: Table, fr: 'Plan de table', en: 'Seating plan', sourceFr: 'Liste par table et alphabétique', sourceEn: 'By table and alphabetical', path: '/dashboard/seating-plan' },
   { key: 'drinks', icon: Wine, fr: 'Boissons', en: 'Drinks', sourceFr: 'Fiche bar / traiteur', sourceEn: 'Bar / caterer sheet', path: '/dashboard/drinks' },
+  { key: 'catering', icon: UtensilsCrossed, fr: 'Traiteur', en: 'Catering', sourceFr: 'Menus, prestataires et logistique par jour', sourceEn: 'Menus, vendors and logistics per day', path: '/dashboard/traiteur' },
   { key: 'decor', icon: Sparkles, fr: 'Décoration', en: 'Decor', sourceFr: 'Mise en place par zone', sourceEn: 'Set-up by area', path: '/dashboard/decoration' },
   { key: 'trombinoscope', icon: Users, fr: 'Trombinoscope', en: 'Who’s who', sourceFr: 'Ajouté à l’équipe', sourceEn: 'Added to the team', path: '/mon-jour-m/equipe' },
   { key: 'ceremony_religious', icon: Heart, fr: 'Cérémonie', en: 'Ceremony', sourceFr: 'Cortège, musiques, interventions', sourceEn: 'Procession, music, speeches', path: '/dashboard/ceremonie' },
@@ -91,6 +94,9 @@ const JourJHandoffSheets: React.FC = () => {
       } else if (module === 'drinks') {
         const { data } = await db.from('wedding_drinks_plan').select('rows').eq('wedding_id', weddingId).maybeSingle();
         setOpenSheet({ module: 'drinks', rows: Array.isArray(data?.rows) ? data.rows : [] });
+      } else if (module === 'catering') {
+        const { data } = await db.from('wedding_module_plans').select('data').eq('wedding_id', weddingId).eq('module', 'catering').maybeSingle();
+        setOpenSheet({ module: 'catering', lines: buildCateringSheetLines({ ...DEFAULT_CATERING_PLAN, ...(data?.data || {}) }, !!isEnglish) });
       } else if (module === 'decor') {
         const { data } = await db.from('wedding_decor_items').select('name, zone, responsible, status, quantity, notes').eq('wedding_id', weddingId).order('position');
         const zones = Object.keys(DECOR_ZONES)
@@ -143,6 +149,8 @@ const JourJHandoffSheets: React.FC = () => {
           lines.push({ text: decorLabel(DECOR_ZONES, group.zone, !!isEnglish), bold: true });
           group.items.forEach((item: any) => lines.push({ text: `${item.name}${item.quantity ? ` × ${item.quantity}` : ''} — ${decorLabel(DECOR_RESPONSIBLES, item.responsible, !!isEnglish)}${item.notes ? ` (${item.notes})` : ''}` }));
         });
+      } else if (data.module === 'catering') {
+        lines.push(...data.lines);
       } else {
         data.people.forEach((person: any) => lines.push({ text: [person.full_name, person.key_role, person.phone].filter(Boolean).join(' · ') }));
       }
@@ -224,6 +232,7 @@ const JourJHandoffSheets: React.FC = () => {
             <DialogTitle className="font-serif">
               {openSheet?.module === 'seating' ? tr('Plan de table validé', 'Approved seating plan')
                 : openSheet?.module === 'drinks' ? tr('Fiche boissons', 'Drinks sheet')
+                : openSheet?.module === 'catering' ? tr('Fiche traiteur', 'Catering sheet')
                 : tr('Mise en place déco par zone', 'Decor set-up by area')}
             </DialogTitle>
           </DialogHeader>
@@ -259,6 +268,16 @@ const JourJHandoffSheets: React.FC = () => {
                     </p>
                     {row.notes && <p className="text-muted-foreground italic">{row.notes}</p>}
                   </div>
+                ))}
+              </div>
+            )
+          )}
+
+          {openSheet?.module === 'catering' && (
+            openSheet.lines.length === 0 ? <p className="text-sm text-muted-foreground">{tr('Fiche vide', 'Empty sheet')}</p> : (
+              <div className="space-y-1 text-sm">
+                {openSheet.lines.map((line, index) => (
+                  <p key={index} className={line.bold ? 'font-serif text-base border-b border-wedding-olive/30 pb-1 pt-3' : 'text-muted-foreground'}>{line.text}</p>
                 ))}
               </div>
             )
