@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Plus, Trash2 } from 'lucide-react';
+import { Plus, Trash2, Upload, Download, Info, PlayCircle } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { PRO_VIDEO_TUTORIALS } from '@/data/proVideoTutorials';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -96,6 +98,74 @@ const Referentiels: React.FC = () => {
     setTasks(await fetchProTaskTemplates());
   };
 
+  const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+  const [isImportingFile, setIsImportingFile] = useState(false);
+
+  // Modèle cible : Intitulé, Catégorie, Responsable, Mois avant (même logique que le carnet d'adresses)
+  const handleDownloadTemplate = async () => {
+    const XLSX = await import('xlsx');
+    const sheet = XLSX.utils.json_to_sheet([
+      { Intitule: 'Réserver le lieu', Categorie: 'Organisation', Responsable: 'planner', MoisAvant: 12 },
+      { Intitule: 'Dégustation traiteur', Categorie: 'Traiteur', Responsable: 'couple', MoisAvant: 6 },
+    ]);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, sheet, 'Taches');
+    XLSX.writeFile(workbook, 'modele-taches-mariable.xlsx');
+  };
+
+  const handleImportFile = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+    setIsImportingFile(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      const XLSX = await import('xlsx');
+      const workbook = XLSX.read(await file.arrayBuffer());
+      const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(workbook.Sheets[workbook.SheetNames[0]], { defval: '' });
+      const normalize = (text: string) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z]/g, '');
+      const aliases: Record<string, string[]> = {
+        title: ['intitule', 'titre', 'tache', 'title', 'task'],
+        category: ['categorie', 'category'],
+        stakeholder: ['responsable', 'stakeholder', 'owner'],
+        months_before: ['moisavant', 'mois', 'monthsbefore', 'months'],
+      };
+      const pick = (row: Record<string, unknown>, field: string) => {
+        const key = Object.keys(row).find((column) => aliases[field].includes(normalize(column)));
+        return key ? String(row[key] ?? '').trim() : '';
+      };
+      const validPeriods = RETROPLANNING_CATALOG_PERIODS.map((period) => period.monthsBefore);
+      const records = rows.map((row) => {
+        const months = Number(pick(row, 'months_before').replace(',', '.'));
+        const stakeholder = pick(row, 'stakeholder');
+        return {
+          owner_id: user.id,
+          title: pick(row, 'title').slice(0, 200),
+          category: pick(row, 'category') || 'Organisation',
+          stakeholder: STAKEHOLDER_LABELS[stakeholder] ? stakeholder : 'planner',
+          // Période la plus proche du catalogue
+          months_before: Number.isFinite(months) && validPeriods.length
+            ? validPeriods.reduce((best, period) => (Math.abs(period - months) < Math.abs(best - months) ? period : best), validPeriods[0])
+            : 1,
+        };
+      }).filter((record) => record.title);
+      if (records.length === 0) {
+        toast({ title: isEnglish ? 'No task found' : 'Aucune tâche trouvée', description: isEnglish ? 'Use the template columns.' : 'Utilisez les colonnes du modèle.', variant: 'destructive' });
+        return;
+      }
+      const { error } = await taskTemplatesTable().insert(records);
+      if (error) throw error;
+      toast({ title: isEnglish ? `${records.length} task(s) imported` : `${records.length} tâche(s) importée(s)` });
+      setTasks(await fetchProTaskTemplates());
+    } catch (error) {
+      console.error('❌ handleImportFile failed:', error);
+      toast({ title: isEnglish ? 'Import failed' : 'Import impossible', variant: 'destructive' });
+    } finally {
+      setIsImportingFile(false);
+    }
+  };
+
   const handleDeleteTask = async (taskId: string) => {
     const { error } = await taskTemplatesTable().delete().eq('id', taskId);
     if (error) { console.error('❌ delete task template failed:', error); return; }
@@ -113,6 +183,7 @@ const Referentiels: React.FC = () => {
         <title>{isEnglish ? 'Templates & catalogues' : 'Modèles & catalogues'} | Mariable Pro</title>
       </Helmet>
       <section className="space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
         <div>
           <h1 className="font-serif text-3xl font-bold">{isEnglish ? 'Templates & catalogues' : 'Modèles & catalogues'}</h1>
           <p className="text-sm text-muted-foreground">
@@ -121,6 +192,33 @@ const Referentiels: React.FC = () => {
               : 'Vos référentiels internes, réutilisables dans chaque mariage : vos tâches s’ajoutent dans chaque mariage avec le bouton « Mes tâches habituelles », vos prix sont disponibles dans chaque Budget.'}
           </p>
         </div>
+          <Button variant="outline" className="rounded-none min-h-[44px] shrink-0" onClick={() => setIsTutorialOpen(true)}>
+            <Info className="h-4 w-4 mr-2" />Tuto
+          </Button>
+        </div>
+        <Dialog open={isTutorialOpen} onOpenChange={setIsTutorialOpen}>
+          <DialogContent className="max-w-lg rounded-none max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle className="font-serif">À quoi servent les référentiels ?</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3 text-sm">
+              <p><strong>Catalogue de tâches :</strong> votre méthodologie maison. Dans chaque mariage, le bouton « Mes tâches habituelles » du rétroplanning ajoute ces tâches à la trame Mariable, avec leur responsable et leur période.</p>
+              <p><strong>Catalogue de prix :</strong> vos tarifs de référence, proposés dans le module Budget de chaque mariage.</p>
+              <p><strong>Import Excel :</strong> téléchargez le modèle (colonnes Intitulé, Catégorie, Responsable, Mois avant), remplissez-le puis importez-le. Responsable : planner, couple… ; Mois avant : nombre de mois avant le mariage.</p>
+              <p className="pt-2 font-semibold">Tutoriels vidéo</p>
+              <ul className="space-y-2">
+                {PRO_VIDEO_TUTORIALS.map((video) => (
+                  <li key={video.number}>
+                    <a href={video.loomUrl} target="_blank" rel="noopener noreferrer" className="flex items-start gap-2 border border-border p-2 hover:bg-muted/50 min-h-[44px]">
+                      <PlayCircle className="h-4 w-4 mt-0.5 shrink-0 text-wedding-olive" />
+                      <span><span className="font-medium">{video.title}</span><span className="block text-xs text-muted-foreground">{video.text}</span></span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </DialogContent>
+        </Dialog>
         <Tabs defaultValue="tasks">
           <TabsList className="rounded-none">
             <TabsTrigger value="tasks" className="rounded-none">{isEnglish ? 'Task catalogue' : 'Catalogue de tâches'}</TabsTrigger>
@@ -138,6 +236,17 @@ const Referentiels: React.FC = () => {
                 {RETROPLANNING_CATALOG_PERIODS.map((period) => <option key={period.monthsBefore} value={String(period.monthsBefore)}>{isEnglish ? period.en : period.fr}</option>)}
               </select>
               <Button onClick={handleAddTask} className="rounded-none"><Plus className="h-4 w-4 mr-1" />{isEnglish ? 'Add' : 'Ajouter'}</Button>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button variant="outline" className="rounded-none min-h-[44px]" onClick={handleDownloadTemplate}>
+                <Download className="h-4 w-4 mr-1" />{isEnglish ? 'Download template' : 'Télécharger le modèle'}
+              </Button>
+              <Button variant="outline" className="rounded-none min-h-[44px]" asChild disabled={isImportingFile}>
+                <label className="cursor-pointer">
+                  <Upload className="h-4 w-4 mr-1" />{isImportingFile ? (isEnglish ? 'Importing…' : 'Import…') : (isEnglish ? 'Import an Excel file' : 'Importer un fichier Excel')}
+                  <input type="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleImportFile} />
+                </label>
+              </Button>
             </div>
             <details className="border border-border bg-background p-4">
               <summary className="cursor-pointer text-sm font-medium text-wedding-olive">
