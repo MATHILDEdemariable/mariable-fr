@@ -144,7 +144,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const { toast } = useToast();
   const { profile } = useUserProfile();
   const isMobile = useIsMobile();
-  const { accountType, currentWedding, currentWeddingId, isWeddingCollaborator } = useWedding();
+  const { accountType, currentWedding, currentWeddingId } = useWedding();
   const isProAccount = accountType === 'b2b';
   // Couple invité : coédition du suivi avec son wedding planner (RLS « Collaborators edit vendors_tracking_preprod »)
   const isReadOnly = false;
