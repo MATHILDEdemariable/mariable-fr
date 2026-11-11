@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { SeatingTable, SeatingAssignment } from '@/types/seating';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
+import { classifyDietaryRestriction, DIETARY_FAMILIES, type DietaryFamily } from '@/lib/dietaryFamilies';
 import { cn } from '@/lib/utils';
 import { normalizeGuestName } from '@/lib/guestTags';
 import { getStandardTableMeters, getRoomCapacity } from '@/lib/seatingStandards';
@@ -648,6 +649,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
               const guestX = Math.cos(angle) * radius;
               const guestY = Math.sin(angle) * radius;
               const isSelected = selectedGuest === guest.id;
+              const dietaryFamily = classifyDietaryRestriction(guest.dietary_restrictions);
 
               return (
                 <div
@@ -668,8 +670,9 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                     transform: 'translateX(-50%)',
                     ...(guestColors[normalizeGuestName(guest.guest_name)] && !isSelected ? { borderColor: guestColors[normalizeGuestName(guest.guest_name)], borderWidth: 3 } : {})
                   }}
-                  title={`${guest.guest_name}${guest.seat_number ? ` (${tr('Place','Seat')} ${guest.seat_number})` : ''} - ${tr('Cliquez pour échanger','Click to swap')}`}
+                  title={`${guest.guest_name}${guest.seat_number ? ` (${tr('Place','Seat')} ${guest.seat_number})` : ''}${dietaryFamily ? ` · ${tr(DIETARY_FAMILIES[dietaryFamily].fr, DIETARY_FAMILIES[dietaryFamily].en)} : ${guest.dietary_restrictions}` : ''} - ${tr('Cliquez pour échanger','Click to swap')}`}
                 >
+                  {dietaryFamily && <span aria-hidden="true" className={cn('mr-1 inline-block h-2 w-2 shrink-0 rounded-full', DIETARY_FAMILIES[dietaryFamily].dotClass)} />}
                   {guest.guest_name}
                 </div>
               );
@@ -677,6 +680,18 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
           </div>
         );
       })}
+
+      {/* Légende des régimes alimentaires */}
+      {guests.some((guest) => classifyDietaryRestriction(guest.dietary_restrictions)) && (
+        <div className="absolute bottom-2 left-2 z-30 flex flex-wrap gap-x-3 gap-y-1 border border-border bg-background/95 px-2 py-1 text-[10px]">
+          {(Object.keys(DIETARY_FAMILIES) as DietaryFamily[]).map((family) => (
+            <span key={family} className="inline-flex items-center gap-1">
+              <span className={cn('h-2 w-2 rounded-full', DIETARY_FAMILIES[family].dotClass)} />
+              {tr(DIETARY_FAMILIES[family].fr, DIETARY_FAMILIES[family].en)}
+            </span>
+          ))}
+        </div>
+      )}
 
       {/* Empty state */}
       {tables.length === 0 && (
