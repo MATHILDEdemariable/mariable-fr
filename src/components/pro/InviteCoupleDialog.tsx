@@ -110,10 +110,19 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
             <DialogTitle className="font-serif">{isEnglish ? 'Invite the couple' : 'Inviter les mariés'}</DialogTitle>
             <DialogDescription>
               {isEnglish
-                ? 'They can edit the guest list, RSVP, seating plan, budget and drinks. Everything else is view-only.'
-                : 'Ils pourront modifier les invités, le RSVP, le plan de table, le budget et les boissons. Le reste est en lecture seule.'}
+                ? 'Inviting the couple lets them co-edit this wedding with you: every module except the Wedding day cockpit and Planning & tasks, which stay yours.'
+                : 'Inviter les mariés leur permet de co-éditer ce mariage avec vous : tous les modules sauf le Cockpit Jour J et Planning & tâches, qui restent les vôtres.'}
             </DialogDescription>
           </DialogHeader>
+
+          <div role="note" className="border-l-4 border-wedding-olive bg-[#F8F5EF] p-3 text-sm space-y-2">
+            <p className="font-semibold">{isEnglish ? 'You don’t want co-editing?' : 'Vous ne souhaitez pas de co-édition ?'}</p>
+            <p>
+              {isEnglish
+                ? 'Either ask the couple not to change the shared items, or skip the invitation and use sharing without an account: the PDF exports and web links display the information nicely, app-style.'
+                : 'Demandez-leur de ne pas modifier les éléments, ou n’invitez pas le couple et utilisez le partage sans création de compte : les boutons export PDF et lien web présentent joliment les infos, au format app.'}
+            </p>
+          </div>
 
           <div role="note" className="border-l-4 border-amber-600 bg-amber-50 p-3 text-sm space-y-2">
             <p className="font-semibold">
@@ -121,13 +130,8 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
             </p>
             <p>
               {isEnglish
-                ? 'If they have already entered their budget, schedule or guests on their own account, it is up to them to invite you from their dashboard: you will then get all their data. If you invite them, they will join this wedding and will not see their own data here.'
-                : 'S’ils ont déjà saisi leur budget, planning ou invités sur leur propre compte, c’est à eux de vous inviter depuis leur tableau de bord : vous récupérerez alors toutes leurs données. Si vous les invitez, ils rejoindront ce mariage et n’y retrouveront pas leurs données.'}
-            </p>
-            <p>
-              {isEnglish
-                ? 'No account yet? They will create one from the email and access this wedding directly.'
-                : 'Pas encore de compte ? Ils le créeront depuis l’email et accéderont directement à ce mariage.'}
+                ? 'If they already entered data on their own account, it is up to them to invite you from their dashboard so you get all their data. No account yet? They will create one from the email.'
+                : 'S’ils ont déjà saisi des données sur leur compte, c’est à eux de vous inviter depuis leur tableau de bord pour que vous récupériez tout. Pas encore de compte ? Ils le créeront depuis l’email.'}
             </p>
           </div>
 
