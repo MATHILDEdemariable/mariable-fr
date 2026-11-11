@@ -6,7 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const db = supabase as any;
 
 /** Lit et enregistre (auto-save) le contenu d'un module (musique, traiteur) partagé pro / mariés. */
-export const useWeddingModulePlan = <T extends object>(module: 'music' | 'catering', defaults: T) => {
+export const useWeddingModulePlan = <T extends object>(module: 'music' | 'catering' | 'decor_zones', defaults: T) => {
   const { currentWeddingId } = useWedding();
   const { user } = useAuth();
   const weddingId = currentWeddingId || user?.id || null;

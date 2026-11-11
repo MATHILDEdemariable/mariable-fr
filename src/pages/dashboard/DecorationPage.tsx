@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { useTranslation } from 'react-i18next';
-import { Plus, Sparkles, Trash2, Pencil, ChevronLeft, ChevronRight, LayoutGrid, UserRound, MapPin, Loader2 } from 'lucide-react';
+import { Plus, Sparkles, Trash2, Pencil, ChevronLeft, ChevronRight, LayoutGrid, UserRound, MapPin, Loader2, ImagePlus, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,6 +14,7 @@ import { useWedding } from '@/contexts/WeddingContext';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
 import InspirationLinksPanel from '@/components/mon-jour-m/InspirationLinksPanel';
 import { useMonJourMCoordination } from '@/hooks/useMonJourMCoordination';
+import { useWeddingModulePlan } from '@/hooks/useWeddingModulePlan';
 import {
   DECOR_CATEGORIES, DECOR_ZONES, DECOR_RESPONSIBLES, DECOR_STATUSES, DECOR_STARTER_KIT, decorLabel, type DecorStatus,
 } from '@/data/decorCatalog';
@@ -50,6 +51,38 @@ const DecorationPage: React.FC = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [isImportingKit, setIsImportingKit] = useState(false);
+  // Image d'inspiration par zone (moodboard), partagée pro / mariés
+  const { data: zonePlan, updateData: updateZonePlan } = useWeddingModulePlan<{ zoneImages: Record<string, string> }>('decor_zones', { zoneImages: {} });
+  const [uploadingZone, setUploadingZone] = useState<string | null>(null);
+
+  const handleZoneImageUpload = async (zoneKey: string, file: File | undefined) => {
+    if (!file || !user) return;
+    if (!file.type.startsWith('image/') || file.size > 8 * 1024 * 1024) {
+      toast.error(tr('Image (8 Mo max) requise', 'Image up to 8 MB required'));
+      return;
+    }
+    setUploadingZone(zoneKey);
+    try {
+      const extension = file.name.split('.').pop() || 'jpg';
+      const filePath = `${user.id}/decor-zones/${weddingId}-${zoneKey}-${Date.now()}.${extension}`;
+      const { error } = await supabase.storage.from('wedding-documents').upload(filePath, file);
+      if (error) throw error;
+      const publicUrl = supabase.storage.from('wedding-documents').getPublicUrl(filePath).data.publicUrl;
+      updateZonePlan((previous) => ({ zoneImages: { ...previous.zoneImages, [zoneKey]: publicUrl } }));
+    } catch (error) {
+      console.error('❌ handleZoneImageUpload failed:', error);
+      toast.error(tr('Envoi de l’image impossible', 'Image upload failed'));
+    } finally {
+      setUploadingZone(null);
+    }
+  };
+
+  const removeZoneImage = (zoneKey: string) => {
+    updateZonePlan((previous) => {
+      const { [zoneKey]: _removed, ...rest } = previous.zoneImages;
+      return { zoneImages: rest };
+    });
+  };
 
   const loadDecorItems = async () => {
     if (!weddingId) return;
@@ -164,8 +197,7 @@ const DecorationPage: React.FC = () => {
 
   const itemsByZone = useMemo(() => {
     return Object.keys(DECOR_ZONES)
-      .map((zoneKey) => ({ zoneKey, zoneItems: items.filter((item) => item.zone === zoneKey) }))
-      .filter((group) => group.zoneItems.length > 0);
+      .map((zoneKey) => ({ zoneKey, zoneItems: items.filter((item) => item.zone === zoneKey) }));
   }, [items]);
 
   const itemsByOwner = useMemo(() => {
@@ -280,7 +312,21 @@ const DecorationPage: React.FC = () => {
             {(view === 'owners' ? itemsByOwner : itemsByZone).map(({ zoneKey, zoneItems }) => (
               <div key={zoneKey} className="space-y-2">
                 <h2 className="font-serif text-xl border-b border-wedding-olive/30 pb-1">{decorLabel(view === 'owners' ? DECOR_RESPONSIBLES : DECOR_ZONES, zoneKey, isEnglish)} <span className="text-sm text-muted-foreground">({zoneItems.length})</span></h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{zoneItems.map(renderItemCard)}</div>
+                {view === 'zones' && (
+                  zonePlan.zoneImages[zoneKey] ? (
+                    <div className="relative w-full max-w-md">
+                      <img src={zonePlan.zoneImages[zoneKey]} alt={tr(`Inspiration déco ${decorLabel(DECOR_ZONES, zoneKey, false)}`, `Decor inspiration ${decorLabel(DECOR_ZONES, zoneKey, true)}`)} className="aspect-video w-full object-cover border border-border" loading="lazy" />
+                      <button type="button" onClick={() => removeZoneImage(zoneKey)} aria-label={tr('Retirer l’image', 'Remove image')} className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center bg-background/90 border border-border"><X className="h-4 w-4" /></button>
+                    </div>
+                  ) : (
+                    <label className="inline-flex min-h-[44px] cursor-pointer items-center gap-2 border border-dashed border-wedding-olive/50 px-4 text-sm text-wedding-olive hover:bg-wedding-olive/5">
+                      {uploadingZone === zoneKey ? <Loader2 className="h-4 w-4 animate-spin" /> : <ImagePlus className="h-4 w-4" />}
+                      {tr('Ajouter une image d’inspiration', 'Add an inspiration image')}
+                      <input type="file" accept="image/*" className="sr-only" disabled={uploadingZone !== null} onChange={(event) => handleZoneImageUpload(zoneKey, event.target.files?.[0])} />
+                    </label>
+                  )
+                )}
+                {zoneItems.length > 0 && <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">{zoneItems.map(renderItemCard)}</div>}
               </div>
             ))}
           </div>
