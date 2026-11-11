@@ -352,35 +352,6 @@ else eventsQuery = eventsQuery.eq('user_id', user.id);
           </div>
 
           <div className="flex flex-wrap items-center gap-2 [&_button]:min-h-[44px]">
-            <Dialog>
-              <DialogTrigger asChild>
-                <Button variant="outline">
-                  <Info className="h-4 w-4 mr-2" />
-                  {t('rsvp.tutoBtn')}
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{t('rsvp.tutoTitle')}</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  {[1, 2, 3, 4].map((n) => (
-                    <div key={n} className="flex items-start gap-3">
-                      <div className="rounded-full bg-primary/10 p-2">
-                        <span className="font-bold text-primary">{n}</span>
-                      </div>
-                      <div>
-                        <h4 className="font-semibold">{t(`rsvp.tutoStep${n}Title`)}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {t(`rsvp.tutoStep${n}Desc`)}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </DialogContent>
-            </Dialog>
-
             <Dialog open={isDialogOpen} onOpenChange={handleDialogOpenChange}>
               <DialogTrigger asChild>
                 <Button className="bg-primary hover:bg-primary/90">
