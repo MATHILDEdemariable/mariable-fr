@@ -120,7 +120,7 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
 
       <nav className="py-2 sm:py-3 px-2 sm:px-3 space-y-0.5">
         {/* ORGANISATION */}
-        <SectionLabel label={t('sidebar.sections.organisation')} />
+        <SectionLabel label={isEnglish ? 'Upstream planning' : 'Organisation & gestion en amont'} />
 
         <Link to={isReaderMode ? '#' : '/dashboard'} onClick={preventReader} className={linkClass(isActive('/dashboard'))}>
           <LayoutDashboard className="h-4 w-4" />
@@ -163,17 +163,13 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </DropdownMenuContent>
         </DropdownMenu>
 
-        <Link to={isReaderMode ? '#' : '/dashboard/traiteur'} onClick={preventReader} className={linkClass(isActive('/dashboard/traiteur'))}>
-          <UtensilsCrossed className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Catering & equipment' : 'Traiteur & Matériel'}</span>
-        </Link>
 
         {/* Check-list fusionnée dans « Planning & tâches » */}
         </>)}
 
 
         {/* JOUR-J */}
-        <SectionLabel label={t('sidebar.sections.jourJ')} />
+        <SectionLabel label={isEnglish ? 'Live run sheet' : 'Conducteur en direct'} />
 
         {/* Cockpit Jour J en 1re position de la section Jour J */}
         <HoverCard openDelay={150} closeDelay={100}>
@@ -194,61 +190,56 @@ const DashboardSidebar: React.FC<DashboardSidebarProps> = ({ isReaderMode = fals
           </HoverCardContent>
         </HoverCard>
 
-
+        {/* INVITÉS & TABLES — inclus dans les 2 formules */}
+        <SectionLabel label={isEnglish ? 'Guests & tables' : 'Invités & tables'} />
         <Link to={isReaderMode ? '#' : '/dashboard/rsvp'} onClick={preventReader} className={linkClass(isActive('/dashboard/rsvp'))}>
           <UserCheck className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.rsvp')}</span>
         </Link>
-
         <Link to={isReaderMode ? '#' : '/dashboard/rsvp?vue=mini-site'} onClick={preventReader} className={linkClass(location.pathname.startsWith('/dashboard/rsvp') && search.includes('vue=mini-site'))}>
           <Globe className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Couple’s mini-site' : 'Mini-site des mariés'}</span>
         </Link>
-
         <Link to={isReaderMode ? '#' : '/dashboard/seating-plan'} onClick={preventReader} className={linkClass(isActive('/dashboard/seating-plan'))}>
           <Table className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.seatingPlan')}</span>
         </Link>
-
-        <Link to={isReaderMode ? '#' : '/dashboard/trombinoscope'} onClick={preventReader} className={linkClass(isActive('/dashboard/trombinoscope'))}>
-          <Contact className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Who’s who' : 'Trombinoscope'}</span>
+        {/* LOGISTIQUE DU JOUR J — inclus dans les 2 formules */}
+        <SectionLabel label={isEnglish ? 'Wedding day logistics' : 'Logistique du Jour J'} />
+        <Link to={isReaderMode ? '#' : '/dashboard/traiteur'} onClick={preventReader} className={linkClass(isActive('/dashboard/traiteur'))}>
+          <UtensilsCrossed className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Catering & equipment' : 'Traiteur & Matériel'}</span>
         </Link>
-
-        <Link to={isReaderMode ? '#' : '/dashboard/liste-photos'} onClick={preventReader} className={linkClass(isActive('/dashboard/liste-photos'))}>
-          <Camera className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Photo list' : 'Liste de photos'}</span>
-        </Link>
-
-        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
-          <Sparkles className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
-        </Link>
-
-
-        <Link to={isReaderMode ? '#' : '/dashboard/musique'} onClick={preventReader} className={linkClass(isActive('/dashboard/musique'))}>
-          <Music className="h-4 w-4" />
-          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'DJ & Music' : 'DJ & Musique'}</span>
-        </Link>
-
         <Link to={isReaderMode ? '#' : '/dashboard/drinks'} onClick={preventReader} className={linkClass(isActive('/dashboard/drinks'))}>
           <Wine className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.drinksCalculator')}</span>
         </Link>
-
+        <Link to={isReaderMode ? '#' : '/dashboard/decoration'} onClick={preventReader} className={linkClass(isActive('/dashboard/decoration'))}>
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Decor' : 'Décoration'}</span>
+        </Link>
+        <Link to={isReaderMode ? '#' : '/dashboard/musique'} onClick={preventReader} className={linkClass(isActive('/dashboard/musique'))}>
+          <Music className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'DJ & Music' : 'DJ & Musique'}</span>
+        </Link>
+        <Link to={isReaderMode ? '#' : '/dashboard/liste-photos'} onClick={preventReader} className={linkClass(isActive('/dashboard/liste-photos'))}>
+          <Camera className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Photo list' : 'Liste de photos'}</span>
+        </Link>
+        {/* CÉRÉMONIES & ÉQUIPE — inclus dans les 2 formules */}
+        <SectionLabel label={isEnglish ? 'Ceremonies & team' : 'Cérémonies & équipe'} />
         <Link to={isReaderMode ? '#' : '/dashboard/ceremonie'} onClick={preventReader} className={linkClass(isActive('/dashboard/ceremonie'))}>
           <Heart className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.ceremony')}</span>
         </Link>
-
-        {(
         <Link to={isReaderMode ? '#' : '/dashboard/mairie-civil'} onClick={preventReader} className={linkClass(isActive('/dashboard/mairie-civil'))}>
           <Building2 className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.civil')}</span>
         </Link>
-        )}
-
-
+        <Link to={isReaderMode ? '#' : '/dashboard/trombinoscope'} onClick={preventReader} className={linkClass(isActive('/dashboard/trombinoscope'))}>
+          <Contact className="h-4 w-4" />
+          <span className="ml-2 sm:ml-3 leading-tight">{isEnglish ? 'Who’s who' : 'Trombinoscope'}</span>
+        </Link>
         <Link to={isReaderMode ? '#' : '/dashboard/accommodations'} onClick={preventReader} className={linkClass(isActive('/dashboard/accommodations'))}>
           <Home className="h-4 w-4" />
           <span className="ml-2 sm:ml-3 leading-tight">{t('sidebar.accommodations')}</span>
