@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
-import { Plus, Loader2, Info, Trash2 } from 'lucide-react';
+import { Plus, Loader2, Trash2 } from 'lucide-react';
 import RSVPEventCard from '@/components/dashboard/RSVPEventCard';
 import GuestPageCustomizer from '@/components/rsvp/GuestPageCustomizer';
 import { useNavigate } from 'react-router-dom';
