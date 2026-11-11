@@ -146,8 +146,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const isMobile = useIsMobile();
   const { accountType, currentWedding, currentWeddingId, isWeddingCollaborator } = useWedding();
   const isProAccount = accountType === 'b2b';
-  // Couple invité par son wedding planner : consultation des statuts et documents, sans modification
-  const isReadOnly = isWeddingCollaborator;
+  // Couple invité : coédition du suivi avec son wedding planner (RLS « Collaborators edit vendors_tracking_preprod »)
+  const isReadOnly = false;
   const [documentCounts, setDocumentCounts] = useState<Record<string, number>>({});
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [addressBookOpen, setAddressBookOpen] = useState(false);
