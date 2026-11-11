@@ -50,7 +50,7 @@ const drawVisualOnePager = (doc: jsPDF, plan: SeatingPlan, tables: SeatingTable[
   const maxX = Math.max(...points.map((p) => p.x));
   const minY = Math.min(...points.map((p) => p.y));
   const maxY = Math.max(...points.map((p) => p.y));
-  const area = { left: 30, top: 42, width: 237, height: 130 };
+  const area = { left: 30, top: 42, width: 237, height: 105 };
   const scale = Math.min(
     maxX > minX ? area.width / (maxX - minX) : 1,
     maxY > minY ? area.height / (maxY - minY) : 1,
