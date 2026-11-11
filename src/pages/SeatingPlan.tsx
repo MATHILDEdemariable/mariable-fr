@@ -23,6 +23,7 @@ import { usePremiumAction } from '@/hooks/usePremiumAction';
 import PremiumModal from '@/components/premium/PremiumModal';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
 import JourJHandoffButton from '@/components/jour-j/JourJHandoffButton';
+import { normalizeGuestName } from '@/lib/seatingGuestNames';
 
 const SeatingPlan = () => {
   const { t, i18n } = useTranslation('seating');
@@ -104,7 +105,19 @@ else plansQuery = plansQuery.eq('user_id', user.id);
         .from('seating_assignments')
         .select('id, seating_plan_id, table_id, guest_name, rsvp_response_id, guest_type, dietary_restrictions, seat_number, notes, created_at')
         .eq('seating_plan_id', planId);
-      setGuests((guestsData || []) as SeatingAssignment[]);
+      // Régimes saisis dans la liste d'invités (/dashboard/rsvp) : affichés sur le plan quand le siège n'en a pas
+      let guestListQuery: any = supabase.from('wedding_guest_list').select('guest_first_name, guest_last_name, notes').not('notes', 'is', null);
+      guestListQuery = weddingId ? guestListQuery.eq('wedding_id', weddingId) : guestListQuery.eq('user_id', user.id);
+      const { data: guestListRows, error: guestListError } = await guestListQuery;
+      if (guestListError) console.error('❌ load guest list diets failed:', guestListError);
+      const dietByName = new Map<string, string>();
+      (guestListRows || []).forEach((row: any) => {
+        const note = (row.notes || '').trim();
+        if (note) dietByName.set(normalizeGuestName(`${row.guest_first_name || ''} ${row.guest_last_name || ''}`), note);
+      });
+      setGuests(((guestsData || []) as SeatingAssignment[]).map((guest) => (
+        guest.dietary_restrictions ? guest : { ...guest, dietary_restrictions: dietByName.get(normalizeGuestName(guest.guest_name)) ?? null }
+      )));
     } catch (error) {
       console.error('Erreur chargement plan de table:', error);
       toast({
@@ -404,6 +417,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           onOpenChange={setShowImportDialog}
           planId={plan?.id || ''}
           onImported={loadSeatingPlan}
+          existingGuestNames={guests.map((guest) => guest.guest_name)}
         />
 
         <ManualGuestDialog
@@ -427,6 +441,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
           onOpenChange={setShowImportGuestList}
           planId={plan?.id || ''}
           onImported={loadSeatingPlan}
+          existingGuestNames={guests.map((guest) => guest.guest_name)}
         />
 
         <TutorialVideoModal 

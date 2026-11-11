@@ -9,12 +9,14 @@ import { toast } from '@/hooks/use-toast';
 import { Loader2, Users } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { useWeddingScope } from '@/hooks/useWeddingScope';
+import { normalizeGuestName } from '@/lib/seatingGuestNames';
 
 interface Guest {
   id: string;
   guest_first_name: string | null;
   guest_last_name: string | null;
   rsvp_status: string | null;
+  notes: string | null;
 }
 
 interface ImportGuestListDialogProps {
@@ -22,9 +24,13 @@ interface ImportGuestListDialogProps {
   onOpenChange: (open: boolean) => void;
   planId: string;
   onImported: () => void;
+  existingGuestNames?: string[];
 }
 
-const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: ImportGuestListDialogProps) => {
+const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported, existingGuestNames = [] }: ImportGuestListDialogProps) => {
+  const existingNameSet = new Set(existingGuestNames.map(normalizeGuestName));
+  const fullName = (g: Guest) => `${g.guest_first_name || ''} ${g.guest_last_name || ''}`.trim();
+  const isAlreadyInPlan = (g: Guest) => existingNameSet.has(normalizeGuestName(fullName(g)));
   const { weddingId } = useWeddingScope();
   const [guests, setGuests] = useState<Guest[]>([]);
   const [selectedGuests, setSelectedGuests] = useState<Set<string>>(new Set());
@@ -47,7 +53,7 @@ const ImportGuestListDialog = ({ open, onOpenChange, planId, onImported }: Impor
 
       let importQuery: any = supabase
         .from('wedding_guest_list')
-        .select('id, guest_first_name, guest_last_name, rsvp_status');
+        .select('id, guest_first_name, guest_last_name, rsvp_status, notes');
 
       
 // Mariage partagé (mariés invités) : on filtre sur le mariage, pas sur l'auteur
@@ -61,7 +67,7 @@ else importQuery = importQuery.eq('user_id', user.id);
       
       const confirmed = new Set<string>(
         (data as any[] || [])
-          .filter(g => g.rsvp_status === 'confirmed' || g.rsvp_status === 'oui')
+          .filter(g => (g.rsvp_status === 'confirmed' || g.rsvp_status === 'oui') && !isAlreadyInPlan(g))
           .map(g => g.id)
       );
       setSelectedGuests(confirmed);
@@ -74,6 +80,8 @@ else importQuery = importQuery.eq('user_id', user.id);
   };
 
   const toggleGuest = (id: string) => {
+    const target = guests.find(g => g.id === id);
+    if (target && isAlreadyInPlan(target)) return;
     const newSelected = new Set(selectedGuests);
     if (newSelected.has(id)) newSelected.delete(id);
     else newSelected.add(id);
@@ -81,8 +89,9 @@ else importQuery = importQuery.eq('user_id', user.id);
   };
 
   const toggleAll = () => {
-    if (selectedGuests.size === guests.length) setSelectedGuests(new Set());
-    else setSelectedGuests(new Set(guests.map(g => g.id)));
+    const selectable = guests.filter(g => !isAlreadyInPlan(g));
+    if (selectedGuests.size === selectable.length) setSelectedGuests(new Set());
+    else setSelectedGuests(new Set(selectable.map(g => g.id)));
   };
 
   const handleImport = async () => {
@@ -92,12 +101,13 @@ else importQuery = importQuery.eq('user_id', user.id);
     }
     setImporting(true);
     try {
-      const selectedGuestsList = guests.filter(g => selectedGuests.has(g.id));
+      const selectedGuestsList = guests.filter(g => selectedGuests.has(g.id) && !isAlreadyInPlan(g));
       const { error } = await supabase.from('seating_assignments').insert(
         selectedGuestsList.map(guest => ({
           seating_plan_id: planId,
-          guest_name: `${guest.guest_first_name || ''} ${guest.guest_last_name || ''}`.trim(),
+          guest_name: fullName(guest),
           guest_type: 'adult',
+          dietary_restrictions: guest.notes?.trim() || null,
           table_id: null
         }))
       );
@@ -131,12 +141,16 @@ else importQuery = importQuery.eq('user_id', user.id);
             </div>
             <ScrollArea className="h-64">
               <div className="space-y-1">
-                {guests.map(guest => (
-                  <div key={guest.id} className="flex items-center gap-3 p-2 hover:bg-muted/50 cursor-pointer" onClick={() => toggleGuest(guest.id)}>
-                    <Checkbox checked={selectedGuests.has(guest.id)} onCheckedChange={() => toggleGuest(guest.id)} />
-                    <p className="font-medium text-sm">{guest.guest_first_name} {guest.guest_last_name}</p>
-                  </div>
-                ))}
+                {guests.map(guest => {
+                  const alreadyInPlan = isAlreadyInPlan(guest);
+                  return (
+                    <div key={guest.id} className={`flex items-center gap-3 p-2 ${alreadyInPlan ? 'opacity-50 cursor-not-allowed' : 'hover:bg-muted/50 cursor-pointer'}`} onClick={() => toggleGuest(guest.id)}>
+                      <Checkbox checked={selectedGuests.has(guest.id)} disabled={alreadyInPlan} onCheckedChange={() => toggleGuest(guest.id)} />
+                      <p className="font-medium text-sm flex-1">{guest.guest_first_name} {guest.guest_last_name}</p>
+                      {alreadyInPlan && <span className="text-xs border border-border px-1.5 py-0.5">{tr('Déjà dans le plan', 'Already in plan')}</span>}
+                    </div>
+                  );
+                })}
               </div>
             </ScrollArea>
           </>
