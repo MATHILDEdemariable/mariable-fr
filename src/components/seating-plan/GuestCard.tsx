@@ -1,3 +1,4 @@
+import { classifyDietaryRestriction, DIETARY_FAMILIES } from '@/lib/dietaryFamilies';
 import { Draggable } from 'react-beautiful-dnd';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -34,11 +35,15 @@ const GuestCard = ({ guest, index, onDelete }: GuestCardProps) => {
           </div>
           
           <div className="flex items-center gap-1">
-            {guest.dietary_restrictions && (
-              <Badge variant="outline" className="text-xs flex items-center gap-1">
-                <Utensils className="h-3 w-3" />
-              </Badge>
-            )}
+            {guest.dietary_restrictions && (() => {
+              const dietaryFamily = classifyDietaryRestriction(guest.dietary_restrictions) ?? 'specific';
+              return (
+                <Badge variant="outline" className={`text-xs flex items-center gap-1 ${DIETARY_FAMILIES[dietaryFamily].badgeClass}`} title={`${DIETARY_FAMILIES[dietaryFamily].fr} : ${guest.dietary_restrictions}`}>
+                  <Utensils className="h-3 w-3" />
+                  <span className="max-w-[90px] truncate">{guest.dietary_restrictions}</span>
+                </Badge>
+              );
+            })()}
             {guest.guest_type === 'vip' && (
               <Badge variant="secondary" className="text-xs">VIP</Badge>
             )}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -15,6 +15,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/hooks/use-toast';
 import { SeatingTable } from '@/types/seating';
 import { useTranslation } from 'react-i18next';
+import { useWeddingScope } from '@/hooks/useWeddingScope';
 
 interface ManualGuestDialogProps {
   open: boolean;
@@ -22,9 +23,13 @@ interface ManualGuestDialogProps {
   planId: string;
   tables: SeatingTable[];
   onAdded: () => void;
+  /** Noms déjà placés dans ce plan de table, pour éviter les doublons */
+  existingGuestNames?: string[];
 }
 
-const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: ManualGuestDialogProps) => {
+const normalizeName = (name: string) => name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/\s+/g, ' ').trim();
+
+const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded, existingGuestNames = [] }: ManualGuestDialogProps) => {
   const [guestName, setGuestName] = useState('');
   const [guestType, setGuestType] = useState<'adult' | 'child' | 'vip'>('adult');
   const [dietaryRestrictions, setDietaryRestrictions] = useState('');
@@ -33,6 +38,25 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
   const [loading, setLoading] = useState(false);
   const { i18n } = useTranslation();
   const tr = (fr: string, en: string) => (i18n.language?.startsWith('en') ? en : fr);
+  const { scopeQuery, withWedding } = useWeddingScope();
+  const [guestListNames, setGuestListNames] = useState<string[]>([]);
+
+  // Liste d'invités (onglet Invités) chargée à l'ouverture : source unique pour éviter les doublons
+  useEffect(() => {
+    if (!open) return;
+    scopeQuery(supabase.from('wedding_guest_list').select('guest_first_name, guest_last_name') as any)
+      .then(({ data, error }: any) => {
+        if (error) { console.error('❌ ManualGuestDialog: liste invités indisponible', error); return; }
+        setGuestListNames((data || []).map((row: any) => `${row.guest_first_name ?? ''} ${row.guest_last_name ?? ''}`.replace(/\s-\s*$|^-\s/g, '').trim()));
+      });
+  }, [open, scopeQuery]);
+
+  const normalizedInput = normalizeName(guestName);
+  const isAlreadySeated = !!normalizedInput && existingGuestNames.some((name) => normalizeName(name) === normalizedInput);
+  const isInGuestList = useMemo(
+    () => !!normalizedInput && guestListNames.some((name) => normalizeName(name) === normalizedInput),
+    [normalizedInput, guestListNames]
+  );
 
   const handleAdd = async () => {
     if (!guestName.trim()) {
@@ -40,9 +64,31 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
       return;
     }
 
+    if (isAlreadySeated) {
+      toast({ title: tr('Doublon', 'Duplicate'), description: tr('Cet invité est déjà dans le plan de table.', 'This guest is already in the seating plan.'), variant: 'destructive' });
+      return;
+    }
+
     setLoading(true);
 
     try {
+      // Invité absent de la liste : on l'y ajoute aussi pour garder liste et plan synchronisés
+      if (!isInGuestList) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const [firstName, ...lastNameParts] = guestName.trim().split(/\s+/);
+          const { error: guestListError } = await supabase.from('wedding_guest_list').insert(withWedding({
+            user_id: user.id,
+            guest_first_name: firstName,
+            guest_last_name: lastNameParts.join(' ') || '-',
+            guest_type: guestType === 'child' ? 'child' : 'adult',
+            notes: dietaryRestrictions ? `Régime : ${dietaryRestrictions}` : null,
+            source: 'seating_plan',
+          }) as any);
+          if (guestListError) console.error('❌ ManualGuestDialog: ajout liste invités échoué', guestListError);
+        }
+      }
+
       const { error } = await supabase
         .from('seating_assignments')
         .insert({
@@ -56,7 +102,7 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
 
       if (error) throw error;
 
-      toast({ title: tr('Invité ajouté', 'Guest added') });
+      toast({ title: tr('Invité ajouté', 'Guest added'), description: isInGuestList ? undefined : tr('Ajouté aussi à la liste d’invités.', 'Also added to the guest list.') });
       onAdded();
       onOpenChange(false);
 
@@ -89,6 +135,14 @@ const ManualGuestDialog = ({ open, onOpenChange, planId, tables, onAdded }: Manu
               onChange={(e) => setGuestName(e.target.value)}
               placeholder={tr('Prénom Nom', 'First Last')}
             />
+            {isAlreadySeated && (
+              <p role="alert" className="mt-1 text-xs text-destructive">{tr('⚠️ Déjà placé dans le plan de table.', '⚠️ Already in the seating plan.')}</p>
+            )}
+            {!isAlreadySeated && normalizedInput && (
+              <p className="mt-1 text-xs text-muted-foreground" aria-live="polite">
+                {isInGuestList ? tr('✓ Trouvé dans la liste d’invités.', '✓ Found in the guest list.') : tr('Nouvel invité : il sera aussi ajouté à la liste d’invités.', 'New guest: will also be added to the guest list.')}
+              </p>
+            )}
           </div>
 
           <div>

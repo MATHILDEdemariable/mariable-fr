@@ -62,3 +62,11 @@
 - [x] Tutoriel Pro complet : 2 niveaux (outils pro / espace mariage) + choix partage lecture seule vs collaboration
 - [x] Catalogue de tâches : import depuis une note texte (une ligne = une tâche)
 - [x] Formulaires clients : modèles Découverte & devis / Cadrage Jour J, éditables, lien sans compte, réponses + one-pager PDF
+
+## Lot Collaboration & Logistique (nov. 2026)
+- [x] Menu dashboard en 5 blocs alignés sur les formules (Organisation masquée en Coordination Jour J)
+- [x] Coédition du suivi prestataires par les mariés + bouton « Contacter » le wedding planner
+- [x] Filtre des étapes du rétroplanning partagées aux mariés
+- [x] Plan de table : pastilles régimes (4 couleurs) + anti-doublons liste invités
+- [x] Décoration : image d'inspiration par zone
+- [x] Traiteur par jour d'événement (prestataires, menus, matériel, logistique, items) + fiche Jour J
