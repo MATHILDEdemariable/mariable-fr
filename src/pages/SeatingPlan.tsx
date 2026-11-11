@@ -130,6 +130,30 @@ else plansQuery = plansQuery.eq('user_id', user.id);
     }
   };
 
+  // Doublons déjà présents : on garde la copie placée à une table (sinon la première)
+  const duplicateGuestIds = (() => {
+    const keptByName = new Map<string, SeatingAssignment>();
+    const duplicates: string[] = [];
+    [...guests].sort((a, b) => Number(!!b.table_id) - Number(!!a.table_id)).forEach((guest) => {
+      const key = normalizeGuestName(guest.guest_name);
+      if (!key) return;
+      if (keptByName.has(key)) duplicates.push(guest.id);
+      else keptByName.set(key, guest);
+    });
+    return duplicates;
+  })();
+
+  const handleRemoveDuplicates = async () => {
+    const { error } = await supabase.from('seating_assignments').delete().in('id', duplicateGuestIds);
+    if (error) {
+      console.error('❌ handleRemoveDuplicates failed:', error);
+      toast({ title: i18n.language?.startsWith('en') ? 'Error' : 'Erreur', variant: 'destructive' });
+      return;
+    }
+    toast({ title: i18n.language?.startsWith('en') ? 'Duplicates removed' : 'Doublons supprimés' });
+    loadSeatingPlan(true);
+  };
+
   const handleDragEnd = (result: DropResult) => {
     (async () => {
       const { source, destination, draggableId } = result;
@@ -294,6 +318,19 @@ else plansQuery = plansQuery.eq('user_id', user.id);
             <ExportPDFButton plan={plan} tables={tables} guests={guests} />
           </div>
         </div>
+
+        {duplicateGuestIds.length > 0 && (
+          <div role="alert" className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-l-4 border-destructive bg-destructive/5 p-3 text-sm">
+            <span>
+              {i18n.language?.startsWith('en')
+                ? `${duplicateGuestIds.length} duplicate guest(s) detected in the plan.`
+                : `${duplicateGuestIds.length} invité(s) en double détecté(s) dans le plan.`}
+            </span>
+            <Button size="sm" variant="outline" className="rounded-none" onClick={handleRemoveDuplicates}>
+              {i18n.language?.startsWith('en') ? 'Remove duplicates' : 'Supprimer les doublons'}
+            </Button>
+          </div>
+        )}
 
         {/* View toggle tabs */}
         <Tabs value={activeView} onValueChange={(v) => setActiveView(v as 'list' | 'visual')} className="mb-6">
