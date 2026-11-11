@@ -5045,6 +5045,13 @@ export type Database = {
           raw_user_meta_data: Json
         }[]
       }
+      get_wedding_planner_contact: {
+        Args: { target_wedding_id: string }
+        Returns: {
+          planner_email: string
+          planner_name: string
+        }[]
+      }
       has_wedding_access: {
         Args: { _user_id: string; _wedding_id: string }
         Returns: boolean
