@@ -3930,6 +3930,60 @@ export type Database = {
           },
         ]
       }
+      wedding_activity_logs: {
+        Row: {
+          action: string
+          actor_id: string | null
+          actor_name: string | null
+          actor_role: string | null
+          created_at: string
+          id: string
+          module: string
+          summary: string
+          wedding_id: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: string
+          module: string
+          summary: string
+          wedding_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          actor_name?: string | null
+          actor_role?: string | null
+          created_at?: string
+          id?: string
+          module?: string
+          summary?: string
+          wedding_id?: string
+        }
+        Relationships: []
+      }
+      wedding_activity_reads: {
+        Row: {
+          last_seen_at: string
+          user_id: string
+          wedding_id: string
+        }
+        Insert: {
+          last_seen_at?: string
+          user_id: string
+          wedding_id: string
+        }
+        Update: {
+          last_seen_at?: string
+          user_id?: string
+          wedding_id?: string
+        }
+        Relationships: []
+      }
       wedding_ceremony_plans: {
         Row: {
           ceremony_type: string
