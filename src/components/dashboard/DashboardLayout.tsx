@@ -16,6 +16,7 @@ import { OnboardingProvider } from '@/components/onboarding/OnboardingProvider';
 import { OnboardingTour } from '@/components/onboarding/OnboardingTour';
 import WeddingContextBar from '@/components/pro/WeddingContextBar';
 import CollaboratorBanner from './CollaboratorBanner';
+import WeddingActivityBell from './WeddingActivityBell';
 import CollaborationInviteBanner from './CollaborationInviteBanner';
 import { useWedding } from '@/contexts/WeddingContext';
 import ProPremiumModal from '@/components/pro/ProPremiumModal';
@@ -206,6 +207,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 )}
               </div>
             )}
+            {variant !== 'pro' && <div className="flex justify-end mb-3"><WeddingActivityBell /></div>}
             <WeddingContextBar />
             <CollaborationInviteBanner />
             <CollaboratorBanner />
