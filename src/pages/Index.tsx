@@ -26,11 +26,11 @@ const Index = () => {
   return (
     <div className="min-h-screen flex flex-col bg-premium-base">
       <SEO 
-        title="Mariable — Tout votre mariage au même endroit"
-        description="L'organisation mariage facile. Outils, prestataires et conseils pour planifier votre grand jour sereinement."
+        title="Mariable — L'application mariage pour planifier et coordonner le jour-J"
+        description="Mariable, l'application en ligne d'organisation mariage pour wedding planners & couples bien organisés."
         keywords="organisation mariage, wedding planner digital, outils mariage, planning mariage, prestataires mariage, budget mariage, checklist mariage, retroplanning mariage, plan de table mariage, coordination jour J"
         canonical="/"
-        image="https://www.mariable.fr/assets/cover.jpg"
+        image="https://mariable.fr/og-image.jpg"
         schemas={[
           {
             type: 'Organization',
