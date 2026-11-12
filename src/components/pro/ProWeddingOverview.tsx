@@ -9,6 +9,7 @@ import type { Wedding } from '@/contexts/WeddingContext';
 import InviteCoupleDialog from './InviteCoupleDialog';
 import ClientFormBriefPanel from './ClientFormBriefPanel';
 import MeetingLogsPanel from './MeetingLogsPanel';
+import MonthlyWrapupDialog from './MonthlyWrapupDialog';
 import weddingHeroPhoto from '@/assets/editorial/baiser-arche-oliviers.png.asset.json';
 
 type OverviewModule = { labelFr: string; labelEn: string; hintFr: string; hintEn: string; icon: typeof Calendar; path: string };
@@ -83,6 +84,7 @@ const ProWeddingOverview: React.FC<{ wedding: Wedding }> = ({ wedding }) => {
         </div>
       </section>
 
+      <div className="flex justify-end"><MonthlyWrapupDialog weddingId={wedding.id} weddingTitle={wedding.title} /></div>
       <MeetingLogsPanel weddingId={wedding.id} isEnglish={!!isEnglish} />
       <ClientFormBriefPanel weddingId={wedding.id} isEnglish={!!isEnglish} />
 

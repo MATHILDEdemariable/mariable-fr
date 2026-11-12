@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.log_wedding_activity() FROM PUBLIC, anon, authenticated;
