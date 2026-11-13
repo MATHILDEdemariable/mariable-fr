@@ -110,6 +110,12 @@ const InvitePlannerButton: React.FC<{ weddingId: string; isEnglish: boolean }> =
                 : 'Votre wedding planner accède à votre mariage avec tout ce que vous avez déjà saisi (budget, planning Jour J, invités…). Rien n’est effacé, vous travaillez à deux sur le même mariage.'}
             </DialogDescription>
           </DialogHeader>
+          <div role="note" className="border-l-4 border-amber-600 bg-amber-50 p-3 text-sm">
+            <strong>{isEnglish ? 'Important: ' : 'Note importante : '}</strong>
+            {isEnglish
+              ? 'your wedding planner must have a Mariable Pro professional account with an active subscription to access your space and collaborate with you.'
+              : 'votre wedding planner doit disposer d’un compte professionnel Mariable Pro avec un abonnement actif pour pouvoir accéder à votre espace et collaborer avec vous.'}
+          </div>
           <div className="flex gap-2">
             <Input
               type="email"
@@ -165,6 +171,17 @@ const CollaborationInviteBanner: React.FC = () => {
   useEffect(() => { loadInvitations(); }, [loadInvitations]);
 
   const handleRespond = async (invitationId: string, acceptInvitation: boolean) => {
+    const targetInvitation = invitations.find((inv) => inv.invitation_id === invitationId);
+    if (acceptInvitation && targetInvitation?.role === 'planner' && accountType !== 'b2b') {
+      toast({
+        title: isEnglish ? 'Wedding planner account required' : 'Compte wedding planner requis',
+        description: isEnglish
+          ? 'This invitation is reserved for a wedding planner. A couple account cannot be linked to another couple account.'
+          : 'Cette invitation est réservée à un wedding planner. Un compte couple ne peut pas être rattaché à un autre compte couple.',
+        variant: 'destructive',
+      });
+      return;
+    }
     setRespondingId(invitationId);
     try {
       const { error } = await db.rpc('respond_wedding_invitation', {
@@ -208,6 +225,13 @@ const CollaborationInviteBanner: React.FC = () => {
                 ? (isEnglish ? 'invites you to collaborate on organising your wedding' : 'vous invite à collaborer sur l’organisation de votre mariage')
                 : (isEnglish ? 'invite you to coordinate their wedding' : 'vous invitent à coordonner leur mariage')}{' '}
               (<em>{invitation.wedding_title}</em>).
+              {!isCoupleInvitation && accountType !== 'b2b' && (
+                <span className="block text-xs text-destructive mt-1">
+                  {isEnglish
+                    ? 'This invitation is reserved for a wedding planner with an active Mariable Pro subscription: a couple account cannot be linked to another couple account.'
+                    : 'Cette invitation est réservée à un wedding planner disposant d’un abonnement Mariable Pro actif : un compte couple ne peut pas être rattaché à un autre compte couple.'}
+                </span>
+              )}
               {isCoupleInvitation && (
                 <span className="block text-xs text-amber-800 mt-1">
                   {isEnglish

@@ -36,12 +36,12 @@ const buildPlannerInviteHtml = (inviter: string, wedding: string, email: string,
   <h1 style="font-size:24px; margin:0 0 16px;">${inviter} vous invite à coordonner leur mariage sur Mariable</h1>
   ${paragraph('Bonjour,')}
   ${paragraph(`${inviter} vous donne accès à <strong>${wedding}</strong> sur l'app Mariable, avec tout ce qu'ils ont déjà préparé : budget, planning du Jour J, invités, plan de table.`)}
-  ${paragraph(`Connectez-vous à votre compte professionnel avec cette adresse email (${email}) : une invitation à accepter s'affichera sur votre tableau de bord. Pas encore de compte ? Créez-le gratuitement.`)}
+  ${paragraph(`Connectez-vous à votre compte professionnel avec cette adresse email (${email}) : une invitation à accepter s'affichera sur votre tableau de bord. Pas encore de compte ? Créez un compte professionnel. <strong>Un abonnement Mariable Pro actif est nécessaire</strong> pour accéder à ce mariage et collaborer.`)}
   <p style="text-align:center; margin:32px 0;"><a href="${link}" style="background:#63745A; color:#fff; padding:14px 28px; text-decoration:none; font-size:16px;">Accéder au mariage</a></p>
   <hr style="border:none; border-top:1px solid #ddd; margin:32px 0;" />
   <h2 style="font-size:20px; margin:0 0 12px;">${inviter} invites you to coordinate their wedding on Mariable</h2>
   ${paragraph(`${inviter} gives you access to <strong>${wedding}</strong> on the Mariable app, with everything they have already prepared: budget, wedding-day schedule, guests, seating plan.`)}
-  ${paragraph(`Log in to your professional account with this email address (${email}): an invitation to accept will appear on your dashboard. No account yet? Create one for free.`)}
+  ${paragraph(`Log in to your professional account with this email address (${email}): an invitation to accept will appear on your dashboard. No account yet? Create a professional account. <strong>An active Mariable Pro subscription is required</strong> to access this wedding and collaborate.`)}
   <p style="text-align:center; margin:32px 0;"><a href="${link}" style="background:#63745A; color:#fff; padding:14px 28px; text-decoration:none; font-size:16px;">Open the wedding</a></p>`;
 
 Deno.serve(async (req) => {
@@ -76,7 +76,9 @@ Deno.serve(async (req) => {
     );
     const weddingTitle = escapeHtml((invitation as any).weddings?.title || 'votre mariage');
     const invitedEmail = escapeHtml(invitation.invited_email);
-    const joinLink = `https://mariable.fr/auth?email=${encodeURIComponent(invitation.invited_email)}`;
+    const joinLink = isPlannerInvite
+      ? `https://mariable.fr/register-gratuit?type=pro&email=${encodeURIComponent(invitation.invited_email)}`
+      : `https://mariable.fr/auth?email=${encodeURIComponent(invitation.invited_email)}`;
 
     const body = isPlannerInvite
       ? buildPlannerInviteHtml(inviterName, weddingTitle, invitedEmail, joinLink)
