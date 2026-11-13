@@ -31,10 +31,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   variant = 'wedding'
 }) => {
   const isMobile = useIsMobile();
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
   const { t: tPro } = useTranslation('pro');
   const { isPremium, isProAccount } = useUserProfile();
-  const isEnglishLayout = typeof document !== 'undefined' && document.documentElement.lang?.startsWith('en');
+  const isEnglishLayout = !!i18n.language?.startsWith('en');
   // Couple invité par son wedding planner : accès inclus, pas d'incitation Premium
   const { isWeddingCollaborator } = useWedding();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
