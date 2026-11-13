@@ -31,7 +31,7 @@ const EfmmAssocem = () => {
               </nav>
               <p className="mb-4 text-xs font-semibold uppercase tracking-widest text-editorial-olive">Partenariat · EFMM x ASSOCEM × Mariable</p>
               <h1 className="text-4xl leading-tight md:text-6xl">L'outil des futurs wedding planners de la EFMM x ASSOCEM</h1>
-              <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">La EFMM x ASSOCEM s'associe à Mariable pour équiper ses élèves d'une application professionnelle d'organisation et de coordination de mariage, avec une offre exclusive.</p>
+              <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">La EFMM x ASSOCEM s'associe à Mariable pour équiper ses élèves et membres d'une application professionnelle d'organisation et de coordination de mariage, avec une offre exclusive.</p>
               <div className="mt-8 flex flex-wrap gap-3">
                 <Button asChild className="min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
                   <a href="#demo"><Play className="mr-2 h-4 w-4" /> Voir la démo</a>
