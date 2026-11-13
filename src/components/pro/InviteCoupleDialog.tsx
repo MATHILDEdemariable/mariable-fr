@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { useToast } from '@/hooks/use-toast';
+import { useUserProfile } from '@/hooks/useUserProfile';
 
 interface WeddingCollaborator {
   id: string;
@@ -28,6 +29,8 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
   const [coupleEmail, setCoupleEmail] = useState('');
   const [collaborators, setCollaborators] = useState<WeddingCollaborator[]>([]);
   const [saving, setSaving] = useState(false);
+  const { isProPremium, loading: profileLoading } = useUserProfile();
+  const isCollaborationLocked = !profileLoading && !isProPremium;
 
   const loadCollaborators = useCallback(async () => {
     const { data, error } = await db
@@ -44,6 +47,7 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
   }, [open, loadCollaborators]);
 
   const handleInvite = async () => {
+    if (isCollaborationLocked) return;
     const email = coupleEmail.trim().toLowerCase();
     if (!EMAIL_PATTERN.test(email)) {
       toast({ title: isEnglish ? 'Invalid email' : 'Email invalide', variant: 'destructive' });
@@ -115,6 +119,18 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
             </DialogDescription>
           </DialogHeader>
 
+          {isCollaborationLocked && (
+            <div role="alert" className="border-l-4 border-destructive bg-destructive/10 p-3 text-sm space-y-2">
+              <p className="font-semibold">{isEnglish ? '🔒 Active Pro subscription required' : '🔒 Abonnement Pro actif requis'}</p>
+              <p>
+                {isEnglish
+                  ? 'Sharing and co-editing with your couples require an active Mariable Pro subscription. Subscribe to a Pro plan to unlock couple collaboration.'
+                  : 'Le partage et la co-édition avec vos couples nécessitent un abonnement Mariable Pro actif. Souscrivez à une formule Pro pour débloquer la collaboration couple.'}
+              </p>
+              <Button asChild size="sm" className="rounded-none"><a href="/pro-solutions#tarifs">{isEnglish ? 'Subscribe to Pro' : 'Souscrire à Mariable Pro'}</a></Button>
+            </div>
+          )}
+
           <div role="note" className="border-l-4 border-wedding-olive bg-[#F8F5EF] p-3 text-sm space-y-2">
             <p className="font-semibold">{isEnglish ? 'You don’t want co-editing?' : 'Vous ne souhaitez pas de co-édition ?'}</p>
             <p>
@@ -145,7 +161,7 @@ const InviteCoupleDialog: React.FC<{ weddingId: string }> = ({ weddingId }) => {
               aria-label={isEnglish ? 'Couple email' : 'Email des mariés'}
               className="rounded-none"
             />
-            <Button onClick={handleInvite} disabled={saving} className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white">
+            <Button onClick={handleInvite} disabled={saving || isCollaborationLocked} className="rounded-none bg-wedding-olive hover:bg-wedding-olive/90 text-white">
               {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : isEnglish ? 'Invite' : 'Inviter'}
             </Button>
           </div>

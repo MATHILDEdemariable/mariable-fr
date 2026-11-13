@@ -26,7 +26,7 @@ const Register = () => {
   const [preferredLanguage, setPreferredLanguage] = useState<'fr' | 'en'>(
     i18n.language?.startsWith('en') ? 'en' : 'fr'
   );
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => new URLSearchParams(window.location.search).get('email') ?? '');
   const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');

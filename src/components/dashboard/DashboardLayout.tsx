@@ -31,9 +31,10 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   variant = 'wedding'
 }) => {
   const isMobile = useIsMobile();
-  const { t } = useTranslation('dashboard');
+  const { t, i18n } = useTranslation('dashboard');
   const { t: tPro } = useTranslation('pro');
   const { isPremium, isProAccount } = useUserProfile();
+  const isEnglishLayout = !!i18n.language?.startsWith('en');
   // Couple invité par son wedding planner : accès inclus, pas d'incitation Premium
   const { isWeddingCollaborator } = useWedding();
   const [showSatisfactionModal, setShowSatisfactionModal] = useState(false);
@@ -207,7 +208,14 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                 )}
               </div>
             )}
-            {variant !== 'pro' && <div className="flex justify-end mb-3"><WeddingActivityBell /></div>}
+            <div className="flex items-center justify-between gap-2 mb-3">
+              <span className="inline-flex items-center border border-wedding-olive bg-card px-3 py-1 text-xs uppercase tracking-[0.15em] text-wedding-olive">
+                {isProAccount
+                  ? (isEnglishLayout ? 'Pro account' : 'Compte pro')
+                  : (isEnglishLayout ? 'Couple account' : 'Compte couple')}
+              </span>
+              {variant !== 'pro' && <WeddingActivityBell />}
+            </div>
             <WeddingContextBar />
             <CollaborationInviteBanner />
             <CollaboratorBanner />
