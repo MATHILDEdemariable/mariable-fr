@@ -82,6 +82,7 @@ const OutilsPlanningMariage = lazy(() => import("./pages/OutilsPlanningMariage")
 const LandingJourJ = lazy(() => import("./pages/LandingJourJ"));
 const WeddingRetroplanning = lazy(() => import("./pages/WeddingRetroplanning"));
 const WeddingAcademy = lazy(() => import("./pages/WeddingAcademy"));
+const EfmmAssocem = lazy(() => import("./pages/EfmmAssocem"));
 const SimulateurTempsWeddingPlanner = lazy(() => import("./pages/SimulateurTempsWeddingPlanner"));
 const DemoPro = lazy(() => import("./pages/DemoPro"));
 const ProPlaybookIA = lazy(() => import("./pages/pro/ProPlaybookIA"));
@@ -322,6 +323,7 @@ function App() {
                   <Route path="/partenariat" element={<Navigate to="/pro-solutions" replace />} />
                   <Route path="/demo-pro" element={<DemoPro />} />
                   <Route path="/weddingacademy" element={<WeddingAcademy />} />
+                  <Route path="/efmm-assocem" element={<EfmmAssocem />} />
                   <Route path="/simulateur-temps-wedding-planner" element={<SimulateurTempsWeddingPlanner />} />
                   <Route path="/demo" element={<DemoVideos />} />
                   <Route path="/pro/ia-organisation-mariage" element={<ProPlaybookIA />} />
