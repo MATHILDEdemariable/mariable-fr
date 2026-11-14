@@ -135,7 +135,7 @@ export default function SalonDuMariageParis() {
                   <SlideNumber value="01" />
                   <h2 className="font-serif text-4xl md:text-6xl leading-tight mb-8">Prolonger le travail d'Élodie</h2>
                   <p className="text-base md:text-lg leading-relaxed mb-5">
-                    Élodie a construit une marque autour de <strong>l'amour, de l'inspiration et de la célébration</strong>. Cette identité et cette communauté sont des acquis à préserver.
+                    Élodie a construit une marque autour de <strong>l'amour et de l'inspiration</strong> . Cette identité et cette communauté sont des acquis à préserver.
                   </p>
                   <p className="text-base md:text-lg leading-relaxed mb-5">
                     L'ambition : positionner aussi le salon comme un <strong>média utile</strong> pour organiser son mariage et découvrir les bons prestataires.
