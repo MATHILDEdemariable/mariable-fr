@@ -138,7 +138,7 @@ export default function SalonDuMariageParis() {
                     Élodie a construit une marque autour de <strong>l'amour et de l'inspiration</strong> . Cette identité et cette communauté sont des acquis à préserver.
                   </p>
                   <p className="text-base md:text-lg leading-relaxed mb-5">
-                    L'ambition : positionner aussi le salon comme un <strong>média utile</strong> pour organiser son mariage et découvrir les bons prestataires.
+                    L'ambition 2027 : positionner aussi le salon comme un <strong>média utile</strong> pour organiser son mariage et découvrir les bons prestataires.
                   </p>
                 </div>
                 <div className="relative">
