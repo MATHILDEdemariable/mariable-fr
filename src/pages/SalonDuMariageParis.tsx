@@ -184,9 +184,9 @@ export default function SalonDuMariageParis() {
                   <h2 className="font-serif text-4xl md:text-5xl mb-8">Proposition d'accompagnement</h2>
                   <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
                     {[
-                      ['Publications', '2 posts / semaine, jusqu\'à 3 les mois de salon (visuels statiques et carrousels).'],
+                      ['Publications', '2 posts / semaine, jusqu\'à 3 les mois de salon (visuels statiques et carrousels principalement).'],
                       ['Stories', '1 story tous les 2jours, principalement en repost de contenus existants.'],
-                      ['Reels', 'Remix et réutilisation de vidéos existantes, sans tournage.'],
+                      ['Reels', 'Remix et réutilisation de vidéos existantes, sans tournage ou montage avancé.'],
                       ['Création visuelle', "Banque d'images IA dédiée + reprise de la charte et des templates d'Élodie."],
                       ['Pilotage partagé', 'Espace Notion commun ; calendrier validé une fois par mois.'],
                       ['Organisation', 'Asynchrone : échanges WhatsApp / e-mail, appels sur rendez-vous.'],
@@ -198,7 +198,7 @@ export default function SalonDuMariageParis() {
                     ))}
                   </div>
                   <p className="mt-8 text-xs md:text-sm text-editorial-noir/60">
-                    Hors forfait : présence sur site, captation photo / vidéo, facecam, montage avancé, modération quotidienne et demandes urgentes.
+                    Hors périmètre: présence sur site, captation photo / vidéo, facecam, montage avancé, modération quotidienne et demandes urgentes.
                     <br />Début possible : 15 Février 2027.
                   </p>
                 </div>
