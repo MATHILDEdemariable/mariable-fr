@@ -196,7 +196,7 @@ export default function SalonDuMariageParis() {
               <div className="grid md:grid-cols-5 gap-10 items-center">
                 <div className="md:col-span-3">
                   <SlideNumber value="03" />
-                  <h2 className="font-serif text-4xl md:text-5xl mb-8">Une organisation claire</h2>
+                  <h2 className="font-serif text-4xl md:text-5xl mb-8">Proposition d'accompagnement</h2>
                   <div className="grid sm:grid-cols-2 gap-x-8 gap-y-6">
                     {[
                       ['Publications', '2 posts / semaine, jusqu\'à 3 les mois de salon (visuels statiques et carrousels).'],
