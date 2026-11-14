@@ -48,6 +48,7 @@ const Index = lazy(() => import("./pages/Index"));
 const VersionJuin26 = lazy(() => import("./pages/VersionJuin26"));
 const RefonteJuillet = lazy(() => import("./pages/RefonteJuillet"));
 const MediaKit = lazy(() => import("./pages/MediaKit"));
+const SalonDuMariageParis = lazy(() => import("./pages/SalonDuMariageParis"));
 const GuidesShop = lazy(() => import("./pages/GuidesShop"));
 const MesGuides = lazy(() => import("./pages/MesGuides"));
 const MesGuidesPending = lazy(() => import("./pages/MesGuidesPending"));
@@ -219,6 +220,8 @@ function App() {
                   <Route path="/mes-guides/:token" element={<MesGuides />} />
                   <Route path="/media-kit" element={<MediaKit />} />
                   <Route path="/kitmedia" element={<MediaKit />} />
+                  <Route path="/salon-du-mariage-paris" element={<SalonDuMariageParis />} />
+                  <Route path="/salondumariageparis" element={<SalonDuMariageParis />} />
                   <Route path="/KITMEDIA" element={<MediaKit />} />
                   <Route path="/mariable" element={<Mariable />} />
                   <Route path="/mariable-v1" element={<Mariable />} />
