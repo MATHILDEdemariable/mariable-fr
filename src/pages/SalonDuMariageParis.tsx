@@ -142,7 +142,7 @@ export default function SalonDuMariageParis() {
                   </p>
                 </div>
                 <div className="relative">
-                  <img src={preparatifsImage.url} alt="Préparatifs de la mariée entourée de ses témoins" className="w-full h-[28rem] md:h-[36rem] object-cover" loading="lazy" />
+                  <img src={salonInstagramFeedImage.url} alt="Aperçu du fil Instagram du Salon du Mariage" className="w-full h-[28rem] md:h-[36rem] object-cover" loading="lazy" />
                   <div className="absolute -bottom-6 -left-4 md:-left-10 bg-editorial-noir text-editorial-cream px-6 py-5">
                     <p className="font-serif text-4xl md:text-5xl">~30 000</p>
                     <p className="uppercase tracking-[0.2em] text-xs mt-1">abonnés Instagram</p>
