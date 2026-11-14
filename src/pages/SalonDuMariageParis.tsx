@@ -234,16 +234,19 @@ export default function SalonDuMariageParis() {
               </div>
               <div className="mt-8 grid md:grid-cols-2 gap-5">
                 <div className="border border-dashed border-editorial-noir/30 p-5">
-                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Piste bonus 1 — à chiffrer</p>
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Mission ponctuelle 1* — sur devis</p>
                   <h3 className="font-serif text-xl mb-1">Monétisation média</h3>
                   <p className="text-sm text-editorial-noir/75">Monétiser les posts dédiés aux exposants : cadrage de l'offre, plan de test et recommandations.</p>
                 </div>
                 <div className="border border-dashed border-editorial-noir/30 p-5">
-                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Piste bonus 2 — à chiffrer</p>
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Mission ponctuelle 2* — sur devis</p>
                   <h3 className="font-serif text-xl mb-1">Expérience digitale visiteurs</h3>
                   <p className="text-sm text-editorial-noir/75">En synergie avec Mariable : guide digital et outils d'organisation pour les couples, plus de réservations pour les exposants.</p>
                 </div>
               </div>
+              <p className="mt-4 text-xs md:text-sm text-editorial-noir/60">
+                * Expertise Mathilde, consultante Business &amp; IA : missions ponctuelles, hors forfait mensuel, activées sur demande et chiffrées séparément, sous réserve de disponibilité et de timing.
+              </p>
             </Slide>
 
             {/* 6 — Contact */}
