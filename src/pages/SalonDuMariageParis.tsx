@@ -253,7 +253,7 @@ export default function SalonDuMariageParis() {
               <div className="relative text-center px-6 max-w-2xl">
                 <Kicker dark>Prochaine étape</Kicker>
                 <img src={mathildeImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
-                <h2 className="font-serif text-4xl md:text-6xl mb-6">Échangeons ensemble</h2>
+                <h2 className="font-serif text-4xl md:text-6xl mb-6">Contact</h2>
                 <p className="text-lg mb-1">Mathilde Lambert</p>
                 <p className="text-sm text-editorial-cream/75 mb-10">Fondatrice de Mariable · 07 60 10 81 89</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
