@@ -47,19 +47,6 @@ function Kicker({ children, dark }: { children: React.ReactNode; dark?: boolean 
   );
 }
 
-function PriceLine({ label, price, children }: { label: string; price: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-8">
-      <div className="flex items-center gap-4">
-        <span className="bg-editorial-cream text-editorial-noir px-4 py-2 text-lg md:text-2xl whitespace-nowrap">{label}</span>
-        <span className="flex-1 h-px bg-editorial-cream/40" />
-        <span className="font-semibold tracking-wider text-lg md:text-2xl whitespace-nowrap">{price}</span>
-      </div>
-      <div className="mt-3 uppercase tracking-wider text-xs md:text-sm text-editorial-cream/80 leading-relaxed">{children}</div>
-    </div>
-  );
-}
-
 export default function SalonDuMariageParis() {
   const [slide, setSlide] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
