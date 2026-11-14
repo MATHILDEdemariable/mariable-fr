@@ -214,9 +214,9 @@ export default function SalonDuMariageParis() {
               <div className="border border-editorial-noir/20 bg-white/60 p-6 md:p-8">
                 <div className="grid md:grid-cols-3 gap-5">
                   {[
-                    { title: 'Forfait mensuel', price: '1 200 € HT / mois', items: ['Pilotage éditorial + programmation', '2 à 3 posts / semaine', '1 story / jour', 'Reels remix'] },
+                    { title: 'Forfait mensuel', price: '1 200 € HT / mois', items: ['Pilotage éditorial + programmation', '2 à 3 posts / semaine', '1 story tous les 2 jours'] },
                     { title: 'Création visuelle', price: 'Incluse', items: ["Banque d'images IA dédiée", "Reprise de la charte et des templates d'Élodie"] },
-                    { title: 'Pilotage', price: 'Inclus', items: ['Espace Notion partagé', 'Validation mensuelle du calendrier', "Passation des sources d'Élodie"] },
+                    { title: 'Pilotage', price: 'Inclus', items: ['Espace Notion partagé', 'Validation mensuelle du calendrier', "Management d'un content creator si besoin"] },
                   ].map((block) => (
                     <div key={block.title} className="border border-editorial-noir/15 bg-[#F6F3EC] p-5">
                       <h3 className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">{block.title}</h3>
