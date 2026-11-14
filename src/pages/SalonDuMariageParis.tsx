@@ -8,6 +8,9 @@ import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import chandellesImage from '@/assets/salon/chandelles.webp.asset.json';
 import marieeImage from '@/assets/salon/mariee.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
+import coupleBagueImage from '@/assets/salon/couple-bague.png.asset.json';
+import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
+import mathildeImage from '@/assets/salon/mathilde.png.asset.json';
 
 const TOTAL_SLIDES = 6;
 const WHATSAPP_URL =
@@ -128,7 +131,7 @@ export default function SalonDuMariageParis() {
           >
             {/* 1 — Couverture */}
             <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-editorial-noir text-editorial-cream overflow-hidden">
-              <img src={tableeImage.url} alt="Dîner de mariage en plein air sous les oliviers" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+              <img src={coupleBagueImage.url} alt="Couple de mariés montrant la bague de fiançailles" className="absolute inset-0 w-full h-full object-cover opacity-50" />
               <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/60 via-editorial-noir/30 to-editorial-noir/80" />
               <div className="relative text-center px-6">
                 <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-cream/80">Proposition de collaboration</p>
@@ -151,9 +154,6 @@ export default function SalonDuMariageParis() {
                   </p>
                   <p className="text-base md:text-lg leading-relaxed mb-5">
                     L'ambition : positionner aussi le salon comme un <strong>média utile</strong> pour organiser son mariage et découvrir les bons prestataires.
-                  </p>
-                  <p className="text-sm md:text-base leading-relaxed text-editorial-noir/70 border-l-2 border-editorial-olive pl-4">
-                    En poste à temps plein dans le conseil Business & IA, je ne reprends pas l'intégralité de la mission d'Élodie : je m'engage sur un périmètre que je peux exécuter avec qualité.
                   </p>
                 </div>
                 <div className="relative">
@@ -179,8 +179,8 @@ export default function SalonDuMariageParis() {
               <div className="grid md:grid-cols-3 gap-8">
                 {[
                   { image: coupleSoireeImage, alt: 'Couple de mariés détendus en fin de soirée', title: 'Inspiration & amour', text: "Continuer à faire rêver et entretenir l'identité de marque : ambiances, tendances, célébration." },
-                  { image: chandellesImage, alt: 'Mariés à table à la lueur des bougies', title: 'Conseils & organisation', text: 'Aider à passer à l\'action : choisir un prestataire, préparer sa visite, budget, checklists.' },
-                  { image: marieeImage, alt: 'Mariée en robe de dentelle dans un couloir', title: 'Prestataires & vie du salon', text: 'Faire découvrir les exposants : portraits, questions-réponses, coulisses, actualités du salon.' },
+                  { image: tableeImage, alt: 'Dîner de mariage dressé en plein air', title: 'Conseils & organisation', text: 'Aider à passer à l\'action : choisir un prestataire, préparer sa visite, budget, checklists.' },
+                  { image: marieeMetroImage, alt: 'Mariée sur le quai du métro Porte de Versailles devant une rame Le Salon du Mariage', title: 'Prestataires & vie du salon', text: 'Faire découvrir les exposants : portraits, questions-réponses, coulisses, actualités du salon.' },
                 ].map((pillar) => (
                   <article key={pillar.title} className="text-center">
                     <img src={pillar.image.url} alt={pillar.alt} className="w-full h-64 md:h-[22rem] object-cover mb-5" loading="lazy" />
@@ -221,39 +221,41 @@ export default function SalonDuMariageParis() {
             </Slide>
 
             {/* 5 — Tarif */}
-            <Slide id="tarif" dark>
-              <div className="grid md:grid-cols-5 gap-10 items-center">
-                <div className="md:col-span-3">
-                  <SlideNumber value="04" dark />
-                  <h2 className="font-serif text-5xl md:text-7xl mb-3">
-                    <span className="italic">Pack</span> <span className="text-editorial-olive-light">« Love in Paris »</span>
-                  </h2>
-                  <p className="text-base md:text-lg mb-10 text-editorial-cream/85">Gestion mensuelle du compte Instagram — à partir du 15 février 2027</p>
-                  <PriceLine label="Forfait mensuel" price="1 200 € HT / mois">
-                    Pilotage éditorial + programmation · 2 à 3 posts / semaine · 1 story / jour · reels remix
-                  </PriceLine>
-                  <PriceLine label="Création visuelle" price="Incluse">
-                    Banque d'images IA dédiée · reprise de la charte et des templates d'Élodie
-                  </PriceLine>
-                  <PriceLine label="Pilotage" price="Inclus">
-                    Espace Notion partagé · validation mensuelle du calendrier · passation des sources d'Élodie
-                  </PriceLine>
+            <Slide id="tarif">
+              <SlideNumber value="04" />
+              <h2 className="font-serif text-4xl md:text-6xl mb-3">Offre tarifaire</h2>
+              <p className="text-base md:text-lg mb-8 text-editorial-noir/75">Gestion mensuelle du compte Instagram — à partir du 15 février 2027</p>
+              <div className="border border-editorial-noir/20 bg-white/60 p-6 md:p-8">
+                <div className="grid md:grid-cols-3 gap-5">
+                  {[
+                    { title: 'Forfait mensuel', price: '1 200 € HT / mois', items: ['Pilotage éditorial + programmation', '2 à 3 posts / semaine', '1 story / jour', 'Reels remix'] },
+                    { title: 'Création visuelle', price: 'Incluse', items: ["Banque d'images IA dédiée", "Reprise de la charte et des templates d'Élodie"] },
+                    { title: 'Pilotage', price: 'Inclus', items: ['Espace Notion partagé', 'Validation mensuelle du calendrier', "Passation des sources d'Élodie"] },
+                  ].map((block) => (
+                    <div key={block.title} className="border border-editorial-noir/15 bg-[#F6F3EC] p-5">
+                      <h3 className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">{block.title}</h3>
+                      <p className="font-serif text-2xl md:text-3xl mb-4">{block.price}</p>
+                      <ul className="space-y-1.5 text-sm leading-relaxed">
+                        {block.items.map((item) => <li key={item}>· {item}</li>)}
+                      </ul>
+                    </div>
+                  ))}
                 </div>
-                <div className="md:col-span-2 space-y-5">
-                  <p className="uppercase tracking-[0.3em] text-xs text-editorial-olive-light">Pistes bonus — à chiffrer si intérêt</p>
-                  <div className="border border-editorial-cream/30 p-6">
-                    <h3 className="font-serif text-2xl mb-2">Piste 1 — Monétisation média</h3>
-                    <p className="text-sm leading-relaxed text-editorial-cream/80">
-                      Monétiser les posts dédiés aux exposants pour augmenter les revenus du salon : cadrage de l'offre, plan de test et recommandations.
-                    </p>
-                  </div>
-                  <div className="border border-editorial-cream/30 p-6">
-                    <h3 className="font-serif text-2xl mb-2">Piste 2 — Expérience digitale visiteurs</h3>
-                    <p className="text-sm leading-relaxed text-editorial-cream/80">
-                      En synergie avec Mariable : guide digital et outils d'organisation pour les couples, visibilité durable et plus de réservations pour les exposants.
-                    </p>
-                  </div>
-                  <p className="text-xs text-editorial-cream/60">Ces pistes ne sont pas comprises dans le forfait mensuel.</p>
+                <div className="mt-6 pt-5 border-t border-editorial-noir/20 flex flex-wrap justify-between gap-2 items-baseline">
+                  <span className="uppercase tracking-[0.2em] text-xs">Total mensuel</span>
+                  <span className="font-serif text-2xl md:text-3xl">1 200 € HT / mois, tout compris</span>
+                </div>
+              </div>
+              <div className="mt-8 grid md:grid-cols-2 gap-5">
+                <div className="border border-dashed border-editorial-noir/30 p-5">
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Piste bonus 1 — à chiffrer</p>
+                  <h3 className="font-serif text-xl mb-1">Monétisation média</h3>
+                  <p className="text-sm text-editorial-noir/75">Monétiser les posts dédiés aux exposants : cadrage de l'offre, plan de test et recommandations.</p>
+                </div>
+                <div className="border border-dashed border-editorial-noir/30 p-5">
+                  <p className="uppercase tracking-[0.2em] text-xs text-editorial-olive mb-2">Piste bonus 2 — à chiffrer</p>
+                  <h3 className="font-serif text-xl mb-1">Expérience digitale visiteurs</h3>
+                  <p className="text-sm text-editorial-noir/75">En synergie avec Mariable : guide digital et outils d'organisation pour les couples, plus de réservations pour les exposants.</p>
                 </div>
               </div>
             </Slide>
@@ -264,7 +266,8 @@ export default function SalonDuMariageParis() {
               <div className="absolute inset-0 bg-editorial-noir/50" />
               <div className="relative text-center px-6 max-w-2xl">
                 <Kicker dark>Prochaine étape</Kicker>
-                <h2 className="font-serif text-4xl md:text-6xl mb-6">Échangeons sur cette proposition</h2>
+                <img src={mathildeImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
+                <h2 className="font-serif text-4xl md:text-6xl mb-6">Échangeons ensemble</h2>
                 <p className="text-lg mb-1">Mathilde Lambert</p>
                 <p className="text-sm text-editorial-cream/75 mb-10">Fondatrice de Mariable · 07 60 10 81 89</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
