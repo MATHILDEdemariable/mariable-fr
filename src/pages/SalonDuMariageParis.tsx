@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import couvertureImage from '@/assets/salon/couverture_salon.png.asset.json';
 import { Helmet } from 'react-helmet-async';
 import { ChevronLeft, ChevronRight, Mail, MessageCircle, Maximize, Minimize } from 'lucide-react';
 import logoSalon from '@/assets/salon/logo.png.asset.json';
@@ -6,7 +7,6 @@ import tableeImage from '@/assets/salon/tablee.webp.asset.json';
 import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
-import coupleBagueImage from '@/assets/salon/couple-bague.png.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
 import mathildeImage from '@/assets/salon/mathilde.png.asset.json';
 
@@ -116,7 +116,7 @@ export default function SalonDuMariageParis() {
           >
             {/* 1 — Couverture */}
             <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-editorial-noir text-editorial-cream overflow-hidden">
-              <img src={coupleBagueImage.url} alt="Couple de mariés montrant la bague de fiançailles" className="absolute inset-0 w-full h-full object-cover opacity-50" />
+              <img src={couvertureImage.url} alt="Couple de mariés" className="absolute inset-0 w-full h-full object-cover opacity-50" />
               <div className="absolute inset-0 bg-gradient-to-b from-editorial-noir/60 via-editorial-noir/30 to-editorial-noir/80" />
               <div className="relative text-center px-6">
                 <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-cream/80">Proposition de collaboration</p>
