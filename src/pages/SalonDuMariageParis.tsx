@@ -9,7 +9,6 @@ import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
-import mathildeImage from '@/assets/salon/mathilde.png.asset.json';
 
 const TOTAL_SLIDES = 6;
 const WHATSAPP_URL =
