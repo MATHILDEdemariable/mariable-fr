@@ -247,20 +247,18 @@ export default function SalonDuMariageParis() {
             </Slide>
 
             {/* 6 — Contact */}
-            <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-editorial-noir text-editorial-cream overflow-hidden">
-              <img src={chandellesImage.url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-35" loading="lazy" />
-              <div className="absolute inset-0 bg-editorial-noir/50" />
+            <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-editorial-beige text-editorial-noir overflow-hidden">
               <div className="relative text-center px-6 max-w-2xl">
-                <Kicker dark>Prochaine étape</Kicker>
+                <Kicker>Prochaine étape</Kicker>
                 <img src={mathildeImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
                 <h2 className="font-serif text-4xl md:text-6xl mb-6">Contact</h2>
                 <p className="text-lg mb-1">Mathilde Lambert</p>
-                <p className="text-sm text-editorial-cream/75 mb-10">Fondatrice de Mariable · 07 60 10 81 89</p>
+                <p className="text-sm text-editorial-noir/75 mb-10">Fondatrice de Mariable · 07 60 10 81 89</p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-editorial-cream text-editorial-noir px-8 py-4 min-h-[44px] uppercase tracking-[0.2em] text-xs hover:opacity-90">
+                  <a href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 bg-editorial-noir text-editorial-cream px-8 py-4 min-h-[44px] uppercase tracking-[0.2em] text-xs hover:opacity-90">
                     <MessageCircle className="h-4 w-4" /> WhatsApp
                   </a>
-                  <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Proposition Salon du Mariage')}`} className="inline-flex items-center justify-center gap-2 border border-editorial-cream px-8 py-4 min-h-[44px] uppercase tracking-[0.2em] text-xs hover:bg-editorial-cream/10">
+                  <a href={`mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('Proposition Salon du Mariage')}`} className="inline-flex items-center justify-center gap-2 border border-editorial-noir px-8 py-4 min-h-[44px] uppercase tracking-[0.2em] text-xs hover:bg-editorial-noir/5">
                     <Mail className="h-4 w-4" /> E-mail
                   </a>
                 </div>
