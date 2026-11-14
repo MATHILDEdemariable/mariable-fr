@@ -5,7 +5,6 @@ import logoSalon from '@/assets/salon/logo.png.asset.json';
 import tableeImage from '@/assets/salon/tablee.webp.asset.json';
 import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
-import chandellesImage from '@/assets/salon/chandelles.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
 import coupleBagueImage from '@/assets/salon/couple-bague.png.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
@@ -247,7 +246,7 @@ export default function SalonDuMariageParis() {
             </Slide>
 
             {/* 6 — Contact */}
-            <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-editorial-beige text-editorial-noir overflow-hidden">
+            <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-[#F6F3EC] text-editorial-noir overflow-hidden">
               <div className="relative text-center px-6 max-w-2xl">
                 <Kicker>Prochaine étape</Kicker>
                 <img src={mathildeImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
