@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import { ChevronLeft, ChevronRight, Mail, MessageCircle, Maximize, Minimize } from 'lucide-react';
 import logoSalon from '@/assets/salon/logo.png.asset.json';
 import tableeImage from '@/assets/salon/tablee.webp.asset.json';
-import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
+import salonInstagramFeedImage from '@/assets/salon/salon-instagram-feed.png.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
