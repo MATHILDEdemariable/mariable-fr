@@ -121,7 +121,7 @@ export default function SalonDuMariageParis() {
               <div className="relative text-center px-6">
                 <p className="uppercase tracking-[0.4em] text-xs mb-8 text-editorial-cream/80">Proposition de collaboration</p>
                 <img src={logoSalon.url} alt="Le Salon du Mariage" className="mx-auto w-72 md:w-[34rem] mix-blend-screen" />
-                <p className="font-serif italic text-2xl md:text-4xl mt-8">× Mathilde Lambert</p>
+                <p className="font-serif italic text-2xl md:text-4xl mt-8">× Mathilde</p>
                 <p className="mt-6 text-sm md:text-base text-editorial-cream/80 max-w-xl mx-auto">
                   Gestion Instagram & vision éditoriale — démarrage le 15 février 2027
                 </p>
