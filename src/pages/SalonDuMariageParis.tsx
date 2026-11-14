@@ -6,7 +6,6 @@ import tableeImage from '@/assets/salon/tablee.webp.asset.json';
 import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import chandellesImage from '@/assets/salon/chandelles.webp.asset.json';
-import marieeImage from '@/assets/salon/mariee.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
 import coupleBagueImage from '@/assets/salon/couple-bague.png.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
