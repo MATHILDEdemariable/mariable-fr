@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import mathildeContactImage from '@/assets/salon/mathilde_portrait_contact.png.asset.json';
 import couvertureImage from '@/assets/salon/couverture_salon.png.asset.json';
 import { Helmet } from 'react-helmet-async';
 import { ChevronLeft, ChevronRight, Mail, MessageCircle, Maximize, Minimize } from 'lucide-react';
@@ -8,7 +9,6 @@ import preparatifsImage from '@/assets/salon/preparatifs.webp.asset.json';
 import coupleSoireeImage from '@/assets/salon/couple-soiree.webp.asset.json';
 import oliviersImage from '@/assets/salon/oliviers.webp.asset.json';
 import marieeMetroImage from '@/assets/salon/mariee-metro.png.asset.json';
-import mathildeImage from '@/assets/salon/mathilde.png.asset.json';
 
 const TOTAL_SLIDES = 6;
 const WHATSAPP_URL =
@@ -249,7 +249,7 @@ export default function SalonDuMariageParis() {
             <section className="w-full md:w-screen md:flex-shrink-0 min-h-screen md:h-screen relative flex items-center justify-center bg-[#F6F3EC] text-editorial-noir overflow-hidden">
               <div className="relative text-center px-6 max-w-2xl">
                 <Kicker>Prochaine étape</Kicker>
-                <img src={mathildeImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
+                <img src={mathildeContactImage.url} alt="Portrait de Mathilde Lambert" className="mx-auto w-40 h-40 md:w-48 md:h-48 object-cover object-top mb-6" loading="lazy" />
                 <h2 className="font-serif text-4xl md:text-6xl mb-6">Contact</h2>
                 <p className="text-lg mb-1">Mathilde Lambert</p>
                 <p className="text-sm text-editorial-noir/75 mb-10">Fondatrice de Mariable · 07 60 10 81 89</p>
