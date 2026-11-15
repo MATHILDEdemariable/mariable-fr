@@ -18,6 +18,8 @@ export default defineTool({
   inputSchema: {
     query: z
       .string()
+      .max(200)
+      .regex(/^[\p{L}\p{N}\s'’-]*$/u, 'Utilisez uniquement du texte pour la recherche')
       .optional()
       .describe("Texte libre recherché dans le nom ou la description"),
     categorie: z

@@ -128,6 +128,7 @@ serve(async (req) => {
     let query = supabase
       .from('prestataires_rows')
       .select('*')
+      .eq('visible', true)
       .eq('categorie', detectedCategory)
       .eq('region', detectedRegion)
       .limit(10);

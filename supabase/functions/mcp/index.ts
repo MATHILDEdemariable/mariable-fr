@@ -21,7 +21,7 @@ var search_prestataires_default = defineTool({
   title: "Rechercher des prestataires",
   description: "Rechercher des prestataires de mariage visibles dans l'annuaire Mariable (lieux, traiteurs, photographes, etc.). Retourne nom, cat\xE9gorie, ville, prix, description, slug.",
   inputSchema: {
-    query: z.string().optional().describe("Texte libre recherch\xE9 dans le nom ou la description"),
+    query: z.string().max(200).regex(/^[\p{L}\p{N}\s'’-]*$/u, "Utilisez uniquement du texte pour la recherche").optional().describe("Texte libre recherch\xE9 dans le nom ou la description"),
     categorie: z.string().optional().describe("Cat\xE9gorie exacte (ex: Lieu de r\xE9ception, Traiteur, Photographe)"),
     ville: z.string().optional().describe("Filtrer par ville"),
     limit: z.number().int().min(1).max(50).default(10)
