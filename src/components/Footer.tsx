@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Instagram } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { OPEN_COOKIE_SETTINGS_EVENT } from '@/components/consent/CookieConsentBanner';
 
 const Footer = () => {
   const { t, i18n } = useTranslation('common');
@@ -105,6 +106,8 @@ const Footer = () => {
           </p>
           <div className="flex gap-4 text-xs">
             <Link to="/contact" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{t('footer.links.contact')}</Link>
+            <Link to="/politique-confidentialite" className="text-wedding-black/70 hover:text-wedding-black transition-colors">{i18n.language?.startsWith('en') ? 'Privacy' : 'Confidentialité'}</Link>
+            <button type="button" onClick={() => window.dispatchEvent(new Event(OPEN_COOKIE_SETTINGS_EVENT))} className="text-wedding-black/70 hover:text-wedding-black transition-colors">{i18n.language?.startsWith('en') ? 'Cookie settings' : 'Paramètres des cookies'}</button>
           </div>
         </div>
       </div>

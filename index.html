@@ -2,6 +2,55 @@
 <!doctype html>
 <html lang="fr">
   <head>
+    <script>
+window.dataLayer = window.dataLayer || [];
+function gtag() {
+  dataLayer.push(arguments);
+}
+gtag("consent", "default", {
+  analytics_storage: "granted",
+  ad_storage: "granted",
+  ad_user_data: "granted",
+  ad_personalization: "granted",
+});
+gtag("consent", "default", {
+  analytics_storage: "denied",
+  ad_storage: "denied",
+  ad_user_data: "denied",
+  ad_personalization: "denied",
+  wait_for_update: 500,
+  region:
+    "AT,BE,BG,HR,CY,CZ,DK,EE,FI,FR,DE,GR,HU,IE,IT,LV,LT,LU,MT,NL,PL,PT,RO,SK,SI,ES,SE,IS,LI,NO,GB,CH,RE,GP,MQ,GF,YT,MF,AX,CA-QC".split(
+      ",",
+    ),
+});
+(function () {
+  var signals = {
+    analytics: ["analytics_storage"],
+    advertising: ["ad_storage", "ad_user_data", "ad_personalization"],
+  };
+  for (var purpose in signals) {
+    var choice = null;
+    try {
+      var saved = JSON.parse(localStorage.getItem("cookie_consent_" + purpose) || "null");
+      if (
+        saved &&
+        (saved.choice === "denied" || (saved.choice === "granted" && Date.now() - saved.at < 365 * 86400000))
+      ) {
+        choice = saved.choice;
+      }
+    } catch (e) {}
+    if (navigator.globalPrivacyControl === true) choice = "denied";
+    if (!choice) continue;
+    var update = {};
+    signals[purpose].forEach(function (signal) {
+      update[signal] = choice;
+    });
+    gtag("consent", "update", update);
+  }
+})();
+
+    </script>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="/logo-mariable-clean.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -98,9 +147,6 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WBJ2F95F"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=1976814949641388&ev=PageView&noscript=1"
-    /></noscript>
     <div id="root"></div>
     <script>
       // Script pour calcul dynamique hauteur header
@@ -140,17 +186,7 @@
       function loadAnalytics() {
         if (analyticsLoaded) return;
         analyticsLoaded = true;
-        // Meta Pixel
-        !function(f,b,e,v,n,t,s)
-        {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-        n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-        if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-        n.queue=[];t=b.createElement(e);t.async=!0;
-        t.src=v;s=b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t,s)}(window, document,'script',
-        'https://connect.facebook.net/en_US/fbevents.js');
-        fbq('init', '1976814949641388');
-        fbq('track', 'PageView');
+        // Meta Pixel et Hotjar : chargés par src/lib/consentedTracking.ts selon le choix cookies
         
         // Google Tag Manager
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -169,15 +205,6 @@
         gtag('js', new Date());
         gtag('config', 'G-2B5T8K9W7X');
         
-        // Hotjar
-        (function(h,o,t,j,a,r){
-          h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};
-          h._hjSettings={hjid:6424249,hjsv:6};
-          a=o.getElementsByTagName('head')[0];
-          r=o.createElement('script');r.async=1;
-          r.src=t+h._hjSettings.hjid+j+h._hjSettings.hjsv;
-          a.appendChild(r);
-        })(window,document,'https://static.hotjar.com/c/hotjar-','.js?sv=');
       }
       
       // Load on first interaction or after 3 seconds

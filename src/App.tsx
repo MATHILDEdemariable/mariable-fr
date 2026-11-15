@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { lazyWithRetry as lazy } from '@/lib/lazyWithRetry';
 import { Toaster } from "@/components/ui/toaster";
 const DemoVideos = lazy(() => import("./pages/DemoVideos"));
+const PolitiqueConfidentialite = lazy(() => import("./pages/PolitiqueConfidentialite"));
+import CookieConsentBanner from "@/components/consent/CookieConsentBanner";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -209,6 +211,7 @@ function App() {
               <BrowserRouter>
                 <AnalyticsProvider>
                   <PaymentSuccessHandler />
+                  <CookieConsentBanner />
                   <Suspense fallback={<PageLoader />}>
                   <Routes>
                  <Route path="/" element={<RefonteJuillet />} />
@@ -335,6 +338,7 @@ function App() {
                   <Route path="/pro/apercu-mariage" element={<ApercuMariage />} />
                   <Route path="/apercu-espace-couple" element={<ApercuEspaceCouple />} />
                   <Route path="/agence" element={<Agence />} />
+                  <Route path="/politique-confidentialite" element={<PolitiqueConfidentialite />} />
                   <Route path="/cgv" element={<CGV />} />
                   <Route path="/cgv-couples" element={<CGVCouples />} />
                   <Route path="/ceremonie-laique" element={<CeremoniePublic />} />
