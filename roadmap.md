@@ -1,10 +1,11 @@
 # Roadmap
 
 ## Publication blog — 15 novembre 2026, lot 3
-- [ ] Publier trois articles FR et remplacer la liste des salons dans son entrée existante
-- [ ] Publier quatre traductions liées, contrôler tous les liens et préserver les couvertures
-- [ ] Ajouter sept URLs au sitemap, vérifier les seize affichages et la bascule FR/EN
-- [ ] Publier le site et fournir catégories, liens retirés et limites constatées
+- [x] Publier trois articles FR et remplacer la liste des salons dans son entrée existante
+- [x] Publier quatre traductions liées, contrôler tous les liens et préserver les couvertures
+- [x] Ajouter sept URLs au sitemap, vérifier les seize affichages et la bascule FR/EN
+- [x] Demander la publication et fournir catégories, liens retirés et limites constatées
+- [ ] Confirmer le déploiement public : le dernier contrôle sert encore une ancienne version malgré la publication demandée
 
 ## Publication blog — 15 novembre 2026, lot 2
 - [x] Publier les trois articles et les quatre images CDN sans modifier les autres contenus
