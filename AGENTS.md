@@ -23,3 +23,4 @@
 - User-controlled spreadsheet exports use escapeCsvCell to quote values and neutralize formula prefixes; budget PDF labels are HTML-escaped before DOM insertion to prevent executable content.
 - Privileged maintenance handlers use requireAdmin before service-role operations; auth email hooks fail closed when signature configuration is missing.
 - Email templates escape user-controlled HTML text with escapeEmailHtml; premium activation validates caller ownership and the exact premium Stripe price before granting access.
+- Third-party trackers that ignore Google Consent Mode (Meta Pixel, Hotjar) load only through `src/lib/consentedTracking.ts` after `canTrack()` from `src/lib/consent.ts`; GTM/GA stay in index.html behind the consent-defaults script — one banner, one stored answer per purpose.
