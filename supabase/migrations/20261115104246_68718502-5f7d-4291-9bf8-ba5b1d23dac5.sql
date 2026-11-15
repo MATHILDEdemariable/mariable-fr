@@ -1,0 +1,9 @@
+ALTER FUNCTION public.notify_new_user_registration() SET search_path = public, pg_temp;
+ALTER FUNCTION public.generate_coordination_slug(text, uuid) SET search_path = public, pg_temp;
+ALTER FUNCTION public.is_admin() SET search_path = public, pg_temp;
+ALTER FUNCTION public.notify_new_vendor_message() SET search_path = public, pg_temp;
+ALTER FUNCTION public.validate_planning_share_token(text) SET search_path = public, pg_temp;
+ALTER FUNCTION public.validate_apres_jour_j_share_token(text) SET search_path = public, pg_temp;
+ALTER FUNCTION public.is_valid_share_token(text) SET search_path = public, pg_temp;
+ALTER FUNCTION public.validate_avant_jour_j_share_token(text) SET search_path = public, pg_temp;
+ALTER FUNCTION public.validate_dashboard_share_token(text) SET search_path = public, pg_temp;
