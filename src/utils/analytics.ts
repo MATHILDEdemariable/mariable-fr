@@ -1,3 +1,4 @@
+import { sendConsentedMetaEvent } from '@/lib/consentedTracking';
 
 // Google Analytics et Google Tag Manager utilities
 export interface GTMEvent {
@@ -190,13 +191,13 @@ export const sendMetaEvent = (eventName: string, parameters: Record<string, any>
 };
 
 /**
- * Track CompleteRegistration pour Meta Pixel
+ * Track CompleteRegistration pour Meta Pixel (envoyé seulement avec l'accord publicité).
+ * content_name distingue les inscriptions Pro (campagne Essai Pro) des comptes couples.
  */
-export const trackMetaRegistration = () => {
-  sendMetaEvent('CompleteRegistration', {
-    content_name: 'Mariable Account',
+export const trackMetaRegistration = (accountType: 'b2b' | 'b2c' = 'b2c') => {
+  const eventId = `registration-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  void sendConsentedMetaEvent('CompleteRegistration', {
+    content_name: accountType === 'b2b' ? 'Mariable Pro' : 'Mariable Couple',
     status: 'completed',
-    value: 0,
-    currency: 'EUR'
-  });
+  }, eventId);
 };

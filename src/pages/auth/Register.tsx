@@ -155,7 +155,7 @@ const Register = () => {
         console.error('❌ Budget lead capture failed:', leadError);
       }
 
-      trackMetaRegistration();
+      trackMetaRegistration(accountType);
       trackUserRegistration('email');
 
       setShowEmailAlert(true);
