@@ -1,5 +1,10 @@
 # Roadmap
 
+## Publication blog — 15 novembre 2026, lot 2
+- [x] Publier les trois articles et les quatre images CDN sans modifier les autres contenus
+- [x] Vérifier les liens internes et conserver tous les liens externes des tableaux de salons
+- [x] Ajouter les trois URLs au sitemap et vérifier les six affichages ordinateur/mobile ; publication du site demandée
+
 ## Publication blog — 15 novembre 2026, lot 1
 - [x] Publier les quatre articles français et leurs couvertures CDN, sans modifier les autres contenus
 - [x] Vérifier les liens internes et fournir la liste exacte des liens retirés

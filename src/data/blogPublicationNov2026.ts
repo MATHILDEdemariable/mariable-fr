@@ -76,4 +76,34 @@ export const BLOG_PUBLICATION_NOV_2026 = [
     ctaDescription: '',
     inlineCta: true,
   },
+  {
+    "slug": "invites-vin-honneur-uniquement",
+    "title": "Invités au vin d'honneur seulement : bonne idée ?",
+    "description": "Inviter certains proches au vin d'honneur seulement, ou n'inviter au vin d'honneur que ceux qui restent dîner ? Avantages, inconvénients et formulations.",
+    "h1": "Inviter au vin d'honneur seulement : avantages, inconvénients et règles",
+    "imageAlt": "Invités et serveurs au vin d'honneur dans les jardins à la française d'un château",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "gagner-du-temps-organisation-mariage",
+    "title": "Gagner du temps sur l'organisation de son mariage",
+    "description": "Organiser son mariage prend des centaines d'heures. 9 réflexes concrets pour décider plus vite, moins relancer et tout retrouver au même endroit.",
+    "h1": "Gagner du temps sur l'organisation de ton mariage : la méthode en 9 réflexes",
+    "imageAlt": "Wedding planner consultant le déroulé du jour J sur son téléphone dans une salle de réception lumineuse",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "salons-du-mariage-2027",
+    "title": "Salon du mariage 2027 : dates par ville et conseils",
+    "description": "Faut-il aller à un salon du mariage, même avec tes prestataires réservés ? Avantages, inconvénients, conseils et la liste des salons 2027 avec leur site.",
+    "h1": "Salons du mariage 2026-2027 : faut-il y aller, et la liste par ville",
+    "imageAlt": "Allée d'un salon du mariage sous une verrière, entre des stands de robes et de fleurs",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
 ] as const;
