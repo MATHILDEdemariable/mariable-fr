@@ -1,5 +1,11 @@
 # Roadmap
 
+## Publication blog — 15 novembre 2026, lot 1
+- [x] Publier les quatre articles français et leurs couvertures CDN, sans modifier les autres contenus
+- [x] Vérifier les liens internes et fournir la liste exacte des liens retirés
+- [x] Ajouter les quatre URLs au sitemap et vérifier chaque article sur ordinateur et mobile
+- [x] Demander la publication du site pour livrer les textes alternatifs et le CTA unique
+
 ## Aide pro — novembre 2026
 - [x] Ajouter WhatsApp Mathilde dans l’aide pro (numéro testé)
 - [x] Afficher un tutoriel dédié au carnet d’adresses en FR/EN

@@ -1,4 +1,4 @@
-// Overrides are restricted to these four supplied articles; existing articles keep their presentation.
+// Overrides are restricted to supplied articles; existing articles keep their presentation.
 export const BLOG_PUBLICATION_NOV_2026 = [
   {
     slug: 'chatgpt-organiser-mariage',
@@ -35,5 +35,45 @@ export const BLOG_PUBLICATION_NOV_2026 = [
     imageAlt: 'Coordinatrice de mariage en tailleur noir qui prépare les chaises de la cérémonie',
     ctaTitle: 'Tes prestataires, leurs réponses et leurs devis au même endroit',
     ctaDescription: 'Note les réponses de chaque prestataire, suis tes devis et tes acomptes, et garde les contrats dans ton espace Mariable, depuis un <strong>compte gratuit</strong>.',
+  },
+  {
+    slug: 'comparer-devis-traiteur-mariage',
+    title: 'Comparer ses devis traiteur de mariage : la méthode',
+    description: 'Deux devis traiteur, deux prix par invité, impossible de comparer ? La méthode pour ramener tes devis au coût réel et savoir lequel est juste.',
+    h1: 'Comparer ses devis traiteur de mariage : la méthode pour savoir si le prix est juste',
+    imageAlt: 'Équipe de traiteur dressant une longue table de mariage sous les oliviers',
+    ctaTitle: '',
+    ctaDescription: '',
+    inlineCta: true,
+  },
+  {
+    slug: 'inviter-cousins-plus-un-mariage',
+    title: 'Cousins, +1 : qui inviter à ton mariage ?',
+    description: "Faut-il inviter tous les cousins ? Donner un +1 aux célibataires ? Les règles claires pour faire ta liste d'invités, et les phrases pour l'annoncer.",
+    h1: 'Cousins, +1, collègues : qui inviter à ton mariage (et comment le dire)',
+    imageAlt: "Enveloppes de faire-part de mariage scellées à la cire vert sauge, avec un stylo-plume et une branche d'olivier",
+    ctaTitle: '',
+    ctaDescription: '',
+    inlineCta: true,
+  },
+  {
+    slug: 'mariage-avec-ou-sans-enfants',
+    title: 'Mariage avec ou sans enfants : comment décider ?',
+    description: "Mariage sans enfants ou avec ? Avantages, inconvénients, solutions intermédiaires et phrases pour l'annoncer sur le faire-part sans froisser personne.",
+    h1: "Mariage avec ou sans enfants : comment décider et l'annoncer sans froisser",
+    imageAlt: "Enfants d'honneur pieds nus courant dans le jardin d'une bastide en Provence",
+    ctaTitle: '',
+    ctaDescription: '',
+    inlineCta: true,
+  },
+  {
+    slug: 'deuxieme-robe-mariee',
+    title: 'Deuxième robe de mariée : bonne idée ou pas ?',
+    description: 'Une deuxième robe pour la soirée : pour qui, à quel moment se changer, quel budget prévoir et les alternatives malines (jupe, cape, combinaison).',
+    h1: 'Deuxième robe de mariée : bonne idée ou dépense de trop ?',
+    imageAlt: "Mariée en robe courte de soirée dansant avec son mari sur la terrasse d'un château",
+    ctaTitle: '',
+    ctaDescription: '',
+    inlineCta: true,
   },
 ] as const;

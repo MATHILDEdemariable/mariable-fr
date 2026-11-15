@@ -176,6 +176,7 @@ const BlogArticlePage = () => {
   
   const h1Title = post.h1_title || post.title;
   const suppliedArticle = BLOG_PUBLICATION_NOV_2026.find((article) => article.slug === post.slug);
+  const hasInlineCta = suppliedArticle && 'inlineCta' in suppliedArticle && suppliedArticle.inlineCta;
   const metaTitle = post.meta_title || post.title;
   const metaDescription = post.meta_description || post.subtitle;
 
@@ -315,7 +316,7 @@ const BlogArticlePage = () => {
                     <img 
                         src={post.background_image_url} 
                         alt={suppliedArticle?.imageAlt || h1Title}
-                        className="w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg"
+                        className={hasInlineCta ? 'w-auto max-w-full h-auto max-h-[700px] mx-auto object-contain rounded-lg shadow-lg' : 'w-full h-auto max-h-[500px] object-cover rounded-lg shadow-lg'}
                     />
                 </div>
             )}
@@ -336,7 +337,7 @@ const BlogArticlePage = () => {
             </div>
 
             {/* CTA contextuel : convertit le trafic éditorial vers l'outil correspondant */}
-            <aside className="mt-10 bg-editorial-beige border border-wedding-olive/20 p-8 text-center">
+            {!hasInlineCta && <aside className="mt-10 bg-editorial-beige border border-wedding-olive/20 p-8 text-center">
                 {!suppliedArticle && <p className="text-sm uppercase tracking-widest text-wedding-olive mb-3">
                     Passez à l'action
                 </p>}
@@ -361,7 +362,7 @@ const BlogArticlePage = () => {
                         </Button>
                     </Link>}
                 </div>
-            </aside>
+            </aside>}
 
 
 
