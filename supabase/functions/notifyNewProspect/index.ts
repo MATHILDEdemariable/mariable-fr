@@ -26,7 +26,7 @@ const handler = async (_request) => {
     const emailPresta = record?.email_presta ?? '';
     const status = record?.status ?? '';
     
-    console.log('📧 Données reçues:', { idTracking, emailPresta, status });
+    console.log('Prospect notification received');
     
     if (!emailPresta) {
       console.log('❌ Email prestataire manquant');
@@ -36,7 +36,7 @@ const handler = async (_request) => {
       });
     }
     
-    console.log('📬 Envoi email vers prestataire:', emailPresta);
+    console.log('Sending prospect notification');
     
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',

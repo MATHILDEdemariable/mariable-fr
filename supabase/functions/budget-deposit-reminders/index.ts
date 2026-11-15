@@ -1,5 +1,6 @@
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 
 // Rappel quotidien (9 h Paris) des acomptes arrivant à échéance le jour même, envoyé au propriétaire et aux collaborateurs du mariage.
 Deno.serve(async (req) => {
@@ -34,7 +35,7 @@ Deno.serve(async (req) => {
         if (!byRecipientGroup.has(key)) byRecipientGroup.set(key, { emails: new Set(), lines: [], notifyCouple: false });
         if (inst.notify_couple !== false) byRecipientGroup.get(key)!.notifyCouple = true;
         byRecipientGroup.get(key)!.lines.push(
-          `<li><strong>${row.item_name || row.category_name}</strong> — acompte n°${index + 1} : ${Number(inst.amount || 0).toFixed(2)} € à régler le ${inst.due_date} (reste à payer : ${(total - paid).toFixed(2)} €)</li>`,
+          `<li><strong>${escapeEmailHtml(row.item_name || row.category_name)}</strong> — acompte n°${index + 1} : ${Number(inst.amount || 0).toFixed(2)} € à régler le ${escapeEmailHtml(inst.due_date)} (reste à payer : ${(total - paid).toFixed(2)} €)</li>`,
         );
         inst.reminder_sent = true;
         changed = true;
@@ -53,7 +54,7 @@ Deno.serve(async (req) => {
       if (!resendKey || group.emails.size === 0) continue;
       const html = `<div style="font-family:Georgia,serif;background:#F8F5EF;padding:24px;color:#1a1a1a">
         <h2 style="color:#63745A">Acompte à régler · Payment due</h2>
-        <p>${wedding?.title || 'Votre mariage'} — rappel des échéances à venir :</p><ul>${group.lines.join('')}</ul>
+        <p>${escapeEmailHtml(wedding?.title || 'Votre mariage')} — rappel des échéances à venir :</p><ul>${group.lines.join('')}</ul>
         <p style="color:#666;font-size:13px">Upcoming wedding payments are listed above. — Mariable</p></div>`;
       const response = await fetch('https://api.resend.com/emails', {
         method: 'POST',

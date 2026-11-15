@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 
 const resendApiKey = Deno.env.get("RESEND")!;
 const resend = new Resend(resendApiKey);
@@ -35,11 +36,11 @@ const handler = async (req: Request): Promise<Response> => {
     const emailContent = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <h1 style="color: #1a1a1a; font-size: 24px; margin-bottom: 20px;">
-          💍 Bienvenue dans votre espace Mariable, ${displayName} !
+          💍 Bienvenue dans votre espace Mariable, ${escapeEmailHtml(displayName)} !
         </h1>
         
         <p style="font-size: 18px; color: #333;">
-          <strong>Félicitations ${displayName} !</strong> 🎉
+          <strong>Félicitations ${escapeEmailHtml(displayName)} !</strong> 🎉
         </p>
         
         <p style="color: #555; line-height: 1.6;">

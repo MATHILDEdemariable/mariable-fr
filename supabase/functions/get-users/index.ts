@@ -125,7 +125,6 @@ Deno.serve(async (req) => {
         users = allUsers.map(user => {
           const profile = profilesMap.get(user.id);
           if (profile) {
-            console.log(`User ${user.email}: Premium=${profile.subscription_type === 'premium'}, Expires=${profile.subscription_expires_at}`);
           }
           return {
             id: user.id,

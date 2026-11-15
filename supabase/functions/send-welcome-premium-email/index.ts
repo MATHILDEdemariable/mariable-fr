@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 
 const resend = new Resend(Deno.env.get("RESEND") as string);
 
@@ -145,7 +146,7 @@ const handler = async (req: Request): Promise<Response> => {
             </div>
             
             <div class="content">
-              <p class="greeting">Bonjour ${userName},</p>
+              <p class="greeting">Bonjour ${escapeEmailHtml(userName)},</p>
               
               <p class="message">
                 Félicitations ! Vous faites désormais partie de la communauté Premium Mariable. 

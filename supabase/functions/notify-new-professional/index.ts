@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 
 const corsHeaders = {
@@ -12,7 +13,7 @@ Deno.serve(async (req) => {
 
   try {
     const { record } = await req.json();
-    console.log('🚀 notify-new-professional:', record?.email);
+    console.log('Professional notification received');
 
     const html = `
 <!DOCTYPE html>
@@ -22,14 +23,14 @@ Deno.serve(async (req) => {
     <h2 style="color:#7F9474; font-family: Georgia, serif;">🎉 Nouvelle inscription professionnelle</h2>
     <p>Un nouveau prestataire vient de s'inscrire sur Mariable :</p>
     <table style="width:100%; border-collapse:collapse; margin:20px 0;">
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Nom :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.nom ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Catégorie :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.categorie ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Email :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.email ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Téléphone :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.telephone ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>SIRET :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.siret ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Région :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${Array.isArray(record?.regions) ? record.regions.join(', ') : (record?.regions ?? 'N/A')}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Site web :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.site_web ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Description :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.description ?? 'N/A'}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Nom :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.nom ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Catégorie :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.categorie ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Email :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.email ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Téléphone :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.telephone ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>SIRET :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.siret ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Région :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(Array.isArray(record?.regions) ? record.regions.join(', ') : (record?.regions ?? 'N/A'))}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Site web :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.site_web ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Description :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.description ?? 'N/A')}</td></tr>
     </table>
     <p style="margin-top:20px;">
       <a href="https://mariable.fr/admin/professional-registrations" style="background:#7F9474; color:#fff; padding:12px 24px; text-decoration:none; border-radius:4px;">Voir dans l'admin</a>

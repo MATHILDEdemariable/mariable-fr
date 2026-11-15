@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 
 const corsHeaders = {
@@ -28,7 +29,7 @@ const handler = async (_request) => {
     const emailClient = record?.email_client ?? 'inconnu';
     const emailPresta = record?.email_presta ?? 'inconnu';
     
-    console.log('📧 Données reçues:', { id, emailClient, emailPresta });
+    console.log('Contact notification received');
     
     const bodyContent = JSON.stringify({
       "from": "Mariable <mathilde@mariable.fr>",
@@ -141,11 +142,11 @@ const handler = async (_request) => {
     <div class="message-block">
       <div class="message-content">
         <strong>Message :</strong><br/>
-        ${message}
+        ${escapeEmailHtml(message)}
       </div>
       
       <div class="client-info">
-        <strong>Email du Client :</strong> ${emailClient}
+        <strong>Email du Client :</strong> ${escapeEmailHtml(emailClient)}
       </div>
     </div>
     

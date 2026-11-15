@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2.0.0";
@@ -47,12 +48,12 @@ const handler = async (req: Request): Promise<Response> => {
       
       <h2>📋 Informations utilisateur</h2>
       <ul>
-        <li><strong>Email:</strong> ${email}</li>
-        <li><strong>Nom complet:</strong> ${fullName}</li>
-        <li><strong>Téléphone:</strong> ${phone}</li>
-        <li><strong>Date de mariage:</strong> ${weddingDate}</li>
+        <li><strong>Email:</strong> ${escapeEmailHtml(email)}</li>
+        <li><strong>Nom complet:</strong> ${escapeEmailHtml(fullName)}</li>
+        <li><strong>Téléphone:</strong> ${escapeEmailHtml(phone)}</li>
+        <li><strong>Date de mariage:</strong> ${escapeEmailHtml(weddingDate)}</li>
         <li><strong>Date d'inscription:</strong> ${new Date(created_at).toLocaleString('fr-FR')}</li>
-        <li><strong>ID utilisateur:</strong> ${user_id}</li>
+        <li><strong>ID utilisateur:</strong> ${escapeEmailHtml(user_id)}</li>
       </ul>
 
       <h2>🔍 Actions recommandées</h2>
@@ -71,7 +72,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Mariable <noreply@mariable.fr>",
       to: ["mathilde@mariable.fr"],
-      subject: `🎉 Nouvelle inscription: ${fullName} (${email})`,
+      subject: `🎉 Nouvelle inscription: ${escapeEmailHtml(fullName)} (${escapeEmailHtml(email)})`,
       html: emailContent,
     });
 

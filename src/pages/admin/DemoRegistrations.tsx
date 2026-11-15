@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 import AdminLayout from '@/components/admin/AdminLayout';
 import { Button } from '@/components/ui/button';
+import { escapeCsvCell } from '@/lib/csvSecurity';
 
 type LeadRow = { id: string; full_name: string; email: string; job: string; created_at: string };
 
@@ -32,7 +33,7 @@ const DemoRegistrations = () => {
   }, [isAuthenticated, isPlaybook]);
 
   const handleExportCsv = () => {
-    const escapeCell = (value: string) => `"${String(value ?? '').replace(/"/g, '""')}"`;
+    const escapeCell = escapeCsvCell;
     const rows = [['Date', 'Nom', 'Email', 'Métier'], ...registrations.map((r) => [
       new Date(r.created_at).toLocaleString('fr-FR'), r.full_name, r.email, r.job,
     ])];

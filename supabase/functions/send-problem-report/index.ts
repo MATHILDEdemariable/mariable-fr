@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -43,19 +44,19 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Mariable <noreply@mariable.fr>",
       to: ["mathilde@mariable.fr"],
-      subject: `[Problème Dashboard] ${subjectLabel}`,
+      subject: `[Problème Dashboard] ${escapeEmailHtml(subjectLabel)}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #4a5d4a;">Nouveau signalement de problème</h2>
           
           <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <p><strong>Email de l'utilisateur :</strong> ${email}</p>
-            <p><strong>Catégorie :</strong> ${subjectLabel}</p>
+            <p><strong>Email de l'utilisateur :</strong> ${escapeEmailHtml(email)}</p>
+            <p><strong>Catégorie :</strong> ${escapeEmailHtml(subjectLabel)}</p>
           </div>
           
           <div style="background-color: #fff; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
             <h3 style="margin-top: 0; color: #333;">Message :</h3>
-            <p style="white-space: pre-wrap; color: #555;">${message}</p>
+            <p style="white-space: pre-wrap; color: #555;">${escapeEmailHtml(message)}</p>
           </div>
           
           <p style="color: #888; font-size: 12px; margin-top: 20px;">
@@ -76,13 +77,13 @@ const handler = async (req: Request): Promise<Response> => {
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #4a5d4a;">Merci de nous avoir contactés !</h2>
           
-          <p>Nous avons bien reçu votre message concernant : <strong>${subjectLabel}</strong></p>
+          <p>Nous avons bien reçu votre message concernant : <strong>${escapeEmailHtml(subjectLabel)}</strong></p>
           
           <p>Notre équipe reviendra vers vous dans les plus brefs délais.</p>
           
           <div style="background-color: #f5f5f5; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="margin-top: 0; color: #333;">Votre message :</h3>
-            <p style="white-space: pre-wrap; color: #555;">${message}</p>
+            <p style="white-space: pre-wrap; color: #555;">${escapeEmailHtml(message)}</p>
           </div>
           
           <p>À très bientôt,<br>L'équipe Mariable</p>

@@ -20,7 +20,7 @@ serve(async (req) => {
     )
 
     const body = await req.json()
-    console.log('📝 Données reçues:', { nom: body.nom, categorie: body.categorie, email: body.email });
+    console.log('Professional registration received');
     
     // Validation basique
     if (!body.nom || !body.email || !body.siret || !body.categorie) {

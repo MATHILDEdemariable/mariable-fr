@@ -4,7 +4,7 @@ import { Resend } from 'npm:resend@4.0.0';
 import { renderAsync } from 'npm:@react-email/components@0.0.22';
 import { PasswordResetEmail } from './_templates/password-reset.tsx';
 
-const resend = new Resend(Deno.env.get('RESEND_API_KEY') as string);
+const resendApiKey = Deno.env.get('RESEND_API_KEY');
 const hookSecret = Deno.env.get('SEND_AUTH_EMAIL_HOOK_SECRET') as string;
 
 const corsHeaders = {
@@ -31,7 +31,11 @@ Deno.serve(async (req) => {
     const payload = await req.text();
     const headers = Object.fromEntries(req.headers);
     
-    // Verify webhook signature if secret is provided
+    // Missing hook configuration must never allow unsigned auth emails.
+    if (!hookSecret || !resendApiKey) {
+      return new Response('Service unavailable', { status: 503, headers: corsHeaders });
+    }
+    // Verify webhook signature before reading or using any event data.
     if (hookSecret) {
       const wh = new Webhook(hookSecret);
       try {
@@ -46,7 +50,6 @@ Deno.serve(async (req) => {
     }
 
     const data = JSON.parse(payload);
-    console.log('📧 Email data received:', data);
 
     const {
       user,
@@ -83,6 +86,7 @@ Deno.serve(async (req) => {
 
     console.log('📤 Sending password reset email...');
     
+    const resend = new Resend(resendApiKey);
     const { error } = await resend.emails.send({
       from: 'Mariable <noreply@mariable.fr>',
       to: [user.email],
@@ -95,7 +99,7 @@ Deno.serve(async (req) => {
       throw error;
     }
 
-    console.log('✅ Password reset email sent successfully to:', user.email);
+    console.log('Password reset email sent successfully');
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

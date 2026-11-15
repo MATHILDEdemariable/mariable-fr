@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -18,7 +19,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { record } = await req.json();
-    console.log("📧 Nouveau message prestataire:", record);
+    console.log('Vendor message notification received');
 
     const vendorName = record.vendor_name || "Non spécifié";
     const userEmail = record.user_email || "Non renseigné";
@@ -32,14 +33,14 @@ const handler = async (req: Request): Promise<Response> => {
       
       <h2>📋 Détails</h2>
       <ul>
-        <li><strong>Prestataire :</strong> ${vendorName}</li>
-        <li><strong>Email utilisateur :</strong> ${userEmail}</li>
+        <li><strong>Prestataire :</strong> ${escapeEmailHtml(vendorName)}</li>
+        <li><strong>Email utilisateur :</strong> ${escapeEmailHtml(userEmail)}</li>
         <li><strong>Date :</strong> ${createdAt}</li>
       </ul>
 
       <h2>📝 Message</h2>
       <blockquote style="border-left: 3px solid #ccc; padding-left: 12px; margin: 12px 0; color: #333;">
-        ${message.replace(/\n/g, "<br>")}
+        ${escapeEmailHtml(message).replace(/\n/g, "<br>")}
       </blockquote>
 
       <p>
@@ -54,7 +55,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "Mariable <noreply@mariable.fr>",
       to: ["mathilde@mariable.fr"],
-      subject: `💬 Nouveau message pour ${vendorName} (de ${userEmail})`,
+      subject: `💬 Nouveau message pour ${escapeEmailHtml(vendorName)} (de ${escapeEmailHtml(userEmail)})`,
       html: emailContent,
     });
 

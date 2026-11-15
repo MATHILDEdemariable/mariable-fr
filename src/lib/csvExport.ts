@@ -1,6 +1,7 @@
 /**
  * Utilitaire pour l'export CSV des utilisateurs admin
  */
+import { escapeCsvCell } from './csvSecurity';
 
 export interface UserExportData {
   email: string;
@@ -68,9 +69,7 @@ export const exportUsersToCSV = (users: any[]): void => {
     const csvContent = [
       headers.join(','),
       ...csvData.map(row => 
-        Object.values(row).map(value => 
-          `"${String(value).replace(/"/g, '""')}"`
-        ).join(',')
+        Object.values(row).map(escapeCsvCell).join(',')
       )
     ].join('\n');
 
@@ -266,12 +265,12 @@ export const exportVendorContactsToCSV = (contacts: any[]): void => {
       headers.join(','),
       ...csvData.map(row => [
         row.date,
-        `"${row.email}"`,
-        `"${row.prestataire}"`,
+        row.email,
+        row.prestataire,
         row.date_mariage,
-        `"${row.message.replace(/"/g, '""')}"`,
+        row.message,
         row.statut
-      ].join(','))
+      ].map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -331,14 +330,14 @@ export const exportPaymentLeadsToCSV = (leads: any[]): void => {
       headers.join(','),
       ...csvData.map(row => [
         row.date,
-        `"${row.nom_complet}"`,
-        `"${row.email}"`,
-        `"${row.telephone}"`,
+        row.nom_complet,
+        row.email,
+        row.telephone,
         row.categorie,
-        `"${row.message.replace(/"/g, '""')}"`,
+        row.message,
         row.statut,
-        `"${row.notes_admin.replace(/"/g, '""')}"`
-      ].join(','))
+        row.notes_admin
+      ].map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });

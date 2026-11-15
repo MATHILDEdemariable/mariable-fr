@@ -1,5 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4'
 import { corsHeaders } from '../_shared/cors.ts'
+import { requireAdmin } from '../_shared/adminAuth.ts'
 
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
@@ -7,6 +8,8 @@ Deno.serve(async (req) => {
   }
 
   try {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
     const supabaseAdmin = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
