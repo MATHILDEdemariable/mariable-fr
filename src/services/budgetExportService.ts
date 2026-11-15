@@ -3,6 +3,8 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 
+const escapeBudgetHtml = (value: string): string => String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[character]!);
+
 interface BudgetCategory {
   name: string;
   items: Array<{
@@ -50,7 +52,7 @@ const generatePieChart = (slices: Array<{ name: string; value: number }>): strin
   const legend = slices.map((slice, index) => `
     <div style="display: flex; align-items: center; gap: 6px; font-size: 10px; margin-bottom: 3px;">
       <span style="width: 10px; height: 10px; background: ${PIE_COLORS[index % PIE_COLORS.length]}; display: inline-block;"></span>
-      <span style="flex: 1;">${slice.name}</span>
+      <span style="flex: 1;">${escapeBudgetHtml(slice.name)}</span>
       <strong>${formatCurrency(slice.value)} · ${Math.round((slice.value / total) * 100)} %</strong>
     </div>`).join('');
   return `
@@ -195,7 +197,7 @@ const generateBudgetContent = (data: BudgetExportData): string => {
           <div>
             <!-- Category row -->
             <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 7px 12px; background-color: ${catIndex % 2 === 0 ? '#f7f8f6' : '#ffffff'}; font-weight: 600; font-size: 12px; border-left: 3px solid #63745a; color: #1a1a1a;">
-              <div>${category.name}</div>
+              <div>${escapeBudgetHtml(category.name)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalActual)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalDeposit)}</div>
               <div style="text-align: right;">${formatCurrency(category.totalRemaining)}</div>
@@ -203,7 +205,7 @@ const generateBudgetContent = (data: BudgetExportData): string => {
             
             ${category.items.filter(item => item.name).map((item, itemIndex) => `
               <div style="display: grid; grid-template-columns: 2.5fr 1fr 1fr 1fr; gap: 8px; padding: 5px 12px; border-bottom: 1px solid #eceeed; font-size: 11px; background-color: ${itemIndex % 2 === 0 ? '#ffffff' : '#fafbfa'};">
-                <div style="padding-left: 16px; color: #333;">${item.name}</div>
+                <div style="padding-left: 16px; color: #333;">${escapeBudgetHtml(item.name)}</div>
                 <div style="text-align: right;">${formatCurrency(item.actual)}</div>
                 <div style="text-align: right;">${formatCurrency(item.deposit)}</div>
                 <div style="text-align: right;">${formatCurrency(item.remaining)}</div>
@@ -254,11 +256,11 @@ const generateEstimatedContent = (data: BudgetExportData, currentDate: string): 
       </div>
       ${data.categories.filter((category) => category.totalEstimated > 0 || category.items.some((item) => item.name)).map((category, catIndex) => `
         <div style="${row} padding: 7px 12px; background-color: ${catIndex % 2 === 0 ? '#f7f8f6' : '#ffffff'}; font-weight: 600; font-size: 12px; border-left: 3px solid #63745a;">
-          <div>${category.name}</div><div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
+          <div>${escapeBudgetHtml(category.name)}</div><div style="text-align: right;">${formatCurrency(category.totalEstimated)}</div>
         </div>
         ${category.items.filter((item) => item.name).map((item) => `
           <div style="${row} padding: 5px 12px; border-bottom: 1px solid #eceeed;">
-            <div style="padding-left: 16px; color: #333;">${item.name}</div><div style="text-align: right;">${formatCurrency(item.estimated)}</div>
+            <div style="padding-left: 16px; color: #333;">${escapeBudgetHtml(item.name)}</div><div style="text-align: right;">${formatCurrency(item.estimated)}</div>
           </div>`).join('')}
       `).join('')}
       <div style="${row} padding: 10px 12px; background-color: #63745a; color: #ffffff; font-weight: 700; font-size: 12px;">

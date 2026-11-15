@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Search, Download, Calendar, MapPin, Users, Building2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { fr } from 'date-fns/locale';
+import { escapeCsvCell } from '@/lib/csvSecurity';
 
 interface CarnetAdressesRequest {
   id: string;
@@ -99,7 +100,7 @@ const CarnetAdressesAdmin: React.FC = () => {
         req.commentaires?.replace(/,/g, ';') || '',
         req.source_lieu || '',
         format(new Date(req.created_at), 'dd/MM/yyyy HH:mm', { locale: fr })
-      ].join(','))
+      ].map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv' });

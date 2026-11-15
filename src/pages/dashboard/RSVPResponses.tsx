@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ArrowLeft, Search, Download, Loader2, Phone, Mail, Users, UtensilsCrossed, MessageSquare, Calendar } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { escapeCsvCell } from '@/lib/csvSecurity';
 
 interface RSVPGuest {
   id: string;
@@ -174,8 +175,8 @@ const RSVPResponses: React.FC = () => {
     });
 
     const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      headers.map(escapeCsvCell).join(','),
+      ...rows.map(row => row.map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
