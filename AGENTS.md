@@ -19,6 +19,7 @@
 - Supplied articles with an inline final CTA keep it in blog_posts.content and suppress the template CTA only for their slugs; their portrait covers use object-contain to preserve the complete image.
 - SEO prerender: scripts/prerenderHeads.ts fetches published blog_posts and visible prestataires_rows from Supabase at build and writes full HTML + JSON-LD for every sitemap URL — AI crawlers don't run JS; new content is covered on next publish.
 - Blog EN translations are separate `blog_posts` rows (language en) linked by `translation_of`, served under `/en/<blog path>/<slug>` with hreflang; older native-EN posts keep their original URLs to preserve existing indexing.
+- The November final batch synchronizes article language on direct entry and emits reciprocal prerendered alternates only for its eight slugs, so other pages retain their existing navigation and metadata behavior.
 - User-controlled spreadsheet exports use escapeCsvCell to quote values and neutralize formula prefixes; budget PDF labels are HTML-escaped before DOM insertion to prevent executable content.
 - Privileged maintenance handlers use requireAdmin before service-role operations; auth email hooks fail closed when signature configuration is missing.
 - Email templates escape user-controlled HTML text with escapeEmailHtml; premium activation validates caller ownership and the exact premium Stripe price before granting access.
