@@ -1,7 +1,7 @@
-import { describe, expect, it, mock } from 'bun:test';
+import { describe, expect, it, vi } from 'vitest';
 
 const sentEvents: Array<{ name: string; parameters: Record<string, unknown> }> = [];
-mock.module('@/lib/consentedTracking', () => ({
+vi.mock('@/lib/consentedTracking', () => ({
   sendConsentedMetaEvent: async (name: string, parameters: Record<string, unknown>) => {
     sentEvents.push({ name, parameters });
   },
