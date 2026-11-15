@@ -59,7 +59,7 @@ export const BLOG_PUBLICATION_NOV_2026 = [
   {
     slug: 'mariage-avec-ou-sans-enfants',
     title: 'Mariage avec ou sans enfants : comment décider ?',
-    description: 'Mariage sans enfants ou avec ? Avantages, inconvénients, solutions intermédiaires et phrases pour l’annoncer sur le faire-part sans froisser personne.',
+    description: "Mariage sans enfants ou avec ? Avantages, inconvénients, solutions intermédiaires et phrases pour l'annoncer sur le faire-part sans froisser personne.",
     h1: "Mariage avec ou sans enfants : comment décider et l'annoncer sans froisser",
     imageAlt: "Enfants d'honneur pieds nus courant dans le jardin d'une bastide en Provence",
     ctaTitle: '',
