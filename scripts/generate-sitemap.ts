@@ -84,6 +84,7 @@ interface Row {
   slug: string | null;
   updated_at: string | null;
   audience?: string | null;
+  translation_of?: string | null;
 }
 
 async function fetchAll(table: string, query: string): Promise<Row[]> {
@@ -128,7 +129,7 @@ function buildXml(prestataires: Row[], blogPosts: Row[]): string {
     ),
     ...blogPosts.map(
       (p) =>
-        `  <url>\n    <loc>${BASE_URL}${p.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage"}/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
+        `  <url>\n    <loc>${BASE_URL}${['wedding-photographer-videographer-duo', 'wedding-entertainment-ideas-2027', 'should-you-go-to-a-wedding-fair', 'wedding-fairs-france-2027'].includes(p.slug ?? '') && p.translation_of ? '/en' : ''}${p.audience === "pro" ? "/conseils-professionnels" : "/conseilsmariage"}/${p.slug}</loc>${lastmodTag(formatDate(p.updated_at))}\n    <changefreq>monthly</changefreq>\n    <priority>0.7</priority>\n  </url>`,
     ),
   ];
 
@@ -143,7 +144,7 @@ async function main() {
     ),
     fetchAll(
       "blog_posts",
-      "select=slug,updated_at,audience&status=eq.published&limit=10000",
+      "select=slug,updated_at,audience,translation_of&status=eq.published&limit=10000",
     ),
   ]);
 
