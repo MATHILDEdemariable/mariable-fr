@@ -42,7 +42,7 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     const { record }: { record: ReservationRecord } = await req.json();
     
-    console.log("Nouvelle réservation Le Jour M reçue:", record);
+    console.log('Reservation notification received');
 
     const formatContacts = (contacts: any[]) => {
       if (!contacts || contacts.length === 0) return '';

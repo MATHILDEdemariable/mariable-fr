@@ -37,7 +37,7 @@ serve(async (req) => {
       throw new Error("User authentication failed");
     }
 
-    console.log('✅ User authenticated:', user.email);
+    console.log('User authenticated');
 
     // Initialize Stripe
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {

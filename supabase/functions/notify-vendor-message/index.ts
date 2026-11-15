@@ -18,7 +18,7 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const { record } = await req.json();
-    console.log("📧 Nouveau message prestataire:", record);
+    console.log('Vendor message notification received');
 
     const vendorName = record.vendor_name || "Non spécifié";
     const userEmail = record.user_email || "Non renseigné";

@@ -28,7 +28,7 @@ serve(async (req) => {
     
     if (authError || !user) throw new Error("User authentication failed");
 
-    console.log('✅ User authenticated:', user.email);
+    console.log('User authenticated');
 
     const { data: profile, error: profileError } = await supabaseClient
       .from('profiles')

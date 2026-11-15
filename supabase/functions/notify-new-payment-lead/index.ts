@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
 
   try {
     const { record } = await req.json();
-    console.log('🚀 notify-new-payment-lead:', record?.email);
+    console.log('Payment lead notification received');
 
     const html = `
 <!DOCTYPE html>

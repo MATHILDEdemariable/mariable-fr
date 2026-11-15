@@ -31,7 +31,11 @@ Deno.serve(async (req) => {
     const payload = await req.text();
     const headers = Object.fromEntries(req.headers);
     
-    // Verify webhook signature if secret is provided
+    // Missing hook configuration must never allow unsigned auth emails.
+    if (!hookSecret) {
+      return new Response('Service unavailable', { status: 503, headers: corsHeaders });
+    }
+    // Verify webhook signature before reading or using any event data.
     if (hookSecret) {
       const wh = new Webhook(hookSecret);
       try {
@@ -46,7 +50,6 @@ Deno.serve(async (req) => {
     }
 
     const data = JSON.parse(payload);
-    console.log('📧 Email data received:', data);
 
     const {
       user,
@@ -95,7 +98,7 @@ Deno.serve(async (req) => {
       throw error;
     }
 
-    console.log('✅ Password reset email sent successfully to:', user.email);
+    console.log('Password reset email sent successfully');
 
     return new Response(JSON.stringify({ success: true }), {
       status: 200,

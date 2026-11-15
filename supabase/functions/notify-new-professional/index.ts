@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
 
   try {
     const { record } = await req.json();
-    console.log('🚀 notify-new-professional:', record?.email);
+    console.log('Professional notification received');
 
     const html = `
 <!DOCTYPE html>
