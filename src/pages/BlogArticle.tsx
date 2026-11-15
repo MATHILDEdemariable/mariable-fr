@@ -113,10 +113,13 @@ const BlogArticlePage = () => {
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  const lotThreeSlugs = ['duo-photographe-videaste-mariage', 'animations-mariage-tendances-2027', 'faut-il-aller-salon-du-mariage', 'salons-du-mariage-2027', 'wedding-photographer-videographer-duo', 'wedding-entertainment-ideas-2027', 'should-you-go-to-a-wedding-fair', 'wedding-fairs-france-2027'];
+  const isLotThree = lotThreeSlugs.includes(slug ?? '');
+  const languageSyncedSlug = React.useRef<string | null>(null);
 
   const { data: post, isLoading, error } = useQuery({
     queryKey: ['blog_post', slug],
-    queryFn: () => fetchBlogPostBySlug(slug!),
+    queryFn: () => slug ? fetchBlogPostBySlug(slug) : Promise.resolve(null),
     enabled: !!slug,
   });
 
@@ -139,14 +142,20 @@ const BlogArticlePage = () => {
   // Le toggle FR/EN bascule vers l'article jumeau
   const uiLang = i18n.language?.startsWith('en') ? 'en' : 'fr';
   React.useEffect(() => {
+    if (!isLotThree || !post || languageSyncedSlug.current === post.slug) return;
+    languageSyncedSlug.current = post.slug;
+    i18n.changeLanguage(post.language === 'en' ? 'en' : 'fr');
+  }, [isLotThree, post, i18n]);
+  React.useEffect(() => {
+    if (isLotThree && ((post as any)?.language || 'fr') !== (i18n.language?.startsWith('en') ? 'en' : 'fr') && uiLang !== (i18n.language?.startsWith('en') ? 'en' : 'fr')) return;
     if (post && counterpartPath && counterpart?.language === uiLang && ((post as any).language || 'fr') !== uiLang) {
       navigate(counterpartPath);
     }
-  }, [uiLang, post, counterpart, counterpartPath, navigate]);
+  }, [uiLang, post, counterpart, counterpartPath, navigate, isLotThree, i18n]);
 
   const { data: relatedPosts = [] } = useQuery({
     queryKey: ['related_posts', slug, postAudience, postIsEnglish],
-    queryFn: () => fetchRelatedPosts(slug!, postAudience, postIsEnglish ? 'en' : 'fr'),
+    queryFn: () => slug ? fetchRelatedPosts(slug, postAudience, postIsEnglish ? 'en' : 'fr') : Promise.resolve([]),
     enabled: !!slug && !!post,
   });
 
@@ -269,11 +278,11 @@ const BlogArticlePage = () => {
 
   return (
     <>
-      {isEnglish && (
+      {(isEnglish || isLotThree) && (
         <Helmet>
-          <html lang="en" />
-          <meta name="language" content="en" />
-          <meta property="og:locale" content="en_US" />
+          <html lang={isEnglish ? 'en' : 'fr'} />
+          <meta name="language" content={isEnglish ? 'en' : 'fr'} />
+          <meta property="og:locale" content={isEnglish ? 'en_US' : 'fr_FR'} />
         </Helmet>
       )}
       <SEO 

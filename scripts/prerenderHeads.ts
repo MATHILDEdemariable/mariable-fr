@@ -7,7 +7,7 @@ import { BLOG_PUBLICATION_NOV_2026 } from '../src/data/blogPublicationNov2026';
 
 const SITE_URL = "https://mariable.fr";
 
-type PageHead = { path: string; title: string; description: string; h1: string; links?: [string, string][]; bodyHtml?: string; jsonLd?: object[]; ogType?: string };
+type PageHead = { path: string; title: string; description: string; h1: string; links?: [string, string][]; bodyHtml?: string; jsonLd?: object[]; ogType?: string; articleAlternates?: { language: string; counterpart: string; image?: string } };
 
 const SUPABASE_URL = process.env.VITE_SUPABASE_URL ?? "https://bgidfcqktsttzlwlumtz.supabase.co";
 const SUPABASE_ANON_KEY = process.env.VITE_SUPABASE_PUBLISHABLE_KEY ?? "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJnaWRmY3FrdHN0dHpsd2x1bXR6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDM0MjM1MTYsImV4cCI6MjA1ODk5OTUxNn0.ij6dWi7LiWNk9mh3SknY1N8-upp9l20R7CZZDeAMEys";
@@ -131,6 +131,11 @@ const buildHead = (page: PageHead) => {
     `<meta name="twitter:title" content="${title}" />`,
     `<meta name="twitter:image" content="${SITE_URL}/og-image.jpg" />`,
     `<meta name="twitter:description" content="${description}" />`,
+    ...(page.articleAlternates ? [
+      `<link rel="alternate" hreflang="${page.articleAlternates.language}" href="${url}" data-rh="true" />`,
+      `<link rel="alternate" hreflang="${page.articleAlternates.language === 'en' ? 'fr' : 'en'}" href="${SITE_URL}${page.articleAlternates.counterpart}" data-rh="true" />`,
+      `<link rel="alternate" hreflang="x-default" href="${page.articleAlternates.language === 'en' ? SITE_URL + page.articleAlternates.counterpart : url}" data-rh="true" />`,
+    ] : []),
     ...(page.jsonLd ?? []).map((data) => `<script type="application/ld+json">${JSON.stringify(data).replace(/</g, "\\u003c")}</script>`),
   ].join("\n    ");
 };
@@ -168,7 +173,13 @@ export const prerenderHeadsPlugin = (): Plugin => {
       const org = p.path === "/" || p.path === "/pro-solutions" ? [ORGANIZATION, SOFTWARE] : [];
       return { ...p, jsonLd: [...org, ...crumbs] };
     });
-    posts.filter((post) => post.slug).forEach((post) => allPages.push(buildArticlePage(post, BLOG_PUBLICATION_NOV_2026.find((a) => a.slug === post.slug))));
+    posts.filter((post) => post.slug).forEach((post) => {
+      const page = buildArticlePage(post, BLOG_PUBLICATION_NOV_2026.find((a) => a.slug === post.slug));
+      const lotThree = ['duo-photographe-videaste-mariage', 'animations-mariage-tendances-2027', 'faut-il-aller-salon-du-mariage', 'salons-du-mariage-2027', 'wedding-photographer-videographer-duo', 'wedding-entertainment-ideas-2027', 'should-you-go-to-a-wedding-fair', 'wedding-fairs-france-2027'].includes(post.slug);
+      const counterpart = lotThree ? posts.find((other) => post.translation_of ? other.id === post.translation_of : other.translation_of === post.id) : undefined;
+      if (counterpart) page.articleAlternates = { language: post.language, counterpart: `${counterpart.translation_of ? '/en' : ''}/conseilsmariage/${counterpart.slug}`, image: post.background_image_url };
+      allPages.push(page);
+    });
     vendors.filter((v) => v.slug && v.nom).forEach((v) => allPages.push(buildVendorPage(v)));
     // Traductions EN (/en/...) : ajoutées au sitemap publié si absentes
     const enSitemapPath = path.join(distDir, "sitemap.xml");
@@ -201,6 +212,10 @@ export const prerenderHeadsPlugin = (): Plugin => {
         // dist/index.html sert aussi de repli pour toutes les autres routes :
         // pas de contenu texte pour "/" afin d'éviter un flash de l'accueil ailleurs.
         let withHead = stripped.replace("</head>", `    ${buildHead(page)}\n  </head>`);
+        if (page.articleAlternates) {
+          withHead = withHead.replace(/<html([^>]*)lang="[^"]*"/, `<html$1lang="${page.articleAlternates.language}"`);
+          if (page.articleAlternates.image) withHead = withHead.replace(/(<meta (?:property="og:image"|name="twitter:image") content=")[^"]*/g, `$1${escapeHtml(page.articleAlternates.image)}`);
+        }
         if (page.path !== "/") {
           // Helmet owns these tags after mounting; mark only these new article fallbacks
           // so their metadata is not duplicated with the template's tags.
