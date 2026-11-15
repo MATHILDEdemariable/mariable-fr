@@ -14,7 +14,7 @@ const TOTAL_SLIDES = 6;
 const WHATSAPP_URL =
   'https://wa.me/33760108189?text=' +
   encodeURIComponent('Bonjour Mathilde, suite à votre proposition pour le Salon du Mariage…');
-const CONTACT_EMAIL = 'mathildelambert.contact@gmail.com';
+const CONTACT_EMAIL = 'mathilde@mariable.fr';
 
 function Slide({ children, dark = false, id }: { children: React.ReactNode; dark?: boolean; id: string }) {
   return (
