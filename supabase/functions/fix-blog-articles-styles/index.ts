@@ -1,4 +1,5 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4'
+import { requireAdmin } from '../_shared/adminAuth.ts';
 
 const customStyles = `body {
   font-family: system-ui, -apple-system, sans-serif;
@@ -18,6 +19,8 @@ a:hover { color: #0052a3; }`;
 
 Deno.serve(async (req) => {
   try {
+    const denied = await requireAdmin(req);
+    if (denied) return denied;
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
     
