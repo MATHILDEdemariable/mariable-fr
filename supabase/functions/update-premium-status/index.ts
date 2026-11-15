@@ -17,16 +17,27 @@ serve(async (req) => {
   }
 
   try {
+    const authClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    );
+    const bearer = req.headers.get('Authorization');
+    const { data: callerData, error: callerError } = await authClient.auth.getUser(
+      bearer?.startsWith('Bearer ') ? bearer.slice(7) : '',
+    );
+    if (callerError || !callerData.user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     // Récupérer le session ID depuis le body
     let sessionId;
     
     if (req.method === 'POST') {
       const body = await req.json();
       sessionId = body.session_id || body.sessionId;
-      console.log('📋 Body received:', JSON.stringify(body, null, 2));
     }
     
-    console.log('📋 Session ID:', sessionId);
     
     if (!sessionId) {
       console.error('❌ Session ID manquant');
@@ -71,7 +82,17 @@ serve(async (req) => {
     
     console.log('💳 Session status:', session.payment_status);
     console.log('💳 Session mode:', session.mode);
-    console.log('👤 Customer email:', session.customer_details?.email);
+    const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
+    const checkoutOwner = session.metadata?.userId || session.client_reference_id;
+    if (checkoutOwner !== callerData.user.id || session.mode !== 'payment' ||
+        session.status !== 'complete' || session.metadata?.type === 'ebook' ||
+        lineItems.data.length !== 1 || lineItems.has_more ||
+        lineItems.data[0].price?.id !== 'price_1SyYn8KHghqBzkgj249P8325' ||
+        lineItems.data[0].quantity !== 1) {
+      return new Response(JSON.stringify({ error: 'Invalid premium purchase' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     if (session.payment_status !== 'paid') {
       console.error('❌ Paiement non confirmé, statut:', session.payment_status);
@@ -103,7 +124,6 @@ serve(async (req) => {
       );
     }
 
-    console.log('🔍 Looking for user with email:', customerEmail);
 
     // Create Supabase service client
     const supabaseService = createClient(
@@ -130,7 +150,6 @@ serve(async (req) => {
     const perPage = 1000; // Maximum per page
     
     while (!user) {
-      console.log(`🔍 Searching users page ${page} for email:`, customerEmail);
       
       const { data: userData, error: userError } = await supabaseService.auth.admin.listUsers({
         page: page,
@@ -162,7 +181,7 @@ serve(async (req) => {
     }
     
     if (!user) {
-      console.error('❌ User not found for email:', customerEmail);
+      console.error('Premium purchase account not found');
       return new Response(
         JSON.stringify({ 
           success: false, 
@@ -204,7 +223,6 @@ serve(async (req) => {
     }
 
     console.log('✅ Premium status updated successfully for user:', user.id);
-    console.log('✅ Updated profile:', updatedProfile);
 
     return new Response(
       JSON.stringify({ 

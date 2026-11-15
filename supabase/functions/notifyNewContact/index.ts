@@ -28,7 +28,7 @@ const handler = async (_request) => {
     const emailClient = record?.email_client ?? 'inconnu';
     const emailPresta = record?.email_presta ?? 'inconnu';
     
-    console.log('📧 Données reçues:', { id, emailClient, emailPresta });
+    console.log('Contact notification received');
     
     const bodyContent = JSON.stringify({
       "from": "Mariable <mathilde@mariable.fr>",
