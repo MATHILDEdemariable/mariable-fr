@@ -98,10 +98,80 @@ export const BLOG_PUBLICATION_NOV_2026 = [
 },
   {
     "slug": "salons-du-mariage-2027",
-    "title": "Salon du mariage 2027 : dates par ville et conseils",
-    "description": "Faut-il aller à un salon du mariage, même avec tes prestataires réservés ? Avantages, inconvénients, conseils et la liste des salons 2027 avec leur site.",
-    "h1": "Salons du mariage 2026-2027 : faut-il y aller, et la liste par ville",
+    "title": "Salon du mariage 2027 : la liste par ville et date",
+    "description": "Tous les salons du mariage 2027 en France : Paris, Lyon, Bordeaux, Toulouse et 25 autres villes, avec les dates, les lieux et le lien vers chaque salon.",
+    "h1": "Salons du mariage 2027 : la liste complète par ville et par date",
     "imageAlt": "Allée d'un salon du mariage sous une verrière, entre des stands de robes et de fleurs",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "duo-photographe-videaste-mariage",
+    "title": "Duo photographe vidéaste mariage : le bon choix ?",
+    "description": "Pourquoi choisir un photographe et un vidéaste qui travaillent déjà ensemble ? Avantages, limites et les questions à poser avant de réserver.",
+    "h1": "Duo photographe et vidéaste : pourquoi choisir des pros qui travaillent déjà ensemble",
+    "imageAlt": "Photographe et vidéaste préparant le déroulé du jour J sur la terrasse d'un château",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "animations-mariage-tendances-2027",
+    "title": "Animations mariage tendance 2027 : 10 idées",
+    "description": "Illustratrice en direct, peintre, bar à fleurs, atelier bijoux ou parfum : les animations de mariage tendance pour 2027-2028, et comment les choisir.",
+    "h1": "Animations de mariage tendance 2027-2028 : les idées qui changent du photobooth",
+    "imageAlt": "Illustratrice dessinant le portrait de deux invitées pendant un vin d'honneur en plein air",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "faut-il-aller-salon-du-mariage",
+    "title": "Faut-il aller à un salon du mariage ? Nos conseils",
+    "description": "Salon du mariage : avantages, inconvénients, quand y aller et comment le préparer. Et pourquoi y aller même quand tes prestataires sont déjà réservés.",
+    "h1": "Faut-il aller à un salon du mariage ? Avantages, inconvénients et conseils",
+    "imageAlt": "Future mariée prenant des notes devant le stand d'une fleuriste dans un salon du mariage",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "wedding-photographer-videographer-duo",
+    "title": "Wedding Photographer and Videographer Duo: A Good Choice?",
+    "description": "Why choose a wedding photographer and videographer who already work together? Benefits, drawbacks and questions to ask before booking.",
+    "h1": "Wedding photographer and videographer duo: why choose professionals who already work together",
+    "imageAlt": "Photographer and videographer preparing the wedding-day timeline on the terrace of a château",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "wedding-entertainment-ideas-2027",
+    "title": "Trending Wedding Entertainment for 2027: 10 Ideas",
+    "description": "Live illustration, painting, flower bars, jewellery or perfume workshops: discover wedding entertainment trends for 2027–2028 and how to choose.",
+    "h1": "Wedding entertainment trends for 2027–2028: ideas beyond the photo booth",
+    "imageAlt": "Illustrator drawing portraits of two guests during an outdoor drinks reception",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "should-you-go-to-a-wedding-fair",
+    "title": "Should You Go to a Wedding Fair? Our Tips",
+    "description": "Wedding fairs: pros, cons, when to go and how to prepare. Plus, why they are worth visiting even when you have already booked your suppliers.",
+    "h1": "Should You Go to a Wedding Fair? Pros, Cons and Tips",
+    "imageAlt": "Bride-to-be taking notes at a florist’s stand at a wedding fair",
+    "ctaTitle": "",
+    "ctaDescription": "",
+    "inlineCta": true
+},
+  {
+    "slug": "wedding-fairs-france-2027",
+    "title": "Wedding Fairs in France 2027: List by City and Date",
+    "description": "Wedding fairs in France in 2027: Paris, Lyon, Bordeaux, Toulouse and 25 other cities, with dates, venues and a link to each fair.",
+    "h1": "Wedding Fairs in 2027: The Complete List by City and Date",
+    "imageAlt": "Wedding fair aisle beneath a glass roof, between dress and flower stands",
     "ctaTitle": "",
     "ctaDescription": "",
     "inlineCta": true
