@@ -1,6 +1,7 @@
 
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
 import { SmtpClient } from 'https://deno.land/x/smtp@v0.7.0/mod.ts';
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -42,11 +43,11 @@ serve(async (req) => {
       <h2>Nouvelle inscription sur Mariable</h2>
       <p>Un nouvel utilisateur vient de s'inscrire :</p>
       <ul>
-        <li><strong>Nom :</strong> ${lastName}</li>
-        <li><strong>Prénom :</strong> ${firstName}</li>
-        <li><strong>Email :</strong> ${email}</li>
-        <li><strong>Type d'utilisateur :</strong> ${userType}</li>
-        <li><strong>Date d'inscription :</strong> ${date}</li>
+        <li><strong>Nom :</strong> ${escapeEmailHtml(lastName)}</li>
+        <li><strong>Prénom :</strong> ${escapeEmailHtml(firstName)}</li>
+        <li><strong>Email :</strong> ${escapeEmailHtml(email)}</li>
+        <li><strong>Type d'utilisateur :</strong> ${escapeEmailHtml(userType)}</li>
+        <li><strong>Date d'inscription :</strong> ${escapeEmailHtml(date)}</li>
       </ul>
     `;
 

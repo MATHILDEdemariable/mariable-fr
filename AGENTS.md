@@ -20,3 +20,4 @@
 - Blog EN translations are separate `blog_posts` rows (language en) linked by `translation_of`, served under `/en/<blog path>/<slug>` with hreflang; older native-EN posts keep their original URLs to preserve existing indexing.
 - User-controlled spreadsheet exports use escapeCsvCell to quote values and neutralize formula prefixes; budget PDF labels are HTML-escaped before DOM insertion to prevent executable content.
 - Privileged maintenance handlers use requireAdmin before service-role operations; auth email hooks fail closed when signature configuration is missing.
+- Email templates escape user-controlled HTML text with escapeEmailHtml; premium activation validates caller ownership and the exact premium Stripe price before granting access.
