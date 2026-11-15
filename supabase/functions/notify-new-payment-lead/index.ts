@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 
 const corsHeaders = {
@@ -22,11 +23,11 @@ Deno.serve(async (req) => {
     <h2 style="color:#7F9474; font-family: Georgia, serif;">💼 Nouvelle demande de démo professionnelle</h2>
     <p>Un professionnel vient de demander une démo via /partenariat :</p>
     <table style="width:100%; border-collapse:collapse; margin:20px 0;">
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Nom :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.full_name ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Email :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.email ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Téléphone :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.phone ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Catégorie :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${record?.category ?? 'N/A'}</td></tr>
-      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Message :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${(record?.message ?? 'Aucun').replace(/\n/g, '<br>')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Nom :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.full_name ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Email :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.email ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Téléphone :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.phone ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Catégorie :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.category ?? 'N/A')}</td></tr>
+      <tr><td style="padding:8px; border-bottom:1px solid #eee;"><strong>Message :</strong></td><td style="padding:8px; border-bottom:1px solid #eee;">${escapeEmailHtml(record?.message ?? 'Aucun').replace(/\n/g, '<br>')}</td></tr>
     </table>
     <p>👉 À recontacter sous 24h.</p>
     <p style="margin-top:20px;">

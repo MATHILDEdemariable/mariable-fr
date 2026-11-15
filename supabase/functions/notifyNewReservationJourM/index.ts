@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
@@ -49,10 +50,10 @@ const handler = async (req: Request): Promise<Response> => {
       
       return contacts.map((contact, index) => 
         `<p><strong>Contact ${index + 1}:</strong><br>
-        Nom: ${contact.nom || 'Non renseigné'}<br>
-        Téléphone: ${contact.telephone || 'Non renseigné'}<br>
-        Rôle: ${contact.role || 'Non renseigné'}<br>
-        ${contact.commentaire ? `Commentaire: ${contact.commentaire}<br>` : ''}
+        Nom: ${escapeEmailHtml(contact.nom || 'Non renseigné')}<br>
+        Téléphone: ${escapeEmailHtml(contact.telephone || 'Non renseigné')}<br>
+        Rôle: ${escapeEmailHtml(contact.role || 'Non renseigné')}<br>
+        ${contact.commentaire ? `Commentaire: ${escapeEmailHtml(contact.commentaire)}<br>` : ''}
         </p>`
       ).join('');
     };
@@ -62,45 +63,45 @@ const handler = async (req: Request): Promise<Response> => {
       
       return Object.entries(prestataires)
         .filter(([_, value]) => value && value !== '')
-        .map(([key, value]) => `<p><strong>${key.replace('_', ' ')}:</strong> ${value}</p>`)
+        .map(([key, value]) => `<p><strong>${escapeEmailHtml(key.replace('_', ' '))}:</strong> ${escapeEmailHtml(value)}</p>`)
         .join('');
     };
 
     const emailResponse = await resend.emails.send({
       from: "Mariable <notifications@mariable.fr>",
       to: ["mathilde@mariable.fr"],
-      subject: `Nouvelle réservation Le Jour M - ${record.first_name} ${record.last_name}`,
+      subject: `Nouvelle réservation Le Jour M - ${escapeEmailHtml(record.first_name)} ${escapeEmailHtml(record.last_name)}`,
       html: `
         <h1>Nouvelle demande de réservation Le Jour M</h1>
         
         <h2>Informations du couple</h2>
-        <p><strong>Nom :</strong> ${record.first_name} ${record.last_name}</p>
-        <p><strong>Email :</strong> ${record.email}</p>
-        <p><strong>Téléphone :</strong> ${record.phone}</p>
-        ${record.partner_name ? `<p><strong>Prénom du partenaire :</strong> ${record.partner_name}</p>` : ''}
+        <p><strong>Nom :</strong> ${escapeEmailHtml(record.first_name)} ${escapeEmailHtml(record.last_name)}</p>
+        <p><strong>Email :</strong> ${escapeEmailHtml(record.email)}</p>
+        <p><strong>Téléphone :</strong> ${escapeEmailHtml(record.phone)}</p>
+        ${record.partner_name ? `<p><strong>Prénom du partenaire :</strong> ${escapeEmailHtml(record.partner_name)}</p>` : ''}
         
         <h2>Détails du mariage</h2>
         <p><strong>Date :</strong> ${new Date(record.wedding_date).toLocaleDateString('fr-FR')}</p>
-        <p><strong>Lieu :</strong> ${record.wedding_location}</p>
-        <p><strong>Nombre d'invités :</strong> ${record.guest_count}</p>
-        ${record.budget ? `<p><strong>Budget :</strong> ${record.budget}</p>` : ''}
+        <p><strong>Lieu :</strong> ${escapeEmailHtml(record.wedding_location)}</p>
+        <p><strong>Nombre d'invités :</strong> ${escapeEmailHtml(record.guest_count)}</p>
+        ${record.budget ? `<p><strong>Budget :</strong> ${escapeEmailHtml(record.budget)}</p>` : ''}
         
         <h2>Organisation actuelle</h2>
-        <p>${record.current_organization}</p>
+        <p>${escapeEmailHtml(record.current_organization)}</p>
         
         ${record.deroulement_mariage ? `
         <h2>Déroulé global du mariage</h2>
-        <p>${record.deroulement_mariage}</p>
+        <p>${escapeEmailHtml(record.deroulement_mariage)}</p>
         ` : ''}
         
         ${record.delegation_tasks ? `
         <h2>Délégation des tâches</h2>
-        <p>${record.delegation_tasks}</p>
+        <p>${escapeEmailHtml(record.delegation_tasks)}</p>
         ` : ''}
         
         ${record.specific_needs ? `
         <h2>Besoins spécifiques</h2>
-        <p>${record.specific_needs}</p>
+        <p>${escapeEmailHtml(record.specific_needs)}</p>
         ` : ''}
         
         <h2>Prestataires réservés</h2>
@@ -111,17 +112,17 @@ const handler = async (req: Request): Promise<Response> => {
         
         ${record.services_souhaites && record.services_souhaites.length > 0 ? `
         <h2>Services souhaités</h2>
-        <ul>${record.services_souhaites.map(service => `<li>${service}</li>`).join('')}</ul>
+        <ul>${record.services_souhaites.map(service => `<li>${escapeEmailHtml(service)}</li>`).join('')}</ul>
         ` : ''}
         
         ${record.documents_links ? `
         <h2>Liens documents</h2>
-        <p>${record.documents_links}</p>
+        <p>${escapeEmailHtml(record.documents_links)}</p>
         ` : ''}
         
         ${record.hear_about_us ? `
         <h2>Comment nous ont-ils connus</h2>
-        <p>${record.hear_about_us}</p>
+        <p>${escapeEmailHtml(record.hear_about_us)}</p>
         ` : ''}
         
         <hr>

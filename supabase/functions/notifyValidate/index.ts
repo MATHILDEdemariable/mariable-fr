@@ -26,7 +26,7 @@ const handler = async (_request)=>{
       "subject": "Proposition de date avec un prestataire",
       "html": `Hello,<br/>
     Le prestataire vient de valider l'une de vos dates pour votre rendez-vous.<br/>
-    <a href="https://www.mariable.fr/prestataire/tracking?id=${id}&edit=user">Cliquez-ici</a>
+    <a href="https://www.mariable.fr/prestataire/tracking?id=${encodeURIComponent(String(id))}&edit=user">Cliquez-ici</a>
     `
     });
   }
@@ -38,7 +38,7 @@ const handler = async (_request)=>{
       "subject": "Validation du rendez-vous",
       "html": `Bonjour,<br/>
     Votre rendez-vous, vient d'etre validé.<br/>
-    <a href="https://www.mariable.fr/prestataire/tracking?id=${id}">Cliquez-ici</a>
+    <a href="https://www.mariable.fr/prestataire/tracking?id=${encodeURIComponent(String(id))}">Cliquez-ici</a>
     `
     });
   }
@@ -54,7 +54,7 @@ const handler = async (_request)=>{
       "subject": "Annulation du rdv",
       "html": `Bonjour,<br/>
     Votre rendez-vous, vient d'etre annulé.
-    <a href="https://www.mariable.fr/prestataire/tracking?id=${id}">Cliquez-ici pour plus d'informations</a>
+    <a href="https://www.mariable.fr/prestataire/tracking?id=${encodeURIComponent(String(id))}">Cliquez-ici pour plus d'informations</a>
     `
     });
   }
