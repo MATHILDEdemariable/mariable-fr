@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { requireUser } from '../_shared/requireUser.ts';
 import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 
@@ -24,10 +26,22 @@ const handler = async (_request) => {
       }
     }));
     
-    const id = record?.id ?? 'inconnu';
-    const message = record?.message ?? 'inconnu';
-    const emailClient = record?.email_client ?? 'inconnu';
-    const emailPresta = record?.email_presta ?? 'inconnu';
+    // Destinataire et contenu relus en base : demande de l'appelant, email officiel du prestataire
+    const auth = await requireUser(_request);
+    if ('response' in auth) return auth.response;
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: contactRow } = await admin.from('vendors_contact_preprod')
+      .select('id, message, email_client, prestataire_id').eq('id', record?.id ?? '').eq('client_id', auth.user.id).maybeSingle();
+    const { data: vendor } = contactRow?.prestataire_id
+      ? await admin.from('prestataires_rows').select('email').eq('id', contactRow.prestataire_id).maybeSingle()
+      : { data: null };
+    if (!contactRow || !vendor?.email) {
+      return new Response(JSON.stringify({ error: 'Demande introuvable' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
+    const id = contactRow.id;
+    const message = contactRow.message ?? '';
+    const emailClient = contactRow.email_client ?? auth.user.email ?? '';
+    const emailPresta = vendor.email;
     
     console.log('Contact notification received');
     

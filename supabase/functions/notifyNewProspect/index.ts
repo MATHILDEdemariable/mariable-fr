@@ -1,3 +1,5 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { requireUser } from '../_shared/requireUser.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 
 const corsHeaders = {
@@ -22,9 +24,18 @@ const handler = async (_request) => {
       }
     }));
     
-    const idTracking = record?.id ?? 'inconnu';
-    const emailPresta = record?.email_presta ?? '';
-    const status = record?.status ?? '';
+    // Destinataire relu en base : rendez-vous de l'appelant, email officiel du prestataire
+    const auth = await requireUser(_request);
+    if ('response' in auth) return auth.response;
+    const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+    const { data: trackingRow } = await admin.from('vendors_tracking_preprod')
+      .select('id, status, prestataire_id').eq('id', record?.id ?? '').eq('user_id', auth.user.id).maybeSingle();
+    const { data: vendor } = trackingRow?.prestataire_id
+      ? await admin.from('prestataires_rows').select('email').eq('id', trackingRow.prestataire_id).maybeSingle()
+      : { data: null };
+    const idTracking = trackingRow?.id ?? 'inconnu';
+    const emailPresta = vendor?.email ?? '';
+    const status = trackingRow?.status ?? '';
     
     console.log('Prospect notification received');
     
