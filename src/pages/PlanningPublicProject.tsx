@@ -96,12 +96,8 @@ const PlanningPublicProject: React.FC = () => {
       const teamMembers = (publicData as any)?.team || [];
 
       // Récupérer les documents de type 'project' (avec file_url pour vraie visualisation)
-      const { data: documents, error: docsError } = await supabase
-        .from('coordination_documents')
-        .select('*')
-        .eq('coordination_id', coordinationId)
-        .eq('category', 'project')
-        .order('created_at', { ascending: false });
+      const { data: allDocuments, error: docsError } = await supabase.rpc('get_public_coordination_documents' as any, { target_coordination_id: coordinationId });
+      const documents = ((allDocuments as any[]) || []).filter((doc) => doc.category === 'project');
 
       // Récupérer les liens Pinterest
       const { data: pinterest, error: pinterestError } = await supabase
