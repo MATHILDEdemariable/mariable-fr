@@ -31,7 +31,7 @@ const ProFeedback = () => {
   };
 
   return (
-    <main className="min-h-screen bg-wedding-beige flex items-center justify-center px-4 py-12">
+    <main className="min-h-screen bg-editorial-beige flex items-center justify-center px-4 py-12">
       <Helmet><title>{isEnglish ? "Your feedback · Mariable Pro" : "Votre avis · Mariable Pro"}</title><meta name="robots" content="noindex" /></Helmet>
       <section className="w-full max-w-lg bg-background border border-border p-8 rounded-none">
         <p className="text-xs tracking-[0.2em] uppercase text-wedding-olive mb-4">Mariable Pro</p>
