@@ -76,7 +76,7 @@ Deno.serve(async (req) => {
       if (!email) continue;
       const lang = profile.preferred_language === 'en' ? 'en' : 'fr';
       const { subject, html } = buildEmail(step, lang, (profile.first_name || '').slice(0, 80));
-      const { error: sendError } = await resend.emails.send({ from: 'Mathilde de Mariable <noreply@mariable.fr>', reply_to: 'mathilde@mariable.fr', to: [email], subject, html });
+      const { error: sendError } = await resend.emails.send({ from: 'Mathilde de Mariable <noreply@mariable.fr>', reply_to: 'mathilde@mariable.fr', to: [email], bcc: ['mathilde@mariable.fr'], subject, html });
       if (sendError) { console.error('❌ send failed', profile.id, sendError); continue; }
       // Les étapes antérieures non envoyées (inscription ancienne) sont marquées pour ne pas partir en rafale
       const order: Step[] = ['m1', 'd14', 'd7', 'expired'];
