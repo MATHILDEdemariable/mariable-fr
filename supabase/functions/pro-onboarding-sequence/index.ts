@@ -11,7 +11,7 @@ const SEQUENCE: Email[] = [
   { day: 3, key: 'm1', subjectFr: 'Vos premiers pas sur Mariable Pro : 4 courtes vidéos pour démarrer', subjectEn: 'Getting started with Mariable Pro: 4 short videos',
     fr: "<p>Nous espérons que vous prenez bien vos marques dans votre espace pro.</p><p>Pour vous faire gagner du temps dès cette semaine, nous vous avons préparé <strong>4 courtes vidéos de 5 minutes</strong> : création d'un mariage, rétroplanning, collaboration avec vos couples et conduite du Jour J.</p>",
     en: "<p>We hope you are settling into your Pro workspace.</p><p>To save you time this week, we prepared <strong>4 short 5-minute videos</strong>: creating a wedding, the timeline, collaborating with couples and running the wedding day.</p>",
-    ctaFr: 'Voir les 4 vidéos', ctaEn: 'Watch the 4 videos', url: `${SITE}/pro/tutoriel` },
+    ctaFr: 'Voir les 4 vidéos', ctaEn: 'Watch the 4 videos', url: `${SITE}/pro` },
   { day: 7, key: 'm2', subjectFr: 'Structurer votre saison sans y passer vos soirées', subjectEn: 'Organise your wedding season effortlessly',
     fr: "<p>Chaque mariage dispose d'un rétroplanning prérempli selon sa date. Assignez des responsables, masquez certaines tâches à vos mariés et suivez l'avancement d'un coup d'œil.</p>",
     en: "<p>Every wedding comes with a timeline prefilled from its date. Assign owners, hide some tasks from couples and track progress at a glance.</p>",
