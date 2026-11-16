@@ -1,3 +1,4 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { z } from 'npm:zod@3';
 
@@ -25,6 +26,13 @@ Deno.serve(async (req) => {
       });
     }
     const { fullName, email, language } = parsed.data;
+    const since = new Date(Date.now() - 15 * 60 * 1000).toISOString();
+    const { data: leads } = await createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!).from('whitepaper_leads')
+      .select('created_at').ilike('email', email).limit(2);
+    // L'adresse doit venir d'une demande enregistrée à l'instant, et ne reçoit le livre blanc qu'une fois
+    if (!leads || leads.length !== 1 || leads[0].created_at < since) {
+      return new Response(JSON.stringify({ error: 'Demande introuvable' }), { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
     const isEnglish = language === 'en';
     const name = escapeHtml(fullName);
     const button = (href: string, label: string, dark: boolean) =>
