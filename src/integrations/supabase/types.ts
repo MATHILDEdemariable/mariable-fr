@@ -2691,6 +2691,33 @@ export type Database = {
         }
         Relationships: []
       }
+      pro_satisfaction_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          email: string | null
+          id: string
+          rating: number
+          user_id: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          rating: number
+          user_id?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          email?: string | null
+          id?: string
+          rating?: number
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       pro_task_templates: {
         Row: {
           category: string
@@ -2776,6 +2803,7 @@ export type Database = {
           notify_club_mariable: boolean | null
           phone: string | null
           preferred_language: string
+          pro_onboarding_sequence: Json
           pro_trial_reminders: Json
           referral_source: string | null
           registration_purpose: string | null
@@ -2799,6 +2827,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           preferred_language?: string
+          pro_onboarding_sequence?: Json
           pro_trial_reminders?: Json
           referral_source?: string | null
           registration_purpose?: string | null
@@ -2822,6 +2851,7 @@ export type Database = {
           notify_club_mariable?: boolean | null
           phone?: string | null
           preferred_language?: string
+          pro_onboarding_sequence?: Json
           pro_trial_reminders?: Json
           referral_source?: string | null
           registration_purpose?: string | null
