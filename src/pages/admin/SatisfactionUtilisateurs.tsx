@@ -13,6 +13,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Helmet } from "react-helmet-async";
+import ProFeedbackAdminSection from "@/components/admin/ProFeedbackAdminSection";
 
 interface FeedbackData {
   id: string;
@@ -378,6 +379,7 @@ const AdminSatisfactionUtilisateurs = () => {
           )}
         </CardContent>
       </Card>
+      <ProFeedbackAdminSection />
       </div>
     </AdminLayout>
   );
