@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
 const corsHeaders = {
@@ -12,6 +13,8 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
     const { images } = await req.json();
 
     if (!images || !Array.isArray(images) || images.length === 0) {

@@ -128,7 +128,12 @@ serve(async (req) => {
   }
 
   try {
-    const { messages } = await req.json();
+    const { messages: rawMessages } = await req.json();
+    // Seuls les rôles user/assistant sont acceptés : l'appelant ne peut pas injecter d'instructions système
+    const messages = (Array.isArray(rawMessages) ? rawMessages : [])
+      .filter((m: any) => (m?.role === 'user' || m?.role === 'assistant') && typeof m?.content === 'string')
+      .slice(-30)
+      .map((m: any) => ({ role: m.role, content: m.content.slice(0, 4000) }));
     
     console.log('🚀 Vibe Wedding AI - Historique reçu:', messages.length, 'messages');
 
