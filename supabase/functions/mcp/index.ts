@@ -34,10 +34,7 @@ var search_prestataires_default = defineTool({
     ).eq("visible", true).limit(limit);
     if (categorie) q = q.eq("categorie", categorie);
     if (ville) q = q.ilike("ville", `%${ville}%`);
-    if (query) {
-      const safeQuery = String(query).replace(/[^\p{L}\p{N}\s'-]/gu, ' ').trim().slice(0, 100);
-      if (safeQuery) q = q.or(`nom.ilike.%${safeQuery}%,description.ilike.%${safeQuery}%`);
-    }
+    if (query) q = q.or(`nom.ilike.%${query}%,description.ilike.%${query}%`);
     const { data, error } = await q;
     if (error) {
       return { content: [{ type: "text", text: error.message }], isError: true };
