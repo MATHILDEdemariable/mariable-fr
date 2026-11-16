@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
@@ -23,7 +24,10 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, firstName }: WelcomeEmailRequest = await req.json();
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
+    const { firstName }: WelcomeEmailRequest = await req.json();
+    const email = auth.user.email ?? '';
     
     if (!email) {
       throw new Error("Email is required");

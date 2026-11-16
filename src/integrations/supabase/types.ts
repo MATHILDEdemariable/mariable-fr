@@ -5089,6 +5089,31 @@ export type Database = {
         Args: { target_coordination_id: string }
         Returns: Json
       }
+      get_public_coordination_documents: {
+        Args: { target_coordination_id: string }
+        Returns: {
+          assigned_to: string | null
+          category: string | null
+          coordination_id: string
+          created_at: string
+          description: string | null
+          file_path: string | null
+          file_size: number | null
+          file_type: string | null
+          file_url: string
+          id: string
+          mime_type: string | null
+          source_document_id: string | null
+          title: string
+          updated_at: string
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "coordination_documents"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
       get_public_drinks_plan: {
         Args: { token_value: string }
         Returns: {

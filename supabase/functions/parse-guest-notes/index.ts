@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 // Transforme des notes en vrac en lignes d'invités (prénom, nom, email, téléphone, adulte/enfant, notes)
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -9,6 +10,8 @@ const jsonResponse = (body: unknown, status = 200) =>
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
   try {
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
     const { noteText } = await req.json();
     if (!noteText || typeof noteText !== 'string' || noteText.trim().length < 2 || noteText.length > 10000) {
       return jsonResponse({ error: 'Note vide ou trop longue' }, 400);

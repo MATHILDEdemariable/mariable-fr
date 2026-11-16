@@ -1,3 +1,4 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 const RESEND_API_KEY = Deno.env.get("RESEND");
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
 const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
@@ -33,6 +34,17 @@ Deno.serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    // Le fichier doit correspondre à un dépôt enregistré il y a moins de 30 minutes avec le même email
+    if (!/^[0-9a-f-]{36}\.(pdf|jpg|jpeg|png)$/i.test(filePath)) {
+      return new Response(JSON.stringify({ error: "fichier invalide" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const since = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+    const { data: submission } = await createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!).from("devis_analyses")
+      .select("id").eq("file_path", filePath).eq("email", email).gte("created_at", since).maybeSingle();
+    if (!submission) {
+      return new Response(JSON.stringify({ error: "dépôt introuvable" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     // Lien signé (7 jours) vers le devis déposé

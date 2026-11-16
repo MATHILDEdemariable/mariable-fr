@@ -26,7 +26,7 @@ serve(async (req) => {
 
   try {
     const payload: EmailPayload = await req.json();
-    const { to, subject, firstName, lastName, email, userType, date } = payload;
+    const { firstName, lastName, email, userType, date } = payload;
 
     // Configuration du client SMTP
     const client = new SmtpClient();
@@ -54,8 +54,8 @@ serve(async (req) => {
     // Envoi de l'email
     await client.send({
       from: Deno.env.get('EMAIL_FROM') || 'mathilde@mariable.fr',
-      to: to,
-      subject: subject,
+      to: 'mathilde@mariable.fr',
+      subject: 'Nouvelle inscription sur Mariable',
       html: content,
     });
 

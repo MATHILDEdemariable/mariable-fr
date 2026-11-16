@@ -32,6 +32,15 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Un seul rapport par jour, quel que soit le nombre d'appels (destinataire fixe)
+    const todayParis = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
+    const { error: claimError } = await supabase.from("system_settings").insert({
+      setting_key: `daily_user_report_sent_${todayParis}`, setting_value: true, description: "Rapport quotidien envoyé",
+    });
+    if (claimError) {
+      return new Response(JSON.stringify({ skipped: true }), { headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+
     // Récupérer les nouveaux utilisateurs des dernières 24h
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);

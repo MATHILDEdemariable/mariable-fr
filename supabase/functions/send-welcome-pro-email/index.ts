@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 import { Resend } from "npm:resend@2.0.0";
 
 const resend = new Resend(Deno.env.get("RESEND")!);
@@ -29,8 +30,10 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
+    const auth = await requireUser(req);
+    if ("response" in auth) return auth.response;
     const body = await req.json();
-    const email = typeof body?.email === "string" ? body.email.trim() : "";
+    const email = auth.user.email ?? "";
     if (!EMAIL_PATTERN.test(email)) {
       return new Response(JSON.stringify({ error: "Email invalide" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }

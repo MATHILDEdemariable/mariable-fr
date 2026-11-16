@@ -23,6 +23,10 @@ const handler = async (req: Request): Promise<Response> => {
   try {
     console.log('📧 Sending welcome premium email...');
 
+    const isInternalCall = req.headers.get('Authorization') === `Bearer ${Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')}`;
+    if (!isInternalCall) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+    }
     const { userEmail, firstName, lastName }: WelcomePremiumEmailRequest = await req.json();
 
     if (!userEmail) {

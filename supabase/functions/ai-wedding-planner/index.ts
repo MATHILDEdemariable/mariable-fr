@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
@@ -15,6 +16,8 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
     const { scenario, weddingDate, guestCount, ceremonyTime } = await req.json();
 
     console.log('🎯 Processing wedding scenario:', { scenario, weddingDate, guestCount, ceremonyTime });

@@ -45,8 +45,8 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId, e
   const isEnglish = i18n.language?.startsWith('en');
 
   const loadDoneIds = async () => {
-    const { data } = await supabase.from('coordination_documents').select('description')
-      .eq('coordination_id', coordinationId).eq('category', PHOTO_STATUS_CATEGORY).maybeSingle();
+    const { data: docs } = await supabase.rpc('get_public_coordination_documents' as any, { target_coordination_id: coordinationId });
+    const data = ((docs as any[]) || []).find((doc) => doc.category === PHOTO_STATUS_CATEGORY);
     try { setDoneIds(data?.description ? JSON.parse(data.description) : []); } catch { setDoneIds([]); }
   };
 
@@ -83,12 +83,8 @@ const PhotoListReadOnly: React.FC<PhotoListReadOnlyProps> = ({ coordinationId, e
   const loadData = async () => {
     try {
       // Charger la liste de photos
-      const { data: docData, error: docError } = await supabase
-        .from('coordination_documents')
-        .select('description')
-        .eq('coordination_id', coordinationId)
-        .eq('category', 'photo_list')
-        .maybeSingle();
+      const { data: docs, error: docError } = await supabase.rpc('get_public_coordination_documents' as any, { target_coordination_id: coordinationId });
+      const docData = ((docs as any[]) || []).find((doc) => doc.category === 'photo_list');
 
       if (docError && docError.code !== 'PGRST116') throw docError;
 
