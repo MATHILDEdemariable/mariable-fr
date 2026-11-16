@@ -1,3 +1,4 @@
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 const handler = async (_request)=>{
   const { record } = await _request.json().catch(()=>({
@@ -8,10 +9,17 @@ const handler = async (_request)=>{
         email_client: 'inconnu'
       }
     }));
-  const id = record?.id ?? 'inconnu';
-  const status = record?.status ?? 'inconnu';
-  const emailPresta = record?.email_presta ?? 'inconnu';
-  const emailClient = record?.email_client ?? 'inconnu';
+  // Statut et destinataires relus en base : les valeurs envoyées par l'appelant sont ignorées
+  const admin = createClient(Deno.env.get('SUPABASE_URL'), Deno.env.get('SUPABASE_SERVICE_ROLE_KEY'));
+  const { data: trackingRow } = await admin.from('vendors_tracking_preprod')
+    .select('id, status, email_presta, email_client').eq('id', String(record?.id ?? '')).maybeSingle();
+  if (!trackingRow) {
+    return new Response(JSON.stringify({ error: 'Rendez-vous introuvable' }), { status: 404, headers: { 'Content-Type': 'application/json' } });
+  }
+  const id = trackingRow.id;
+  const status = trackingRow.status ?? 'inconnu';
+  const emailPresta = trackingRow.email_presta ?? 'inconnu';
+  const emailClient = trackingRow.email_client ?? 'inconnu';
   let bodyContent = JSON.stringify({
     "from": "contact@mariable.fr",
     "to": "jordan.morand@gmail.com",

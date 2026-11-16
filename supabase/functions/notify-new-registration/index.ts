@@ -24,9 +24,18 @@ const handler = async (req: Request): Promise<Response> => {
 
   try {
     const requestData = await req.json();
-    console.log("📧 Nouvelle inscription détectée:", requestData);
+    console.log("📧 Nouvelle inscription détectée");
 
-    const { user_id, email, created_at, raw_user_meta_data } = requestData;
+    // Le compte doit exister et avoir été créé il y a moins de 15 minutes ; les infos viennent de la base, pas de l'appelant
+    const { data: authData } = await supabase.auth.admin.getUserById(String(requestData?.user_id ?? ''));
+    const authUser = authData?.user;
+    if (!authUser || Date.now() - new Date(authUser.created_at).getTime() > 15 * 60 * 1000) {
+      return new Response(JSON.stringify({ error: "Inscription introuvable" }), { status: 403, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
+    const user_id = authUser.id;
+    const email = authUser.email ?? '';
+    const created_at = authUser.created_at;
+    const raw_user_meta_data = authUser.user_metadata ?? {};
 
     // Récupérer les infos profile si disponibles
     const { data: profile } = await supabase
