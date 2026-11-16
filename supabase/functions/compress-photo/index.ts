@@ -32,13 +32,21 @@ serve(async (req) => {
 
   try {
     const { photoUrl, prestataireId } = await req.json();
+    const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    const allowedPrefix = `${SUPABASE_URL}/storage/v1/object/public/prestataires-photos/${prestataireId}/`;
+    if (typeof prestataireId !== 'string' || !uuidPattern.test(prestataireId) || typeof photoUrl !== 'string'
+      || !photoUrl.startsWith(allowedPrefix) || photoUrl.includes('..')) {
+      return new Response(JSON.stringify({ error: 'URL de photo non autorisée' }), {
+        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     
     console.log(`🚀 Compressing photo from ${photoUrl}`);
 
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
     // Télécharger l'image depuis Supabase
-    const imageResponse = await fetch(photoUrl);
+    const imageResponse = await fetch(photoUrl, { redirect: 'error' });
     if (!imageResponse.ok) {
       throw new Error(`Failed to fetch image: ${imageResponse.statusText}`);
     }

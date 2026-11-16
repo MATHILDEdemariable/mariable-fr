@@ -1,4 +1,5 @@
 import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
+import { requireUser } from '../_shared/requireUser.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
 
@@ -34,7 +35,13 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, subject, message }: ProblemReportRequest = await req.json();
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
+    const { subject, message }: ProblemReportRequest = await req.json();
+    const email = auth.user.email ?? '';
+    if (!email || typeof message !== 'string' || message.length > 5000) {
+      return new Response(JSON.stringify({ error: 'Requête invalide' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
+    }
 
     console.log('📧 Sending problem report from:', email, 'subject:', subject);
 

@@ -1,3 +1,4 @@
+import { requireUser } from '../_shared/requireUser.ts';
 // Transforme une note texte libre en étapes de rétroplanning (titre, date, période, catégorie)
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +12,11 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
-    const { noteText, weddingDate, language } = await req.json();
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
+    const { noteText, weddingDate: rawWeddingDate, language } = await req.json();
+    // Seule une date au format yyyy-MM-dd est injectée dans les instructions du modèle
+    const weddingDate = typeof rawWeddingDate === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(rawWeddingDate.slice(0, 10)) ? rawWeddingDate.slice(0, 10) : '';
     const isEnglish = language === 'en';
     if (!noteText || typeof noteText !== 'string' || noteText.trim().length < 3 || noteText.length > 8000) {
       return jsonResponse({ error: isEnglish ? 'Note is empty or too long' : 'Note vide ou trop longue' }, 400);
