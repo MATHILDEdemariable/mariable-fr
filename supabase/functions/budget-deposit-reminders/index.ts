@@ -12,6 +12,11 @@ Deno.serve(async (req) => {
     const parisHour = Number(new Intl.DateTimeFormat('en-GB', { timeZone: 'Europe/Paris', hour: '2-digit', hour12: false }).format(new Date()));
     if (parisHour !== 9) return new Response(JSON.stringify({ skipped: true, parisHour }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     const todayParis = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris' }).format(new Date());
+    // Une seule exécution par jour, quel que soit le nombre d'appels
+    const { error: claimError } = await supabase.from('system_settings').insert({
+      setting_key: `budget_deposit_reminders_sent_${todayParis}`, setting_value: true, description: 'Rappels acomptes envoyés',
+    });
+    if (claimError) return new Response(JSON.stringify({ skipped: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
 
     const { data: rows, error } = await supabase
       .from('budgets_detail')
