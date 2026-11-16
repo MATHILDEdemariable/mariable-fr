@@ -18,23 +18,31 @@ const SEQUENCE: Email[] = [
     tipFr: "La vue Kanban (par colonne, en statut) pour mieux visualiser les tâches à faire (ou celles déjà faites : oui, ça fait du bien).",
     tipEn: "The Kanban view (columns by status) to better see what's left to do (or what's already done: yes, it feels good).",
     ctaFr: 'Ouvrir mon rétroplanning', ctaEn: 'Open my timeline', url: `${SITE}/pro` },
-  { day: 12, key: 'm3', subjectFr: 'Collaborez avec vos mariés, sans échanges interminables', subjectEn: 'Collaborate with your couples, without endless back-and-forth',
+  { day: 15, key: 'mid', skipIfPaid: true, subjectFr: 'Déjà 2 semaines : qu\'avez-vous pensé de Mariable ?', subjectEn: '2 weeks in: what do you think of Mariable?',
+    fr: "<p>Cela fait deux semaines que vous avez rejoint Mariable. Votre avis d'expert nous est précieux : qu'avez-vous pensé de l'outil jusqu'ici ? Une fonctionnalité vous a manqué ? Répondez simplement à cet email.</p><p>Il vous reste encore 15 jours d'essai complet.</p>",
+    en: "<p>It's been two weeks since you joined Mariable. Your expert feedback matters: what do you think so far? Anything missing? Just reply to this email.</p><p>You still have 15 days of full trial access.</p>",
+    ctaFr: 'Me connecter', ctaEn: 'Log in', url: `${SITE}/pro` },
+  { day: 18, key: 'm3', subjectFr: 'Collaborez avec vos mariés, sans échanges interminables', subjectEn: 'Collaborate with your couples, without endless back-and-forth',
     fr: "<p>Invitez vos mariés sur leur mariage : ils complètent eux-mêmes invités, RSVP, budget et hébergements, et vous gardez la main sur le reste.</p>",
     en: "<p>Invite your couples to their wedding: they fill in guests, RSVPs, budget and accommodation themselves, while you keep control of the rest.</p>",
     ctaFr: 'Inviter mes mariés', ctaEn: 'Invite my couple', url: `${SITE}/pro` },
-  { day: 18, key: 'm4', subjectFr: 'Plan de table & régimes alimentaires : gagnez des heures', subjectEn: 'Seating plan & dietary needs: save hours',
+  { day: 23, key: 'm4', subjectFr: 'Plan de table & régimes alimentaires : gagnez des heures', subjectEn: 'Seating plan & dietary needs: save hours',
     fr: "<p>Le plan de table est souvent un moment long dans les préparatifs. Sur Mariable, vous créez votre plan de table facilement directement sur la plateforme : les régimes de vos invités apparaissent avec des pastilles de couleur sur chaque table.</p>",
     en: "<p>The seating plan is often a long part of wedding prep. On Mariable, you build it easily right on the platform: guests' dietary needs show up as colour badges on each table.</p>",
     tipFr: "N'oubliez pas l'export 3 en 1 du plan de table (plan visuel, liste alphabétique des invités et récapitulatif traiteur).",
     tipEn: "Don't forget the 3-in-1 seating plan export (visual map, alphabetical guest list and caterer summary).",
     ctaFr: 'Essayer le plan de table', ctaEn: 'Try the seating plan', url: `${SITE}/pro` },
-  { day: 23, key: 'm5', subjectFr: 'Le Jour J dans votre poche (et partagé à toute votre équipe)', subjectEn: 'The wedding day in your pocket (shared with your whole team)',
+  { day: 27, key: 'm5', subjectFr: 'Le Jour J dans votre poche (et partagé à toute votre équipe)', subjectEn: 'The wedding day in your pocket (shared with your whole team)',
     fr: "<p>Le Cockpit Jour J rassemble le conducteur heure par heure, les contacts prestataires, les boissons et le trombinoscope. Partagez un lien à chaque membre de l'équipe, sans compte ni application à installer.</p>",
     en: "<p>The Day-of Cockpit gathers the hour-by-hour run sheet, vendor contacts, drinks and key people. Share a link with each team member, no account or app needed.</p>",
     tipFr: "L'export PDF pour conserver une version papier si jamais (plus de batterie, pas internet).",
     tipEn: "The PDF export to keep a paper copy just in case (dead battery, no internet).",
     ctaFr: 'Découvrir le Cockpit Jour J', ctaEn: 'Discover the Day-of Cockpit', url: `${SITE}/pro` },
-  { day: 32, key: 'm6', skipIfPaid: true, subjectFr: 'Votre avis compte : 30 secondes pour nous aider', subjectEn: 'Your opinion matters: 30 seconds to help us',
+  { day: 30, key: 'end', skipIfPaid: true, subjectFr: 'Votre période d\'essai est terminée · Vos données sont préservées', subjectEn: 'Your trial has ended · Your data is safe',
+    fr: "<p>Votre essai d'1 mois sur Mariable est arrivé à son terme. Vos mariages, rétroplannings et contacts sont <strong>gardés intacts</strong> : souscrivez pour tout retrouver instantanément (dès 16 €/mois, sans engagement).</p>",
+    en: "<p>Your 1-month Mariable trial has ended. Your weddings, timelines and contacts are <strong>kept intact</strong>: subscribe to unlock everything instantly (from 16 €/month, no commitment).</p>",
+    ctaFr: 'Débloquer mon compte Pro', ctaEn: 'Unlock my Pro account', url: `${SITE}/pro-solutions#tarifs` },
+  { day: 35, key: 'm6', skipIfPaid: true, subjectFr: 'Votre avis compte : 30 secondes pour nous aider', subjectEn: 'Your opinion matters: 30 seconds to help us',
     fr: "<p>Votre période d'essai est terminée. Vous n'avez pas souscrit, mais nous serions très curieux d'avoir votre avis, dans un souci d'amélioration continue.</p><p>Une note en étoiles, un commentaire si vous le souhaitez : c'est tout.</p>",
     en: "<p>Your trial has ended. You haven't subscribed, but we'd love to hear your thoughts to keep improving.</p><p>A star rating, and a comment if you wish: that's all.</p>",
     ctaFr: 'Donner mon avis', ctaEn: 'Give my feedback', url: `${SITE}/pro-feedback` },
@@ -71,14 +79,18 @@ Deno.serve(async (req) => {
     const resend = new Resend(Deno.env.get('RESEND')!);
     const since = new Date(Date.now() - 40 * 86400000).toISOString();
     const { data: profiles, error } = await supabase.from('profiles')
-      .select('id, first_name, created_at, subscription_type, subscription_expires_at, pro_onboarding_sequence')
+      .select('id, first_name, created_at, subscription_type, subscription_expires_at, pro_onboarding_sequence, pro_trial_reminders')
       .eq('account_type', 'b2b').gte('created_at', since);
     if (error) throw error;
 
     let sent = 0;
     for (const profile of profiles || []) {
       const days = Math.floor((Date.now() - new Date(profile.created_at).getTime()) / 86400000);
-      const history = (profile.pro_onboarding_sequence || {}) as Record<string, string>;
+      const history = { ...((profile.pro_onboarding_sequence || {}) as Record<string, string>) };
+      // Ne pas renvoyer ce que l'ancien système d'essai a déjà envoyé
+      const trial = (profile.pro_trial_reminders || {}) as Record<string, string>;
+      if (trial.m1 && !history.mid) history.mid = trial.m1;
+      if (trial.expired && !history.end) history.end = trial.expired;
       // Dernière étape due et pas encore envoyée (les étapes plus anciennes sont sautées, pas de rafale)
       const due = [...SEQUENCE].reverse().find((e) => days >= e.day);
       if (!due || history[due.key]) continue;
@@ -92,7 +104,7 @@ Deno.serve(async (req) => {
         const to = userData?.user?.email;
         if (!to) continue;
         const { subject, html } = buildOnboardingEmail(due, (profile.first_name || '').slice(0, 80));
-        const { error: sendError } = await resend.emails.send({ from: 'Mathilde de Mariable <noreply@mariable.fr>', reply_to: 'mathilde@mariable.fr', to: [to], subject, html });
+        const { error: sendError } = await resend.emails.send({ from: 'Mathilde de Mariable <noreply@mariable.fr>', reply_to: 'mathilde@mariable.fr', to: [to], bcc: ['mathilde@mariable.fr'], subject, html });
         if (sendError) { console.error('❌ send failed', profile.id, sendError); continue; }
         sent++;
       }
