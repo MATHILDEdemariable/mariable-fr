@@ -278,7 +278,6 @@ const LogicielWeddingPlanner = () => {
             </div>
             <p className="mt-3 text-sm text-editorial-noir/70">{isEnglish ? "✓ 1-month free trial · No credit card · No commitment" : "✓ 1 mois d'essai offert · Sans carte bancaire · Sans engagement"}</p>
             </div>
-            </div>
             <figure className="relative">
               <img src={heroPlannerPhoto.url} alt={isEnglish ? "Wedding planner checking the day-of schedule on her phone at a château" : "Wedding planner consultant le planning du jour J sur son téléphone devant un château"} className="aspect-[3/4] w-full object-cover object-top" width={1440} height={1920} fetchPriority="high" />
             </figure>
