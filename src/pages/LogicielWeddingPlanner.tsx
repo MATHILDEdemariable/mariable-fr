@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { ArrowDown, ArrowRight, Play } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import proVideoFr from "@/assets/mariable-pro-9x16-FR-mathilde.mp4.asset.json";
 import proVideoEn from "@/assets/mariable-pro-9x16-EN-mathilde.mp4.asset.json";
 import PremiumHeader from "@/components/home/PremiumHeader";
@@ -195,26 +195,28 @@ const CONTENT = {
   },
 };
 
-const STUDIO = {
+const TESTIMONIALS = {
   fr: {
-    title: "L'agence IA des professionnels de l'événementiel",
-    intro: "Au-delà de l'app, Mariable accompagne wedding planners, agences, lieux et écoles à adopter l'IA, sur mesure et sur devis.",
-    offers: [
-      ["Formation", "Former vos équipes à ChatGPT, Claude ou Gemini : prompts adaptés au mariage, réponses aux couples, briefs, fiches techniques."],
-      ["Conseil & accompagnement", "Revoir vos méthodes et mettre en place des agents et process IA dans votre quotidien : leads, relances, feuilles de route."],
-      ["Application sur mesure", "Créer un outil ou une application dédiée à votre activité, à votre marque et connectée à vos outils."],
+    eyebrow: "Témoignages",
+    title: "Ce que disent les wedding planners",
+    cta: "Tester gratuitement pendant 1 mois",
+    items: [
+      ["« C'est incroyable comme appli, j'aurais tellement voulu commencer plus tôt ! Ça me change la vie sur ma saison. On voit que les fonctionnalités ont été pensées pour le quotidien d'une wedding planner. »", "Cléa", "Wedding planner depuis 3 ans · Île-de-France"],
+      ["« L'export du plan de table est génial : liste alphabétique, liste par table et plan visuel avec les régimes en couleur, dans un seul PDF pour le traiteur. Des heures de gagnées. »", "Amélie", "Wedding planner depuis 5 ans · Tours"],
+      ["« Le RSVP en ligne apporte une vraie expérience premium à mes couples. Bien plus élégant qu'un Google Form et tellement plus simple qu'un site web. Le compromis parfait. »", "Imène", "Wedding planner depuis 4 ans · Île-de-France"],
+      ["« Pour le prix d'un forfait de téléphone par mois, sans engagement, ce serait vraiment dommage de s'en priver. »", "Sol", "Wedding planner depuis 2 ans · Tours"],
     ],
-    outro: "Sur devis : voir la formule « Agences, écoles & sur-mesure » ci-dessus.",
   },
   en: {
-    title: "The AI Agency for Event Professionals",
-    intro: "Beyond the app, Mariable helps wedding planners, agencies, venues and schools adopt AI, tailor-made and on quote.",
-    offers: [
-      ["Training", "Train your team on ChatGPT, Claude or Gemini: wedding-specific prompts, replies to couples, briefs, run sheets."],
-      ["Consulting & support", "Review your methods and set up AI agents and processes in your daily work: leads, follow-ups, run sheets."],
-      ["Custom app", "Build a tool or app dedicated to your business and brand, connected to your existing tools."],
+    eyebrow: "Testimonials",
+    title: "What wedding planners say",
+    cta: "Try free for 1 month",
+    items: [
+      ["“This app is amazing, I wish I had started sooner! It changes my whole season. You can tell the features were designed for a wedding planner's daily work.”", "Cléa", "Wedding planner for 3 years · Île-de-France"],
+      ["“The seating plan export is brilliant: alphabetical list, list by table and visual plan with colour-coded diets, in one PDF for the caterer. Hours saved.”", "Amélie", "Wedding planner for 5 years · Tours"],
+      ["“Online RSVP gives my couples a truly premium experience. Far more elegant than a Google Form and much simpler than a website. The perfect compromise.”", "Imène", "Wedding planner for 4 years · Île-de-France"],
+      ["“For the price of a phone plan per month, with no commitment, it would be a shame to go without.”", "Sol", "Wedding planner for 2 years · Tours"],
     ],
-    outro: "On quote: see the “Agencies, schools & custom” plan above.",
   },
 };
 
@@ -222,7 +224,7 @@ const LogicielWeddingPlanner = () => {
   const { i18n } = useTranslation();
   const isEnglish = i18n.language?.startsWith("en");
   const content = isEnglish ? CONTENT.en : CONTENT.fr;
-  const studio = isEnglish ? STUDIO.en : STUDIO.fr;
+  const testimonials = isEnglish ? TESTIMONIALS.en : TESTIMONIALS.fr;
   const [demoLanguage, setDemoLanguage] = useState<"fr" | "en">(isEnglish ? "en" : "fr");
 
   useEffect(() => {
@@ -267,12 +269,14 @@ const LogicielWeddingPlanner = () => {
             <h1 className="text-4xl leading-tight md:text-6xl">{content.h1}</h1>
             <p className="mt-6 text-lg leading-relaxed text-editorial-noir/75">{content.answer}</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild className="min-h-12 rounded-none bg-editorial-noir px-7 text-primary-foreground hover:bg-editorial-olive">
-                <a href="#demo"><Play className="mr-2 h-4 w-4" /> {isEnglish ? "Watch the demo" : "Voir la démo"}</a>
+              <Button asChild className="min-h-12 rounded-none bg-editorial-olive px-7 text-primary-foreground hover:bg-editorial-noir">
+                <Link to="/register-gratuit?type=pro">{isEnglish ? "Create a free account" : "Créer un compte gratuit"} <ArrowRight className="ml-2 h-4 w-4" /></Link>
               </Button>
               <Button asChild variant="outline" className="min-h-12 rounded-none border-editorial-noir bg-transparent px-7">
-                <a href="#tarifs">{content.ctaPrices} <ArrowDown className="ml-2 h-4 w-4" /></a>
+                <a href="#demo">{isEnglish ? "Learn more" : "En savoir plus"} <ArrowDown className="ml-2 h-4 w-4" /></a>
               </Button>
+            </div>
+            <p className="mt-3 text-sm text-editorial-noir/70">{isEnglish ? "✓ 1-month free trial · No credit card · No commitment" : "✓ 1 mois d'essai offert · Sans carte bancaire · Sans engagement"}</p>
             </div>
             </div>
             <figure className="relative">
@@ -315,7 +319,7 @@ const LogicielWeddingPlanner = () => {
                 ))}
                 <div className="flex flex-wrap items-center gap-4">
                   <Button asChild className="min-h-12 rounded-none bg-editorial-olive px-7 text-primary-foreground hover:bg-editorial-noir">
-                    <Link to="/register-gratuit?type=pro">{isEnglish ? "Try free for 1 month" : "Essayer gratuitement 1 mois"}</Link>
+                    <Link to="/register-gratuit?type=pro">{isEnglish ? "Start my 30-day free trial" : "Démarrer mon essai gratuit de 30 jours"}</Link>
                   </Button>
                   <a href="#tarifs" className="text-sm underline underline-offset-4">{isEnglish ? "See pricing ↓" : "Voir les tarifs ↓"}</a>
                 </div>
@@ -328,20 +332,21 @@ const LogicielWeddingPlanner = () => {
           <div className="mx-auto max-w-5xl"><ProPricingPlans isEnglish={isEnglish} /></div>
         </section>
 
-        <section id="ai-studio" aria-labelledby="ai-studio-title" className="scroll-mt-24 bg-editorial-noir px-4 py-16 text-primary-foreground md:py-20">
+        <section id="temoignages" aria-labelledby="temoignages-title" className="scroll-mt-24 bg-editorial-noir px-4 py-16 text-primary-foreground md:py-20">
           <div className="mx-auto max-w-5xl">
-            <p className="text-xs font-semibold uppercase tracking-widest opacity-70">Mariable AI Studio</p>
-            <h2 id="ai-studio-title" className="mt-3 text-3xl md:text-4xl">{studio.title}</h2>
-            <p className="mt-4 max-w-3xl text-lg opacity-80">{studio.intro}</p>
-            <div className="mt-10 grid gap-px bg-primary-foreground/20 md:grid-cols-3">
-              {studio.offers.map(([heading, copy]) => (
-                <article key={heading} className="bg-editorial-noir p-6">
-                  <h3 className="font-serif text-xl">{heading}</h3>
-                  <p className="mt-3 text-sm opacity-80">{copy}</p>
-                </article>
+            <p className="text-xs font-semibold uppercase tracking-widest opacity-70">{testimonials.eyebrow}</p>
+            <h2 id="temoignages-title" className="mt-3 text-3xl md:text-4xl">{testimonials.title}</h2>
+            <div className="mt-10 grid gap-px bg-primary-foreground/20 md:grid-cols-2">
+              {testimonials.items.map(([quote, name, role]) => (
+                <figure key={name} className="bg-editorial-noir p-6 md:p-8">
+                  <blockquote className="font-serif text-lg leading-relaxed">{quote}</blockquote>
+                  <figcaption className="mt-5 text-sm opacity-80"><span className="font-semibold">{name}</span> — {role}</figcaption>
+                </figure>
               ))}
             </div>
-            <p className="mt-8 text-sm opacity-70">{studio.outro}</p>
+            <Button asChild className="mt-10 min-h-12 rounded-none bg-editorial-olive px-7 text-primary-foreground hover:bg-primary-foreground hover:text-editorial-noir">
+              <Link to="/register-gratuit?type=pro">{testimonials.cta}</Link>
+            </Button>
           </div>
         </section>
 
