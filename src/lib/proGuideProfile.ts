@@ -1,5 +1,5 @@
 // Fiche Guide d'un pro : champs comptés pour la complétude
-export const GUIDE_PROFILE_FIELDS = ['nom', 'responsable_nom', 'ville', 'telephone', 'email', 'instagram', 'site_web', 'photo_portrait_url', 'description'] as const;
+export const GUIDE_PROFILE_FIELDS = ['nom', 'responsable_nom', 'ville', 'pays', 'telephone', 'email', 'instagram', 'site_web', 'photo_portrait_url', 'description'] as const;
 export type GuideProfileField = typeof GUIDE_PROFILE_FIELDS[number];
 
 export const countGuideProfileCompletion = (values: Partial<Record<GuideProfileField, string | null>>): number =>

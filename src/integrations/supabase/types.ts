@@ -2323,6 +2323,7 @@ export type Database = {
           nombre_couchages: number | null
           owner_user_id: string | null
           partner: boolean | null
+          pays: string | null
           photo_portrait_url: string | null
           prix_a_partir_de: number | null
           prix_minimum: number | null
@@ -2388,6 +2389,7 @@ export type Database = {
           nombre_couchages?: number | null
           owner_user_id?: string | null
           partner?: boolean | null
+          pays?: string | null
           photo_portrait_url?: string | null
           prix_a_partir_de?: number | null
           prix_minimum?: number | null
@@ -2453,6 +2455,7 @@ export type Database = {
           nombre_couchages?: number | null
           owner_user_id?: string | null
           partner?: boolean | null
+          pays?: string | null
           photo_portrait_url?: string | null
           prix_a_partir_de?: number | null
           prix_minimum?: number | null

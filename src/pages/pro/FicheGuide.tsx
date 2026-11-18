@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { ExternalLink, Loader2, Save, Upload, UserRound } from 'lucide-react';
+import { CheckCircle2, ExternalLink, Loader2, Save, Upload, UserRound } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -13,7 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { buildGuideSlug, countGuideProfileCompletion, GUIDE_PROFILE_FIELDS, GuideProfileField } from '@/lib/proGuideProfile';
 
 type GuideForm = Record<GuideProfileField, string>;
-const EMPTY_FORM: GuideForm = { nom: '', responsable_nom: '', ville: '', telephone: '', email: '', instagram: '', site_web: '', photo_portrait_url: '', description: '' };
+const EMPTY_FORM: GuideForm = { nom: '', responsable_nom: '', ville: '', pays: 'France', telephone: '', email: '', instagram: '', site_web: '', photo_portrait_url: '', description: '' };
 // Colonnes récentes : types générés pas encore à jour
 const guideTable = () => (supabase as any).from('prestataires_rows');
 
@@ -30,6 +30,7 @@ const FicheGuide: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
+  const [showOnlineMessage, setShowOnlineMessage] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -41,7 +42,7 @@ const FicheGuide: React.FC = () => {
         if (error) throw error;
         if (data) {
           setFicheId(data.id); setSlug(data.slug); setIsVisible(!!data.visible);
-          setForm(Object.fromEntries(GUIDE_PROFILE_FIELDS.map((f) => [f, data[f] ?? ''])) as GuideForm);
+          setForm({ ...(Object.fromEntries(GUIDE_PROFILE_FIELDS.map((f) => [f, data[f] ?? ''])) as GuideForm), pays: data.pays || 'France' });
         } else {
           // Pré-remplissage depuis le compte
           const { data: profile } = await supabase.from('profiles').select('first_name, last_name').eq('id', user.id).maybeSingle();
@@ -94,11 +95,12 @@ const FicheGuide: React.FC = () => {
         const newSlug = buildGuideSlug(form.nom, user.id.replace(/-/g, ''));
         const { data, error } = await guideTable()
           .insert({ ...payload, owner_user_id: user.id, categorie: 'Coordination', slug: newSlug })
-          .select('id, slug').single();
+          .select('id, slug, visible').single();
         if (error) throw error;
-        setFicheId(data.id); setSlug(data.slug);
+        setFicheId(data.id); setSlug(data.slug); setIsVisible(!!data.visible);
         await supabase.from('profiles').update({ prestataire_id: data.id } as any).eq('id', user.id);
       }
+      setShowOnlineMessage(true);
       toast({ title: tr('Fiche enregistrée', 'Profile saved') });
     } catch (error) {
       console.error('❌ FicheGuide: enregistrement impossible', error);
@@ -113,6 +115,7 @@ const FicheGuide: React.FC = () => {
     { field: 'nom', label: tr('Nom de l’agence *', 'Agency name *') },
     { field: 'responsable_nom', label: tr('Prénom et nom', 'First and last name') },
     { field: 'ville', label: tr('Ville principale', 'Main city'), placeholder: 'Paris, Tours…' },
+    { field: 'pays', label: tr('Pays', 'Country'), placeholder: 'France' },
     { field: 'telephone', label: tr('Téléphone', 'Phone'), type: 'tel' },
     { field: 'email', label: 'Email', type: 'email' },
     { field: 'instagram', label: 'Instagram', placeholder: '@monagence' },
@@ -126,7 +129,7 @@ const FicheGuide: React.FC = () => {
         <div>
           <h1 className="font-serif text-3xl font-bold">{tr('Ma fiche sur le Guide Mariable', 'My Mariable Guide profile')}</h1>
           <p className="text-sm text-muted-foreground">
-            {tr('Complétez votre fiche pour être référencée auprès des futurs mariés. Elle est publiée après validation par l’équipe Mariable.', 'Complete your profile to be listed for engaged couples. It is published after review by the Mariable team.')}
+            {tr('Complétez votre fiche pour être référencée auprès des futurs mariés. Elle est en ligne dans le catalogue dès l’enregistrement.', 'Complete your profile to be listed for engaged couples. It goes live in the catalogue as soon as you save.')}
           </p>
         </div>
 
@@ -136,7 +139,7 @@ const FicheGuide: React.FC = () => {
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">{tr('Fiche complétée', 'Profile completed')} : {completion}/{GUIDE_PROFILE_FIELDS.length}</span>
                 <span className="text-muted-foreground">
-                  {!ficheId ? tr('Pas encore créée', 'Not created yet') : isVisible ? tr('En ligne', 'Live') : tr('En attente de validation', 'Awaiting review')}
+                  {!ficheId ? tr('Pas encore créée', 'Not created yet') : isVisible ? tr('En ligne', 'Live') : tr('Hors ligne', 'Offline')}
                 </span>
               </div>
               <div className="h-2 bg-muted" role="progressbar" aria-valuenow={completion} aria-valuemin={0} aria-valuemax={GUIDE_PROFILE_FIELDS.length}>
@@ -160,16 +163,31 @@ const FicheGuide: React.FC = () => {
                 <div key={field} className="space-y-1">
                   <Label htmlFor={`guide-${field}`}>{label}</Label>
                   <Input id={`guide-${field}`} type={type ?? 'text'} value={form[field]} placeholder={placeholder}
+                    list={field === 'pays' ? 'guide-pays-options' : undefined}
                     onChange={(e) => updateField(field, e.target.value)} className="text-base" />
                 </div>
               ))}
             </div>
+            <datalist id="guide-pays-options">
+              {['France', 'Belgique', 'Suisse', 'Luxembourg', 'Monaco', 'Royaume-Uni', 'États-Unis', 'Italie', 'Espagne', 'Portugal', 'Grèce', 'Canada', 'Maroc'].map((c) => <option key={c} value={c} />)}
+            </datalist>
             <div className="space-y-1">
               <Label htmlFor="guide-description">{tr('Présentation courte', 'Short description')}</Label>
               <Textarea id="guide-description" rows={5} value={form.description} onChange={(e) => updateField('description', e.target.value)}
                 placeholder={tr('Votre approche, vos spécialités, votre zone d’intervention…', 'Your approach, specialties, area…')} className="text-base" />
             </div>
 
+            {showOnlineMessage && slug && isVisible && (
+              <div role="status" aria-live="polite" className="border border-wedding-olive bg-wedding-olive/10 p-4 flex items-start gap-3">
+                <CheckCircle2 className="h-5 w-5 text-wedding-olive shrink-0 mt-0.5" />
+                <p className="text-sm">
+                  {tr('Merci ! Votre fiche est en ligne dans le catalogue. ', 'Thank you! Your profile is live in the catalogue. ')}
+                  <a href={`/prestataire/${slug}`} target="_blank" rel="noopener noreferrer" className="font-semibold underline">
+                    {tr('Voir votre fiche en ligne ici →', 'See your live profile here →')}
+                  </a>
+                </p>
+              </div>
+            )}
             <div className="flex flex-wrap gap-3">
               <Button onClick={handleSave} disabled={isSaving} className="bg-wedding-olive hover:bg-wedding-olive/90 rounded-none min-h-[44px]">
                 {isSaving ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
