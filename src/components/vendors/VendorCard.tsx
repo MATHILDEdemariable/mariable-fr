@@ -190,7 +190,7 @@ const VendorCard: React.FC<VendorCardProps> = ({
             <FeaturedImage presta={vendor} />
           </AspectRatio>
           <Badge className="absolute top-3 left-3 bg-white/90 text-editorial-noir font-medium rounded-none">
-            {vendor.categorie === "Coordination" ? "Planners" : (vendor.categorie || "Prestataire")}
+            {vendor.categorie === "Coordination" ? "Wedding Planner" : (vendor.categorie || "Prestataire")}
           </Badge>
           {/* Boutons en haut à droite */}
           <div className="absolute top-3 right-3 flex gap-2">

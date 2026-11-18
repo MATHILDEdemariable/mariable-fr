@@ -35,7 +35,7 @@ const SinglePrestataire = () => {
       // Public-safe column list (excludes email, telephone, siret, status_crm,
       // date_derniere_contact, source_inscription, accord_*, assurance_nom).
       const PUBLIC_COLUMNS =
-        "id,created_at,updated_at,nom,categorie,categorie_lieu,description,description_more,ville,latitude,longitude,regions,capacite_invites,hebergement_inclus,nombre_couchages,prix_minimum,prix_a_partir_de,prix_par_personne,first_price_package,first_price_package_name,first_price_package_description,second_price_package,second_price_package_name,second_price_package_description,third_price_package,third_price_package_name,third_price_package_description,fourth_price_package,fourth_price_package_name,fourth_price_package_description,responsable_nom,responsable_bio,site_web,visible,featured,partner,slug,styles,show_prices,show_contact_form,show_description,show_photos,show_brochures,show_responsable,google_rating,google_reviews_count,google_place_id,google_business_url,avantage_propose,prestataires_photos_preprod(*)";
+        "id,created_at,updated_at,nom,categorie,categorie_lieu,description,description_more,ville,latitude,longitude,regions,capacite_invites,hebergement_inclus,nombre_couchages,prix_minimum,prix_a_partir_de,prix_par_personne,first_price_package,first_price_package_name,first_price_package_description,second_price_package,second_price_package_name,second_price_package_description,third_price_package,third_price_package_name,third_price_package_description,fourth_price_package,fourth_price_package_name,fourth_price_package_description,responsable_nom,responsable_bio,site_web,visible,featured,partner,slug,styles,show_prices,show_contact_form,show_description,show_photos,show_brochures,show_responsable,google_rating,google_reviews_count,google_place_id,google_business_url,avantage_propose,photo_portrait_url,prestataires_photos_preprod(*)";
 
       let { data, error } = await supabase
         .from("prestataires_rows")
@@ -140,7 +140,7 @@ const SinglePrestataire = () => {
   const mainImage =
     photos && photos.length > 0
       ? photos.find((p) => p.principale)?.url || photos[0].url
-      : "/placeholder.svg";
+      : (vendor as any).photo_portrait_url || "/placeholder.svg";
 
   const regionDisplay = (vendor.regions as any)?.[0] || "";
 
@@ -193,17 +193,18 @@ const SinglePrestataire = () => {
 
       <main className="flex-grow">
         {/* Hero Photo full width */}
-        <div className="relative h-[55vh] md:h-[70vh] w-full">
+        <div className="relative h-[60vh] md:h-[75vh] w-full overflow-hidden bg-editorial-noir">
+          <img src={mainImage} alt="" aria-hidden="true" className="absolute inset-0 w-full h-full object-cover blur-2xl scale-110 opacity-60" />
           <img
             src={mainImage}
             alt={vendor?.nom || "Prestataire de mariage"}
-            className="w-full h-full object-cover"
+            className="relative w-full h-full object-contain"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
 
           <div className="absolute bottom-8 left-4 md:left-12 text-white max-w-2xl">
             <Badge className="bg-white/20 text-white border-white/30 mb-3 rounded-none">
-              {vendor?.categorie}
+              {vendor?.categorie === "Coordination" ? "Wedding Planner" : vendor?.categorie}
             </Badge>
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif mb-3">{vendor?.nom}</h1>
             <div className="flex items-center gap-2 text-white/90 text-sm md:text-base">

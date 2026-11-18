@@ -13,6 +13,8 @@
     "ctaTools": "DISCOVER YOUR WEDDING WORKSPACE"
   },
   "categories": {
+    "WeddingPlanner": "Wedding Planner",
+    "Autres": "Others",
     "Tous": "All",
     "Lieux": "Venues",
     "Photo": "Photo",

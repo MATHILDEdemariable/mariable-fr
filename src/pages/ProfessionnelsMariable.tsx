@@ -21,20 +21,20 @@ import InstagramHighlightsGrid from '@/components/instagram/InstagramHighlightsG
 
 type PrestataireCategorie = Database['public']['Enums']['prestataire_categorie'];
 
-const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; labelKey: string; icon: React.ReactNode }[] = [
+const OTHER_CATEGORIES = ['Décoration', 'Invités'];
+const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous' | 'Autres' | 'Autres'; labelKey: string; icon: React.ReactNode }[] = [
   { value: 'Tous', labelKey: 'Tous', icon: <Sparkles className="w-4 h-4" /> },
   { value: 'Lieu de réception', labelKey: 'Lieux', icon: <Building2 className="w-4 h-4" /> },
+  { value: 'Coordination', labelKey: 'WeddingPlanner', icon: <Calendar className="w-4 h-4" /> },
   { value: 'Photographe', labelKey: 'Photo', icon: <Camera className="w-4 h-4" /> },
   { value: 'Vidéaste', labelKey: 'Vidéo', icon: <Camera className="w-4 h-4" /> },
   { value: 'Traiteur', labelKey: 'Traiteur', icon: <Utensils className="w-4 h-4" /> },
   { value: 'DJ', labelKey: 'DJ', icon: <Music className="w-4 h-4" /> },
   { value: 'Fleuriste', labelKey: 'Fleuriste', icon: <Flower2 className="w-4 h-4" /> },
-  { value: 'Décoration', labelKey: 'Déco', icon: <Palette className="w-4 h-4" /> },
   { value: 'Mise en beauté', labelKey: 'Beauté', icon: <Star className="w-4 h-4" /> },
   { value: 'Robe de mariée', labelKey: 'Robes', icon: <Gift className="w-4 h-4" /> },
   { value: 'Voiture', labelKey: 'Voiture', icon: <Car className="w-4 h-4" /> },
-  { value: 'Invités', labelKey: 'Invités', icon: <Users className="w-4 h-4" /> },
-  { value: 'Coordination', labelKey: 'Planners', icon: <Calendar className="w-4 h-4" /> },
+  { value: 'Autres', labelKey: 'Autres', icon: <Palette className="w-4 h-4" /> },
 ];
 
 const ITEMS_PER_PAGE = 12;
@@ -103,12 +103,12 @@ const CategoryPills = ({
   onSelect,
   categoryCounts,
 }: {
-  selected: PrestataireCategorie | 'Tous';
-  onSelect: (cat: PrestataireCategorie | 'Tous') => void;
+  selected: PrestataireCategorie | 'Tous' | 'Autres';
+  onSelect: (cat: PrestataireCategorie | 'Tous' | 'Autres') => void;
   categoryCounts: Record<string, number> | undefined;
 }) => {
   const { t } = useTranslation('professionals');
-  const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || (categoryCounts && (categoryCounts[cat.value] ?? 0) > 0));
+  const visibleCategories = CATEGORY_CONFIG.filter((cat) => cat.value === 'Tous' || (categoryCounts && (cat.value === 'Autres' ? OTHER_CATEGORIES.reduce((n, c) => n + (categoryCounts[c] ?? 0), 0) : (categoryCounts[cat.value] ?? 0)) > 0));
   return (
     <ScrollArea className="w-full whitespace-nowrap">
       <div className="flex gap-1 md:gap-2 pb-4 justify-start md:justify-center">
@@ -139,7 +139,7 @@ const ProfessionnelsMariable = () => {
   const navigate = useNavigate();
   const resultsRef = useRef<HTMLDivElement>(null);
   const [search, setSearch] = useState('');
-  const [category, setCategory] = useState<PrestataireCategorie | 'Tous'>('Tous');
+  const [category, setCategory] = useState<PrestataireCategorie | 'Tous' | 'Autres'>('Tous');
   const [region, setRegion] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState<'list' | 'map'>('list');

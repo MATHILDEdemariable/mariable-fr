@@ -83,7 +83,9 @@ export const useOptimizedVendors = ({
         );
       }
 
-      if (filters.category && filters.category !== 'Tous') {
+      if (filters.category === 'Autres') {
+        query = query.in('categorie', ['Décoration', 'Invités']);
+      } else if (filters.category && filters.category !== 'Tous') {
         query = query.eq('categorie', filters.category as Database["public"]["Enums"]["prestataire_categorie"]);
       }
 
