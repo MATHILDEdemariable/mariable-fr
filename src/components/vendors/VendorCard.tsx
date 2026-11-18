@@ -186,11 +186,11 @@ const VendorCard: React.FC<VendorCardProps> = ({
         onClick={() => onClick(vendor)}
       >
         <div className="relative flex-shrink-0">
-          <AspectRatio ratio={16 / 9}>
+          <AspectRatio ratio={4 / 5}>
             <FeaturedImage presta={vendor} />
           </AspectRatio>
           <Badge className="absolute top-3 left-3 bg-white/90 text-editorial-noir font-medium rounded-none">
-            {vendor.categorie || "Prestataire"}
+            {vendor.categorie === "Coordination" ? "Planners" : (vendor.categorie || "Prestataire")}
           </Badge>
           {/* Boutons en haut à droite */}
           <div className="absolute top-3 right-3 flex gap-2">

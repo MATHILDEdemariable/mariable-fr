@@ -5,7 +5,7 @@ const FeaturedImage = ({ presta }) => {
     : null;
   return (
     <img
-      src={featured?.url || "https://placehold.co/1920x1920?text=No+Image"}
+      src={presta.photo_portrait_url || featured?.url || "https://placehold.co/1920x1920?text=No+Image"}
       alt={presta.nom}
       className="object-cover w-full h-full "
     />

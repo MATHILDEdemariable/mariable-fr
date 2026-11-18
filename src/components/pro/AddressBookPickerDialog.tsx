@@ -26,7 +26,7 @@ const AddressBookPickerDialog: React.FC<AddressBookPickerDialogProps> = ({ open,
       setLoading(true);
       const { data, error } = await (supabase as any)
         .from('pro_address_book')
-        .select('id, company_name, contact_name, category, email, phone, city, website, notes, prestataire_id, source')
+        .select('id, company_name, contact_name, category, email, phone, city, website, instagram, notes, prestataire_id, source')
         .order('company_name');
       if (error) console.error('❌ AddressBookPicker: chargement impossible', error);
       setContacts(data ?? []);

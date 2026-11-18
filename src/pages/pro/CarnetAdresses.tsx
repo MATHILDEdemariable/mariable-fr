@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Helmet } from 'react-helmet-async';
-import { Trash2, Plus, Mail, Phone, MapPin, Upload, Download } from 'lucide-react';
+import { Trash2, Plus, Mail, Phone, MapPin, Upload, Download, Pencil, Globe, Instagram, X } from 'lucide-react';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Input } from '@/components/ui/input';
@@ -20,12 +20,13 @@ export interface AddressBookContact {
   phone: string | null;
   city: string | null;
   website: string | null;
+  instagram?: string | null;
   notes: string | null;
   prestataire_id: string | null;
   source: string;
 }
 
-const emptyContactForm = { company_name: '', contact_name: '', category: '', email: '', phone: '', city: '', notes: '' };
+const emptyContactForm = { company_name: '', contact_name: '', category: '', email: '', phone: '', city: '', website: '', instagram: '', notes: '' };
 
 // Table créée récemment : types générés pas encore à jour
 const addressBookTable = () => (supabase as any).from('pro_address_book');
@@ -57,10 +58,11 @@ const CarnetAdresses: React.FC = () => {
   const [contacts, setContacts] = useState<AddressBookContact[]>([]);
   const [contactForm, setContactForm] = useState(emptyContactForm);
   const [isSaving, setIsSaving] = useState(false);
+  const [editingContactId, setEditingContactId] = useState<string | null>(null);
 
   const loadContacts = async () => {
     const { data, error } = await addressBookTable()
-      .select('id, company_name, contact_name, category, email, phone, city, website, notes, prestataire_id, source')
+      .select('id, company_name, contact_name, category, email, phone, city, website, instagram, notes, prestataire_id, source')
       .order('company_name');
     if (error) {
       console.error('❌ CarnetAdresses: chargement impossible', error);
@@ -146,19 +148,24 @@ const CarnetAdresses: React.FC = () => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Utilisateur non authentifié');
-      const { error } = await addressBookTable().insert({
-        owner_id: user.id,
+      const contactPayload = {
         company_name: contactForm.company_name.trim(),
         contact_name: contactForm.contact_name.trim() || null,
         category: contactForm.category.trim() || 'Autre',
         email: contactForm.email.trim() || null,
         phone: contactForm.phone.trim() || null,
         city: contactForm.city.trim() || null,
+        website: contactForm.website.trim() || null,
+        instagram: contactForm.instagram.trim() || null,
         notes: contactForm.notes.trim() || null,
-      });
+      };
+      const { error } = editingContactId
+        ? await addressBookTable().update(contactPayload).eq('id', editingContactId)
+        : await addressBookTable().insert({ owner_id: user.id, ...contactPayload });
       if (error) throw error;
       setContactForm(emptyContactForm);
-      toast({ title: t('addressBook.added') });
+      toast({ title: editingContactId ? 'Partenaire modifié' : t('addressBook.added') });
+      setEditingContactId(null);
       loadContacts();
     } catch (error) {
       console.error('❌ CarnetAdresses: ajout impossible', error);
@@ -186,10 +193,16 @@ const CarnetAdresses: React.FC = () => {
     return ok;
   };
 
+  const handleEditContact = (c: AddressBookContact) => {
+    setEditingContactId(c.id);
+    setContactForm({ company_name: c.company_name, contact_name: c.contact_name ?? '', category: c.category === 'Autre' ? '' : c.category, email: c.email ?? '', phone: c.phone ?? '', city: c.city ?? '', website: c.website ?? '', instagram: c.instagram ?? '', notes: c.notes ?? '' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   const field = (key: keyof typeof emptyContactForm, type = 'text') => (
     <Input
       type={type}
-      placeholder={t(`addressBook.${key === 'company_name' ? 'company' : key === 'contact_name' ? 'contact' : key}`)}
+      placeholder={key === 'website' ? 'Site web' : key === 'instagram' ? 'Instagram (@compte)' : t(`addressBook.${key === 'company_name' ? 'company' : key === 'contact_name' ? 'contact' : key}`)}
       value={contactForm[key]}
       onChange={(e) => setContactForm({ ...contactForm, [key]: e.target.value })}
       className="rounded-none"
@@ -235,10 +248,19 @@ const CarnetAdresses: React.FC = () => {
               {field('email', 'email')}
               {field('phone', 'tel')}
               {field('city')}
-              <div className="sm:col-span-2">{field('notes')}</div>
-              <Button type="submit" disabled={isSaving} className="rounded-none min-h-[44px]">
-                <Plus className="h-4 w-4 mr-1" />{t('addressBook.add')}
-              </Button>
+              {field('website', 'url')}
+              {field('instagram')}
+              {field('notes')}
+              <div className="sm:col-span-3 flex gap-2 justify-end">
+                {editingContactId && (
+                  <Button type="button" variant="ghost" className="rounded-none min-h-[44px]" onClick={() => { setEditingContactId(null); setContactForm(emptyContactForm); }}>
+                    <X className="h-4 w-4 mr-1" />Annuler
+                  </Button>
+                )}
+                <Button type="submit" disabled={isSaving} className="rounded-none min-h-[44px]">
+                  {editingContactId ? <><Pencil className="h-4 w-4 mr-1" />Enregistrer</> : <><Plus className="h-4 w-4 mr-1" />{t('addressBook.add')}</>}
+                </Button>
+              </div>
             </form>
 
             {contacts.length === 0 ? (
@@ -258,12 +280,19 @@ const CarnetAdresses: React.FC = () => {
                         {c.email && <a href={`mailto:${c.email}`} className="flex items-center gap-1 hover:underline"><Mail className="h-3 w-3" />{c.email}</a>}
                         {c.phone && <a href={`tel:${c.phone}`} className="flex items-center gap-1 hover:underline"><Phone className="h-3 w-3" />{c.phone}</a>}
                         {c.city && <span className="flex items-center gap-1"><MapPin className="h-3 w-3" />{c.city}</span>}
+                        {c.website && <a href={c.website.startsWith('http') ? c.website : `https://${c.website}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Globe className="h-3 w-3" />Site web</a>}
+                        {c.instagram && <a href={c.instagram.startsWith('http') ? c.instagram : `https://instagram.com/${c.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:underline"><Instagram className="h-3 w-3" />{c.instagram.startsWith('http') ? 'Instagram' : c.instagram}</a>}
                       </div>
                       {c.notes && <p className="text-xs italic text-muted-foreground">{c.notes}</p>}
                     </div>
+                    <div className="flex shrink-0">
+                    <Button variant="ghost" size="icon" aria-label="Modifier" onClick={() => handleEditContact(c)}>
+                      <Pencil className="h-4 w-4" />
+                    </Button>
                     <Button variant="ghost" size="icon" aria-label={t('addressBook.delete')} onClick={() => handleDeleteContact(c.id)}>
                       <Trash2 className="h-4 w-4" />
                     </Button>
+                    </div>
                   </li>
                 ))}
               </ul>

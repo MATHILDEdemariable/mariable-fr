@@ -153,7 +153,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [addressBookOpen, setAddressBookOpen] = useState(false);
 
   // Ajoute une ligne au suivi sans quitter la page (catalogue Mariable ou carnet pro)
-  const addVendorToTracking = async (entry: { vendor_name: string; category: string; email: string | null; phone: string | null; website: string | null; location: string | null; prestataire_id: string | null; source: string }) => {
+  const addVendorToTracking = async (entry: { vendor_name: string; category: string; email: string | null; phone: string | null; website: string | null; instagram?: string | null; location: string | null; prestataire_id: string | null; source: string }) => {
     try {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Utilisateur non connecté');
@@ -961,6 +961,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           email: contact.email,
           phone: contact.phone,
           website: contact.website,
+          instagram: contact.instagram ?? null,
           location: contact.city,
           prestataire_id: contact.prestataire_id,
           source: contact.prestataire_id ? 'mariable' : 'personal', // contrainte DB : 'mariable' | 'personal'

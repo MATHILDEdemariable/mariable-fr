@@ -2571,6 +2571,7 @@ export type Database = {
           created_at: string
           email: string | null
           id: string
+          instagram: string | null
           notes: string | null
           owner_id: string
           phone: string | null
@@ -2587,6 +2588,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          instagram?: string | null
           notes?: string | null
           owner_id: string
           phone?: string | null
@@ -2603,6 +2605,7 @@ export type Database = {
           created_at?: string
           email?: string | null
           id?: string
+          instagram?: string | null
           notes?: string | null
           owner_id?: string
           phone?: string | null

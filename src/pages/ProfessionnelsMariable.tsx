@@ -34,7 +34,7 @@ const CATEGORY_CONFIG: { value: PrestataireCategorie | 'Tous'; labelKey: string;
   { value: 'Robe de mariée', labelKey: 'Robes', icon: <Gift className="w-4 h-4" /> },
   { value: 'Voiture', labelKey: 'Voiture', icon: <Car className="w-4 h-4" /> },
   { value: 'Invités', labelKey: 'Invités', icon: <Users className="w-4 h-4" /> },
-  { value: 'Coordination', labelKey: 'Coordination', icon: <Calendar className="w-4 h-4" /> },
+  { value: 'Coordination', labelKey: 'Planners', icon: <Calendar className="w-4 h-4" /> },
 ];
 
 const ITEMS_PER_PAGE = 12;
