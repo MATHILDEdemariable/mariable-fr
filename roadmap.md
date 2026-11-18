@@ -89,4 +89,4 @@
 - [x] Décoration : image d'inspiration par zone
 - [x] Traiteur par jour d'événement (prestataires, menus, matériel, logistique, items) + fiche Jour J
 
-- [ ] Campagne Meta Guide WP : cible FR + cible EN (US/UK/Europe), 10 €/jour
+- [x] Campagne Meta Guide WP (créée en pause) : cible FR + cible EN (US/UK/Europe), 10 €/jour
