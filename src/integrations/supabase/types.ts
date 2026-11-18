@@ -2316,11 +2316,14 @@ export type Database = {
           google_reviews_count: number | null
           hebergement_inclus: boolean | null
           id: string
+          instagram: string | null
           latitude: number | null
           longitude: number | null
           nom: string
           nombre_couchages: number | null
+          owner_user_id: string | null
           partner: boolean | null
+          photo_portrait_url: string | null
           prix_a_partir_de: number | null
           prix_minimum: number | null
           prix_par_personne: number | null
@@ -2378,11 +2381,14 @@ export type Database = {
           google_reviews_count?: number | null
           hebergement_inclus?: boolean | null
           id?: string
+          instagram?: string | null
           latitude?: number | null
           longitude?: number | null
           nom: string
           nombre_couchages?: number | null
+          owner_user_id?: string | null
           partner?: boolean | null
+          photo_portrait_url?: string | null
           prix_a_partir_de?: number | null
           prix_minimum?: number | null
           prix_par_personne?: number | null
@@ -2440,11 +2446,14 @@ export type Database = {
           google_reviews_count?: number | null
           hebergement_inclus?: boolean | null
           id?: string
+          instagram?: string | null
           latitude?: number | null
           longitude?: number | null
           nom?: string
           nombre_couchages?: number | null
+          owner_user_id?: string | null
           partner?: boolean | null
+          photo_portrait_url?: string | null
           prix_a_partir_de?: number | null
           prix_minimum?: number | null
           prix_par_personne?: number | null
