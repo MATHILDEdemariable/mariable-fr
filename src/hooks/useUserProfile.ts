@@ -3,7 +3,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { isProTrialExpired } from '@/lib/proTrial';
+import { getPremiumAccess } from '@/lib/proAccess';
 
 interface UserProfile {
   created_at?: string | null;
@@ -112,22 +112,8 @@ export const useUserProfile = () => {
     }
   };
 
-  const isSubscriptionActive = (() => {
-    if (!profile) return false;
-    if (profile.subscription_expires_at === null) return true;
-    return new Date(profile.subscription_expires_at) > new Date();
-  })();
-
-  // Abonnés Pro : 'pro_premium' = Organisation complète, 'pro_jour_j' = Coordination Jour J
-  const isProOrganisation = profile?.subscription_type === 'pro_premium' && isSubscriptionActive;
-  const isProJourJ = profile?.subscription_type === 'pro_jour_j' && isSubscriptionActive;
-  // isProPremium = pro abonné (l'une ou l'autre formule) : lève le verrou d'essai
-  const isProPremium = isProOrganisation || isProJourJ;
-  const isProAccount = profile?.account_type === 'b2b';
-  // Essai Pro de 30 jours : mêmes droits qu'un abonné pendant l'essai
-  const isProTrialActive = isProAccount && !!profile?.created_at && !isProTrialExpired(profile.created_at);
-  const isPremium =
-    (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium || isProTrialActive;
+  // Droits d'accès : abonnements payants + essai Pro de 30 jours (src/lib/proAccess.ts)
+  const { isProAccount, isProPremium, isProOrganisation, isProJourJ, isPremium } = getPremiumAccess(profile);
 
   return {
     profile,
