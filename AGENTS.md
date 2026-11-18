@@ -24,3 +24,4 @@
 - Privileged maintenance handlers use requireAdmin before service-role operations; auth email hooks fail closed when signature configuration is missing.
 - Email templates escape user-controlled HTML text with escapeEmailHtml; premium activation validates caller ownership and the exact premium Stripe price before granting access.
 - Third-party trackers that ignore Google Consent Mode (Meta Pixel, Hotjar) load only through `src/lib/consentedTracking.ts` after `canTrack()` from `src/lib/consent.ts`; GTM/GA stay in index.html behind the consent-defaults script — one banner, one stored answer per purpose.
+- Premium access rights (isPremium, isProPremium, isProOrganisation, isProJourJ, isProAccount) are derived in one place, `getPremiumAccess()` in `src/lib/proAccess.ts`, and consumed by `useUserProfile.ts`; an active 30-day Pro trial counts as Premium there — keep new paywall rules in that function so they stay testable.
