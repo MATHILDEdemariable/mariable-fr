@@ -88,3 +88,5 @@
 - [x] Plan de table : pastilles régimes (4 couleurs) + anti-doublons liste invités
 - [x] Décoration : image d'inspiration par zone
 - [x] Traiteur par jour d'événement (prestataires, menus, matériel, logistique, items) + fiche Jour J
+
+- [ ] Campagne Meta Guide WP : cible FR + cible EN (US/UK/Europe), 10 €/jour
