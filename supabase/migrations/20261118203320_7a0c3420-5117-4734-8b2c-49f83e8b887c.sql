@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.guard_owner_prestataire_fields() FROM PUBLIC, anon, authenticated;

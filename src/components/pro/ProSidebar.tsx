@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Building2, CalendarHeart, Sun, BarChart3, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone, ExternalLink, Library, ClipboardList } from 'lucide-react';
+import { Building2, CalendarHeart, Sun, BarChart3, Settings, LogOut, BookUser, GraduationCap, LifeBuoy, Smartphone, ExternalLink, Library, ClipboardList, BadgeCheck } from 'lucide-react';
 import { openProTutorial, openProHelp } from './ProSupportHost';
 import { supabase } from '@/integrations/supabase/client';
 import { cn } from '@/lib/utils';
@@ -57,6 +57,10 @@ const ProSidebar: React.FC = () => {
             <span className="ml-3 leading-tight">{item.label}</span>
           </a>
         ))}
+        <Link to="/pro/fiche-guide" className={linkClass(location.pathname.startsWith('/pro/fiche-guide'))}>
+          <BadgeCheck className="h-4 w-4" />
+          <span className="ml-3 leading-tight">{isEnglish ? 'My Guide profile' : 'Ma fiche Guide'}</span>
+        </Link>
 
         <SectionLabel label={isEnglish ? 'Shared tools' : 'Tronc commun'} />
         <Link to="/pro/carnet-adresses" className={linkClass(location.pathname.startsWith('/pro/carnet-adresses'))}>

@@ -151,6 +151,7 @@ const CarnetAdresses = lazy(() => import("./pages/pro/CarnetAdresses"));
 const ProReferentiels = lazy(() => import("./pages/pro/Referentiels"));
 const ProFeedback = lazy(() => import("./pages/pro/ProFeedback"));
 const ProFormulairesClients = lazy(() => import("./pages/pro/FormulairesClients"));
+const ProFicheGuide = lazy(() => import("./pages/pro/FicheGuide"));
 const FormulaireClientPublic = lazy(() => import("./pages/FormulaireClientPublic"));
 const ApercuEspacePro = lazy(() => import("./pages/pro/ApercuEspacePro"));
 const ApercuMariage = lazy(() => import("./pages/pro/ApercuMariage"));
@@ -354,6 +355,7 @@ function App() {
                   <Route path="/pro-feedback" element={<ProFeedback />} />
                   <Route path="/pro/referentiels" element={<ProtectedRoute><ProReferentiels /></ProtectedRoute>} />
                   <Route path="/pro/formulaires" element={<ProtectedRoute><ProFormulairesClients /></ProtectedRoute>} />
+                  <Route path="/pro/fiche-guide" element={<ProtectedRoute><ProFicheGuide /></ProtectedRoute>} />
                   <Route path="/formulaire/:token" element={<FormulaireClientPublic />} />
 
                   {/* Dashboard Professionnel Mockup */}
