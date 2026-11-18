@@ -3,8 +3,10 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
+import { isProTrialExpired } from '@/lib/proTrial';
 
 interface UserProfile {
+  created_at?: string | null;
   id: string;
   first_name: string | null;
   last_name: string | null;
@@ -25,7 +27,7 @@ const fetchOrCreateProfile = async (userId: string, userMetadata?: any): Promise
 
   const { data, error } = await supabase
     .from('profiles')
-    .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+    .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, created_at, notify_club_mariable')
     .eq('id', userId)
     .maybeSingle();
 
@@ -48,7 +50,7 @@ const fetchOrCreateProfile = async (userId: string, userMetadata?: any): Promise
     const { data: insertedProfile, error: insertError } = await supabase
       .from('profiles')
       .insert(newProfile)
-      .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+      .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, created_at, notify_club_mariable')
       .single();
 
     if (insertError) throw insertError;
@@ -92,7 +94,7 @@ export const useUserProfile = () => {
           updated_at: new Date().toISOString()
         })
         .eq('id', user.id)
-        .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, notify_club_mariable')
+        .select('id, first_name, last_name, wedding_date, guest_count, account_type, subscription_type, subscription_expires_at, subscription_status, stripe_customer_id, stripe_subscription_id, updated_at, created_at, notify_club_mariable')
         .single();
 
       if (error) throw error;
@@ -121,9 +123,11 @@ export const useUserProfile = () => {
   const isProJourJ = profile?.subscription_type === 'pro_jour_j' && isSubscriptionActive;
   // isProPremium = pro abonné (l'une ou l'autre formule) : lève le verrou d'essai
   const isProPremium = isProOrganisation || isProJourJ;
-  const isPremium =
-    (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium;
   const isProAccount = profile?.account_type === 'b2b';
+  // Essai Pro de 30 jours : mêmes droits qu'un abonné pendant l'essai
+  const isProTrialActive = isProAccount && !!profile?.created_at && !isProTrialExpired(profile.created_at);
+  const isPremium =
+    (profile?.subscription_type === 'premium' && isSubscriptionActive) || isProPremium || isProTrialActive;
 
   return {
     profile,
