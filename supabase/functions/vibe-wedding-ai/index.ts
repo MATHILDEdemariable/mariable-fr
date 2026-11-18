@@ -128,6 +128,18 @@ serve(async (req) => {
   }
 
   try {
+    // Accès réservé aux utilisateurs connectés (service IA payant)
+    const authHeader = req.headers.get('Authorization') ?? '';
+    const authClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, {
+      global: { headers: { Authorization: authHeader } },
+    });
+    const { data: { user: authUser }, error: authError } = await authClient.auth.getUser();
+    if (authError || !authUser) {
+      return new Response(JSON.stringify({ error: 'Connexion requise' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     const { messages: rawMessages } = await req.json();
     // Seuls les rôles user/assistant sont acceptés : l'appelant ne peut pas injecter d'instructions système
     const messages = (Array.isArray(rawMessages) ? rawMessages : [])
