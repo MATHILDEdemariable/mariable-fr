@@ -1,0 +1,1 @@
+UPDATE public.prestataires_rows SET slug = 'mariable' WHERE id = 'c83dce74-a30f-4360-a346-590ce66020ab' AND NOT EXISTS (SELECT 1 FROM public.prestataires_rows WHERE slug = 'mariable');
