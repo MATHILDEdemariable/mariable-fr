@@ -1,4 +1,5 @@
 
+import { sanitizeHtml, sanitizeCss } from '@/lib/sanitizeHtml';
 import React from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -337,11 +338,11 @@ const BlogArticlePage = () => {
 
             <div className="bg-white p-8 rounded-lg shadow-sm">
                 {post.custom_styles && (
-                    <style dangerouslySetInnerHTML={{ __html: post.custom_styles }} />
+                    <style dangerouslySetInnerHTML={{ __html: sanitizeCss(post.custom_styles) }} />
                 )}
                 <div 
                     className={`prose prose-lg max-w-none prose-headings:font-serif prose-headings:text-foreground prose-h2:mt-12 prose-h2:mb-5 prose-h2:text-3xl prose-h3:mt-8 prose-h3:mb-3 prose-h3:text-xl prose-p:my-4 prose-li:my-1 prose-hr:my-10 prose-th:bg-muted prose-th:p-3 prose-td:p-3 prose-td:align-top [&_table]:border [&_table]:border-border [&_td]:border-t [&_td]:border-border [&_.table-scroll]:overflow-x-auto [&_.table-scroll]:max-w-full [&_table]:min-w-[560px] [&_blockquote]:border-primary [&_blockquote]:bg-muted [&_blockquote]:p-4 [&_blockquote]:not-italic`}
-                    dangerouslySetInnerHTML={{ __html: post.content }}
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content) }}
                 />
             </div>
 

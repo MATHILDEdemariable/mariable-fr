@@ -1,4 +1,5 @@
 
+import { sanitizeHtml, sanitizeCss } from '@/lib/sanitizeHtml';
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -268,7 +269,7 @@ const BlogPostForm: React.FC<BlogPostFormProps> = ({ post, onClose, onSuccess })
                       <div className="bg-white border rounded-lg p-4 max-h-[400px] overflow-y-auto">
                         <div 
                           className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: formData.content || '' }}
+                          dangerouslySetInnerHTML={{ __html: sanitizeHtml(formData.content) }}
                         />
                       </div>
                     </div>

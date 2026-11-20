@@ -237,12 +237,15 @@ const MonJourMDocuments: React.FC = () => {
               e.currentTarget.style.display = 'none';
               const parent = e.currentTarget.parentElement;
               if (parent) {
+                const safeHref = /^https:\/\/([a-z0-9-]+\.)*(pinterest\.[a-z.]+|pin\.it)\//i.test(link.pinterest_url)
+                  ? encodeURI(link.pinterest_url).replace(/"/g, '%22')
+                  : '#';
                 parent.innerHTML = `
                   <div class="flex items-center justify-center h-full bg-gray-100 text-gray-500">
                     <div class="text-center">
                       <div class="text-2xl mb-2">📌</div>
                       <p class="text-sm">${t("documents.pinterestUnavailable")}</p>
-                      <a href="${link.pinterest_url}" target="_blank" rel="noopener noreferrer" 
+                      <a href="${safeHref}" target="_blank" rel="noopener noreferrer" 
                          class="text-blue-600 hover:underline text-xs">
                         ${t("documents.seeOnPinterest")}
                       </a>

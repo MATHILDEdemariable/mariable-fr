@@ -1,3 +1,4 @@
+import { sanitizeHtml, sanitizeCss } from '@/lib/sanitizeHtml';
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -89,7 +90,7 @@ const PropositionPage: React.FC = () => {
           <div className="w-full">
             <div 
               className="iframe-container"
-              dangerouslySetInnerHTML={{ __html: customPage.iframe_code }}
+              dangerouslySetInnerHTML={{ __html: sanitizeHtml(customPage.iframe_code) }}
             />
           </div>
         </main>

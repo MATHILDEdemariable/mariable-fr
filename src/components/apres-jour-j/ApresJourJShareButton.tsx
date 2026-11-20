@@ -62,7 +62,7 @@ export const ApresJourJShareButton: React.FC<ApresJourJShareButtonProps> = ({ ch
 
     setIsLoading(true);
     try {
-      const token = `apres_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const token = `apres_${Array.from(crypto.getRandomValues(new Uint8Array(24)), (byte) => byte.toString(16).padStart(2, "0")).join("")}`;
       
       const { data, error } = await supabase
         .from('apres_jour_j_share_tokens')

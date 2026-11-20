@@ -1,3 +1,4 @@
+import { escapeCsvCell } from '@/lib/csvSecurity';
 import React, { useEffect, useState } from 'react';
 import { Helmet } from 'react-helmet-async';
 import QRCode from 'qrcode';
@@ -115,7 +116,7 @@ const LeadsTab = ({ pin }: { pin: string }) => {
   const handleExportCsv = () => {
     const header = ['Date', 'Prestataire', 'Prénom', 'Nom', 'Email', 'Téléphone', 'Date mariage', 'Lieu', 'Devis', 'Message'];
     const lines = visibleLeads.map((lead) => [new Date(lead.created_at).toLocaleString('fr-FR'), lead.vendor_name, lead.first_name, lead.last_name, lead.email, lead.phone || '', lead.wedding_date || '', lead.wedding_location || '', lead.wants_quote ? 'Oui' : 'Non', (lead.message || '').replace(/\n/g, ' ')]);
-    const csv = [header, ...lines].map((line) => line.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(';')).join('\n');
+    const csv = [header, ...lines].map((line) => line.map(escapeCsvCell).join(';')).join('\n');
     const blobUrl = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
     downloadFile(blobUrl, 'demandes_immersion_mariage.csv');
     URL.revokeObjectURL(blobUrl);

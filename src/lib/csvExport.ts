@@ -154,9 +154,7 @@ export const exportPrestatairesToCSV = (prestataires: any[]): void => {
     const csvContent = [
       headers.join(','),
       ...csvData.map(row => 
-        Object.values(row).map(value => 
-          `"${String(value).replace(/"/g, '""')}"`
-        ).join(',')
+        Object.values(row).map(escapeCsvCell).join(',')
       )
     ].join('\n');
 

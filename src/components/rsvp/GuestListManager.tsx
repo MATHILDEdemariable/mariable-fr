@@ -1,3 +1,4 @@
+import { escapeCsvCell } from '@/lib/csvSecurity';
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
@@ -230,7 +231,7 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
 
     const csvContent = [
       headers.join(','),
-      ...rows.map(row => row.map(cell => `"${cell}"`).join(','))
+      ...rows.map(row => row.map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });

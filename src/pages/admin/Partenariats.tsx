@@ -1,3 +1,4 @@
+import { escapeCsvCell } from '@/lib/csvSecurity';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminLayout from '@/components/admin/AdminLayout';
@@ -111,9 +112,9 @@ const AdminPartenariats = () => {
         req.email,
         req.company_name || '',
         req.phone || '',
-        `"${(req.message || '').replace(/"/g, '""')}"`,
+        req.message || '',
         statusConfig[req.status as keyof typeof statusConfig]?.label || req.status
-      ].join(','))
+      ].map(escapeCsvCell).join(','))
     ].join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
