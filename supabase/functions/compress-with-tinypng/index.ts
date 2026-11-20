@@ -68,7 +68,13 @@ serve(async (req) => {
         console.log(`🔄 Processing photo: ${photo.id} (${photo.filename})`);
 
         // Télécharger l'image depuis Supabase
-        const imageResponse = await fetch(photo.url);
+        const allowedHost = new URL(Deno.env.get('SUPABASE_URL')!).host;
+        let photoUrl: URL;
+        try { photoUrl = new URL(photo.url); } catch { throw new Error('URL de photo invalide'); }
+        if (photoUrl.protocol !== 'https:' || photoUrl.host !== allowedHost || !photoUrl.pathname.startsWith('/storage/v1/object/')) {
+          throw new Error('Source de photo non autorisée');
+        }
+        const imageResponse = await fetch(photoUrl.toString(), { redirect: 'error' });
         if (!imageResponse.ok) {
           throw new Error(`Failed to fetch image: ${imageResponse.statusText}`);
         }

@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 const RESEND_API_KEY = Deno.env.get('RESEND');
 const handler = async (_request)=>{
   const { record } = await _request.json().catch(()=>({
@@ -5,7 +6,7 @@ const handler = async (_request)=>{
         nom: 'inconnu'
       }
     }));
-  const name = record?.nom ?? 'inconnu';
+  const name = escapeEmailHtml(String(record?.nom ?? 'inconnu').slice(0, 200));
   const res = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: {

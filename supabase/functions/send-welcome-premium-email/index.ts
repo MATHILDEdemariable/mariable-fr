@@ -37,7 +37,7 @@ const handler = async (req: Request): Promise<Response> => {
       ? `${firstName} ${lastName}` 
       : firstName || "Membre premium";
 
-    console.log('✅ Sending to:', userEmail, 'Name:', userName);
+    console.log('✅ Sending welcome premium email');
 
     const emailResponse = await resend.emails.send({
       from: "Mariable <mathilde@mariable.fr>",
@@ -229,7 +229,7 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log('✅ Email sent successfully:', emailResponse);
+    console.log('✅ Email sent successfully:', emailResponse?.data?.id);
 
     return new Response(JSON.stringify({ success: true, emailResponse }), {
       status: 200,

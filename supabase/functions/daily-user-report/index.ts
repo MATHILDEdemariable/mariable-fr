@@ -1,3 +1,4 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 import { Resend } from "npm:resend@2.0.0";
@@ -161,10 +162,10 @@ const handler = async (req: Request): Promise<Response> => {
         const formatted = formatUserForCSV(user);
         emailContent += `
           <tr>
-            <td>${formatted.email}</td>
-            <td>${formatted.nom_complet}</td>
-            <td>${formatted.date_inscription}</td>
-            <td>${formatted.date_mariage}</td>
+            <td>${escapeEmailHtml(formatted.email)}</td>
+            <td>${escapeEmailHtml(formatted.nom_complet)}</td>
+            <td>${escapeEmailHtml(formatted.date_inscription)}</td>
+            <td>${escapeEmailHtml(formatted.date_mariage)}</td>
           </tr>
         `;
       });

@@ -43,7 +43,7 @@ const handler = async (req: Request): Promise<Response> => {
       return new Response(JSON.stringify({ error: 'Requête invalide' }), { status: 400, headers: { 'Content-Type': 'application/json', ...corsHeaders } });
     }
 
-    console.log('📧 Sending problem report from:', email, 'subject:', subject);
+    console.log('📧 Sending problem report');
 
     const subjectLabel = getSubjectLabel(subject);
 

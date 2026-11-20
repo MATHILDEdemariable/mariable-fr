@@ -41,9 +41,28 @@ serve(async (req) => {
       });
     }
     
-    console.log(`🚀 Compressing photo from ${photoUrl}`);
-
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Autorisé : admin, propriétaire de la fiche, ou fiche tout juste créée (inscription en cours)
+    const { data: vendorRow } = await supabase.from('prestataires_rows')
+      .select('id, owner_user_id, created_at').eq('id', prestataireId).maybeSingle();
+    let isAllowed = !!vendorRow && Date.now() - new Date(vendorRow.created_at).getTime() < 30 * 60 * 1000;
+    const authHeader = req.headers.get('Authorization') || '';
+    if (!isAllowed && vendorRow && authHeader.startsWith('Bearer ')) {
+      const userClient = createClient(SUPABASE_URL, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authHeader } } });
+      const { data: { user } } = await userClient.auth.getUser();
+      if (user) {
+        const { data: isAdmin } = await userClient.rpc('is_admin');
+        isAllowed = isAdmin === true || vendorRow.owner_user_id === user.id;
+      }
+    }
+    if (!isAllowed) {
+      return new Response(JSON.stringify({ error: 'Accès refusé' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log(`🚀 Compressing photo for ${prestataireId}`);
 
     // Télécharger l'image depuis Supabase
     const imageResponse = await fetch(photoUrl, { redirect: 'error' });

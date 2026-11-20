@@ -20,9 +20,9 @@ Deno.serve(async (req) => {
     const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const { data: wedding } = await admin.from('weddings').select('owner_id').eq('id', weddingId).maybeSingle();
     if (!wedding) return json({ error: 'not_found' }, 404);
-    const { data: collaborators } = await admin.from('wedding_collaborators').select('user_id, invited_email').eq('wedding_id', weddingId).eq('status', 'accepted');
+    const { data: collaborators } = await admin.from('wedding_collaborators').select('user_id, invited_email, role').eq('wedding_id', weddingId).eq('status', 'accepted');
     const isOwner = wedding.owner_id === user.id;
-    const isCollaborator = (collaborators || []).some((c: any) => c.user_id === user.id);
+    const isCollaborator = (collaborators || []).some((c: any) => c.user_id === user.id && c.role === 'planner');
     if (!isOwner && !isCollaborator) return json({ error: 'forbidden' }, 403);
 
     const recipients = new Set<string>();

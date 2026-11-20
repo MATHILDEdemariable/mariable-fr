@@ -114,7 +114,7 @@ const ImmersionMariage = () => {
       return;
     }
     const { error: emailError } = await supabase.functions.invoke('notify-immersion-lead', {
-      body: { vendorName: selectedVendor.name, vendorEmail: selectedVendor.email ?? '', ...leadForm, wantsQuote },
+      body: { vendorName: selectedVendor.name, vendorSlug: selectedVendor.slug, ...leadForm, wantsQuote },
     });
     if (emailError) console.error('❌ notify-immersion-lead failed:', emailError);
     toast({ description: `Votre demande a été transmise à ${selectedVendor.name}. Un email de confirmation vous a été envoyé.` });

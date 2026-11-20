@@ -37,6 +37,7 @@ Deno.serve(async (req) => {
     for (const m of media ?? []) {
       // deno-lint-ignore no-explicit-any
       if ((m as any).guest_albums?.user_id !== userId) continue;
+      if (typeof m.storage_path !== 'string' || !m.storage_path.startsWith(`${m.album_id}/`) || m.storage_path.includes('..')) continue;
       const { data: signed } = await supabase.storage
         .from('guest-album')
         .createSignedUrl(m.storage_path, 3600);

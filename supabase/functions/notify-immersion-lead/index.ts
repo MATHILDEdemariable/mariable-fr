@@ -1,4 +1,5 @@
 import { Resend } from "npm:resend@2.0.0";
+import { IMMERSION_VENDOR_EMAILS } from "./vendorEmails.ts";
 
 const resend = new Resend(Deno.env.get("RESEND"));
 const corsHeaders = {
@@ -17,7 +18,7 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const lead = {
       vendorName: String(body.vendorName ?? "").slice(0, 200),
-      vendorEmail: String(body.vendorEmail ?? "").trim(),
+      vendorEmail: IMMERSION_VENDOR_EMAILS[String(body.vendorSlug ?? "")] ?? "",
       firstName: String(body.firstName ?? "").slice(0, 100),
       lastName: String(body.lastName ?? "").slice(0, 100),
       email: String(body.email ?? "").trim(),

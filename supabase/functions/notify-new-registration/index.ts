@@ -90,17 +90,10 @@ const handler = async (req: Request): Promise<Response> => {
       throw new Error(`Erreur envoi email: ${emailResponse.error.message}`);
     }
 
-    console.log("✅ Notification email sent successfully:", {
-      email: email,
-      fullName: fullName,
-      emailId: emailResponse.data?.id
-    });
+    console.log("✅ Notification email sent successfully:", { emailId: emailResponse.data?.id });
 
     return new Response(JSON.stringify({
       success: true,
-      user_id: user_id,
-      email: email,
-      fullName: fullName,
       emailSent: true,
       emailId: emailResponse.data?.id
     }), {
@@ -116,7 +109,7 @@ const handler = async (req: Request): Promise<Response> => {
     
     return new Response(JSON.stringify({
       success: false,
-      error: error.message
+      error: "Erreur interne"
     }), {
       status: 500,
       headers: {

@@ -1,3 +1,4 @@
+import { createClient } from 'npm:@supabase/supabase-js@2';
 // Transforme un texte libre (notes, liste de questions) en formulaire client structuré
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -13,6 +14,14 @@ Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
 
   try {
+    const authHeader = req.headers.get('Authorization') || '';
+    if (!authHeader.startsWith('Bearer ')) return jsonResponse({ error: 'Unauthorized' }, 401);
+    const userClient = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!, { global: { headers: { Authorization: authHeader } } });
+    const { data: { user } } = await userClient.auth.getUser();
+    if (!user) return jsonResponse({ error: 'Unauthorized' }, 401);
+    const { data: callerProfile } = await userClient.from('profiles').select('account_type').eq('id', user.id).maybeSingle();
+    if (callerProfile?.account_type !== 'b2b') return jsonResponse({ error: 'Forbidden' }, 403);
+
     const { sourceText, language } = await req.json();
     const isEnglish = language === 'en';
     if (!sourceText || typeof sourceText !== 'string' || sourceText.trim().length < 3 || sourceText.length > 8000) {

@@ -1,4 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.4';
+import { requireUser } from '../_shared/requireUser.ts';
+
+const PRO_TRIAL_MS = 30 * 24 * 60 * 60 * 1000;
+
+/** Premium, abonnement Pro ou essai Pro actif = illimité ; sinon une seule génération IA. */
+async function canGenerate(userId: string): Promise<boolean> {
+  const admin = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
+  const { data: isPremium } = await admin.rpc('is_user_premium', { user_uuid: userId });
+  if (isPremium === true) return true;
+  const { data: profile } = await admin.from('profiles').select('account_type, created_at').eq('id', userId).maybeSingle();
+  if (profile?.account_type === 'b2b' && profile.created_at && Date.now() - new Date(profile.created_at).getTime() < PRO_TRIAL_MS) return true;
+  const { data: existing } = await admin.from('wedding_retroplanning').select('id').eq('user_id', userId).eq('mode', 'ai').limit(1);
+  return !existing || existing.length === 0;
+}
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,6 +26,13 @@ serve(async (req) => {
   }
 
   try {
+    const auth = await requireUser(req);
+    if ('response' in auth) return auth.response;
+    if (!(await canGenerate(auth.user.id))) {
+      return new Response(JSON.stringify({ success: false, error: 'premium_required' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
     const { weddingDate, language } = await req.json();
     const lang = language === 'en' ? 'en' : 'fr';
 

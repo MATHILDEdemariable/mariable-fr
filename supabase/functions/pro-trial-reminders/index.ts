@@ -1,3 +1,5 @@
+import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
+import { requireAdmin } from '../_shared/adminAuth.ts';
 import { createClient } from 'npm:@supabase/supabase-js@2';
 import { corsHeaders } from 'npm:@supabase/supabase-js@2/cors';
 import { Resend } from 'npm:resend@2.0.0';
@@ -49,6 +51,8 @@ const stepForDaysLeft = (daysLeft: number): Step | null => {
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
   console.log('🚀 pro-trial-reminders started');
+  const adminError = await requireAdmin(req);
+  if (adminError) return adminError;
   try {
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
     const resend = new Resend(Deno.env.get('RESEND')!);
@@ -75,7 +79,7 @@ Deno.serve(async (req) => {
       const email = userData?.user?.email;
       if (!email) continue;
       const lang = profile.preferred_language === 'en' ? 'en' : 'fr';
-      const { subject, html } = buildEmail(step, lang, (profile.first_name || '').slice(0, 80));
+      const { subject, html } = buildEmail(step, lang, escapeEmailHtml((profile.first_name || '').slice(0, 80)));
       const { error: sendError } = await resend.emails.send({ from: 'Mathilde de Mariable <noreply@mariable.fr>', reply_to: 'mathilde@mariable.fr', to: [email], bcc: ['mathilde@mariable.fr'], subject, html });
       if (sendError) { console.error('❌ send failed', profile.id, sendError); continue; }
       // Les étapes antérieures non envoyées (inscription ancienne) sont marquées pour ne pas partir en rafale

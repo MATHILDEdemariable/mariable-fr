@@ -35,7 +35,7 @@ const handler = async (req: Request): Promise<Response> => {
 
     const displayName = firstName || "futur(e) marié(e)";
 
-    console.log("📧 Envoi email de bienvenue à:", email);
+    console.log("📧 Envoi email de bienvenue");
 
     const emailContent = `
       <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; padding: 20px;">
@@ -110,8 +110,6 @@ const handler = async (req: Request): Promise<Response> => {
     }
 
     console.log("✅ Welcome email sent successfully:", {
-      email: email,
-      firstName: displayName,
       emailId: emailResponse.data?.id
     });
 
