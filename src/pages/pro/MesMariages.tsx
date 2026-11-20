@@ -23,6 +23,7 @@ import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
 import ProTrialGate from '@/components/pro/ProTrialGate';
+import FicheGuidePrompt from '@/components/pro/FicheGuidePrompt';
 
 interface ProProfileForm {
   first_name: string;
@@ -234,6 +235,7 @@ const MesMariages: React.FC = () => {
 
   return (
     <DashboardLayout variant="pro">
+      <FicheGuidePrompt />
       <Helmet>
         <title>{t('meta.title')}</title>
         <meta name="description" content={t('meta.description')} />

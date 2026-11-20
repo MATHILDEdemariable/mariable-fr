@@ -90,6 +90,7 @@ const CopilotWidget = () => {
       >
         <img src="/cachet_M.webp" alt="" className="h-8 w-8 rounded-full bg-background object-contain p-0.5" />
         <span className="font-serif text-sm">Une question ?</span>
+        <span className="text-[10px] uppercase tracking-wider border border-primary-foreground/60 px-1.5 py-0.5">Bêta</span>
       </button>
     );
   }
@@ -102,8 +103,8 @@ const CopilotWidget = () => {
       <header className="flex items-center gap-3 border-b border-border bg-primary px-4 py-3 text-primary-foreground">
         <img src="/cachet_M.webp" alt="" className="h-9 w-9 rounded-full bg-background object-contain p-0.5" />
         <div className="flex-1 min-w-0">
-          <h2 className="font-serif text-base leading-tight">Copilote Mariable</h2>
-          <p className="text-xs opacity-80">Conseils selon la méthode Mariable</p>
+          <h2 className="font-serif text-base leading-tight">Copilote Mariable <span className="ml-1 align-middle text-[10px] uppercase tracking-wider border border-primary-foreground/60 px-1.5 py-0.5 font-sans">Bêta</span></h2>
+          <p className="text-xs opacity-80">Version bêta · conseils selon la méthode Mariable</p>
         </div>
         {conversation.messages.length > 0 && (
           <button type="button" onClick={handleReset} aria-label="Nouvelle conversation" className="p-2 opacity-80 hover:opacity-100">
