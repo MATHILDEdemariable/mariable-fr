@@ -34,8 +34,11 @@ import {
   Play,
   FileText,
   Globe,
-  Instagram
+  Instagram,
+  Upload
 } from 'lucide-react';
+import ExcelImportDialog from '@/components/import/ExcelImportDialog';
+import { vendorTrackingImport, matchVendorStatus } from '@/lib/importModules';
 import { cn } from '@/lib/utils';
 import { Database } from '@/integrations/supabase/types';
 import { supabase } from '@/integrations/supabase/client';
@@ -151,6 +154,33 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
   const [documentCounts, setDocumentCounts] = useState<Record<string, number>>({});
   const [catalogOpen, setCatalogOpen] = useState(false);
   const [addressBookOpen, setAddressBookOpen] = useState(false);
+  const [excelImportOpen, setExcelImportOpen] = useState(false);
+
+  // Import Excel du suivi (rattaché au mariage ouvert)
+  const handleExcelVendorImport = async (rows: Record<string, string>[]) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+    const records = rows.map((r) => ({
+      user_id: user.id,
+      wedding_id: currentWeddingId || null,
+      vendor_name: r.vendor_name,
+      category: r.category || 'Autre',
+      status: matchVendorStatus(r.status),
+      email: r.email || null,
+      phone: r.phone || null,
+      location: r.location || null,
+      budget: r.budget || null,
+      website: r.website || null,
+      notes: r.notes || null,
+      source: 'import',
+    }));
+    if (records.length) {
+      const { error } = await supabase.from('vendors_tracking_preprod').insert(records);
+      if (error) throw error;
+    }
+    await fetchVendors();
+    return records.length;
+  };
 
   // Ajoute une ligne au suivi sans quitter la page (catalogue Mariable ou carnet pro)
   const addVendorToTracking = async (entry: { vendor_name: string; category: string; email: string | null; phone: string | null; website: string | null; instagram?: string | null; location: string | null; prestataire_id: string | null; source: string }) => {
@@ -485,6 +515,16 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                 <Plus className="h-4 w-4 mr-2" /> {tr('Depuis mon carnet', 'From my address book')}
               </Button>
             )}
+            <Button variant="outline" onClick={() => setExcelImportOpen(true)}>
+              <Upload className="h-4 w-4 mr-2" /> {tr('Importer Excel', 'Import Excel')}
+            </Button>
+            <ExcelImportDialog
+              open={excelImportOpen}
+              onOpenChange={setExcelImportOpen}
+              config={vendorTrackingImport}
+              existingKeys={new Set(vendors.map((v) => vendorTrackingImport.duplicateKey({ vendor_name: v.vendor_name })))}
+              onImport={handleExcelVendorImport}
+            />
             
             <Button 
               className="bg-wedding-olive hover:bg-wedding-olive/90"

@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { Upload, Plus, Search, Download, Loader2, Pencil, Trash2, Users, Sparkles, Inbox } from 'lucide-react';
 import { GUEST_TAG_LABELS, detectGuestTags, normalizeGuestName } from '@/lib/guestTags';
-import GuestImportDialog from './GuestImportDialog';
+import ExcelImportDialog from '@/components/import/ExcelImportDialog';
+import { guestImport } from '@/lib/importModules';
 import GuestManualAdd from './GuestManualAdd';
 import GuestBulkNotesDialog from './GuestBulkNotesDialog';
 import GuestEditDialog from './GuestEditDialog';
@@ -49,6 +50,30 @@ const GuestListManager: React.FC = () => {
     loadGuests();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [weddingId]);
+
+  // Import Excel : régime, groupe et notes regroupés dans les notes (pastilles régimes détectées automatiquement)
+  const handleExcelGuestImport = async (rows: Record<string, string>[]) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Utilisateur non connecté');
+    const records = rows.map((r) => ({
+      user_id: user.id,
+      wedding_id: weddingId || null,
+      guest_first_name: r.first_name,
+      guest_last_name: r.last_name || '-',
+      guest_email: r.email || null,
+      guest_phone: r.phone || null,
+      guest_address: r.address || null,
+      guest_type: /enfant|child|kid/i.test(r.type) ? 'child' : 'adult',
+      notes: [r.diet, r.group && `Groupe : ${r.group}`, r.notes].filter(Boolean).join(' · ') || null,
+      source: 'import',
+    }));
+    if (records.length) {
+      const { error } = await supabase.from('wedding_guest_list').insert(records);
+      if (error) throw error;
+    }
+    await loadGuests();
+    return records.length;
+  };
 
   const loadGuests = async () => {
     try {
@@ -474,10 +499,12 @@ else guestsQuery = guestsQuery.eq('user_id', user.id);
         </>
       )}
 
-      <GuestImportDialog
-        isOpen={isImportOpen}
-        onClose={() => setIsImportOpen(false)}
-        onImported={loadGuests}
+      <ExcelImportDialog
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        config={guestImport}
+        existingKeys={new Set(guests.map((g: any) => guestImport.duplicateKey({ email: g.guest_email ?? '', first_name: g.guest_first_name, last_name: g.guest_last_name === '-' ? '' : g.guest_last_name })))}
+        onImport={handleExcelGuestImport}
       />
 
       <GuestBulkNotesDialog

@@ -3,7 +3,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, eachDayOfInterval, addMonths, isSameMonth, isToday } from 'date-fns';
 import { fr, enUS } from 'date-fns/locale';
-import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer, LayoutGrid, Wand2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, List as ListIcon, CalendarDays, Sparkles, GitCommitVertical, ChevronLeft, ChevronRight, BookOpen, Printer, LayoutGrid, Wand2, Upload } from 'lucide-react';
+import ExcelImportDialog from '@/components/import/ExcelImportDialog';
+import { retroplanningImport } from '@/lib/importModules';
+import { parseImportDate } from '@/lib/excelImport';
 import { RETROPLANNING_TASK_CATALOG } from '@/data/retroplanningTaskCatalog';
 import { computeStepDate, periodLabel } from './ImportTaskCatalogDialog';
 import { fetchProTaskTemplates } from '@/pages/pro/Referentiels';
@@ -208,6 +211,13 @@ const RetroplanningManuel = () => {
     setQuickTitle('');
   };
 
+  const [isExcelImportOpen, setIsExcelImportOpen] = useState(false);
+  const handleExcelStepImport = async (rows: Record<string, string>[]) => {
+    const newSteps = rows.map((r) => ({ ...EMPTY_STEP, id: uuidv4(), title: r.title.slice(0, 200), period: r.period || '', date: parseImportDate(r.date), category: r.category || '', note: r.note || '' }));
+    await persistSteps([...steps, ...newSteps]);
+    return newSteps.length;
+  };
+
   const handleImportFromCatalog = (drafts: CatalogStepDraft[]) => {
     const newSteps = drafts.map((draft) => ({ ...EMPTY_STEP, ...draft, id: uuidv4() }));
     persistSteps([...steps, ...newSteps]);
@@ -348,6 +358,8 @@ const RetroplanningManuel = () => {
             <Button variant="ghost" size="sm" onClick={() => setIsCatalogOpen(true)}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'Catalogue' : 'Catalogue'}</Button>
             <Button variant="ghost" size="sm" onClick={handleLoadStandardTemplate}><Wand2 className="h-4 w-4 mr-1" />{isEnglish ? 'Standard template' : 'Trame standard'}</Button>
             <Button variant="ghost" size="sm" onClick={handleLoadMyTasks}><BookOpen className="h-4 w-4 mr-1" />{isEnglish ? 'My usual tasks' : 'Mes tâches habituelles'}</Button>
+            <Button variant="ghost" size="sm" onClick={() => setIsExcelImportOpen(true)}><Upload className="h-4 w-4 mr-1" />{isEnglish ? 'Import Excel' : 'Importer Excel'}</Button>
+            <ExcelImportDialog open={isExcelImportOpen} onOpenChange={setIsExcelImportOpen} config={retroplanningImport} existingKeys={new Set(steps.map((s) => retroplanningImport.duplicateKey({ title: s.title })))} onImport={handleExcelStepImport} />
           </div>
           {inputMode === 'quick' ? (
             <>

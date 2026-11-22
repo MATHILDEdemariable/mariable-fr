@@ -5,7 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/components/ui/use-toast';
-import { Plus, Trash2, Save, Download, ShoppingCart, Lock, Package } from 'lucide-react';
+import { Plus, Trash2, Save, Download, ShoppingCart, Lock, Package, Upload } from 'lucide-react';
+import ExcelImportDialog from '@/components/import/ExcelImportDialog';
+import { budgetImport, matchBudgetCategory } from '@/lib/importModules';
+import { parseAmount } from '@/lib/excelImport';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { exportBudgetToPDF } from '@/services/budgetExportService';
@@ -97,6 +100,38 @@ const DetailedBudget: React.FC<DetailedBudgetProps> = ({
   const isPremium = isPremiumProfile || isWeddingCollaborator;
   const { items: cartItems } = useCart();
   const { weddingId } = useWeddingScope();
+  const [isExcelImportOpen, setIsExcelImportOpen] = useState(false);
+
+  // Import Excel du budget : catégorie libre rattachée à une catégorie Mariable (sinon « Divers »)
+  const handleExcelBudgetImport = async (rows: Record<string, string>[]) => {
+    const { data: userData } = await supabase.auth.getUser();
+    if (!userData.user) throw new Error('Utilisateur non connecté');
+    const records = rows.map((r) => {
+      const estimated = parseAmount(r.estimated);
+      const actual = parseAmount(r.actual);
+      const deposit = parseAmount(r.deposit);
+      return {
+        user_id: userData.user!.id,
+        wedding_id: weddingId || null,
+        category_name: matchBudgetCategory(r.category),
+        item_id: crypto.randomUUID(),
+        item_name: r.item_name.slice(0, 200),
+        estimated,
+        actual,
+        deposit,
+        unit_price: estimated,
+        quantity: 1,
+        remaining: Math.max((actual || estimated) - deposit, 0),
+        payment_note: r.note || null,
+      };
+    });
+    if (records.length) {
+      const { error } = await supabase.from('budgets_detail').insert(records);
+      if (error) throw error;
+    }
+    await queryClient.invalidateQueries({ queryKey: ['budgetDetails'] });
+    return records.length;
+  };
   const { coordination: jourJCoordination } = useMonJourMCoordination();
   const [isPublishingEnvelopes, setIsPublishingEnvelopes] = useState(false);
   const isEnglishBudget = i18n.language.startsWith('en');
@@ -960,6 +995,19 @@ else existingQuery = existingQuery.eq('user_id', userData.user.id);
       <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-white sticky top-0 z-10 border-b p-3 sm:p-6">
         <CardTitle className="text-lg sm:text-xl font-serif">{t('detailed.title')}</CardTitle>
         <div className="flex gap-1 sm:gap-2 flex-wrap w-full sm:w-auto">
+          {isPremium && (
+            <Button onClick={() => setIsExcelImportOpen(true)} variant="outline" size="sm" className="text-wedding-olive border-wedding-olive hover:bg-wedding-olive/10 text-xs sm:text-sm">
+              <Upload className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">Importer Excel</span>
+            </Button>
+          )}
+          <ExcelImportDialog
+            open={isExcelImportOpen}
+            onOpenChange={setIsExcelImportOpen}
+            config={budgetImport}
+            existingKeys={new Set(categories.flatMap((c) => c.items.map((item) => budgetImport.duplicateKey({ category: c.name, item_name: item.name }))))}
+            onImport={handleExcelBudgetImport}
+          />
           <Button
             onClick={() => setIsCatalogImportOpen(true)}
             variant="outline"
