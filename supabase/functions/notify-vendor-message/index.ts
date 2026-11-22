@@ -1,6 +1,7 @@
 import { escapeEmailHtml } from '../_shared/emailSecurity.ts';
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "npm:resend@2.0.0";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const resendApiKey = Deno.env.get("RESEND")!;
 const resend = new Resend(resendApiKey);
@@ -18,8 +19,16 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { record } = await req.json();
+    const { record: bodyRecord } = await req.json();
     console.log('Vendor message notification received');
+    // Message relu en base : seules les valeurs réelles et récentes (< 5 min) déclenchent l'alerte
+    const admin = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
+    const { data: record } = await admin.from("vendor_messages")
+      .select("id, vendor_name, user_email, message, created_at")
+      .eq("id", String(bodyRecord?.id ?? "")).maybeSingle();
+    if (!record || !record.created_at || Date.now() - new Date(record.created_at).getTime() > 5 * 60 * 1000) {
+      return new Response(JSON.stringify({ success: false }), { status: 404, headers: { "Content-Type": "application/json", ...corsHeaders } });
+    }
 
     const vendorName = record.vendor_name || "Non spécifié";
     const userEmail = record.user_email || "Non renseigné";
