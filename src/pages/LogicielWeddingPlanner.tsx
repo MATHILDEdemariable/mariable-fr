@@ -222,7 +222,13 @@ const TESTIMONIALS = {
 
 const LogicielWeddingPlanner = () => {
   const { i18n } = useTranslation();
-  const isEnglish = i18n.language?.startsWith("en");
+  // Meta Ads EN: /pro-solutions?lang=en force l'anglais (toggle + vidéo EN)
+  const urlLang = typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("lang") : null;
+  if ((urlLang === "en" || urlLang === "fr") && !i18n.language?.startsWith(urlLang)) {
+    try { window.localStorage.setItem("mariable_lang", urlLang); } catch { /* ignore */ }
+    i18n.changeLanguage(urlLang);
+  }
+  const isEnglish = urlLang === "en" || (urlLang !== "fr" && i18n.language?.startsWith("en"));
   const content = isEnglish ? CONTENT.en : CONTENT.fr;
   const testimonials = isEnglish ? TESTIMONIALS.en : TESTIMONIALS.fr;
   const [demoLanguage, setDemoLanguage] = useState<"fr" | "en">(isEnglish ? "en" : "fr");
