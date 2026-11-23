@@ -481,7 +481,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
           </div>
           
           {/* Boutons d'action - Desktop */}
-          <div className="hidden sm:flex gap-2 justify-end">
+          <div className="hidden sm:flex flex-wrap gap-2 justify-end">
             <Button 
               variant="outline"
               onClick={handleExportPDF}
@@ -777,22 +777,20 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-[250px]">{tr('Prestataire', 'Vendor')}</TableHead>
-                    <TableHead className="w-[120px]">{tr('Catégorie', 'Category')}</TableHead>
-                    <TableHead className="w-[100px]">Source</TableHead>
-                    <TableHead className="w-[140px]">{tr('Statut', 'Status')}</TableHead>
-                    <TableHead className="w-[100px]">Budget</TableHead>
-                    <TableHead className="w-[120px]">Feeling</TableHead>
-                    <TableHead className="w-[150px]">Notes</TableHead>
-                    <TableHead className="w-[150px]">{tr('Points +/-', 'Pros / cons')}</TableHead>
-                    <TableHead className="w-[110px]">Contact</TableHead>
-                    <TableHead className="text-right w-[120px]">Actions</TableHead>
+                    <TableHead className="min-w-[220px]">{tr('Prestataire', 'Vendor')}</TableHead>
+                    <TableHead>{tr('Catégorie', 'Category')}</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>{tr('Statut', 'Status')}</TableHead>
+                    <TableHead>Budget</TableHead>
+                    <TableHead>Feeling</TableHead>
+                    <TableHead>Contact</TableHead>
+                    <TableHead className="text-right sticky right-0 bg-background">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-6">
+                      <TableCell colSpan={8} className="text-center py-6">
                         <div className="flex justify-center">
                           <RefreshCw className="h-5 w-5 animate-spin" />
                         </div>
@@ -800,7 +798,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                     </TableRow>
                   ) : filteredVendors.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={10} className="text-center py-6 text-muted-foreground">
+                      <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
                         {vendors.length === 0 ? 
                           tr("Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer.", "No vendors yet. Use the buttons above to get started.") :
                           tr("Aucun prestataire trouvé avec ces critères", "No vendors match these filters")
@@ -810,7 +808,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                   ) : (
                     filteredVendors.map((vendor) => (
                       <TableRow key={vendor.id}>
-                        <TableCell className="w-[250px]">
+                        <TableCell className="min-w-[220px] max-w-[320px]">
                           <div className="font-medium truncate" title={vendor.vendor_name}>
                             {vendor.vendor_name}
                           </div>
@@ -838,6 +836,15 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <div className="text-xs text-muted-foreground truncate mt-1" title={vendor.notes}>
                               💭 {vendor.notes}
                             </div>
+                          )}
+                          {vendor.user_notes && (
+                            <div className="text-xs text-muted-foreground truncate mt-1" title={vendor.user_notes}>📝 {vendor.user_notes}</div>
+                          )}
+                          {vendor.points_forts && (
+                            <div className="text-xs text-green-600 truncate mt-1" title={vendor.points_forts}>✅ {vendor.points_forts}</div>
+                          )}
+                          {vendor.points_faibles && (
+                            <div className="text-xs text-red-600 truncate mt-1" title={vendor.points_faibles}>❌ {vendor.points_faibles}</div>
                           )}
                         </TableCell>
                         <TableCell className="truncate text-sm">{vendor.category}</TableCell>
@@ -883,37 +890,11 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           )}
                         </TableCell>
                         <TableCell>
-                          {vendor.user_notes ? (
-                            <div className="text-xs text-muted-foreground truncate" title={vendor.user_notes}>
-                              📝 {vendor.user_notes}
-                            </div>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">-</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <div className="space-y-1">
-                            {vendor.points_forts && (
-                              <div className="text-xs text-green-600 truncate" title={vendor.points_forts}>
-                                ✅ {vendor.points_forts}
-                              </div>
-                            )}
-                            {vendor.points_faibles && (
-                              <div className="text-xs text-red-600 truncate" title={vendor.points_faibles}>
-                                ❌ {vendor.points_faibles}
-                              </div>
-                            )}
-                            {!vendor.points_forts && !vendor.points_faibles && (
-                              <span className="text-muted-foreground text-sm">-</span>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
                           <div className="text-sm truncate">
                             {formatDate(vendor.contact_date)}
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right sticky right-0 bg-background">
                           <div className="flex items-center justify-end gap-1">
                             <Button variant="outline" size="sm" className="p-2" title={tr('Documents (devis…)', 'Documents (quotes…)')} aria-label={tr('Documents du prestataire', 'Vendor documents')} onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
                               <FileText className="h-3 w-3" />

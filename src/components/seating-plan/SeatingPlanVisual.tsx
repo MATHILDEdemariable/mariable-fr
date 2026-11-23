@@ -53,6 +53,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  const [unassignedSearch, setUnassignedSearch] = useState('');
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(1);
   zoomRef.current = zoom;
@@ -203,8 +204,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   };
 
   // Invité sélectionné puis clic sur une autre table : déplacement si place libre
-  const moveSelectedGuestToTable = async (tableId: string) => {
-    const guest = guests.find(g => g.id === selectedGuest);
+  const moveSelectedGuestToTable = async (tableId: string, guestId: string | null = selectedGuest) => {
+    const guest = guests.find(g => g.id === guestId);
     const table = tables.find(t => t.id === tableId);
     if (!guest || !table) return;
     setSelectedGuest(null);
@@ -495,6 +496,40 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
         </div>
       )}
 
+    {/* Invités non placés : glisser sur une table, ou cliquer puis cliquer sur la table */}
+    {(() => {
+      const unassignedGuests = guests.filter(g => !g.table_id && normalizeGuestName(g.guest_name).includes(normalizeGuestName(unassignedSearch)));
+      const unassignedTotal = guests.filter(g => !g.table_id).length;
+      return (
+        <div className="border border-wedding-olive/40 bg-white p-3 space-y-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="font-semibold text-sm">{tr('Invités non placés', 'Unseated guests')} ({unassignedTotal})</p>
+            <p className="text-xs text-muted-foreground">{tr('Glissez un invité sur une table, ou cliquez-le puis cliquez sur la table.', 'Drag a guest onto a table, or click it then click the table.')}</p>
+            <input type="search" value={unassignedSearch} onChange={(e) => setUnassignedSearch(e.target.value)} placeholder={tr('Rechercher…', 'Search…')} aria-label={tr('Rechercher un invité non placé', 'Search unseated guest')} className="ml-auto min-h-[44px] border px-2 text-base sm:text-sm w-full sm:w-56" />
+          </div>
+          {unassignedTotal === 0 ? (
+            <p className="text-sm text-muted-foreground">{tr('Tous les invités sont placés ✓', 'All guests are seated ✓')}</p>
+          ) : (
+            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+              {unassignedGuests.map((guest) => (
+                <button
+                  key={guest.id}
+                  type="button"
+                  draggable
+                  onDragStart={(e) => { e.dataTransfer.setData('text/plain', guest.id); e.dataTransfer.effectAllowed = 'move'; }}
+                  onClick={() => setSelectedGuest(selectedGuest === guest.id ? null : guest.id)}
+                  aria-pressed={selectedGuest === guest.id}
+                  className={cn('min-h-[36px] px-3 border text-sm cursor-grab', selectedGuest === guest.id ? 'bg-wedding-olive text-white border-wedding-olive' : 'bg-editorial-cream border-wedding-olive/40 hover:border-wedding-olive')}
+                >
+                  {guest.guest_name}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      );
+    })()}
+
     <div ref={viewportRef} className="w-full overflow-auto rounded-xl border-2 border-dashed border-wedding-olive/30">
     <div style={{ width: canvasW * zoom, height: canvasH * zoom }}>
     <div
@@ -624,6 +659,8 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
                 setSelectedItem(table.id); handleMouseDown(e, table.id);
               }}
               onDoubleClick={() => onEditTable?.(table)}
+              onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }}
+              onDrop={(e) => { e.preventDefault(); const droppedGuestId = e.dataTransfer.getData('text/plain'); if (droppedGuestId) moveSelectedGuestToTable(table.id, droppedGuestId); }}
               title={`${table.table_name} · ${tableGuests.length}/${table.capacity}`}
             >
               {table.shape === 'serpentine' && (
