@@ -377,11 +377,6 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
     }
   };
   
-  // Format date for display
-  const formatDate = (date?: Date | null) => {
-    if (!date) return tr("Aucun contact", "No contact");
-    return date.toLocaleDateString('fr-FR');
-  };
 
   // Export to PDF
   const handleExportPDF = async () => {
@@ -643,10 +638,6 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <span className="font-medium">{vendor.budget}</span>
                           </div>
                         )}
-                        <div className="flex justify-between">
-                          <span>{tr('Contact :', 'Contact:')}</span>
-                          <span>{formatDate(vendor.contact_date)}</span>
-                        </div>
                         {vendor.feeling && (
                           <div className="flex justify-between">
                             <span>Feeling:</span>
@@ -666,7 +657,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         )}
                       </div>
 
-                      {vendor.source === 'personal' && (vendor.email || vendor.phone || vendor.location) && (
+                      {(vendor.email || vendor.phone || vendor.location) && (
                         <div className="mb-4 p-2 bg-gray-50 rounded text-xs">
                           {vendor.email && (
                             <div className="flex items-center gap-1 mb-1">
@@ -813,24 +804,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             {vendor.vendor_name}
                           </div>
                           <VendorLinks vendor={vendor} label={tr("Site web", "Website")} />
-                          {vendor.source === 'personal' && (
-                            <div className="mt-1 space-y-1 text-xs text-muted-foreground">
-                              {vendor.email && (
-                                <div className="flex items-center gap-1 truncate">
-                                  <Mail className="h-3 w-3 flex-shrink-0" />
-                                  <span className="truncate" title={vendor.email}>{vendor.email}</span>
-                                </div>
-                              )}
-                              {vendor.phone && (
-                                <div className="flex items-center gap-1">
-                                  <Phone className="h-3 w-3 flex-shrink-0" />
-                                  <span className="truncate">{vendor.phone}</span>
-                                </div>
-                              )}
-                              {vendor.location && (
-                                <div className="truncate" title={vendor.location}>📍 {vendor.location}</div>
-                              )}
-                            </div>
+                          {vendor.location && (
+                            <div className="mt-1 text-xs text-muted-foreground truncate" title={vendor.location}>📍 {vendor.location}</div>
                           )}
                           {vendor.notes && (
                             <div className="text-xs text-muted-foreground truncate mt-1" title={vendor.notes}>
@@ -890,9 +865,22 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                           )}
                         </TableCell>
                         <TableCell>
-                          <div className="text-sm truncate">
-                            {formatDate(vendor.contact_date)}
-                          </div>
+                          {vendor.email || vendor.phone ? (
+                            <div className="space-y-1 text-xs">
+                              {vendor.email && (
+                                <a href={`mailto:${vendor.email}`} className="flex items-center gap-1 truncate hover:underline" title={vendor.email}>
+                                  <Mail className="h-3 w-3 flex-shrink-0" /><span className="truncate">{vendor.email}</span>
+                                </a>
+                              )}
+                              {vendor.phone && (
+                                <a href={`tel:${vendor.phone.replace(/\s/g, '')}`} className="flex items-center gap-1 hover:underline">
+                                  <Phone className="h-3 w-3 flex-shrink-0" /><span>{vendor.phone}</span>
+                                </a>
+                              )}
+                            </div>
+                          ) : (
+                            <span className="text-muted-foreground text-sm">-</span>
+                          )}
                         </TableCell>
                         <TableCell className="text-right sticky right-0 bg-background">
                           <div className="flex items-center justify-end gap-1">
