@@ -503,15 +503,15 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               className="bg-wedding-olive hover:bg-wedding-olive/90 text-white"
               onClick={() => setCatalogOpen(true)}
             >
-              <Plus className="h-4 w-4 mr-2" /> {tr('Sélection Mariable', 'Mariable selection')}
+              <Plus className="h-4 w-4 mr-2" /> Mariable
             </Button>
             {isProAccount && (
               <Button variant="outline" onClick={() => setAddressBookOpen(true)}>
-                <Plus className="h-4 w-4 mr-2" /> {tr('Depuis mon carnet', 'From my address book')}
+                <Plus className="h-4 w-4 mr-2" /> {tr('Mon carnet', 'Address book')}
               </Button>
             )}
             <Button variant="outline" onClick={() => setExcelImportOpen(true)}>
-              <Upload className="h-4 w-4 mr-2" /> {tr('Importer Excel', 'Import Excel')}
+              <Upload className="h-4 w-4 mr-2" /> Excel
             </Button>
             <ExcelImportDialog
               open={excelImportOpen}
@@ -525,7 +525,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               className="bg-wedding-olive hover:bg-wedding-olive/90"
               onClick={() => setAddDialogOpen(true)}
             >
-              <Plus className="h-4 w-4 mr-2" /> {tr('Sélection personnelle', 'Add my own')}
+              <Plus className="h-4 w-4 mr-2" /> {tr('Perso', 'Own')}
             </Button>
             </>)}
           </div>
@@ -768,20 +768,17 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="min-w-[220px]">{tr('Prestataire', 'Vendor')}</TableHead>
-                    <TableHead>{tr('Catégorie', 'Category')}</TableHead>
-                    <TableHead>Source</TableHead>
-                    <TableHead>{tr('Statut', 'Status')}</TableHead>
-                    <TableHead>Budget</TableHead>
-                    <TableHead>Feeling</TableHead>
+                    <TableHead className="min-w-[200px]">{tr('Prestataire', 'Vendor')}</TableHead>
+                    <TableHead className="w-[140px]">{tr('Statut', 'Status')}</TableHead>
+                    <TableHead className="w-[100px]">Budget</TableHead>
                     <TableHead>Contact</TableHead>
-                    <TableHead className="text-right sticky right-0 bg-background">Actions</TableHead>
+                    <TableHead className="text-right w-[110px]">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6">
+                      <TableCell colSpan={5} className="text-center py-6">
                         <div className="flex justify-center">
                           <RefreshCw className="h-5 w-5 animate-spin" />
                         </div>
@@ -789,7 +786,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                     </TableRow>
                   ) : filteredVendors.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={8} className="text-center py-6 text-muted-foreground">
+                      <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">
                         {vendors.length === 0 ? 
                           tr("Aucun prestataire ajouté. Utilisez les boutons ci-dessus pour commencer.", "No vendors yet. Use the buttons above to get started.") :
                           tr("Aucun prestataire trouvé avec ces critères", "No vendors match these filters")
@@ -802,6 +799,10 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                         <TableCell className="min-w-[220px] max-w-[320px]">
                           <div className="font-medium truncate" title={vendor.vendor_name}>
                             {vendor.vendor_name}
+                          </div>
+                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground mt-0.5">
+                            <span title={vendor.source === 'personal' ? tr('Personnel', 'Personal') : 'Mariable'}>{vendor.source === 'personal' ? '👤' : '🏢'}</span>
+                            <span className="truncate">{vendor.category}</span>
                           </div>
                           <VendorLinks vendor={vendor} label={tr("Site web", "Website")} />
                           {vendor.location && (
@@ -822,35 +823,35 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <div className="text-xs text-red-600 truncate mt-1" title={vendor.points_faibles}>❌ {vendor.points_faibles}</div>
                           )}
                         </TableCell>
-                        <TableCell className="truncate text-sm">{vendor.category}</TableCell>
                         <TableCell>
-                          <Badge 
-                            variant={vendor.source === 'personal' ? 'secondary' : 'default'}
-                            className={cn(
-                              "text-xs px-2 py-1",
-                              vendor.source === 'personal' ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'
-                            )}
+                          <Select
+                            defaultValue={vendor.status}
+                            disabled={isReadOnly}
+                            onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
                           >
-                            {vendor.source === 'personal' ? '👤' : '🏢'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>
-                          <Badge className={cn("flex items-center gap-1 text-xs px-2 py-1", statusColorMap[vendor.status])}>
-                            {statusIconMap[vendor.status]}
-                            <span className="hidden sm:inline">{getStatusLabel(vendor.status)}</span>
-                          </Badge>
+                            <SelectTrigger className={cn("h-8 w-[130px] text-xs border-0", statusColorMap[vendor.status])} aria-label={tr('Statut', 'Status')}>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="à contacter">{getStatusLabel('à contacter')}</SelectItem>
+                              <SelectItem value="contactés">{getStatusLabel('contactés')}</SelectItem>
+                              <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
+                              <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
+                              <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
+                              <SelectItem value="validé">{getStatusLabel('validé')}</SelectItem>
+                              <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </TableCell>
                         <TableCell>
                           <div className="text-sm font-medium truncate">
                             {vendor.budget || '-'}
                           </div>
-                        </TableCell>
-                        <TableCell>
-                          {vendor.feeling ? (
+                          {vendor.feeling && (
                             <Badge 
                               variant="outline" 
                               className={cn(
-                                "text-xs px-2 py-1",
+                                "mt-1 text-[10px] px-1.5 py-0",
                                 vendor.feeling === 'Excellent' && 'bg-green-100 text-green-800 border-green-300',
                                 vendor.feeling === 'Bon' && 'bg-blue-100 text-blue-800 border-blue-300',
                                 vendor.feeling === 'Moyen' && 'bg-yellow-100 text-yellow-800 border-yellow-300',
@@ -858,10 +859,8 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               )}
                               title={vendor.feeling}
                             >
-                              {vendor.feeling.charAt(0)}
+                              {vendor.feeling}
                             </Badge>
-                          ) : (
-                            <span className="text-muted-foreground text-sm">-</span>
                           )}
                         </TableCell>
                         <TableCell>
@@ -882,7 +881,7 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                             <span className="text-muted-foreground text-sm">-</span>
                           )}
                         </TableCell>
-                        <TableCell className="text-right sticky right-0 bg-background">
+                        <TableCell className="text-right">
                           <div className="flex items-center justify-end gap-1">
                             <Button variant="outline" size="sm" className="p-2" title={tr('Documents (devis…)', 'Documents (quotes…)')} aria-label={tr('Documents du prestataire', 'Vendor documents')} onClick={() => setDocumentsVendorName(vendor.vendor_name)}>
                               <FileText className="h-3 w-3" />
@@ -915,25 +914,6 @@ const VendorTracking = ({ project_id }: VendorTrackingProps) => {
                               <Trash className="h-3 w-3" />
                             </Button>
                             </>)}
-                            
-                            <Select 
-                              defaultValue={vendor.status}
-                          disabled={isReadOnly}
-                              onValueChange={(value) => updateVendorStatus(vendor.id, value as VendorStatus)}
-                            >
-                              <SelectTrigger className="w-[100px] text-xs">
-                                <SelectValue />
-                              </SelectTrigger>
-                              <SelectContent>
-                                <SelectItem value="à contacter">{getStatusLabel('à contacter')}</SelectItem>
-                                <SelectItem value="contactés">{getStatusLabel('contactés')}</SelectItem>
-                                <SelectItem value="en attente">{getStatusLabel('en attente')}</SelectItem>
-                                <SelectItem value="réponse reçue">{getStatusLabel('réponse reçue')}</SelectItem>
-                                <SelectItem value="à valider">{getStatusLabel('à valider')}</SelectItem>
-                <SelectItem value="validé">{getStatusLabel('validé')}</SelectItem>
-                                <SelectItem value="annuler">{getStatusLabel('annuler')}</SelectItem>
-                              </SelectContent>
-                            </Select>
                           </div>
                         </TableCell>
                       </TableRow>
