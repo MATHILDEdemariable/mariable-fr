@@ -7,8 +7,9 @@ import { toast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play, List, LayoutGrid } from 'lucide-react';
+import { Plus, Download, Users, UserPlus, FileSpreadsheet, Play, List, LayoutGrid, HelpCircle } from 'lucide-react';
 import { TutorialVideoModal } from '@/components/tutorials/TutorialVideoModal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import TablesList from '@/components/seating-plan/TablesList';
 import GuestList from '@/components/seating-plan/GuestList';
 import TableEditor from '@/components/seating-plan/TableEditor';
@@ -31,6 +32,7 @@ const SeatingPlan = () => {
   const [tables, setTables] = useState<SeatingTable[]>([]);
   const [guests, setGuests] = useState<SeatingAssignment[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unassignedSlot, setUnassignedSlot] = useState<HTMLDivElement | null>(null);
   const [showTableEditor, setShowTableEditor] = useState(false);
   const [showImportDialog, setShowImportDialog] = useState(false);
   const [showImportGuestList, setShowImportGuestList] = useState(false);
@@ -409,22 +411,33 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                   </Button>
                   <ExportPDFButton plan={plan} tables={tables} guests={guests} />
                 </div>
-                <div className="border border-wedding-olive/40 bg-editorial-cream p-4 text-sm space-y-2">
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <Button variant="outline" className="w-full"><HelpCircle className="h-4 w-4 mr-2" />{i18n.language?.startsWith('en') ? 'How it works' : 'Mode d’emploi'}</Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader><DialogTitle>{i18n.language?.startsWith('en') ? 'How it works' : 'Mode d’emploi'}</DialogTitle></DialogHeader>
+                <div className="text-sm space-y-2">
                   <p className="font-semibold">{i18n.language?.startsWith('en') ? 'How it works' : 'Mode d’emploi'}</p>
                   {(i18n.language?.startsWith('en') ? [
                     '🔄 Swap guests: click one guest, then another — even across tables.',
                     '➡️ Move a guest: click a guest, then a table with free seats.',
                     '✋ Move: click and hold a table or element, then drag it.',
                     '✎ Edit: a single click selects a table or element to change it.',
+                    '↩️ Unseat: drag a guest from a table back to the unseated list.',
                     '🔍 Zoom: + / − buttons, or Ctrl + mouse wheel / trackpad pinch.',
                   ] : [
                     '🔄 Échanger : cliquez sur un invité puis sur un autre, même entre deux tables.',
                     '➡️ Déplacer un invité : cliquez sur l’invité puis sur une table avec des places libres.',
                     '✋ Déplacer : maintenez le clic sur une table ou un élément et faites-le glisser.',
                     '✎ Modifier : un simple clic sélectionne la table ou l’élément.',
+                    '↩️ Retirer un invité : glissez-le d’une table vers la liste des invités non placés.',
                     '🔍 Zoomer : boutons + / −, ou Ctrl + molette / pincement du trackpad.',
                   ]).map((tip) => <p key={tip} className="text-muted-foreground">{tip}</p>)}
                 </div>
+                  </DialogContent>
+                </Dialog>
+                <div ref={setUnassignedSlot} />
               </div>
 
               {/* Visual canvas */}
@@ -432,6 +445,7 @@ else plansQuery = plansQuery.eq('user_id', user.id);
                 <SeatingPlanVisual
                   tables={tables}
                   guests={guests}
+                  unassignedContainer={unassignedSlot}
                   onTablePositionUpdate={() => loadSeatingPlan(true)}
                   onEditTable={handleEditTable}
                 />

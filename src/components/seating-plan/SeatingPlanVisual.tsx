@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import React, { useState, useRef, useEffect } from 'react';
 import { SeatingTable, SeatingAssignment } from '@/types/seating';
@@ -35,6 +36,7 @@ const FIXED_ELEMENTS: Record<FixedElementKind, { fr: string; en: string; w: numb
 interface SeatingPlanVisualProps {
   tables: SeatingTable[];
   guests: SeatingAssignment[];
+  unassignedContainer?: HTMLElement | null;
   onTablePositionUpdate: () => void;
   onEditTable?: (table: SeatingTable) => void;
 }
@@ -42,6 +44,7 @@ interface SeatingPlanVisualProps {
 const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   tables,
   guests,
+  unassignedContainer,
   onTablePositionUpdate,
   onEditTable
 }) => {
@@ -51,6 +54,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
   const [draggingTable, setDraggingTable] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [tablePositions, setTablePositions] = useState<Record<string, { x: number; y: number }>>({});
+  const [unassignedDragOver, setUnassignedDragOver] = useState(false);
   const [selectedGuest, setSelectedGuest] = useState<string | null>(null);
   const [selectedItem, setSelectedItem] = useState<string | null>(null);
   const [unassignedSearch, setUnassignedSearch] = useState('');
@@ -498,26 +502,45 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
 
     {/* Invités non placés : glisser sur une table, ou cliquer puis cliquer sur la table */}
     {(() => {
+      const unassignGuest = async (guestId: string) => {
+        const guest = guests.find(g => g.id === guestId);
+        if (!guest || !guest.table_id) return;
+        setSelectedGuest(null);
+        const { error } = await supabase.from('seating_assignments').update({ table_id: null, seat_number: null }).eq('id', guestId);
+        if (error) {
+          console.error('❌ Retrait invité échoué:', error);
+          toast({ title: tr('Erreur', 'Error'), description: tr("Impossible de retirer l'invité", 'Unable to unseat guest'), variant: 'destructive' });
+          return;
+        }
+        toast({ title: tr('Invité remis dans la liste', 'Guest back in the list'), description: guest.guest_name });
+        onTablePositionUpdate();
+      };
       const unassignedGuests = guests.filter(g => !g.table_id && normalizeGuestName(g.guest_name).includes(normalizeGuestName(unassignedSearch)));
       const unassignedTotal = guests.filter(g => !g.table_id).length;
-      return (
-        <div className="border border-wedding-olive/40 bg-white p-3 space-y-2">
+      const panel = (
+        <div
+          className={cn('border border-wedding-olive/40 bg-white p-3 space-y-2 transition-colors', unassignedDragOver && 'bg-editorial-cream ring-2 ring-wedding-olive')}
+          onDragOver={(e) => { e.preventDefault(); e.dataTransfer.dropEffect = 'move'; setUnassignedDragOver(true); }}
+          onDragLeave={() => setUnassignedDragOver(false)}
+          onDrop={(e) => { e.preventDefault(); setUnassignedDragOver(false); const id = e.dataTransfer.getData('text/plain'); if (id) unassignGuest(id); }}
+          onClick={() => { const g = guests.find(x => x.id === selectedGuest); if (g?.table_id) unassignGuest(g.id); }}
+        >
           <div className="flex flex-wrap items-center gap-2">
             <p className="font-semibold text-sm">{tr('Invités non placés', 'Unseated guests')} ({unassignedTotal})</p>
-            <p className="text-xs text-muted-foreground">{tr('Glissez un invité sur une table, ou cliquez-le puis cliquez sur la table.', 'Drag a guest onto a table, or click it then click the table.')}</p>
-            <input type="search" value={unassignedSearch} onChange={(e) => setUnassignedSearch(e.target.value)} placeholder={tr('Rechercher…', 'Search…')} aria-label={tr('Rechercher un invité non placé', 'Search unseated guest')} className="ml-auto min-h-[44px] border px-2 text-base sm:text-sm w-full sm:w-56" />
+            <p className="text-xs text-muted-foreground">{tr('Glissez un invité sur une table. Pour le retirer, glissez-le d’une table vers cette liste.', 'Drag a guest onto a table. To unseat, drag them from a table back here.')}</p>
+            <input type="search" value={unassignedSearch} onChange={(e) => setUnassignedSearch(e.target.value)} placeholder={tr('Rechercher…', 'Search…')} aria-label={tr('Rechercher un invité non placé', 'Search unseated guest')} onClick={(e) => e.stopPropagation()} className="min-h-[44px] border px-2 text-base sm:text-sm w-full" />
           </div>
           {unassignedTotal === 0 ? (
             <p className="text-sm text-muted-foreground">{tr('Tous les invités sont placés ✓', 'All guests are seated ✓')}</p>
           ) : (
-            <div className="flex flex-wrap gap-2 max-h-40 overflow-y-auto">
+            <div className={cn('flex flex-wrap gap-2 overflow-y-auto', unassignedContainer ? 'max-h-[60vh]' : 'max-h-40')}>
               {unassignedGuests.map((guest) => (
                 <button
                   key={guest.id}
                   type="button"
                   draggable
                   onDragStart={(e) => { e.dataTransfer.setData('text/plain', guest.id); e.dataTransfer.effectAllowed = 'move'; }}
-                  onClick={() => setSelectedGuest(selectedGuest === guest.id ? null : guest.id)}
+                  onClick={(e) => { e.stopPropagation(); setSelectedGuest(selectedGuest === guest.id ? null : guest.id); }}
                   aria-pressed={selectedGuest === guest.id}
                   className={cn('min-h-[36px] px-3 border text-sm cursor-grab', selectedGuest === guest.id ? 'bg-wedding-olive text-white border-wedding-olive' : 'bg-editorial-cream border-wedding-olive/40 hover:border-wedding-olive')}
                 >
@@ -528,6 +551,7 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
           )}
         </div>
       );
+      return unassignedContainer ? createPortal(panel, unassignedContainer) : panel;
     })()}
 
     <div ref={viewportRef} className="w-full overflow-auto rounded-xl border-2 border-dashed border-wedding-olive/30">
@@ -691,6 +715,10 @@ const SeatingPlanVisual: React.FC<SeatingPlanVisualProps> = ({
               return (
                 <div
                   key={guest.id}
+                  draggable
+                  onDragStart={(e) => { e.stopPropagation(); e.dataTransfer.setData('text/plain', guest.id); e.dataTransfer.effectAllowed = 'move'; }}
+                  onMouseDown={(e) => e.stopPropagation()}
+                  
                   onClick={(e) => {
                     e.stopPropagation();
                     handleGuestClick(guest.id, table.id);
