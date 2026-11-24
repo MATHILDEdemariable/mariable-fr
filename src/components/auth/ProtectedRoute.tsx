@@ -20,7 +20,8 @@ const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
   }
 
   if (!user) {
-    return <Navigate to="/login" state={{ redirectAfterLogin: location.pathname }} replace />;
+    const redirectAfterLogin = location.pathname + location.search + location.hash;
+    return <Navigate to={`/login?next=${encodeURIComponent(redirectAfterLogin)}`} state={{ redirectAfterLogin }} replace />;
   }
 
   // Un compte professionnel sans mariage sélectionné passe d'abord par sa liste

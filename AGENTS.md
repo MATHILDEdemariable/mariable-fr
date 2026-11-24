@@ -25,6 +25,7 @@
 - Email templates escape user-controlled HTML text with escapeEmailHtml; premium activation validates caller ownership and the exact premium Stripe price before granting access.
 - Third-party trackers that ignore Google Consent Mode (Meta Pixel, Hotjar) load only through `src/lib/consentedTracking.ts` after `canTrack()` from `src/lib/consent.ts`; GTM/GA stay in index.html behind the consent-defaults script — one banner, one stored answer per purpose.
 - Premium access rights (isPremium, isProPremium, isProOrganisation, isProJourJ, isProAccount) are derived in one place, `getPremiumAccess()` in `src/lib/proAccess.ts`, and consumed by `useUserProfile.ts`; an active 30-day Pro trial counts as Premium there — keep new paywall rules in that function so they stay testable.
-- The site-wide AI Copilot (CopilotWidget in App.tsx → copilote-ia edge function) keeps the conversation in sessionStorage and its Mariable method in copilote-ia/systemPrompt.ts; vendor search uses exact prestataire_categorie enum values — update the prompt when retroplanning/dashboard modules change.
+- The AI Copilot is not mounted in App.tsx; retain CopilotWidget and the copilote-ia edge function for later reactivation. It keeps conversations in sessionStorage and the Mariable method in systemPrompt.ts; vendor search uses exact prestataire_categorie enum values.
+- ProtectedRoute preserves pathname, search and hash in the login next parameter and navigation state so explicit subscription choices survive sign-in and reloads.
 
 - Excel/CSV imports go through `ExcelImportDialog` + per-module configs in `src/lib/importModules.ts` (template, header aliases, duplicate key); each module keeps its own insert — one preview/dedup UX for every module.

@@ -4,7 +4,6 @@ import { Toaster } from "@/components/ui/toaster";
 const DemoVideos = lazy(() => import("./pages/DemoVideos"));
 const PolitiqueConfidentialite = lazy(() => import("./pages/PolitiqueConfidentialite"));
 import CookieConsentBanner from "@/components/consent/CookieConsentBanner";
-const CopilotWidget = lazy(() => import("@/components/copilot/CopilotWidget"));
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -216,7 +215,7 @@ function App() {
                 <AnalyticsProvider>
                   <PaymentSuccessHandler />
                   <CookieConsentBanner />
-                  <Suspense fallback={null}><CopilotWidget /></Suspense>
+                  {/* Copilot hidden; its component and server function are retained for later reactivation. */}
                   <Suspense fallback={<PageLoader />}>
                   <Routes>
                  <Route path="/" element={<RefonteJuillet />} />

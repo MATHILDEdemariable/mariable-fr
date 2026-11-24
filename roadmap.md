@@ -1,5 +1,12 @@
 # Roadmap
 
+## Abonnement Pro et Copilot — 24 novembre 2026
+- [x] Masquer le Copilot sur tout le site sans supprimer son code
+- [x] Préserver le choix d’abonnement dans le retour après connexion
+- [x] Tester les quatre choix conservés après retour connexion/rechargement et l’absence du Copilot sur mobile ; 13 tests passent
+- [ ] Vérifier l’ouverture Stripe après connexion : aucune session disponible sur le Supabase externe
+- [ ] Publication à effectuer par Mathilde après validation
+
 ## Publication blog — 15 novembre 2026, lot 3
 - [x] Publier trois articles FR et remplacer la liste des salons dans son entrée existante
 - [x] Publier quatre traductions liées, contrôler tous les liens et préserver les couvertures
