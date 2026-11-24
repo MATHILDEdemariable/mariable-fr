@@ -1,5 +1,11 @@
 # Roadmap
 
+## Accès abonnement Pro — mobile et ordinateur
+- [x] Regrouper badge, boîte à outils, paramètres et passage Premium vers /pro/abonnement
+- [x] Ajouter Abonnement à la navigation mobile et les outils Pro au menu Plus
+- [x] Vérifier 16 tests, compilation et retour connexion sans erreur sur mobile/ordinateur
+- [ ] Vérifier le menu en session Pro réelle : Supabase externe sans session disponible
+
 ## Abonnement Pro et Copilot — 24 novembre 2026
 - [x] Masquer le Copilot sur tout le site sans supprimer son code
 - [x] Préserver le choix d’abonnement dans le retour après connexion

@@ -22,6 +22,9 @@ import {
   MessageSquare,
   ArrowLeft,
   Contact,
+  Crown,
+  BadgeCheck,
+  Library,
 } from 'lucide-react';
 import {
   Drawer,
@@ -33,6 +36,8 @@ import {
 import { cn } from '@/lib/utils';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
+import { useTranslation } from 'react-i18next';
+import { Button } from '@/components/ui/button';
 import { useWedding } from '@/contexts/WeddingContext';
 
 interface NavItem {
@@ -51,6 +56,7 @@ const mainNavItems: NavItem[] = [
 const proNavItems: NavItem[] = [
   { icon: Calendar, label: 'Mariages', path: '/pro#mes-mariages' },
   { icon: BookOpen, label: 'Carnet', path: '/pro/carnet-adresses' },
+  { icon: Crown, label: 'Abonnement', path: '/pro/abonnement' },
 ];
 
 // Pro dans un mariage : retour aux mariages + même barre que le couple
@@ -108,6 +114,8 @@ const HIDDEN_PATTERNS = [
 
 const MobileBottomNav: React.FC = () => {
   const location = useLocation();
+  const { i18n } = useTranslation();
+  const isEnglish = i18n.language?.startsWith('en');
   const navigate = useNavigate();
   const { isAuthenticated, loading } = useAuth();
   const { accountType } = useWedding();
@@ -116,9 +124,19 @@ const MobileBottomNav: React.FC = () => {
   if (loading || !isAuthenticated) return null;
   if (HIDDEN_PATTERNS.some((r) => r.test(location.pathname))) return null;
 
-  const isProSpace = location.pathname.startsWith('/pro');
+  const isProSpace = location.pathname === '/pro' || location.pathname.startsWith('/pro/');
   const isProAccount = accountType === 'b2b';
   const bottomItems = isProSpace ? proNavItems : isProAccount ? proWeddingNavItems : mainNavItems;
+
+  const proTools: NavItem[] = [
+    { icon: Crown, label: isEnglish ? 'My subscription' : 'Mon abonnement', path: '/pro/abonnement' },
+    { icon: BadgeCheck, label: isEnglish ? 'My Guide profile' : 'Ma fiche Guide', path: '/pro/fiche-guide' },
+    { icon: BookOpen, label: isEnglish ? 'Address book' : 'Carnet d’adresses', path: '/pro/carnet-adresses' },
+    { icon: Library, label: isEnglish ? 'Templates' : 'Modèles', path: '/pro/referentiels' },
+    { icon: ClipboardList, label: isEnglish ? 'Client forms' : 'Formulaires clients', path: '/pro/formulaires' },
+  ];
+  const drawerItems = isProSpace ? proTools : drawerNavItems;
+  const proLabels: Record<string, string> = { Mariages: 'Weddings', Carnet: 'Contacts', Abonnement: 'Subscription' };
 
   const isActive = (path: string) => {
     if (path === '/pro') return location.pathname === '/pro' && !location.hash;
@@ -157,7 +175,7 @@ const MobileBottomNav: React.FC = () => {
               >
                 <Icon className={cn('h-5 w-5', active && 'stroke-[2.5]')} />
                 <span className={cn('text-[10px] mt-1 font-medium', active && 'font-semibold')}>
-                  {item.label}
+                  {isProSpace && isEnglish ? proLabels[item.label] ?? item.label : item.label}
                 </span>
                 {active && (
                   <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-wedding-olive" />
@@ -166,20 +184,21 @@ const MobileBottomNav: React.FC = () => {
             );
           })}
 
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setDrawerOpen(true)}
-            className="flex flex-col items-center justify-center flex-1 h-full py-2 text-gray-500 transition-colors hover:text-wedding-olive"
+            className="flex flex-col items-center justify-center flex-1 h-full py-2 rounded-none text-muted-foreground transition-colors hover:text-primary"
           >
             <Menu className="h-5 w-5" />
-            <span className="text-[10px] mt-1 font-medium">Plus</span>
-          </button>
+            <span className="text-[10px] mt-1 font-medium">{isProSpace && isEnglish ? 'More' : 'Plus'}</span>
+          </Button>
         </div>
       </nav>
 
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen}>
         <DrawerContent className="max-h-[85vh]">
           <DrawerHeader className="flex items-center justify-between border-b pb-4">
-            <DrawerTitle className="text-lg font-semibold">Tous les outils</DrawerTitle>
+            <DrawerTitle className="text-lg font-semibold">{isProSpace ? (isEnglish ? 'My pro space' : 'Mon espace pro') : 'Tous les outils'}</DrawerTitle>
             <DrawerClose asChild>
               <button className="p-2 rounded-full hover:bg-gray-100">
                 <X className="h-5 w-5" />
@@ -189,7 +208,7 @@ const MobileBottomNav: React.FC = () => {
 
           <div className="overflow-y-auto px-4 py-4 pb-8">
             <div className="grid grid-cols-3 gap-3 mb-6">
-              {drawerNavItems.map((item) => {
+              {drawerItems.map((item) => {
                 const Icon = item.icon;
                 const active = isActive(item.path);
                 return (
@@ -211,7 +230,7 @@ const MobileBottomNav: React.FC = () => {
               })}
             </div>
 
-            <div className="mb-6">
+            {!isProSpace && bonusItems.length > 0 && <div className="mb-6">
               <h3 className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Bonus & IA</h3>
               <div className="grid grid-cols-2 gap-3">
                 {bonusItems.map((item) => {
@@ -235,16 +254,16 @@ const MobileBottomNav: React.FC = () => {
                   );
                 })}
               </div>
-            </div>
+            </div>}
 
             <div className="border-t pt-4 space-y-2">
               <Link
-                to="/dashboard/settings"
+                to={isProSpace ? "/pro#parametres" : "/dashboard/settings"}
                 onClick={() => setDrawerOpen(false)}
                 className="flex items-center gap-3 p-3 rounded-xl text-gray-600 hover:bg-gray-100 transition-all"
               >
                 <Settings className="h-5 w-5" />
-                <span className="text-sm font-medium">Paramètres</span>
+                <span className="text-sm font-medium">{isProSpace && isEnglish ? 'Settings' : 'Paramètres'}</span>
               </Link>
               <button
                 onClick={handleLogout}

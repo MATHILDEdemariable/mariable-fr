@@ -13,14 +13,12 @@ import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import DashboardLayout from '@/components/dashboard/DashboardLayout';
 import { useWedding, type Wedding } from '@/contexts/WeddingContext';
-import ProPricingPlans from '@/components/pro/ProPricingPlans';
 import NouveauMariageDialog from '@/components/pro/NouveauMariageDialog';
 import ModifierMariageDialog from '@/components/pro/ModifierMariageDialog';
 import { openProTutorial } from '@/components/pro/ProSupportHost';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ProSeasonOverview from '@/components/pro/ProSeasonOverview';
 import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
-import { openProUpgradeMail } from '@/components/pro/proUpgradeMail';
 import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
 import ProTrialGate from '@/components/pro/ProTrialGate';
 import FicheGuidePrompt from '@/components/pro/FicheGuidePrompt';
@@ -55,7 +53,6 @@ const MesMariages: React.FC = () => {
     setWeddingArchived,
   } = useWedding();
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [offerOpen, setOfferOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
   const [savingProfile, setSavingProfile] = useState(false);
@@ -76,7 +73,11 @@ const MesMariages: React.FC = () => {
 
   useEffect(() => {
     const openSettingsFromHash = () => {
-      if (['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
+      if (window.location.hash === '#mon-offre') {
+        navigate('/pro/abonnement', { replace: true });
+        return;
+      }
+      if (['#parametres', '#mes-informations'].includes(window.location.hash)) setSettingsOpen(true);
     };
     openSettingsFromHash();
     window.addEventListener('hashchange', openSettingsFromHash);
@@ -85,7 +86,7 @@ const MesMariages: React.FC = () => {
 
   // À la fermeture, on retire le hash pour qu'un nouveau clic rouvre la fenêtre
   useEffect(() => {
-    if (!settingsOpen && ['#parametres', '#mon-offre', '#mes-informations'].includes(window.location.hash)) {
+    if (!settingsOpen && ['#parametres', '#mes-informations'].includes(window.location.hash)) {
       window.history.replaceState(null, '', window.location.pathname + window.location.search);
     }
   }, [settingsOpen]);
@@ -200,6 +201,12 @@ const MesMariages: React.FC = () => {
 
   const toolboxItems = [
     {
+      icon: Crown,
+      title: isEnglish ? 'My subscription' : 'Mon abonnement',
+      text: isEnglish ? 'Plans, payment & invoices' : 'Formules, paiement & facture',
+      onClick: () => navigate('/pro/abonnement'),
+    },
+    {
       icon: GraduationCap,
       title: isEnglish ? 'Tutorial & guide' : 'Tuto & guide',
       text: isEnglish ? 'Get started in 3 steps' : 'Prendre en main en 3 étapes',
@@ -214,7 +221,7 @@ const MesMariages: React.FC = () => {
     {
       icon: Settings,
       title: isEnglish ? 'Account settings' : 'Paramètres du compte',
-      text: isEnglish ? 'Agency details & offer' : 'Coordonnées agence & offre',
+      text: isEnglish ? 'Agency details' : 'Coordonnées de votre agence',
       onClick: () => setSettingsOpen(true),
     },
     {
@@ -253,9 +260,9 @@ const MesMariages: React.FC = () => {
                 <Building2 className="h-3 w-3 mr-1" />
                 {t('header.badge')}
               </Badge>
-              <a href="/pro#mon-offre" className="text-xs font-semibold uppercase tracking-wider border border-editorial-beige/50 px-2 py-0.5 hover:bg-editorial-beige/10">
+              <a href="/pro/abonnement" className="text-xs font-semibold uppercase tracking-wider border border-editorial-beige/50 px-2 py-0.5 hover:bg-editorial-beige/10">
                 <Crown className="inline h-3 w-3 mr-1" />
-                {isProPremium ? 'Premium Pro' : (isEnglish ? 'Free plan' : 'Offre gratuite')}
+                {isEnglish ? 'My subscription' : 'Mon abonnement'}
               </a>
               <span className="text-xs uppercase tracking-widest opacity-80">
                 {todayDate.toLocaleDateString(dateLocale, { weekday: 'long', day: 'numeric', month: 'long' })}
@@ -304,7 +311,7 @@ const MesMariages: React.FC = () => {
           {accountType === 'b2b' && !canCreateMoreWeddings && weddings.length > 0 && (
             <div className="mb-4 border border-border bg-background p-4 text-sm text-muted-foreground">
               {t('weddings.limit')}{' '}
-              <button className="underline" onClick={() => setOfferOpen(true)}>
+              <button className="underline" onClick={() => navigate('/pro/abonnement')}>
                 {t('weddings.limitCta')}
               </button>
             </div>
@@ -500,16 +507,6 @@ const MesMariages: React.FC = () => {
       </div>
       </ProTrialGate>
 
-      {/* L'offre Mariable Pro s'ouvre ici, sans quitter l'espace pro */}
-      <Dialog open={offerOpen} onOpenChange={setOfferOpen}>
-        <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-5xl">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-2xl">{isEnglish ? 'The Mariable Pro offer' : "L'offre Mariable Pro"}</DialogTitle>
-          </DialogHeader>
-          <ProPricingPlans isEnglish={!!isEnglish} />
-        </DialogContent>
-      </Dialog>
-
       <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
         <DialogContent className="rounded-none max-h-[90vh] overflow-y-auto sm:max-w-xl">
           <DialogHeader>
@@ -578,25 +575,12 @@ const MesMariages: React.FC = () => {
           </Card>
         </section>
 
-        {/* Mon offre */}
-        <section id="mon-offre">
-          <h3 className="font-serif text-lg text-foreground mb-3">{t('offer.title')}</h3>
-          <Card className="rounded-none border-border bg-background">
-            <CardContent className="p-5 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <p className="font-medium text-foreground flex items-center gap-2">
-                  <Crown className="h-4 w-4 text-wedding-olive" />
-                  {t('offer.name')}
-                </p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  {t('offer.description')}
-                </p>
-              </div>
-              <Button className="rounded-none" onClick={() => openProUpgradeMail(i18n.language?.startsWith('en'))}>
-                {t('offer.cta')}
-              </Button>
-            </CardContent>
-          </Card>
+        <section>
+          <h3 className="font-serif text-lg text-foreground mb-3">{isEnglish ? 'My subscription' : 'Mon abonnement'}</h3>
+          <Button className="rounded-none" onClick={() => navigate('/pro/abonnement')}>
+            <Crown className="h-4 w-4 mr-2" />
+            {isEnglish ? 'Manage my subscription' : 'Gérer mon abonnement'}
+          </Button>
         </section>
           </div>
         </DialogContent>

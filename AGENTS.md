@@ -29,3 +29,5 @@
 - ProtectedRoute preserves pathname, search and hash in the login next parameter and navigation state so explicit subscription choices survive sign-in and reloads.
 
 - Excel/CSV imports go through `ExcelImportDialog` + per-module configs in `src/lib/importModules.ts` (template, header aliases, duplicate key); each module keeps its own insert — one preview/dedup UX for every module.
+
+- All Pro subscription entry points (desktop/mobile navigation, toolbox, settings and legacy #mon-offre) target /pro/abonnement; keep one payment/formula page to prevent divergent upgrade flows.
