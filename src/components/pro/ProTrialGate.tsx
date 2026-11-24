@@ -27,7 +27,7 @@ const ProTrialGate = ({ children }: { children: React.ReactNode }) => {
   if (loading || !signupDate || !isProAccount || isProPremium) return <>{children}</>;
 
   const daysLeft = getProTrialDaysLeft(signupDate);
-  const pricingUrl = '/pro-solutions#tarifs';
+  const pricingUrl = '/pro/abonnement';
 
   if (daysLeft > 0) {
     if (daysLeft > 14) return <>{children}</>;

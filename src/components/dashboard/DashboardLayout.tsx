@@ -140,7 +140,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
             <Button
               size="sm"
               className="bg-wedding-gold hover:bg-wedding-gold/90 text-white shadow-md animate-pulse"
-              onClick={() => setShowProPremiumModal(true)}
+              onClick={() => { window.location.href = '/pro/abonnement'; }}
             >
               <Crown className="h-4 w-4 mr-1" />
               {tPro('bar.upgrade')}
@@ -200,7 +200,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
                   <Button
                     size="sm"
                     className="flex-1 min-w-[140px] bg-wedding-gold hover:bg-wedding-gold/90 text-white"
-                    onClick={() => setShowProPremiumModal(true)}
+                    onClick={() => { window.location.href = '/pro/abonnement'; }}
                   >
                     <Crown className="h-4 w-4 mr-1" />
                     {tPro('bar.upgradeShort')}
