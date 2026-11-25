@@ -549,6 +549,12 @@
     <priority>0.6</priority>
   </url>
   <url>
+    <loc>https://mariable.fr/prestataire/les-maries-d-alex-8164eb</loc>
+    <lastmod>2026-11-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
     <loc>https://mariable.fr/prestataire/chateau-de-vallery</loc>
     <lastmod>2025-10-06</lastmod>
     <changefreq>weekly</changefreq>
@@ -587,6 +593,12 @@
   <url>
     <loc>https://mariable.fr/prestataire/la-soleillade-aixoise-aix-en-provence</loc>
     <lastmod>2025-12-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://mariable.fr/prestataire/divine-events-079948</loc>
+    <lastmod>2026-11-25</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
