@@ -22,6 +22,8 @@ import ProFeuilleDeRoute from '@/components/pro/ProFeuilleDeRoute';
 import proHeroPhoto from '@/assets/editorial/couple-rires-chateau.png.asset.json';
 import ProTrialGate from '@/components/pro/ProTrialGate';
 import FicheGuidePrompt from '@/components/pro/FicheGuidePrompt';
+import { createDemoWedding } from '@/lib/demoWedding';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface ProProfileForm {
   first_name: string;
@@ -51,7 +53,34 @@ const MesMariages: React.FC = () => {
     canCreateMoreWeddings,
     accountType,
     setWeddingArchived,
+    refreshWeddings,
   } = useWedding();
+  const { user } = useAuth();
+  const [creatingDemo, setCreatingDemo] = useState(false);
+  const handleCreateDemo = async () => {
+    if (!user || creatingDemo) return;
+    setCreatingDemo(true);
+    try {
+      const demoId = await createDemoWedding(user.id);
+      await refreshWeddings?.();
+      selectWedding(demoId);
+      toast({ title: i18n.language?.startsWith('en') ? 'Sample wedding ready' : 'Mariage exemple prêt', description: i18n.language?.startsWith('en') ? 'Explore the day-of timeline, vendors, seating and budget.' : 'Découvrez le déroulé Jour J, les prestataires, le plan de table et le budget.' });
+    } catch (error) {
+      console.error('❌ handleCreateDemo failed:', error);
+      toast({ title: 'Erreur', description: 'Impossible de créer le mariage exemple.', variant: 'destructive' });
+    } finally {
+      setCreatingDemo(false);
+    }
+  };
+  // Premier passage d'un Pro sans mariage : on crée automatiquement le mariage exemple (une seule fois)
+  useEffect(() => {
+    if (loading || !user || accountType !== 'b2b' || weddings.length > 0 || archivedWeddings.length > 0) return;
+    const flagKey = `mariable_demo_wedding_${user.id}`;
+    if (localStorage.getItem(flagKey)) return;
+    localStorage.setItem(flagKey, '1');
+    handleCreateDemo();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, accountType, weddings.length, archivedWeddings.length]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingWedding, setEditingWedding] = useState<Wedding | null>(null);
   const [form, setForm] = useState<ProProfileForm>(emptyForm);
@@ -329,6 +358,12 @@ const MesMariages: React.FC = () => {
                   <Plus className="h-4 w-4 mr-2" />
                   {t('weddings.createFirst')}
                 </Button>
+                <div className="mt-3">
+                  <Button variant="outline" onClick={handleCreateDemo} disabled={creatingDemo} className="rounded-none">
+                    <Sparkles className="h-4 w-4 mr-2" />
+                    {creatingDemo ? '…' : i18n.language?.startsWith('en') ? 'Explore a sample wedding (Chloé & Antoine)' : 'Découvrir un mariage exemple (Chloé & Antoine)'}
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           ) : (
