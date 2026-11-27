@@ -438,12 +438,15 @@ async function handleSubscriptionUpdated(event: Stripe.Event, supabaseClient: an
   const { error } = await supabaseClient
     .from('profiles')
     .update({
+      last_stripe_event_created: event.created,
       subscription_status: subscription.status,
       subscription_type: subscription.status === 'active' ? 'premium' : 'free',
       subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
       updated_at: new Date().toISOString()
     })
-    .eq('stripe_subscription_id', subscription.id);
+    .eq('stripe_subscription_id', subscription.id)
+    // Stripe does not guarantee event order: ignore events older than the last one applied
+    .or(`last_stripe_event_created.is.null,last_stripe_event_created.lt.${event.created}`);
 
   if (error) throw error;
   logStep("Profile updated after subscription change", { subscriptionId: subscription.id });
@@ -457,12 +460,15 @@ async function handleSubscriptionDeleted(event: Stripe.Event, supabaseClient: an
   const { error } = await supabaseClient
     .from('profiles')
     .update({
+      last_stripe_event_created: event.created,
       subscription_type: 'free',
       subscription_status: 'canceled',
       subscription_expires_at: new Date(subscription.current_period_end * 1000).toISOString(),
       updated_at: new Date().toISOString()
     })
-    .eq('stripe_subscription_id', subscription.id);
+    .eq('stripe_subscription_id', subscription.id)
+    // Stripe does not guarantee event order: ignore events older than the last one applied
+    .or(`last_stripe_event_created.is.null,last_stripe_event_created.lt.${event.created}`);
 
   if (error) throw error;
   logStep("Profile downgraded to free", { subscriptionId: subscription.id });
